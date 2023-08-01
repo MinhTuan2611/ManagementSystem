@@ -1,0 +1,6 @@
+D:\SourceCode\ManagementSystem\ManagementSystemDb\bin\Debug\ManagementSystemDb.dacpac
+D:\SourceCode\ManagementSystem\ManagementSystemDb\bin\Debug\ManagementSystemDb.dll
+D:\SourceCode\ManagementSystem\ManagementSystemDb\bin\Debug\ManagementSystemDb.pdb
+D:\SourceCode\ManagementSystem\ManagementSystemDb\obj\Debug\ManagementSystemDb.sqlproj.AssemblyReference.cache
+D:\SourceCode\ManagementSystem\ManagementSystemDb\obj\Debug\ManagementSystemDb.dll
+D:\SourceCode\ManagementSystem\ManagementSystemDb\obj\Debug\ManagementSystemDb.pdb

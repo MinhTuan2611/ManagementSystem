@@ -1,0 +1,14 @@
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\bin\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.deps.json
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\bin\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.dll
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\bin\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.pdb
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\obj\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.csproj.AssemblyReference.cache
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\obj\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.GeneratedMSBuildEditorConfig.editorconfig
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\obj\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.AssemblyInfoInputs.cache
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\obj\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.AssemblyInfo.cs
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\obj\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.csproj.CoreCompileInputs.cache
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\obj\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.dll
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\obj\Debug\net6.0\refint\ManagementSystem.EmployeesApi.DataModel.dll
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\obj\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.pdb
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\obj\Debug\net6.0\ref\ManagementSystem.EmployeesApi.DataModel.dll
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\bin\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.runtimeconfig.json
+D:\SourceCode\ManagementSystem\ManagementSystem.EmployeesApi.DataModel\obj\Debug\net6.0\ManagementSystem.EmployeesApi.DataModel.genruntimeconfig.cache
