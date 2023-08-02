@@ -1,14 +1,15 @@
 ﻿using ManagementSystem.AccountsApi.Services;
-using ManagementSystem.EmployeesApi.Data;
 using ManagementSystem.EmployeesApi.Data.Entities;
+using ManagementSystem.EmployeesApi.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Net.Http;
-using System.Web.Http;
 
 namespace ManagementSystem.AccountsApi.Controllers
 {
-    [Route("/api/[controller]")]
-    public class UsersController : ApiController
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UsersController : ControllerBase
     {
         private readonly IUsersService _UsersService;
 
@@ -23,17 +24,17 @@ namespace ManagementSystem.AccountsApi.Controllers
         }
         #endregion
         // GET api/product
-        public HttpResponseMessage Get()
+        [HttpGet(Name = "Get")]
+        public IActionResult Get()
         {
             var users = _UsersService.GetAllUsers();
             if (users != null)
             {
                 var UsersEntities = users as List<User> ?? users.ToList();
                 if (UsersEntities.Any())
-                    return Request.CreateResponse(HttpStatusCode.OK, UsersEntities);
+                    return Ok(UsersEntities);
             }
-            return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Products not found");
+            return StatusCode(404, "Products not found");
         }
-
     }
 }

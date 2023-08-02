@@ -31,7 +31,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Users}/{action=Get}/{id?}");
+        name: "default",
+        pattern: "{controller=Users}/{action=Get}/{id?}");
 
 app.Run();
