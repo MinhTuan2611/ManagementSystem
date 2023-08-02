@@ -4,3 +4,17 @@
 .vs/ManagementSystem/FileContentIndex/
 
 .vs/ManagementSystem/DesignTimeBuild/
+
+ManagementSystem.AccountsApi/bin/Debug/net6.0/
+
+ManagementSystem.AccountsApi/obj/Container/
+
+ManagementSystem.AccountsApi/obj/Debug/net6.0/
+
+ManagementSystem.Common/obj/Debug/net6.0/
+
+ManagementSystem.Common/bin/Debug/net6.0/
+
+ManagementSystem.AccountsApi/obj/
+
+ManagementSystem.Common/obj/
