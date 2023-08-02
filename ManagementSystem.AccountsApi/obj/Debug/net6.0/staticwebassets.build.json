@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "36Yr6PRaPHn6FOKQnKsI/SgHgZ/jL4e3y9Wgs7YtS/s=",
+  "Source": "ManagementSystem.AccountsApi",
+  "BasePath": "_content/ManagementSystem.AccountsApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
