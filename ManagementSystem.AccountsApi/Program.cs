@@ -18,6 +18,8 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseRouting();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -28,6 +30,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Users}/{action=Get}/{id?}");
 
 app.Run();
