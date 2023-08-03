@@ -1,7 +1,7 @@
 ﻿using ManagementSystem.AccountsApi.Repositories.GenericRepository;
 using ManagementSystem.EmployeesApi.Data;
 using ManagementSystem.EmployeesApi.Data.Entities;
-using System.Data.Entity.Validation;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace ManagementSystem.AccountsApi.Repositories.UnitOfWork
@@ -48,19 +48,19 @@ namespace ManagementSystem.AccountsApi.Repositories.UnitOfWork
             {
                 _context.SaveChanges();
             }
-            catch (DbEntityValidationException e)
+            catch (DbUpdateException e)
             {
 
                 var outputLines = new List<string>();
-                foreach (var eve in e.EntityValidationErrors)
+                foreach (var eve in e.Entries)
                 {
                     outputLines.Add(string.Format(
                         "{0}: Entity of type \"{1}\" in state \"{2}\" has the following validation errors:", DateTime.Now,
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State));
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        outputLines.Add(string.Format("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage));
-                    }
+                        eve.Entity.GetType().Name, eve.State));
+                    //foreach (var ve in eve.ValidationErrors)
+                    //{
+                    //    outputLines.Add(string.Format("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage));
+                    //}
                 }
                 System.IO.File.AppendAllLines(@"C:\errors.txt", outputLines);
 
