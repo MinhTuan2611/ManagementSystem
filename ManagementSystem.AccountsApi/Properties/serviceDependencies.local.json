@@ -4,6 +4,10 @@
       "ignored": "true",
       "type": "mssql",
       "connectionId": "ConnectionStrings:AcountsDbConnStr"
+    },
+    "secrets1": {
+      "type": "secrets.user",
+      "dynamicId": null
     }
   }
 }

@@ -1,4 +1,5 @@
-﻿using ManagementSystem.EmployeesApi.Data.Entities;
+﻿using ManagementSystem.AccountsApi.Models;
+using ManagementSystem.EmployeesApi.Data.Entities;
 
 namespace ManagementSystem.AccountsApi.Services
 {
@@ -6,7 +7,7 @@ namespace ManagementSystem.AccountsApi.Services
     {
         //User GetUserById(int UserId);
         IEnumerable<User> GetAllUsers();
-        //int CreateUser(User UserEntity);
+        int CreateUser(UserRegister UserEntity);
         //bool UpdateUser(int UserId, User UserEntity);
         //bool DeleteUser(int UserId);
     }

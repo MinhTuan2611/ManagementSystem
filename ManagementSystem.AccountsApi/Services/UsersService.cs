@@ -1,4 +1,5 @@
-﻿using ManagementSystem.AccountsApi.Repositories.UnitOfWork;
+﻿using ManagementSystem.AccountsApi.Models;
+using ManagementSystem.AccountsApi.Repositories.UnitOfWork;
 using ManagementSystem.EmployeesApi.Data;
 using ManagementSystem.EmployeesApi.Data.Entities;
 
@@ -20,6 +21,34 @@ namespace ManagementSystem.AccountsApi.Services
             
                 return users;
             return null;
+        }
+
+        public int CreateUser(UserRegister UserEntity)
+        {
+            try
+            {
+                User newUser = new User
+                {
+                    UserName = UserEntity.UserName,
+                    Password = UserEntity.Password,
+                    LastName = UserEntity.LastName,
+                    FirstName = UserEntity.FirstName,
+                    Email = UserEntity.Email,
+                    PhoneNumber = UserEntity.PhoneNumber,
+                };
+                _unitOfWork.UserRepository.Insert(newUser);
+                _unitOfWork.Save();
+                User user = _unitOfWork.UserRepository.Get(u => u.UserName == UserEntity.UserName);
+                if (user != null)
+                {
+                    return user.UserId;
+                } else { return -1; }
+                
+            }
+            catch(Exception ex)
+            {
+                return -1;
+            }
         }
     }
 }
