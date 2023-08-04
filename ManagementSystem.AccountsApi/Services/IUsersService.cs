@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.AccountsApi.Models;
+using ManagementSystem.Common.Models;
 using ManagementSystem.EmployeesApi.Data.Entities;
 
 namespace ManagementSystem.AccountsApi.Services

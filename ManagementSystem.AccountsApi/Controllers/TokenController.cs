@@ -1,5 +1,6 @@
 ﻿using ManagementSystem.AccountsApi.Models;
 using ManagementSystem.AccountsApi.Services;
+using ManagementSystem.Common.Models;
 using ManagementSystem.EmployeesApi.Data;
 using ManagementSystem.EmployeesApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ namespace ManagementSystem.AccountsApi.Controllers
             _TokenService = new TokenServices(config, context);
         }
         [HttpPost]
-        public async Task<IActionResult> Post(UserAPIModel _userData)
+        public async Task<IActionResult> Post(Login _userData)
         {
             if (_userData != null && _userData.Password != null)
             {
@@ -28,7 +29,7 @@ namespace ManagementSystem.AccountsApi.Controllers
 
                 if (token != null)
                 {
-                    return Ok(token);
+                    return Ok(new { Token = token, Message = "Success" });
                 }
                 else
                 {

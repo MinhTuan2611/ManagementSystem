@@ -1,6 +1,7 @@
 ﻿using ManagementSystem.AccountsApi.Models;
 using ManagementSystem.AccountsApi.Repositories.UnitOfWork;
 using ManagementSystem.Common.Helpers;
+using ManagementSystem.Common.Models;
 using ManagementSystem.EmployeesApi.Data;
 using ManagementSystem.EmployeesApi.Data.Entities;
 using Microsoft.IdentityModel.Tokens;
@@ -19,7 +20,7 @@ namespace ManagementSystem.AccountsApi.Services
             _unitOfWork = new UnitOfWork(context);
             _configuration = config;
         }
-        public string GetToken(UserAPIModel User)
+        public string GetToken(Login User)
         {
             if (User != null && User.Password != null)
             {
@@ -29,7 +30,6 @@ namespace ManagementSystem.AccountsApi.Services
                 {
                     //create claims details based on the user information
                     var claims = new[] {
-                        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                         new Claim("UserId", user.UserId.ToString()),
@@ -41,9 +41,9 @@ namespace ManagementSystem.AccountsApi.Services
                     var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                     var token = new JwtSecurityToken(
                         _configuration["Jwt:Issuer"],
-                        _configuration["Jwt:Audience"],
+                        _configuration["Jwt:Issuer"],
                         claims,
-                        expires: DateTime.UtcNow.AddMinutes(10),
+                        expires: DateTime.UtcNow.AddMinutes(120),
                         signingCredentials: signIn);
 
                     return new JwtSecurityTokenHandler().WriteToken(token);

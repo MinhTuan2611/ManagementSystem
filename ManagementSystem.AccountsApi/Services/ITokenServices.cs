@@ -1,10 +1,9 @@
-﻿using ManagementSystem.AccountsApi.Models;
-using ManagementSystem.EmployeesApi.Data.Entities;
+﻿using ManagementSystem.Common.Models;
 
 namespace ManagementSystem.AccountsApi.Services
 {
     public interface ITokenServices
     {
-        string GetToken(UserAPIModel User);
+        string GetToken(Login User);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ManagementSystem.AccountsApi.Models;
 using ManagementSystem.AccountsApi.Repositories.UnitOfWork;
+using ManagementSystem.Common.Models;
 using ManagementSystem.EmployeesApi.Data;
 using ManagementSystem.EmployeesApi.Data.Entities;
 

@@ -7,6 +7,7 @@ using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.AccountsApi.Models;
+using ManagementSystem.Common.Models;
 
 namespace ManagementSystem.AccountsApi.Controllers
 {
@@ -28,7 +29,7 @@ namespace ManagementSystem.AccountsApi.Controllers
         }
         #endregion
         // GET api/user/get
-        [HttpGet(Name = "Get")]
+        [HttpGet("Get")]
         public IActionResult Get()
         {
             var users = _UsersService.GetAllUsers();
@@ -43,7 +44,7 @@ namespace ManagementSystem.AccountsApi.Controllers
 
         // GET api/user/Register
         [AllowAnonymous]
-        [HttpPost(Name = "Register")]
+        [HttpPost("Register")]
         public IActionResult Register(UserRegister user)
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);

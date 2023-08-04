@@ -20,3 +20,7 @@ ManagementSystem.AccountsApi/obj/
 ManagementSystem.Common/obj/
 
 .vs/ProjectEvaluation/
+
+ManagementSystem.MainApp/obj/Debug/net6.0/
+
+ManagementSystem.MainApp/obj/

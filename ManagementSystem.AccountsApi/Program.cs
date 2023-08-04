@@ -18,15 +18,21 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+builder.Services.AddAuthentication();
+builder.Services.AddAuthentication(option =>
 {
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
+    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+}).AddJwtBearer(options =>
+{
     options.TokenValidationParameters = new TokenValidationParameters()
     {
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidateLifetime = false,
+        ValidateIssuerSigningKey = true,
+        ValidAudience = builder.Configuration["Jwt:Issuer"],
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
@@ -74,8 +80,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Users}/{action=Get}/{id?}");
+app.MapControllers();
 
 app.Run();
