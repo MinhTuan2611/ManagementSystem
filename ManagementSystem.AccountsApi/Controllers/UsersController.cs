@@ -60,11 +60,7 @@ namespace ManagementSystem.AccountsApi.Controllers
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             int userId = _UsersService.CreateUser(user);
-            if (userId != null)
-            {
-                return Ok(userId);
-            }
-            return StatusCode(StatusCodes.Status500InternalServerError, "Invalid create user");
+            return Ok(userId);
         }
     }
 }

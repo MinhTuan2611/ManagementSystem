@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -24,7 +25,7 @@ namespace ManagementSystem.MainApp.Services
             {
                 User userInfo = await GetUserLogin(user);
 
-                if (user != null)
+                if (userInfo != null)
                 {
                     //create claims details based on the user information
                     var claims = new[] {
@@ -59,15 +60,8 @@ namespace ManagementSystem.MainApp.Services
 
         private async Task<User> GetUserLogin(Login user)
         {
-            using var httpClient = new HttpClient();
-            var resLogin = await httpClient.PostAsJsonAsync(Environment.AccountApiUrl + "users/get-login", user);
-            if (resLogin.IsSuccessStatusCode)
-            {
-                var content = await resLogin.Content.ReadAsStringAsync();
-                var resultToken = JsonConvert.DeserializeObject<User>(content);
-                return resultToken;
-            }
-            return null;
+            User userInfo = await HttpRequestsHelper.Post<User>(Environment.AccountApiUrl + "users/get-login", user);
+            return userInfo;
         }
     }
 }
