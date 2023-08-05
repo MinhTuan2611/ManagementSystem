@@ -33,7 +33,7 @@ builder.Services.AddAuthentication(option =>
 
 builder.Services.AddSwaggerGen(option =>
 {
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "AccountsApi", Version = "v1" });
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "MainApp", Version = "v1" });
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -71,6 +71,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers().RequireAuthorization();
+app.MapControllers();
 
 app.Run();

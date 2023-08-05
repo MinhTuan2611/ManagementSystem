@@ -1,7 +1,7 @@
 ﻿using ManagementSystem.Common.Models;
 using System.ComponentModel.DataAnnotations;
 
-namespace ManagementSystem.EmployeesApi.Data.Entities
+namespace ManagementSystem.Common.Entities
 {
     public class User
     {

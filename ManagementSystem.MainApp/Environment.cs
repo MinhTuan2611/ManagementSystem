@@ -2,6 +2,6 @@
 {
     public static class Environment
     {
-        public const string AccountApiUrl = "https://localhost:7161";
+        public const string AccountApiUrl = "https://localhost:7161/api/";
     }
 }

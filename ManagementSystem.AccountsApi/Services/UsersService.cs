@@ -1,8 +1,8 @@
 ﻿using ManagementSystem.AccountsApi.Models;
 using ManagementSystem.AccountsApi.Repositories.UnitOfWork;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.EmployeesApi.Data;
-using ManagementSystem.EmployeesApi.Data.Entities;
 
 namespace ManagementSystem.AccountsApi.Services
 {
@@ -22,6 +22,12 @@ namespace ManagementSystem.AccountsApi.Services
             
                 return users;
             return null;
+        }
+
+        public User GetUserLogin(Login UserLogin)
+        {
+            var users = _unitOfWork.UserRepository.Get(u => u.UserName == UserLogin.UserName && BCrypt.Net.BCrypt.Verify(UserLogin.Password, u.Password));
+            return users;
         }
 
         public int CreateUser(UserRegister UserEntity)

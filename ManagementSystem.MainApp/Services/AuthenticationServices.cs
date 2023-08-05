@@ -1,28 +1,28 @@
-﻿using ManagementSystem.AccountsApi.Models;
-using ManagementSystem.AccountsApi.Repositories.UnitOfWork;
+﻿using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
-using ManagementSystem.EmployeesApi.Data;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 
-namespace ManagementSystem.AccountsApi.Services
+namespace ManagementSystem.MainApp.Services
 {
-    public class TokenServices : ITokenServices
+    public class AuthenticationServices : IAuthenticationServices
     {
-        private readonly UnitOfWork _unitOfWork;
         public IConfiguration _configuration;
-        public TokenServices(IConfiguration config, AccountsDbContext context)
+        public AuthenticationServices(IConfiguration config)
         {
-            _unitOfWork = new UnitOfWork(context);
             _configuration = config;
         }
-        public string GetToken(Login User)
+        public async Task<string> GenerateToken(Login user)
         {
-            if (User != null && User.Password != null)
+            if (user != null && user.Password != null)
             {
-                var user = _unitOfWork.UserRepository.Get(u => u.UserName == User.UserName && BCrypt.Net.BCrypt.Verify(User.Password,u.Password));
+                User userInfo = await GetUserLogin(user);
 
                 if (user != null)
                 {
@@ -30,9 +30,9 @@ namespace ManagementSystem.AccountsApi.Services
                     var claims = new[] {
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                        new Claim("UserId", user.UserId.ToString()),
-                        new Claim("DisplayName", user.FirstName + user.LastName),
-                        new Claim("UserName", user.UserName)
+                        new Claim("UserId", userInfo.UserId.ToString()),
+                        new Claim("DisplayName", userInfo.FirstName + userInfo.LastName),
+                        new Claim("UserName", userInfo.UserName)
                     };
 
                     var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -45,14 +45,29 @@ namespace ManagementSystem.AccountsApi.Services
                         signingCredentials: signIn);
 
                     return new JwtSecurityTokenHandler().WriteToken(token);
-                } else
+                }
+                else
                 {
                     return null;
                 }
-            } else
+            }
+            else
             {
                 return null;
             }
+        }
+
+        private async Task<User> GetUserLogin(Login user)
+        {
+            using var httpClient = new HttpClient();
+            var resLogin = await httpClient.PostAsJsonAsync(Environment.AccountApiUrl + "users/get-login", user);
+            if (resLogin.IsSuccessStatusCode)
+            {
+                var content = await resLogin.Content.ReadAsStringAsync();
+                var resultToken = JsonConvert.DeserializeObject<User>(content);
+                return resultToken;
+            }
+            return null;
         }
     }
 }

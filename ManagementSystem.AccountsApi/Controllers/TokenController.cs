@@ -2,7 +2,6 @@
 using ManagementSystem.AccountsApi.Services;
 using ManagementSystem.Common.Models;
 using ManagementSystem.EmployeesApi.Data;
-using ManagementSystem.EmployeesApi.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
