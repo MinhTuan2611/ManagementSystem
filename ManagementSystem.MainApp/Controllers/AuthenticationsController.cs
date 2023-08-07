@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementSystem.MainApp.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthenticationsController : ControllerBase
     {
@@ -13,7 +13,7 @@ namespace ManagementSystem.MainApp.Controllers
         {
             _AuthServices = new AuthenticationServices(config);
         }
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Post(Login _userData)
         {
             if (_userData != null && _userData.Password != null)

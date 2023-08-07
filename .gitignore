@@ -26,3 +26,5 @@ ManagementSystem.MainApp/obj/Debug/net6.0/
 ManagementSystem.MainApp/obj/
 
 ManagementSystem.MainApp/bin/Debug/net6.0/
+
+.vs/ManagementSystem/config/applicationhost.config
