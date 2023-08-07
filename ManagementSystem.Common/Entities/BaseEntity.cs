@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ManagementSystem.Common.Entities
 {
-    internal class BaseEntity
+    public class BaseEntity
     {
         public DateTime CreateDate { get; set; } = DateTime.Now;
-        public User? CreateBy { get; set; }
+        public int? CreateBy { get; set; }
         public DateTime ModifyDate { get; set; } = DateTime.Now;
-        public User? ModifyBy { get; set;}
+        public int? ModifyBy { get; set;}
     }
 }
