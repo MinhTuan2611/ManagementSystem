@@ -1,6 +1,6 @@
 ﻿using ManagementSystem.AccountsApi.Repositories.GenericRepository;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.EmployeesApi.Data;
-using ManagementSystem.EmployeesApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 

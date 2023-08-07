@@ -1,5 +1,4 @@
 ﻿using ManagementSystem.AccountsApi.Services;
-using ManagementSystem.EmployeesApi.Data.Entities;
 using ManagementSystem.EmployeesApi.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.AccountsApi.Models;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Entities;
 
 namespace ManagementSystem.AccountsApi.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -42,6 +41,18 @@ namespace ManagementSystem.AccountsApi.Controllers
             return StatusCode(StatusCodes.Status404NotFound, "Products not found");
         }
 
+        [HttpPost("get-login")]
+        public IActionResult GetLogin(Login user)
+        {
+            var users = _UsersService.GetUserLogin(user);
+            if (users != null)
+            {
+                return Ok(users);
+            }
+            return StatusCode(StatusCodes.Status404NotFound, "Products not found");
+        }
+
+
         // GET api/user/Register
         [AllowAnonymous]
         [HttpPost("Register")]
@@ -49,11 +60,7 @@ namespace ManagementSystem.AccountsApi.Controllers
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             int userId = _UsersService.CreateUser(user);
-            if (userId != null)
-            {
-                return Ok(userId);
-            }
-            return StatusCode(StatusCodes.Status500InternalServerError, "Invalid create user");
+            return Ok(userId);
         }
     }
 }

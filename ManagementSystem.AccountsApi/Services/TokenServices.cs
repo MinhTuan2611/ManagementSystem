@@ -1,9 +1,7 @@
 ﻿using ManagementSystem.AccountsApi.Models;
 using ManagementSystem.AccountsApi.Repositories.UnitOfWork;
-using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.EmployeesApi.Data;
-using ManagementSystem.EmployeesApi.Data.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

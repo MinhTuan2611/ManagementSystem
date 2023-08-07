@@ -1,4 +1,5 @@
-﻿using ManagementSystem.EmployeesApi.Data.Entities;
+﻿
+using ManagementSystem.Common.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.EmployeesApi.Data

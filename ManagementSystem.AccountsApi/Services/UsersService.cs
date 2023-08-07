@@ -1,8 +1,8 @@
 ﻿using ManagementSystem.AccountsApi.Models;
 using ManagementSystem.AccountsApi.Repositories.UnitOfWork;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.EmployeesApi.Data;
-using ManagementSystem.EmployeesApi.Data.Entities;
 
 namespace ManagementSystem.AccountsApi.Services
 {
@@ -24,22 +24,33 @@ namespace ManagementSystem.AccountsApi.Services
             return null;
         }
 
-        public int CreateUser(UserRegister UserEntity)
+        public User GetUserLogin(Login UserLogin)
+        {
+            var users = _unitOfWork.UserRepository.Get(u => u.UserName == UserLogin.UserName && BCrypt.Net.BCrypt.Verify(UserLogin.Password, u.Password));
+            return users;
+        }
+
+        public int CreateUser(UserRegister userEntity)
         {
             try
             {
+                User userInfo = _unitOfWork.UserRepository.Get(u => u.UserName == userEntity.UserName);
+                if (userInfo != null)
+                {
+                    return -2;
+                }
                 User newUser = new User
                 {
-                    UserName = UserEntity.UserName,
-                    Password = UserEntity.Password,
-                    LastName = UserEntity.LastName,
-                    FirstName = UserEntity.FirstName,
-                    Email = UserEntity.Email,
-                    PhoneNumber = UserEntity.PhoneNumber,
+                    UserName = userEntity.UserName,
+                    Password = userEntity.Password,
+                    LastName = userEntity.LastName,
+                    FirstName = userEntity.FirstName,
+                    Email = userEntity.Email,
+                    PhoneNumber = userEntity.PhoneNumber,
                 };
                 _unitOfWork.UserRepository.Insert(newUser);
                 _unitOfWork.Save();
-                User user = _unitOfWork.UserRepository.Get(u => u.UserName == UserEntity.UserName);
+                User user = _unitOfWork.UserRepository.Get(u => u.UserName == userEntity.UserName);
                 if (user != null)
                 {
                     return user.UserId;
