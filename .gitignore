@@ -28,3 +28,9 @@ ManagementSystem.MainApp/obj/
 ManagementSystem.MainApp/bin/Debug/net6.0/
 
 .vs/ManagementSystem/config/applicationhost.config
+
+ManagementSystem.StoragesApi/bin/Debug/net6.0/
+
+ManagementSystem.StoragesApi/obj/Debug/net6.0/
+
+ManagementSystem.StoragesApi/obj/Container/

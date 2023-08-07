@@ -1,7 +1,7 @@
 ﻿using ManagementSystem.StoragesApi.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace ManagementSystem.AccountsApi.Repositories.GenericRepository
+namespace ManagementSystem.StoragesApi.Repositories.GenericRepository
 {
     public class GenericRepository<TEntity> where TEntity : class
     {
@@ -10,8 +10,8 @@ namespace ManagementSystem.AccountsApi.Repositories.GenericRepository
 
         public GenericRepository(StoragesDbContext context)
         {
-            this.Context = context;
-            this.DbSet = context.Set<TEntity>();
+            Context = context;
+            DbSet = context.Set<TEntity>();
         }
         /// <summary>
         /// generic Get method for Entities
@@ -99,9 +99,9 @@ namespace ManagementSystem.AccountsApi.Repositories.GenericRepository
         /// </summary>
         /// <param name="where"></param>
         /// <returns></returns>
-        public TEntity Get(Func<TEntity, Boolean> where)
+        public TEntity Get(Func<TEntity, bool> where)
         {
-            return DbSet.Where(where).FirstOrDefault<TEntity>();
+            return DbSet.Where(where).FirstOrDefault();
         }
 
         /// <summary>
@@ -109,9 +109,9 @@ namespace ManagementSystem.AccountsApi.Repositories.GenericRepository
         /// </summary>
         /// <param name="where"></param>
         /// <returns></returns>
-        public void Delete(Func<TEntity, Boolean> where)
+        public void Delete(Func<TEntity, bool> where)
         {
-            IQueryable<TEntity> objects = DbSet.Where<TEntity>(where).AsQueryable();
+            IQueryable<TEntity> objects = DbSet.Where(where).AsQueryable();
             foreach (TEntity obj in objects)
                 DbSet.Remove(obj);
         }
@@ -135,7 +135,7 @@ namespace ManagementSystem.AccountsApi.Repositories.GenericRepository
             System.Linq.Expressions.Expression<Func<TEntity,
             bool>> predicate, params string[] include)
         {
-            IQueryable<TEntity> query = this.DbSet;
+            IQueryable<TEntity> query = DbSet;
             query = include.Aggregate(query, (current, inc) => current.Include(inc));
             return query.Where(predicate);
         }
@@ -157,7 +157,7 @@ namespace ManagementSystem.AccountsApi.Repositories.GenericRepository
         /// <returns>A single record that matches the specified criteria</returns>
         public TEntity GetSingle(Func<TEntity, bool> predicate)
         {
-            return DbSet.Single<TEntity>(predicate);
+            return DbSet.Single(predicate);
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace ManagementSystem.AccountsApi.Repositories.GenericRepository
         /// matching the specified criteria</returns>
         public TEntity GetFirst(Func<TEntity, bool> predicate)
         {
-            return DbSet.First<TEntity>(predicate);
+            return DbSet.First(predicate);
         }
     }
 }
