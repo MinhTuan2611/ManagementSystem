@@ -1,10 +1,10 @@
-﻿using ManagementSystem.AccountsApi.Repositories.GenericRepository;
-using ManagementSystem.Common.Entities;
+﻿using ManagementSystem.Common.Entities;
 using ManagementSystem.StoragesApi.Data;
+using ManagementSystem.StoragesApi.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
-namespace ManagementSystem.AccountsApi.Repositories.UnitOfWork
+namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
 {
     public class UnitOfWork : IDisposable
     {
@@ -30,8 +30,8 @@ namespace ManagementSystem.AccountsApi.Repositories.UnitOfWork
         {
             get
             {
-                if (this._branchRepository == null)
-                    this._branchRepository = new GenericRepository<Branch>(_context);
+                if (_branchRepository == null)
+                    _branchRepository = new GenericRepository<Branch>(_context);
                 return _branchRepository;
             }
         }
@@ -62,7 +62,7 @@ namespace ManagementSystem.AccountsApi.Repositories.UnitOfWork
                     //    outputLines.Add(string.Format("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage));
                     //}
                 }
-                System.IO.File.AppendAllLines(@"C:\errors.txt", outputLines);
+                File.AppendAllLines(@"C:\errors.txt", outputLines);
 
                 throw e;
             }
@@ -82,7 +82,7 @@ namespace ManagementSystem.AccountsApi.Repositories.UnitOfWork
         /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!disposed)
             {
                 if (disposing)
                 {
@@ -90,7 +90,7 @@ namespace ManagementSystem.AccountsApi.Repositories.UnitOfWork
                     _context.Dispose();
                 }
             }
-            this.disposed = true;
+            disposed = true;
         }
 
         /// <summary>
