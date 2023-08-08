@@ -12,6 +12,5 @@ namespace ManagementSystem.StoragesApi.Services
 
         bool UpdateBranch(int branchId, Branch branch);
         bool DeleteBranch(int branchId);
-
     }
 }

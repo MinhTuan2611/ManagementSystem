@@ -21,4 +21,12 @@ namespace ManagementSystem.Common.Models
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
     }
+
+    public class TokenRes
+    {
+        public string Token { get; set; }
+        public string Status { get; set; }
+        public string Error { get; set; }
+        public string Username { get; set; }
+    }
 }

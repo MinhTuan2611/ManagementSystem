@@ -8,8 +8,9 @@ namespace ManagementSystem.AccountsApi.Services
     {
         //User GetUserById(int UserId);
         IEnumerable<User> GetAllUsers();
-        User GetUserLogin(Login UserLogin);
-        int CreateUser(UserRegister UserEntity);
+        User GetUserLogin(Login userLogin);
+        UserInfo GetUserByUsername(string username);
+        int CreateUser(UserRegister userEntity);
         //bool UpdateUser(int UserId, User UserEntity);
         //bool DeleteUser(int UserId);
     }

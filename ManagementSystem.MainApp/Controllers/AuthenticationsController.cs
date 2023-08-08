@@ -22,7 +22,7 @@ namespace ManagementSystem.MainApp.Controllers
 
                 if (token != null)
                 {
-                    return Ok(new { Token = token, Message = "Success" });
+                    return Ok(new TokenRes{ Token = token, Status = "Success", Username = _userData.UserName });
                 }
                 else
                 {

@@ -41,6 +41,17 @@ namespace ManagementSystem.AccountsApi.Controllers
             return StatusCode(StatusCodes.Status404NotFound, "Products not found");
         }
 
+        [HttpGet("get-by-username/{username}")]
+        public IActionResult GetLogin(string username)
+        {
+            var users = _UsersService.GetUserByUsername(username);
+            if (users != null)
+            {
+                return Ok(users);
+            }
+            return StatusCode(StatusCodes.Status404NotFound, "Products not found");
+        }
+
         [HttpPost("get-login")]
         public IActionResult GetLogin(Login user)
         {

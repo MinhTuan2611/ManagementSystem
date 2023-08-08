@@ -24,10 +24,25 @@ namespace ManagementSystem.AccountsApi.Services
             return null;
         }
 
-        public User GetUserLogin(Login UserLogin)
+        public User GetUserLogin(Login userLogin)
         {
-            var users = _unitOfWork.UserRepository.Get(u => u.UserName == UserLogin.UserName && BCrypt.Net.BCrypt.Verify(UserLogin.Password, u.Password));
+            var users = _unitOfWork.UserRepository.Get(u => u.UserName == userLogin.UserName && BCrypt.Net.BCrypt.Verify(userLogin.Password, u.Password));
             return users;
+        }
+
+        public UserInfo GetUserByUsername(string username)
+        {
+            var user = _unitOfWork.UserRepository.Get(u => u.UserName == username);
+            UserInfo userInfo = new UserInfo
+            {
+                UserId = user.UserId,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Phone = user.PhoneNumber
+            };
+            return userInfo;
         }
 
         public int CreateUser(UserRegister userEntity)

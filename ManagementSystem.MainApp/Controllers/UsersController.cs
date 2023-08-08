@@ -20,6 +20,17 @@ namespace ManagementSystem.MainApp.Controllers
             {
                 return Ok(users);
             }
+            return Ok("Users not found");
+        }
+        [AllowAnonymous]
+        [HttpGet("get-by-username/{username}")]
+        public async Task<IActionResult> User(string username)
+        {
+            UserInfo userInfo = await HttpRequestsHelper.Get<UserInfo>(Environment.AccountApiUrl + "users/get-by-username/" + username);
+            if (userInfo != null)
+            {
+                return Ok(userInfo);
+            }
             return StatusCode(StatusCodes.Status404NotFound, "Products not found");
         }
 
