@@ -34,7 +34,7 @@ namespace ManagementSystem.AccountsApi.Controllers
             var users = _UsersService.GetAllUsers();
             if (users != null)
             {
-                var UsersEntities = users as List<User> ?? users.ToList();
+                var UsersEntities = users as List<UserInfo> ?? users.ToList();
                 if (UsersEntities.Any())
                     return Ok(UsersEntities);
             }

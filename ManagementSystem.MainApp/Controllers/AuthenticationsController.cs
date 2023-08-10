@@ -22,16 +22,22 @@ namespace ManagementSystem.MainApp.Controllers
 
                 if (token != null)
                 {
-                    return Ok(new TokenRes{ Token = token, Status = "Success", Username = _userData.UserName });
+                    return Ok(new TokenRes { Token = token, Status = "Success", Username = _userData.UserName });
                 }
                 else
                 {
-                    return BadRequest("Invalid credentials");
+                    return Ok(new TokenRes { Token = null, Status = "Fail", Username = null, Error = "Tên đăng nhập hoặc mật khẩu không đúng!" });
                 }
             }
             else
             {
-                return BadRequest();
+                return Ok(new TokenRes
+                {
+                    Token = null,
+                    Status = "Fail",
+                    Username = null,
+                    Error = "Tên đăng nhập hoặc mật khẩu không đúng!"
+                });
             }
         }
     }

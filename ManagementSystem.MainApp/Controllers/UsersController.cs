@@ -15,7 +15,7 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get()
         {
-            List<User> users = await HttpRequestsHelper.Get<List<User>>(Environment.AccountApiUrl + "users/get");
+            List<UserInfo> users = await HttpRequestsHelper.Get<List<UserInfo>>(Environment.AccountApiUrl + "users/get");
             if (users != null || users.Count > 0)
             {
                 return Ok(users);

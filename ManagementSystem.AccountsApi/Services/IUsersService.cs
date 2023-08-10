@@ -7,7 +7,7 @@ namespace ManagementSystem.AccountsApi.Services
     public interface IUsersService
     {
         //User GetUserById(int UserId);
-        IEnumerable<User> GetAllUsers();
+        IEnumerable<UserInfo> GetAllUsers();
         User GetUserLogin(Login userLogin);
         UserInfo GetUserByUsername(string username);
         int CreateUser(UserRegister userEntity);

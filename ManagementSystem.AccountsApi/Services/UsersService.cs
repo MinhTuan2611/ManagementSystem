@@ -15,12 +15,25 @@ namespace ManagementSystem.AccountsApi.Services
             _unitOfWork = new UnitOfWork(context);
         }
 
-        public IEnumerable<User> GetAllUsers()
+        public IEnumerable<UserInfo> GetAllUsers()
         {
             var users = _unitOfWork.UserRepository.GetAll().ToList();
+            var usersRes = new List<UserInfo>();
             if (users.Any())
-            
-                return users;
+                foreach (var user in users)
+                {
+                    usersRes.Add(new UserInfo
+                    {
+                        UserId = user.UserId,
+                        UserName = user.UserName,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        FullName = user.FirstName + " " + user.LastName,
+                        Email = user.Email,
+                        Phone = user.PhoneNumber
+                    });
+                };
+                return usersRes;
             return null;
         }
 
@@ -39,6 +52,7 @@ namespace ManagementSystem.AccountsApi.Services
                 UserName = user.UserName,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                FullName = user.FirstName + " " + user.LastName,
                 Email = user.Email,
                 Phone = user.PhoneNumber
             };
