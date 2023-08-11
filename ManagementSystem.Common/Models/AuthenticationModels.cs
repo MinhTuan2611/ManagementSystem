@@ -22,6 +22,21 @@ namespace ManagementSystem.Common.Models
         public string? PhoneNumber { get; set; }
     }
 
+    public class UserInformation
+    {
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+    }
+
+    public class UpdateUserModel
+    {
+        public int UserId { get; set; }
+        public UserInformation UserEntity { get; set; }
+    }
+
     public class TokenRes
     {
         public string Token { get; set; }

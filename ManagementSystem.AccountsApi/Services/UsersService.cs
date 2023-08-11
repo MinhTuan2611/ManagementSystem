@@ -30,7 +30,7 @@ namespace ManagementSystem.AccountsApi.Services
                         LastName = user.LastName,
                         FullName = user.FirstName + " " + user.LastName,
                         Email = user.Email,
-                        Phone = user.PhoneNumber
+                        PhoneNumber = user.PhoneNumber
                     });
                 };
                 return usersRes;
@@ -54,7 +54,7 @@ namespace ManagementSystem.AccountsApi.Services
                 LastName = user.LastName,
                 FullName = user.FirstName + " " + user.LastName,
                 Email = user.Email,
-                Phone = user.PhoneNumber
+                PhoneNumber = user.PhoneNumber
             };
             return userInfo;
         }
@@ -90,6 +90,29 @@ namespace ManagementSystem.AccountsApi.Services
             {
                 return -1;
             }
+        }
+
+        public bool UpdateUser(int UserId, UserInformation UserEntity)
+        {
+            if (UserId < 1 || UserEntity == null)
+            {
+                return false;
+            }
+
+            User user = _unitOfWork.UserRepository.GetFirst(u => u.UserId == UserId);
+            if (user != null)
+            {
+                user.FirstName = UserEntity.FirstName; 
+                user.LastName = UserEntity.LastName;
+                user.Email = UserEntity.Email;
+                user.PhoneNumber = UserEntity.PhoneNumber;
+
+                _unitOfWork.UserRepository.Update(user);
+                _unitOfWork.Save();
+                return true;
+            }
+            return false;
+
         }
     }
 }

@@ -73,5 +73,12 @@ namespace ManagementSystem.AccountsApi.Controllers
             int userId = _UsersService.CreateUser(user);
             return Ok(userId);
         }
+
+        [HttpPost("update")]
+        public IActionResult Update(UpdateUserModel user)
+        {
+            bool updated = _UsersService.UpdateUser(user.UserId, user.UserEntity);
+            return Ok(updated);
+        }
     }
 }

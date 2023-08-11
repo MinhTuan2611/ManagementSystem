@@ -11,7 +11,7 @@ namespace ManagementSystem.AccountsApi.Services
         User GetUserLogin(Login userLogin);
         UserInfo GetUserByUsername(string username);
         int CreateUser(UserRegister userEntity);
-        //bool UpdateUser(int UserId, User UserEntity);
+        bool UpdateUser(int UserId, UserInformation UserEntity);
         //bool DeleteUser(int UserId);
     }
 }

@@ -48,5 +48,12 @@ namespace ManagementSystem.MainApp.Controllers
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
         }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> Update(UpdateUserModel user)
+        {
+            bool userId = await HttpRequestsHelper.Post<bool>(Environment.AccountApiUrl + "users/update", user);
+            return Ok(userId);
+        }
     }
 }
