@@ -68,7 +68,7 @@ namespace ManagementSystem.AccountsApi.Services
             {
                 return false;
             }
-            Role isExistName = _unitOfWork.RoleRepository.GetFirst(x => x.RoleName == roleInfo.RoleName);
+            Role isExistName = _unitOfWork.RoleRepository.Get(x => x.RoleName == roleInfo.RoleName);
             if(isExistName != null)
             {
                 return false;
