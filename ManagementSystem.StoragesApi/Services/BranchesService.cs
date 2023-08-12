@@ -24,6 +24,21 @@ namespace ManagementSystem.StoragesApi.Services
             return null;
         }
 
+        public Branch CreateBranch(Branch branch)
+        {
+            try
+            {
+                _unitOfWork.BranchRepository.Insert(branch);
+                _unitOfWork.Save();
+                _unitOfWork.Dispose();
+                return branch;
+            } catch (Exception ex)
+            {
+                return null;
+            }
+            
+        }
+
         public Branch GetBranchByCode(string branchCode)
         {
             Branch branch = _unitOfWork.BranchRepository.Get(b => b.BranchCode.Equals(branchCode));

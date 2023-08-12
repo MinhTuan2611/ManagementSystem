@@ -28,10 +28,10 @@ namespace ManagementSystem.AccountsApi.Controllers
         }
         #endregion
         // GET api/user/get
-        [HttpGet("Get")]
-        public IActionResult Get()
+        [HttpGet("get")]
+        public IActionResult Get(string? searchValue)
         {
-            var users = _UsersService.GetAllUsers();
+            var users = _UsersService.GetAllUsers(searchValue);
             if (users != null)
             {
                 var UsersEntities = users as List<UserInfo> ?? users.ToList();
@@ -42,7 +42,7 @@ namespace ManagementSystem.AccountsApi.Controllers
         }
 
         [HttpGet("get-by-username/{username}")]
-        public IActionResult GetLogin(string username)
+        public IActionResult GetLogin(string? username)
         {
             var users = _UsersService.GetUserByUsername(username);
             if (users != null)

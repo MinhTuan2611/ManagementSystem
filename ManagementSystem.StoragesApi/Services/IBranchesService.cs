@@ -10,6 +10,8 @@ namespace ManagementSystem.StoragesApi.Services
 
         Branch GetBranchById(int branchId);
 
+        Branch CreateBranch(Branch branch);
+
         bool UpdateBranch(int branchId, Branch branch);
         bool DeleteBranch(int branchId);
     }

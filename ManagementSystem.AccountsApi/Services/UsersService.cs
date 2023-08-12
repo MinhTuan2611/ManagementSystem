@@ -15,9 +15,20 @@ namespace ManagementSystem.AccountsApi.Services
             _unitOfWork = new UnitOfWork(context);
         }
 
-        public IEnumerable<UserInfo> GetAllUsers()
+        public IEnumerable<UserInfo> GetAllUsers(string? searchValue)
         {
-            var users = _unitOfWork.UserRepository.GetAll().ToList();
+            List<User> users;
+            if (searchValue == null)
+            {
+                users = _unitOfWork.UserRepository.GetAll().ToList();
+            } else
+            {
+                users = _unitOfWork.UserRepository.GetMany(u=> u.UserName.Contains(searchValue)
+                || u.FirstName.Contains(searchValue) 
+                || u.LastName.Contains(searchValue) 
+                || (u.Email != null && u.Email.Contains(searchValue))
+                || (u.PhoneNumber != null && u.PhoneNumber.Contains(searchValue))).ToList();
+            }
             var usersRes = new List<UserInfo>();
             if (users.Any())
                 foreach (var user in users)

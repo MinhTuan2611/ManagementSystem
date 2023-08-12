@@ -12,10 +12,10 @@ namespace ManagementSystem.MainApp.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get()
+        [HttpGet("get")]
+        public async Task<IActionResult> Get(string? searchValue)
         {
-            List<UserInfo> users = await HttpRequestsHelper.Get<List<UserInfo>>(Environment.AccountApiUrl + "users/get");
+            List<UserInfo> users = await HttpRequestsHelper.Get<List<UserInfo>>(Environment.AccountApiUrl + "users/get?searchValue=" + searchValue);
             if (users != null || users.Count > 0)
             {
                 return Ok(users);
