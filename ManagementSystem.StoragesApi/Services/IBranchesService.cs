@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -12,7 +13,7 @@ namespace ManagementSystem.StoragesApi.Services
 
         Branch CreateBranch(Branch branch);
 
-        bool UpdateBranch(int branchId, Branch branch);
+        bool UpdateBranch(int branchId, BranchRequest branch);
         bool DeleteBranch(int branchId);
     }
 }

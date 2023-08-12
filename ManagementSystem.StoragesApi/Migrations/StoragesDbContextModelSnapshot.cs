@@ -31,7 +31,6 @@ namespace ManagementSystem.StoragesApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BranchId"), 1L, 1);
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BranchCode")
@@ -48,7 +47,7 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ManagerID")
+                    b.Property<int?>("ManagerID")
                         .HasColumnType("int");
 
                     b.Property<int?>("ModifyBy")
@@ -58,7 +57,6 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")

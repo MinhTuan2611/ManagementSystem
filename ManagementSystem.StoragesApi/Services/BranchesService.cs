@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 
@@ -7,11 +8,9 @@ namespace ManagementSystem.StoragesApi.Services
     public class BranchesService : IBranchesService
     {
         private readonly UnitOfWork _unitOfWork;
-        public IConfiguration _configuration;
-        public BranchesService(IConfiguration config, StoragesDbContext context)
+        public BranchesService(StoragesDbContext context)
         {
             _unitOfWork = new UnitOfWork(context);
-            _configuration = config;
         }
 
         public IEnumerable<Branch> GetListBranches()
@@ -21,7 +20,7 @@ namespace ManagementSystem.StoragesApi.Services
             {
                 return listBranches;
             }
-            return null;
+            return new List<Branch>();
         }
 
         public Branch CreateBranch(Branch branch)
@@ -46,19 +45,18 @@ namespace ManagementSystem.StoragesApi.Services
         }
         public Branch GetBranchById(int branchId)
         {
-            Branch branch = _unitOfWork.BranchRepository.Get(b => b.BranchCode.Equals(branchId));
+            Branch branch = _unitOfWork.BranchRepository.Get(b => b.BranchId.Equals(branchId));
             return branch;
         }
-        public bool UpdateBranch(int branchId, Branch branch)
+        public bool UpdateBranch(int branchId, BranchRequest branch)
         {
-            Branch branchCur = _unitOfWork.BranchRepository.Get(b => b.BranchCode.Equals(branchId));
+            Branch branchCur = _unitOfWork.BranchRepository.Get(b => b.BranchId.Equals(branchId));
             branchCur.BranchCode = branch.BranchCode;
             branchCur.BranchName = branch.BranchName;
             branchCur.Address = branch.Address;
             branchCur.PhoneNumber = branch.PhoneNumber;
-            branchCur.ManagerID = branch.ManagerID;
             branchCur.ModifyDate = DateTime.Now;
-            branchCur.ModifyBy = branch.ModifyBy;
+            branchCur.ModifyBy =  0;
             try
             {
                 _unitOfWork.BranchRepository.Update(branchCur);

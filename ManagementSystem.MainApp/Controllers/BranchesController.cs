@@ -11,7 +11,7 @@ namespace ManagementSystem.MainApp.Controllers
     [ApiController]
     public class BranchesController : ControllerBase
     {
-        private string branchUrl = Environment.AccountApiUrl + "branches/";
+        private string branchUrl = Environment.StorageApiUrl + "branches/";
         [HttpGet("get")]
         public async Task<IActionResult> Get(string? searchValue)
         {
@@ -30,14 +30,29 @@ namespace ManagementSystem.MainApp.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(Branch branch)
+        public async Task<IActionResult> Create(BranchRequest branch)
         {
-            Branch newBranch = await HttpRequestsHelper.Post<Branch>(branchUrl + "create", branch);
+            Branch branchPayload = new Branch
+            {
+                BranchCode = branch.BranchCode,
+                BranchName = branch.BranchName,
+                Address = branch.Address,
+                PhoneNumber = branch.PhoneNumber,
+                ManagerID = 1
+            };
+            Branch newBranch = await HttpRequestsHelper.Post<Branch>(branchUrl + "create", branchPayload);
             if (newBranch != null)
             {
                 return Ok(newBranch);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+        }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> Update(UpdateBranchModel updateBranch)
+        {
+            bool successfully = await HttpRequestsHelper.Post<bool>(branchUrl + "update", updateBranch);
+            return Ok(successfully);
         }
     }
 }
