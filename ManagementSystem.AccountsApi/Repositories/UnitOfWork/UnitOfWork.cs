@@ -12,6 +12,7 @@ namespace ManagementSystem.AccountsApi.Repositories.UnitOfWork
 
         private AccountsDbContext _context = null;
         private GenericRepository<User> _userRepository;
+        private GenericRepository<Role> _roleRepository;
         #endregion
 
         public UnitOfWork(AccountsDbContext context)
@@ -33,6 +34,15 @@ namespace ManagementSystem.AccountsApi.Repositories.UnitOfWork
                 if (this._userRepository == null)
                     this._userRepository = new GenericRepository<User>(_context);
                 return _userRepository;
+            }
+        }
+        public GenericRepository<Role> RoleRepository
+        {
+            get
+            {
+                if (this._roleRepository == null)
+                    this._roleRepository = new GenericRepository<Role>(_context);
+                return _roleRepository;
             }
         }
 
