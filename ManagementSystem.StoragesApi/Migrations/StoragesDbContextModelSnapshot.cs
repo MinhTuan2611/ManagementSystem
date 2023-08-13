@@ -66,6 +66,62 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.ToTable("Branches");
                 });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.Storage", b =>
+                {
+                    b.Property<int>("StorageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StorageId"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StorageCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StorageName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StorageId");
+
+                    b.HasIndex("BranchId");
+
+                    b.ToTable("Storages");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.Storage", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
+                    b.Navigation("Branch");
+                });
 #pragma warning restore 612, 618
         }
     }

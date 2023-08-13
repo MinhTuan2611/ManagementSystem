@@ -15,7 +15,7 @@ namespace ManagementSystem.StoragesApi.Services
 
         public IEnumerable<Branch> GetListBranches()
         {
-            List<Branch> listBranches = _unitOfWork.BranchRepository.GetAll().ToList();
+            List<Branch> listBranches = _unitOfWork.BranchRepository.GetMany(b => b.Status.Equals(ActiveStatus.Active)).ToList();
             if (listBranches.Any())
             {
                 return listBranches;
@@ -48,7 +48,7 @@ namespace ManagementSystem.StoragesApi.Services
             Branch branch = _unitOfWork.BranchRepository.Get(b => b.BranchId.Equals(branchId));
             return branch;
         }
-        public bool UpdateBranch(int branchId, BranchRequest branch)
+        public bool UpdateBranch(int branchId, BranchInfo branch, int? userId)
         {
             Branch branchCur = _unitOfWork.BranchRepository.Get(b => b.BranchId.Equals(branchId));
             branchCur.BranchCode = branch.BranchCode;
@@ -56,7 +56,7 @@ namespace ManagementSystem.StoragesApi.Services
             branchCur.Address = branch.Address;
             branchCur.PhoneNumber = branch.PhoneNumber;
             branchCur.ModifyDate = DateTime.Now;
-            branchCur.ModifyBy =  0;
+            branchCur.ModifyBy = userId;
             try
             {
                 _unitOfWork.BranchRepository.Update(branchCur);
@@ -69,11 +69,15 @@ namespace ManagementSystem.StoragesApi.Services
                 return false;
             }
         }
-        public bool DeleteBranch(int branchId)
+        public bool DeleteBranch(int branchId, int? userId)
         {
+            Branch branch = _unitOfWork.BranchRepository.GetByID(branchId);
+            branch.Status -= ActiveStatus.Inactive;
+            branch.ModifyDate = DateTime.Now;
+            branch.ModifyBy = userId;
             try
             {
-                _unitOfWork.BranchRepository.Delete(branchId);
+                _unitOfWork.BranchRepository.Update(branch);
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
                 return true;

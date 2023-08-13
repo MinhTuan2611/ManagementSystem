@@ -12,6 +12,7 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
 
         private StoragesDbContext _context = null;
         private GenericRepository<Branch> _branchRepository;
+        private GenericRepository<Storage> _storageRepository;
         #endregion
 
         public UnitOfWork(StoragesDbContext context)
@@ -33,6 +34,16 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
                 if (_branchRepository == null)
                     _branchRepository = new GenericRepository<Branch>(_context);
                 return _branchRepository;
+            }
+        }
+
+        public GenericRepository<Storage> StorageRepository
+        {
+            get
+            {
+                if (_storageRepository == null)
+                    _storageRepository = new GenericRepository<Storage>(_context);
+                return _storageRepository;
             }
         }
 

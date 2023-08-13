@@ -13,7 +13,7 @@ namespace ManagementSystem.StoragesApi.Services
 
         Branch CreateBranch(Branch branch);
 
-        bool UpdateBranch(int branchId, BranchRequest branch);
-        bool DeleteBranch(int branchId);
+        bool UpdateBranch(int branchId, BranchInfo branch, int? userId);
+        bool DeleteBranch(int branchId, int? userId);
     }
 }

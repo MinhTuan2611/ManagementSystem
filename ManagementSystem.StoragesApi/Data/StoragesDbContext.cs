@@ -11,6 +11,7 @@ namespace ManagementSystem.StoragesApi.Data
         }
 
         public DbSet<Branch> Branches { get; set; }
+        public DbSet<Storage> Storages { get; set; }
 
     }
 }

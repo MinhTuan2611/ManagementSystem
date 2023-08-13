@@ -43,7 +43,14 @@ namespace ManagementSystem.StoragesApi.Controllers
         [HttpPost("update")]
         public IActionResult Update(UpdateBranchModel branch)
         {
-            bool updated = _BranchesService.UpdateBranch(branch.BranchId, branch.Branch);
+            bool updated = _BranchesService.UpdateBranch(branch.BranchId, branch.Branch, branch.UserId);
+            return Ok(updated);
+        }
+
+        [HttpPost("delete")]
+        public IActionResult Delete(BranchRequest request)
+        {
+            bool updated = _BranchesService.DeleteBranch(request.BranchId, request.UserId);
             return Ok(updated);
         }
     }

@@ -17,4 +17,9 @@ namespace ManagementSystem.Common.Models
     {
         public List<Branch>? Branches { get; set; }
     }
+
+    public class LsStorageRes : ResponseModel
+    {
+        public List<Storage>? Storages { get; set; }
+    }
 }
