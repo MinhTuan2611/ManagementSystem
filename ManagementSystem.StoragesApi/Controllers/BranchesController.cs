@@ -1,5 +1,6 @@
 ﻿using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
+using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,11 @@ namespace ManagementSystem.StoragesApi.Controllers
     public class BranchesController : ControllerBase
     {
         private readonly IBranchesService _BranchesService;
+
+        public BranchesController(StoragesDbContext context)
+        {
+            _BranchesService = new BranchesService(context);
+        }
         [HttpGet("get")]
         public IActionResult Get()
         {
@@ -32,6 +38,20 @@ namespace ManagementSystem.StoragesApi.Controllers
                 return Ok(newBranch);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+        }
+
+        [HttpPost("update")]
+        public IActionResult Update(UpdateBranchModel branch)
+        {
+            bool updated = _BranchesService.UpdateBranch(branch.BranchId, branch.Branch, branch.UserId);
+            return Ok(updated);
+        }
+
+        [HttpPost("delete")]
+        public IActionResult Delete(BranchRequest request)
+        {
+            bool updated = _BranchesService.DeleteBranch(request.BranchId, request.UserId);
+            return Ok(updated);
         }
     }
 }
