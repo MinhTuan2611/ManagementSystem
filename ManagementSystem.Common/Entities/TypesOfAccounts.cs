@@ -13,9 +13,9 @@ namespace ManagementSystem.Common.Entities
         public int AccountId { get; set; }
         public string AccountCode { get; set; }
         public string AccountName { get; set; }
-        public int AccountParentId { get; set; }
-        public int IsLiability { get; set; }
-        public int LiabilityType { get; set; }
-        public int AccountRank { get;}
+        public int? AccountParentId { get; set; }
+        public int? IsLiability { get; set; }
+        public int? LiabilityType { get; set; }
+        public int AccountRank { get; set; }
     }
 }

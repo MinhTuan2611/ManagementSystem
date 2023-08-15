@@ -4,6 +4,7 @@ using ManagementSystem.AccountingApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManagementSystem.AccountingApi.Migrations
 {
     [DbContext(typeof(AccountingDbContext))]
-    partial class AccountingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230815182058_update_is_null_column")]
+    partial class update_is_null_column
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,9 +80,6 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("AccountParentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AccountRank")
                         .HasColumnType("int");
 
                     b.Property<int?>("CreateBy")
