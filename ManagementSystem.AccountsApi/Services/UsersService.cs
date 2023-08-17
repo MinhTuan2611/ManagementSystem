@@ -93,9 +93,24 @@ namespace ManagementSystem.AccountsApi.Services
                 User user = _unitOfWork.UserRepository.Get(u => u.UserName == userEntity.UserName);
                 if (user != null)
                 {
+                    if (userEntity.Roles != null)
+                    {
+                        List<int> roleIds = userEntity.Roles.Split(',').Select(Int32.Parse).ToList();
+                        foreach (var roleId in roleIds)
+                        {
+                            var role = _unitOfWork.RoleRepository.GetByID(roleId);
+                            var userRole = new UserRole
+                            {
+                                user = user,
+                                role = role
+                            };
+                            _unitOfWork.UserRoleRepository.Insert(userRole);
+                        }
+                        _unitOfWork.Save();
+                    }
                     return user.UserId;
                 } else { return -1; }
-                
+
             }
             catch(Exception ex)
             {
@@ -120,10 +135,36 @@ namespace ManagementSystem.AccountsApi.Services
 
                 _unitOfWork.UserRepository.Update(user);
                 _unitOfWork.Save();
+                if (UserEntity.Roles != null)
+                {
+                    List<int> roleIds = UserEntity.Roles.Split(',').Select(Int32.Parse).ToList();
+                    _unitOfWork.UserRoleRepository.Delete(x => x.UserId == user.UserId);
+                    foreach (var roleId in roleIds)
+                    {
+                        var role = _unitOfWork.RoleRepository.GetByID(roleId);
+                        var userRole = new UserRole
+                        {
+                            user = user,
+                            role = role
+                        };
+                        _unitOfWork.UserRoleRepository.Insert(userRole);
+                    }
+                    _unitOfWork.Save();
+                }
                 return true;
             }
             return false;
 
+        }
+        public string GetUserRoles(int userId)
+        {
+            var roles = "";
+            List<int> roleIds = _unitOfWork.UserRoleRepository.GetMany(x => x.UserId == userId).Select(x => x.RoleId).ToList();
+            if (roleIds != null)
+            {
+                roles = string.Join(",", roleIds);
+            }
+            return roles;
         }
     }
 }

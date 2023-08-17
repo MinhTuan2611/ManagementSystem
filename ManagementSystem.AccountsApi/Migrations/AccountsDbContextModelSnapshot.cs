@@ -95,6 +95,60 @@ namespace ManagementSystem.AccountsApi.Migrations
 
                     b.ToTable("Users");
                 });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.UserRole", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<int?>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRole");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.UserRole", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.Role", "role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManagementSystem.Common.Entities.User", "user")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("role");
+
+                    b.Navigation("user");
+                });
 #pragma warning restore 612, 618
         }
     }
