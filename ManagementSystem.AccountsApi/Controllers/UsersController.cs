@@ -80,5 +80,11 @@ namespace ManagementSystem.AccountsApi.Controllers
             bool updated = _UsersService.UpdateUser(user.UserId, user.UserEntity);
             return Ok(updated);
         }
+        [HttpGet("get-user-roles")]
+        public IActionResult GetUserRoles(int userId)
+        {
+            string roleIds = _UsersService.GetUserRoles(userId);
+            return Ok(roleIds);
+        }
     }
 }

@@ -13,5 +13,6 @@ namespace ManagementSystem.AccountsApi.Services
         int CreateUser(UserRegister userEntity);
         bool UpdateUser(int UserId, UserInformation UserEntity);
         //bool DeleteUser(int UserId);
+        string GetUserRoles(int UserId);
     }
 }
