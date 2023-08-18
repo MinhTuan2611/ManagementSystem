@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ManagementSystem.Common.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,7 @@ namespace ManagementSystem.Common.Entities
         public string TypeOfVoucherName { get; set;}
         public int DebitAccountId { get; set; }
         public int CreditAccountId { get; set; }
+        public ActiveStatus Status { get; set; } = ActiveStatus.Active;
+        public string? Note { get; set; }
     }
 }

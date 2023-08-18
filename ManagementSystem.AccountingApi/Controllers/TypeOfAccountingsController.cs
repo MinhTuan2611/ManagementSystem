@@ -16,7 +16,7 @@ namespace ManagementSystem.AccountingApi.Controllers
             _TypesOfAccountsService = new TypesOfAccountsService(context);
         }
 
-        // GET api/user/get
+        // GET api/typeOfAccountings/get
         [HttpGet("get")]
         public IActionResult Get(string? searchValue)
         {

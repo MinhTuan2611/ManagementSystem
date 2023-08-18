@@ -48,6 +48,12 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<DateTime>("ModifyDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<string>("TypeOfVoucherCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

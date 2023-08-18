@@ -22,4 +22,9 @@ namespace ManagementSystem.Common.Models
     {
         public List<Storage>? Storages { get; set; }
     }
+
+    public class LsRecTransRes : ResponseModel
+    {
+        public List<RecTransInfo>? RecTrans { get; set; }
+    }
 }
