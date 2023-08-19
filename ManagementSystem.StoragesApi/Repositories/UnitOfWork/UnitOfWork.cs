@@ -13,6 +13,10 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
         private StoragesDbContext _context = null;
         private GenericRepository<Branch> _branchRepository;
         private GenericRepository<Storage> _storageRepository;
+        private GenericRepository<Unit> _unitRepository;
+        private GenericRepository<Category> _categoryRepository;
+        private GenericRepository<Product> _productRepository;
+        private GenericRepository<ProductStorage> _productStorageRepository;
         #endregion
 
         public UnitOfWork(StoragesDbContext context)
@@ -44,6 +48,42 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
                 if (_storageRepository == null)
                     _storageRepository = new GenericRepository<Storage>(_context);
                 return _storageRepository;
+            }
+        }
+        public GenericRepository<Unit> UnitRepository
+        {
+            get
+            {
+                if (_unitRepository == null)
+                    _unitRepository = new GenericRepository<Unit>(_context);
+                return _unitRepository;
+            }
+        }
+        public GenericRepository<Category> CategoryRepository
+        {
+            get
+            {
+                if (_categoryRepository == null)
+                    _categoryRepository = new GenericRepository<Category>(_context);
+                return _categoryRepository;
+            }
+        }
+        public GenericRepository<Product> ProductRepository
+        {
+            get
+            {
+                if (_productRepository == null)
+                    _productRepository = new GenericRepository<Product>(_context);
+                return _productRepository;
+            }
+        }
+        public GenericRepository<ProductStorage> ProductStorageRepository
+        {
+            get
+            {
+                if (_productStorageRepository == null)
+                    _productStorageRepository = new GenericRepository<ProductStorage>(_context);
+                return _productStorageRepository;
             }
         }
 
