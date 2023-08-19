@@ -36,3 +36,9 @@ ManagementSystem.StoragesApi/obj/Debug/net6.0/
 ManagementSystem.StoragesApi/obj/Container/
 
 ManagementSystem.StoragesApi/obj/
+
+ManagementSystem.AccountingApi/obj/Debug/net6.0/
+
+ManagementSystem.AccountingApi/bin/Debug/net6.0/
+
+ManagementSystem.AccountingApi/obj/
