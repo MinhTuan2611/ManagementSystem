@@ -33,6 +33,12 @@ namespace ManagementSystem.AccountsApi.Services
             if (users.Any())
                 foreach (var user in users)
                 {
+                    var roles = "";
+                    List<int> roleIds = _unitOfWork.UserRoleRepository.GetMany(x => x.UserId == user.UserId).Select(x => x.RoleId).ToList();
+                    if (roleIds != null)
+                    {
+                        roles = string.Join(",", roleIds);
+                    }
                     usersRes.Add(new UserInfo
                     {
                         UserId = user.UserId,
@@ -41,7 +47,8 @@ namespace ManagementSystem.AccountsApi.Services
                         LastName = user.LastName,
                         FullName = user.FirstName + " " + user.LastName,
                         Email = user.Email,
-                        PhoneNumber = user.PhoneNumber
+                        PhoneNumber = user.PhoneNumber,
+                        RoleIds = roles
                     });
                 };
                 return usersRes;
