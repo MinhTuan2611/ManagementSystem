@@ -16,6 +16,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<Category> Category { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductStorage> ProductStorages { get; set; }
+        public DbSet<ProductUnit> ProductUnit { get; set; }
     }
 }
 

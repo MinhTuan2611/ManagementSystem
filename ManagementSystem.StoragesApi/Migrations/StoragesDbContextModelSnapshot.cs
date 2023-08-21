@@ -107,6 +107,9 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"), 1L, 1);
 
+                    b.Property<string>("BarCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
@@ -116,10 +119,10 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DefaultPurchasePrice")
-                        .HasColumnType("int");
+                    b.Property<string>("Decription")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DefaultSalePrice")
+                    b.Property<int>("DefaultPurchasePrice")
                         .HasColumnType("int");
 
                     b.Property<int?>("ModifyBy")
@@ -127,6 +130,9 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<DateTime>("ModifyDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
 
                     b.Property<string>("ProductCode")
                         .IsRequired()
@@ -136,14 +142,15 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UnitId")
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Tax")
                         .HasColumnType("int");
 
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("UnitId");
 
                     b.ToTable("Products");
                 });
@@ -184,6 +191,59 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.HasIndex("StorageId");
 
                     b.ToTable("ProductStorages");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ProductUnit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Barcode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OldPrice")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitExchange")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("ProductUnit");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Storage", b =>
@@ -268,15 +328,7 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .WithMany()
                         .HasForeignKey("CategoryId");
 
-                    b.HasOne("ManagementSystem.Common.Entities.Unit", "Unit")
-                        .WithMany()
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
-
-                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ProductStorage", b =>
@@ -296,6 +348,25 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Storage");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ProductUnit", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManagementSystem.Common.Entities.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Storage", b =>
