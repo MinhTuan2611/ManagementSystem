@@ -9,16 +9,20 @@ namespace ManagementSystem.Common.Models
 {
     public class RecTransInfo
     {
-        public string TypeOfVoucherCode { get; set; }
-        public string TypeOfVoucherName { get; set; }
+        public int? Id { get; set; }
+        public string DocumentType { get; set; }
+        public string ReasonGroup { get; set; }
+        public string ReasonCode { get; set; }
+        public string ReasonName { get; set; }
         public int DebitAccountId { get; set; }
         public int CreditAccountId { get; set; }
+        public string? ExpenseItem { get; set; }
         public ActiveStatus? Status { get; set; }
         public string? Note { get; set; }
     }
     public class RecTransRequest
     {
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public int? RecTransId { get; set; }
     }
 

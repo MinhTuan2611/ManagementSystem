@@ -33,21 +33,21 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("create")]
         public IActionResult Create(ResTransModel requestValue)
         {
-            bool success = _RecordingtransactionsService.CreateRecordTrans(requestValue.RecTrans, requestValue.UserId);
+            bool success = _RecordingtransactionsService.CreateRecordTrans(requestValue.RecTrans, requestValue.UserId ?? 0);
             return Ok(success);
         }
 
-        [HttpPost("edit")]
+        [HttpPost("update")]
         public IActionResult Edit(ResTransModel requestValue)
         {
-            bool success = _RecordingtransactionsService.EditRecordTrans(requestValue.RecTransId ?? 0, requestValue.RecTrans, requestValue.UserId);
+            bool success = _RecordingtransactionsService.EditRecordTrans(requestValue.RecTransId ?? 0, requestValue.RecTrans, requestValue.UserId ?? 0);
             return Ok(success);
         }
 
         [HttpPost("delete")]
         public IActionResult Delete(RecTransRequest requestValue)
         {
-            bool success = _RecordingtransactionsService.DeleteRecordTrans(requestValue.RecTransId ?? 0, requestValue.UserId);
+            bool success = _RecordingtransactionsService.DeleteRecordTrans(requestValue.RecTransId ?? 0, requestValue.UserId ?? 0);
             return Ok(success);
         }
     }

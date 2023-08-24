@@ -2,6 +2,7 @@
 using ManagementSystem.AccountingApi.Repositories.UnitOfWork;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
+using Newtonsoft.Json.Linq;
 
 namespace ManagementSystem.AccountingApi.Services
 {
@@ -21,12 +22,17 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 var recordTrans = recordTransDb.Select(r => new RecTransInfo
                 {
-                    TypeOfVoucherCode = r.TypeOfVoucherCode,
-                    TypeOfVoucherName = r.TypeOfVoucherName,
+                    Id = r.Id,
+                    DocumentType = r.DocumentType,
+                    ReasonGroup = r.ReasonGroup,
+                    ReasonCode = r.ReasonCode,
+                    ReasonName = r.ReasonName,
                     CreditAccountId = r.CreditAccountId,
                     DebitAccountId = r.DebitAccountId,
+                    ExpenseItem = r.ExpenseItem,
                     Note = r.Note,
                     Status = r.Status,
+                    
                 });
                 return recordTrans;
             }
@@ -37,10 +43,13 @@ namespace ManagementSystem.AccountingApi.Services
             Recordingtransaction recordTrans= _unitOfWork.RecordingtransactionRepository.GetByID(recordId);
             if (recordTrans != null)
             {
-                recordTrans.TypeOfVoucherCode = record.TypeOfVoucherCode;
-                recordTrans.TypeOfVoucherName = record.TypeOfVoucherName;
+                recordTrans.DocumentType = record.DocumentType;
+                recordTrans.ReasonGroup = record.ReasonGroup;
+                recordTrans.ReasonCode = record.ReasonCode;
+                recordTrans.ReasonName = record.ReasonName;
                 recordTrans.CreditAccountId = record.CreditAccountId;
                 recordTrans.DebitAccountId = record.DebitAccountId;
+                recordTrans.ExpenseItem = record.ExpenseItem;
                 recordTrans.Note = record.Note;
                 recordTrans.ModifyDate = DateTime.Now;
                 recordTrans.ModifyBy = userId;
@@ -84,8 +93,12 @@ namespace ManagementSystem.AccountingApi.Services
         {
             Recordingtransaction record = new Recordingtransaction
             {
-                TypeOfVoucherCode = value.TypeOfVoucherCode,
-                TypeOfVoucherName = value.TypeOfVoucherName,
+                DocumentType = value.DocumentType,
+                ExpenseItem = value.ExpenseItem,
+                Note = value.Note,
+                ReasonGroup = value.ReasonGroup,
+                ReasonCode = value.ReasonCode,
+                ReasonName = value.ReasonName,
                 DebitAccountId = value.DebitAccountId,
                 CreditAccountId = value.CreditAccountId,
                 CreateBy = userId,

@@ -42,6 +42,13 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int>("DebitAccountId")
                         .HasColumnType("int");
 
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExpenseItem")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
@@ -51,16 +58,20 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ReasonCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReasonGroup")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReasonName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<string>("TypeOfVoucherCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TypeOfVoucherName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -89,16 +100,19 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int>("AccountRank")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BalanceType")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CreateBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("IsLiability")
+                    b.Property<int?>("HasAccountItem")
                         .HasColumnType("int");
 
-                    b.Property<int?>("LiabilityType")
+                    b.Property<int?>("HasCosting")
                         .HasColumnType("int");
 
                     b.Property<int?>("ModifyBy")

@@ -3,6 +3,7 @@ using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Xml.Linq;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -31,26 +32,24 @@ namespace ManagementSystem.MainApp.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(StorageInfo storage)
+        public async Task<IActionResult> Create(RecTransInfo payload)
         {
-            Storage storagePayload = new Storage
+            var userId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            ResTransModel recTransPayload = new ResTransModel
             {
-                StorageCode = storage.StorageCode,
-                StorageName = storage.StorageName,
-                Address = storage.Address,
-                Phone = storage.Phone,
-                BranchId = storage.BranchId
+                UserId = userId,
+                RecTrans = payload
             };
-            Storage newBranch = await HttpRequestsHelper.Post<Storage>(recTransUrl + "create", storagePayload);
-            if (newBranch != null)
+            bool newRecTrans = await HttpRequestsHelper.Post<bool>(recTransUrl + "create", recTransPayload);
+            if (newRecTrans)
             {
-                return Ok(newBranch);
+                return Ok(newRecTrans);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> Update(UpdateStorageModel updateStorage)
+        public async Task<IActionResult> Update(ResTransModel updateStorage)
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             updateStorage.UserId = Convert.ToInt32(userId);
