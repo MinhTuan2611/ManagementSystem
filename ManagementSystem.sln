@@ -12,7 +12,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementSystem.MainApp", 
 		{54F097C8-2E51-4D5D-9734-14B2A0956B72} = {54F097C8-2E51-4D5D-9734-14B2A0956B72}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementSystem.StoragesApi", "ManagementSystem.StoragesApi\ManagementSystem.StoragesApi.csproj", "{433355AC-C434-45FE-A29E-AA23243B20F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementSystem.StoragesApi", "ManagementSystem.StoragesApi\ManagementSystem.StoragesApi.csproj", "{433355AC-C434-45FE-A29E-AA23243B20F8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ManagementSystem.AccountingApi", "ManagementSystem.AccountingApi\ManagementSystem.AccountingApi.csproj", "{D131B17B-4005-41C8-B7B2-DE70B64893E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +38,10 @@ Global
 		{433355AC-C434-45FE-A29E-AA23243B20F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{433355AC-C434-45FE-A29E-AA23243B20F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{433355AC-C434-45FE-A29E-AA23243B20F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D131B17B-4005-41C8-B7B2-DE70B64893E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D131B17B-4005-41C8-B7B2-DE70B64893E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D131B17B-4005-41C8-B7B2-DE70B64893E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D131B17B-4005-41C8-B7B2-DE70B64893E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
