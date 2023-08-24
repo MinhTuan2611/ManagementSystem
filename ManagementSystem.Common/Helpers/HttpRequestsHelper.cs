@@ -34,5 +34,16 @@ namespace ManagementSystem.Common.Helpers
             }
             return default(TResult);
         }
+        public static async Task<TResult> Delete<TResult>(string url, object parameter)
+        {
+            using var httpClient = new HttpClient();
+            var resLogin = await httpClient.DeleteAsync(url);
+            if (resLogin.IsSuccessStatusCode)
+            {
+                var content = await resLogin.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<TResult>(content);
+            }
+            return default(TResult);
+        }
     }
 }

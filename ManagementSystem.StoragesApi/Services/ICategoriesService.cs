@@ -5,9 +5,9 @@ namespace ManagementSystem.StoragesApi.Services
 {
     public interface ICategoriesService
     {
-        public IEnumerable<Category> GetListCategory();
+        public List<Category> GetListCategory();
         public Category CreateCategory(Category unit);
         public bool UpdateCategory(Category unit, int userId);
-        public bool DeleteCategory(int categoryId, int userId);
+        public bool DeleteCategory(int categoryId, int? userId);
     }
 }

@@ -17,16 +17,10 @@ namespace ManagementSystem.StoragesApi.Controllers
             _UnitsService = new UnitsService(context);
         }
         [HttpGet("get")]
-        public IActionResult Get()
+        public List<Unit> Get()
         {
             var units = _UnitsService.GetListUnits();
-            if (units != null)
-            {
-                var lsUnit = units as List<Unit> ?? units.ToList();
-                if (lsUnit.Any())
-                    return Ok(lsUnit);
-            }
-            return StatusCode(StatusCodes.Status404NotFound, "Units not found");
+            return units;
         }
         [HttpPost("create")]
         public IActionResult Create(Unit unit)

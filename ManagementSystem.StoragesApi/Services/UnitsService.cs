@@ -13,14 +13,10 @@ namespace ManagementSystem.StoragesApi.Services
             _unitOfWork = new UnitOfWork(context);
         }
 
-        public IEnumerable<Unit> GetListUnits()
+        public List<Unit> GetListUnits()
         {
             List<Unit> units = _unitOfWork.UnitRepository.GetAll().ToList();
-            if (units.Any())
-            {
-                return units;
-            }
-            return new List<Unit>();
+            return units;
         }
 
         public Unit CreateUnit(Unit unit)
