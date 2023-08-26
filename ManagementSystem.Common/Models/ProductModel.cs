@@ -44,6 +44,7 @@ namespace ManagementSystem.Common.Models
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public int DefaultPurchasePrice { get; set; }
         public List<ProductUnitDetail> Units { get; set; }
+        public int? ModifyBy { get; set; }
     }
     public class ProductUnitDetail
     {

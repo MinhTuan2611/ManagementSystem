@@ -17,9 +17,9 @@ namespace ManagementSystem.StoragesApi.Controllers
             _ProductService = new ProductsService(context);
         }
         [HttpGet("get")]
-        public List<ProductListResponse> Get()
+        public List<ProductListResponse> Get(string? searchValue,int? categoryId )
         {
-            var products = _ProductService.GetListProduct();
+            var products = _ProductService.GetListProduct(searchValue, categoryId);
             return products;
         }
         [HttpGet("get-detail")]
@@ -31,10 +31,10 @@ namespace ManagementSystem.StoragesApi.Controllers
         [HttpPost("create")]
         public IActionResult Create(ProductCreateUpdate request)
         {
-            var newUnit = _ProductService.CreateProduct(request);
-            if (newUnit == true)
+            var isCreated = _ProductService.CreateProduct(request);
+            if (isCreated == true)
             {
-                return Ok(newUnit);
+                return Ok(isCreated);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
@@ -44,10 +44,10 @@ namespace ManagementSystem.StoragesApi.Controllers
             bool updated = _ProductService.UpdateProduct(request);
             return Ok(updated);
         }
-        [HttpPost("delete")]
-        public IActionResult Delete(int productId)
+        [HttpDelete("delete")]
+        public IActionResult Delete(int productId, int? userId)
         {
-            bool deleted = _ProductService.DeleteProduct(productId);
+            bool deleted = _ProductService.DeleteProduct(productId, userId);
             return Ok(deleted);
         }
     }
