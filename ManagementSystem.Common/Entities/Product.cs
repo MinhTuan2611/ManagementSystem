@@ -17,6 +17,7 @@ namespace ManagementSystem.Common.Entities
         public string ProductName { get; set; }
         public string? Decription { get; set; }
         public int? CategoryId { get; set; }
+        public ProductTypes ProductType { get; set; } = ProductTypes.Product;
         public int Price { get; set; }
         public int? Tax { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;

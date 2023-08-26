@@ -17,6 +17,7 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
         private GenericRepository<Category> _categoryRepository;
         private GenericRepository<Product> _productRepository;
         private GenericRepository<ProductStorage> _productStorageRepository;
+        private GenericRepository<ProductUnit> _productUnitRepository;
         private GenericRepository<Supplier> _supplierRepository;
         #endregion
 
@@ -85,6 +86,15 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
                 if (_productStorageRepository == null)
                     _productStorageRepository = new GenericRepository<ProductStorage>(_context);
                 return _productStorageRepository;
+            }
+        }
+        public GenericRepository<ProductUnit> ProductUnitRepository
+        {
+            get
+            {
+                if (_productUnitRepository == null)
+                    _productUnitRepository = new GenericRepository<ProductUnit>(_context);
+                return _productUnitRepository;
             }
         }
 

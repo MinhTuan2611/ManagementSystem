@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -19,34 +20,28 @@ namespace ManagementSystem.StoragesApi.Controllers
         public IActionResult Get()
         {
             var categories = _CategoriesService.GetListCategory();
-            if (categories != null)
-            {
-                var lsCategory = categories as List<Category> ?? categories.ToList();
-                if (lsCategory.Any())
-                    return Ok(lsCategory);
-            }
-            return StatusCode(StatusCodes.Status404NotFound, "Categories not found");
+            return Ok(categories);
         }
         [HttpPost("create")]
         public IActionResult Create(Category category)
         {
-            var newUnit = _CategoriesService.CreateCategory(category);
-            if (newUnit != null)
+            var newCategory = _CategoriesService.CreateCategory(category);
+            if (newCategory != null)
             {
-                return Ok(newUnit);
+                return Ok(newCategory);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
         [HttpPost("update")]
-        public IActionResult Update(Category category, int userId)
+        public IActionResult Update(CategoryUpdateRequest request)
         {
-            bool updated = _CategoriesService.UpdateCategory(category, userId);
+            bool updated = _CategoriesService.UpdateCategory(request.category, request.userId);
             return Ok(updated);
         }
-        [HttpPost("delete")]
-        public IActionResult Delete(int unitId, int userId)
+        [HttpDelete("delete")]
+        public IActionResult Delete(int categoryId, int? userId)
         {
-            bool updated = _CategoriesService.DeleteCategory(unitId, userId);
+            bool updated = _CategoriesService.DeleteCategory(categoryId, userId);
             return Ok(updated);
         }
     }

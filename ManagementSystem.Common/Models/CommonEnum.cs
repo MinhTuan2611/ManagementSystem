@@ -13,7 +13,11 @@ namespace ManagementSystem.Common.Models
         Active,
         Inactive
     }
-
+    public enum ProductTypes
+    {
+        Product,
+        Combo
+    }
     public enum HasAccountItemStatus
     {
         Unchecked,

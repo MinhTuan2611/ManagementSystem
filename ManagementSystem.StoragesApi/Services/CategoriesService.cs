@@ -13,14 +13,11 @@ namespace ManagementSystem.StoragesApi.Services
             _unitOfWork = new UnitOfWork(context);
         }
 
-        public IEnumerable<Category> GetListCategory()
+        public List<Category> GetListCategory()
         {
-            List<Category> categories = _unitOfWork.CategoryRepository.GetMany(c => c.Status == ActiveStatus.Active).ToList();
-            if (categories.Any())
-            {
-                return categories;
-            }
-            return new List<Category>();
+            List<Category> categories = new List<Category>();
+            categories = _unitOfWork.CategoryRepository.GetMany(c => c.Status == ActiveStatus.Active).ToList();
+            return categories;
         }
 
         public Category CreateCategory(Category category)
@@ -53,7 +50,7 @@ namespace ManagementSystem.StoragesApi.Services
                 return false;
             }
         }
-        public bool DeleteCategory(int categoryId, int userId)
+        public bool DeleteCategory(int categoryId, int? userId)
         {
             Category category = _unitOfWork.CategoryRepository.GetByID(categoryId);
             category.Status -= ActiveStatus.Inactive;
