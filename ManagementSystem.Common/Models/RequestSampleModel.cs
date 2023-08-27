@@ -14,7 +14,7 @@ namespace ManagementSystem.Common.Models
         public string Name { get; set; }
         public RequestedBranch Branch { get; set; }
         public RequestedStorage Storage { get; set; }
-        public RequestSampleItemModel Items { get; set; }
+        public List<RequestSampleItemModel> Items { get; set; }
         public string? Note { get; set; }
     }
     public class RequestedBranch

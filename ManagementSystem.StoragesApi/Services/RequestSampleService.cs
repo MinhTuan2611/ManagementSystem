@@ -40,7 +40,7 @@ namespace ManagementSystem.StoragesApi.Services
 
         public bool UpdateRequestSample(int requestId, RequestSampleModel request)
         {
-            var existingRequest = _context.RequestSamples.Find(requestId);
+            RequestSample existingRequest = _context.RequestSamples.Find(requestId);
             if (existingRequest == null)
             {
                 return false;
@@ -53,10 +53,19 @@ namespace ManagementSystem.StoragesApi.Services
             existingRequest.Note = request.Note;
 
             // Update the RequestSampleItem properties
-            existingRequest.RequestSampleItemIdList = new List<int>
+            List<RequestSampleItem> sampleItems = new List<RequestSampleItem>(); ;
+            foreach(RequestSampleItemModel sampleModel in request.Items)
             {
-                request.Items.Id
-            };
+                sampleItems.Add(new RequestSampleItem
+                {
+                    RequestSampleItemId = sampleModel.Id,
+                    ProductId = sampleModel.ProductId,
+                    Quantity = sampleModel.Quantity,
+                    UnitId = sampleModel.UnitId,
+                    Note = sampleModel.Note,
+                });
+            }
+            existingRequest.RequestSampleItemId = sampleItems;
 
             _context.SaveChanges();
 

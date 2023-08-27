@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ManagementSystem.Common.Entities
 {
     public class RequestSampleItem : BaseEntity
@@ -8,5 +10,7 @@ namespace ManagementSystem.Common.Entities
         public int Quantity { get; set; }
         public int UnitId { get; set; }
         public string? Note { get; set; }
+        public Product? Product { get; set; }
+        public RequestSample? requestSample { get; set; }
     }
 }
