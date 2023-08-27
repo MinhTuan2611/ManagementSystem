@@ -23,6 +23,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<BillDetail> BillDetails { get; set; }
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<BillPayment> BillPayments { get; set; }
+        public DbSet<RequestSample> RequestSamples { get; set; }
 
     }
 }

@@ -19,6 +19,7 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
         private GenericRepository<ProductStorage> _productStorageRepository;
         private GenericRepository<ProductUnit> _productUnitRepository;
         private GenericRepository<Supplier> _supplierRepository;
+        private GenericRepository<RequestSample> _requestSampleRepository;
         private GenericRepository<Customer> _customerRepository;
         private GenericRepository<Bill> _billRepository;
         private GenericRepository<BillDetail> _billDetailRepository;
@@ -155,6 +156,16 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
                 if (_billPaymentRepository == null)
                     _billPaymentRepository = new GenericRepository<BillPayment>(_context);
                 return _billPaymentRepository;
+            }
+        }
+
+        public GenericRepository<RequestSample> RequestSampleRepository
+        {
+            get
+            {
+                if (_requestSampleRepository == null)
+                    _requestSampleRepository = new GenericRepository<RequestSample>(_context);
+                return _requestSampleRepository;
             }
         }
 
