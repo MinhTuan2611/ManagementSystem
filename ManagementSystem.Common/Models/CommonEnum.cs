@@ -33,4 +33,14 @@ namespace ManagementSystem.Common.Models
         [Description("Lưỡng tính")]
         DoubleEntry
     }
+
+    public enum PaymentMethod
+    {
+        [Description("Tiền Mặt")]
+        Cash,
+        [Description("Chuyển Khoản")]
+        BankTransfer,
+        [Description("Công nợ/Chưa thanh toán")]
+        OnDebt
+    }
 }
