@@ -18,6 +18,11 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<ProductStorage> ProductStorages { get; set; }
         public DbSet<ProductUnit> ProductUnit { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Bill> Bills { get; set; }
+        public DbSet<BillDetail> BillDetails { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
+        public DbSet<BillPayment> BillPayments { get; set; }
 
     }
 }

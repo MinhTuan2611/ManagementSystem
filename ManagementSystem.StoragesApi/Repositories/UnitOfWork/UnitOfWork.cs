@@ -19,6 +19,11 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
         private GenericRepository<ProductStorage> _productStorageRepository;
         private GenericRepository<ProductUnit> _productUnitRepository;
         private GenericRepository<Supplier> _supplierRepository;
+        private GenericRepository<Customer> _customerRepository;
+        private GenericRepository<Bill> _billRepository;
+        private GenericRepository<BillDetail> _billDetailRepository;
+        private GenericRepository<PaymentMethod> _paymentMethodRepository;
+        private GenericRepository<BillPayment> _billPaymentRepository;
         #endregion
 
         public UnitOfWork(StoragesDbContext context)
@@ -105,6 +110,51 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
                 if (_supplierRepository == null)
                     _supplierRepository = new GenericRepository<Supplier>(_context);
                 return _supplierRepository;
+            }
+        }
+        public GenericRepository<Customer> CustomerRepository
+        {
+            get
+            {
+                if (_customerRepository == null)
+                    _customerRepository = new GenericRepository<Customer>(_context);
+                return _customerRepository;
+            }
+        }
+        public GenericRepository<Bill> BillRepository
+        {
+            get
+            {
+                if (_billRepository == null)
+                    _billRepository = new GenericRepository<Bill>(_context);
+                return _billRepository;
+            }
+        }
+        public GenericRepository<BillDetail> BillDetailRepository
+        {
+            get
+            {
+                if (_billDetailRepository == null)
+                    _billDetailRepository = new GenericRepository<BillDetail>(_context);
+                return _billDetailRepository;
+            }
+        }
+        public GenericRepository<PaymentMethod> PaymentMethodRepository
+        {
+            get
+            {
+                if (_paymentMethodRepository == null)
+                    _paymentMethodRepository = new GenericRepository<PaymentMethod>(_context);
+                return _paymentMethodRepository;
+            }
+        }
+        public GenericRepository<BillPayment> BillPaymentRepository
+        {
+            get
+            {
+                if (_billPaymentRepository == null)
+                    _billPaymentRepository = new GenericRepository<BillPayment>(_context);
+                return _billPaymentRepository;
             }
         }
 
