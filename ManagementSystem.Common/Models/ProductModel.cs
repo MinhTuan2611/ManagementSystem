@@ -51,11 +51,25 @@ namespace ManagementSystem.Common.Models
         public int? Id { get; set; }
         public int ProductId { get; set; }
         public int UnitId { get; set; }
+        public string? UnitName { get; set; }
         public int UnitExchange { get; set; }
         public int Price { get; set; }
         public int OldPrice { get; set; } = 0;
         public bool IsPrimary { get; set; }
         public string? Barcode { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
+    }
+
+    public class ProductDetailInSale
+    {
+        public int Id { get; set; }
+        public string Barcode { get; set; }
+        public string Name { get; set; }
+        public ProductUnitDetail Unit { get; set; }
+        public int Price { get; set; }
+        public int? Promotion { get; set; }
+        public int? Quantity { get; set; }
+        public int? Amount { get; set; }
+        public List<ProductUnitDetail> ProductUnits { get; set; }
     }
 }

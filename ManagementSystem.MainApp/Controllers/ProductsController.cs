@@ -76,5 +76,11 @@ namespace ManagementSystem.MainApp.Controllers
             bool successfully = await HttpRequestsHelper.Delete<bool>(APIUrl + "delete?productId="+ productId + "&userId="+ userId, new{ });
             return Ok(successfully);
         }
+        [HttpGet("get-product-detail-for-sale")]
+        public async Task<IActionResult> GetProductDetailForSale(string barcode)
+        {
+            ProductDetailInSale? product = await HttpRequestsHelper.Get<ProductDetailInSale>(APIUrl + "get-product-detail-for-sale?barcode=" + barcode);
+            return Ok(product);
+        }
     }
 }

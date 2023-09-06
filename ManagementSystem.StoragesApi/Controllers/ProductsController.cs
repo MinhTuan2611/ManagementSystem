@@ -50,5 +50,11 @@ namespace ManagementSystem.StoragesApi.Controllers
             bool deleted = _ProductService.DeleteProduct(productId, userId);
             return Ok(deleted);
         }
+        [HttpGet("get-product-detail-for-sale")]
+        public IActionResult GetProductDetailForSale(string barcode)
+        {
+            ProductDetailInSale? product = _ProductService.GetProductDetailForSale(barcode);
+            return Ok(product);
+        }
     }
 }
