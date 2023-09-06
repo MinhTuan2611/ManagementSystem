@@ -29,6 +29,19 @@ namespace ManagementSystem.StoragesApi.Controllers
             return StatusCode(StatusCodes.Status404NotFound, "Products not found");
         }
 
+        [HttpGet("autocomplete-storages")]
+        public IActionResult AutoCompleteStorages(string? searchValue)
+        {
+            var storages = _StoragesService.AutoCompleteStorage(searchValue);
+            if (storages != null)
+            {
+                var lsStorages = storages as List<Storage> ?? storages.ToList();
+                if (lsStorages.Any())
+                    return Ok(lsStorages);
+            }
+            return Ok(new List<Storage>());
+        }
+
         [HttpPost("create")]
         public IActionResult Create(Storage storage)
         {

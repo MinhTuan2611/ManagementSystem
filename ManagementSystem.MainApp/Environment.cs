@@ -4,6 +4,6 @@
     {
         public const string AccountApiUrl = "https://localhost:7161/api/";
         public const string StorageApiUrl = "https://localhost:7010/api/";
-        public const string AccountingApiUrl = "https://localhost:7231/api/";
+        public const string AccountingApiUrl = "https://localhost:64019/api/";
     }
 }

@@ -45,6 +45,19 @@ namespace ManagementSystem.StoragesApi.Services
             return listProduct;
         }
 
+        public IEnumerable<ProductUnit> AutoCompleteProduct(string? valueSearch)
+        {
+            string[] includes = { "Product" };
+            List<ProductUnit> listProduct = _unitOfWork.ProductUnitRepository.GetWithInclude(s => s.Status.Equals(ActiveStatus.Active)
+           && (s.Product.ProductName.ToLower().Contains(valueSearch.Trim().ToLower())
+           || s.Barcode.ToLower().Contains(valueSearch.Trim().ToLower())), includes).ToList();
+            if (listProduct.Any())
+            {
+                return listProduct;
+            }
+            return new List<ProductUnit>();
+        }
+
         public ProductCreateUpdate GetProductDetail(int productId)
         {
             try

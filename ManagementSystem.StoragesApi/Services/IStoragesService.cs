@@ -11,6 +11,8 @@ namespace ManagementSystem.StoragesApi.Services
 
         Storage GetStorageById(int storageId);
 
+        IEnumerable<Storage> AutoCompleteStorage(string? valueSearch);
+
         Storage CreateStorage(Storage storage);
 
         bool UpdateStorage(int storageId, StorageInfo storage, int? userId);

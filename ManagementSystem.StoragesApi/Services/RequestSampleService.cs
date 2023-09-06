@@ -51,6 +51,7 @@ namespace ManagementSystem.StoragesApi.Services
             existingRequest.BranchId = request.Branch.BranchId;
             existingRequest.StorageId = request.Storage.StorageId;
             existingRequest.Note = request.Note;
+            existingRequest.ModifyDate = DateTime.Now;
 
             // Update the RequestSampleItem properties
             List<RequestSampleItem> sampleItems = new List<RequestSampleItem>(); ;
