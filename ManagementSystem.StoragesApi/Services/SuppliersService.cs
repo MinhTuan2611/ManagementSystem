@@ -24,6 +24,18 @@ namespace ManagementSystem.StoragesApi.Services
             return new List<Supplier>();
         }
 
+        public IEnumerable<Supplier> AutoCompleteSupplieresByName(string? valueSearch)
+        {
+            List<Supplier> listSuppliers = _unitOfWork.SupplierRepository.GetMany(s => s.Status.Equals(ActiveStatus.Active)
+            && (s.DisplayName.ToLower().Contains(valueSearch.Trim().ToLower()) 
+            || s.SupplierName.ToLower().Contains(valueSearch.Trim().ToLower()))).ToList();
+            if (listSuppliers.Any())
+            {
+                return listSuppliers;
+            }
+            return new List<Supplier>();
+        }
+
         public Supplier GetSupplierByCode(string supplierCode)
         {
             Supplier supplier = _unitOfWork.SupplierRepository.Get(s => s.SupplierCode.Equals(supplierCode));

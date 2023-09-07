@@ -28,6 +28,18 @@ namespace ManagementSystem.StoragesApi.Controllers
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Products not found");
         }
+        [HttpGet("autocomplete-suppliers-by-name")]
+        public IActionResult AutoCompleteSupplieresByName(string? searchValue)
+        {
+            var suppliers = _suppliersService.AutoCompleteSupplieresByName(searchValue);
+            if (suppliers != null)
+            {
+                var lsSuppliers = suppliers as List<Supplier> ?? suppliers.ToList();
+                if (lsSuppliers.Any())
+                    return Ok(lsSuppliers);
+            }
+            return Ok(new List<Supplier>());
+        }
 
         [HttpPost("create")]
         public IActionResult Create(Supplier supplier)

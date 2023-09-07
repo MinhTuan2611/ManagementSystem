@@ -6,6 +6,7 @@ namespace ManagementSystem.StoragesApi.Services
     public interface ISuppliersService
     {
         IEnumerable<Supplier> GetListSupplieres();
+        IEnumerable<Supplier> AutoCompleteSupplieresByName(string? valueSearch);
 
         Supplier GetSupplierByCode(string branchCode);
 

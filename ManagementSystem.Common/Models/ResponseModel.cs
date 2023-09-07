@@ -33,11 +33,6 @@ namespace ManagementSystem.Common.Models
         public List<TypesOfAccountsInfo>? Data { get; set; }
     }
 
-    public class LsSuppllerRes : ResponseModel
-    {
-        public List<Supplier>? Data { get; set; }
-    }
-
     public class ResponseModel<T>
     {
         public string Status { get; set; }

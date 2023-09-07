@@ -453,6 +453,224 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.ToTable("ProductUnit");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.Request", b =>
+                {
+                    b.Property<int>("RequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestId"), 1L, 1);
+
+                    b.Property<int>("BillNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeliverName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeliverPhone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReceiverName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceiverPhone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReceivingDay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StorageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VoucherNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("RequestId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("StorageId");
+
+                    b.HasIndex("SupplierId");
+
+                    b.ToTable("Requests");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.RequestItem", b =>
+                {
+                    b.Property<int>("RequestItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestItemId"), 1L, 1);
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ProductAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Tax")
+                        .HasColumnType("real");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitPrice")
+                        .HasColumnType("int");
+
+                    b.HasKey("RequestItemId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("RequestItem");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.RequestSample", b =>
+                {
+                    b.Property<int>("RequestSampleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestSampleId"), 1L, 1);
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestSampleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StorageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RequestSampleId");
+
+                    b.ToTable("RequestSamples");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.RequestSampleItem", b =>
+                {
+                    b.Property<int>("RequestSampleItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestSampleItemId"), 1L, 1);
+
+                    b.Property<int?>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RequestSampleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.HasKey("RequestSampleItemId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("RequestSampleId");
+
+                    b.ToTable("RequestSampleItem");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.Storage", b =>
                 {
                     b.Property<int>("StorageId")
@@ -677,6 +895,65 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Navigation("Unit");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.Request", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManagementSystem.Common.Entities.Storage", "Storage")
+                        .WithMany()
+                        .HasForeignKey("StorageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManagementSystem.Common.Entities.Supplier", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("Storage");
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.RequestItem", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManagementSystem.Common.Entities.Request", null)
+                        .WithMany("RequestItemId")
+                        .HasForeignKey("RequestId");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.RequestSampleItem", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManagementSystem.Common.Entities.RequestSample", "requestSample")
+                        .WithMany("RequestSampleItemId")
+                        .HasForeignKey("RequestSampleId");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("requestSample");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.Storage", b =>
                 {
                     b.HasOne("ManagementSystem.Common.Entities.Branch", "Branch")
@@ -684,6 +961,16 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasForeignKey("BranchId");
 
                     b.Navigation("Branch");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.Request", b =>
+                {
+                    b.Navigation("RequestItemId");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.RequestSample", b =>
+                {
+                    b.Navigation("RequestSampleItemId");
                 });
 #pragma warning restore 612, 618
         }

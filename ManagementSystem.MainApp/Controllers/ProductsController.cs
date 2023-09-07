@@ -60,6 +60,24 @@ namespace ManagementSystem.MainApp.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
 
+        [HttpGet("autocomplete-product")]
+        public async Task<IActionResult> AutoCompleteStorages(string? searchValue)
+        {
+
+            ResponseModel<ProductInfo> response = new ResponseModel<ProductInfo>();
+           List<ProductInfo> lsProduct = await HttpRequestsHelper.Get<List<ProductInfo>>(APIUrl + "autocomplete-product?searchValue=" + searchValue);
+            if (lsProduct != null)
+            {
+
+                response.Status = "success";
+                response.Data = lsProduct;
+                return Ok(response);
+            }
+            response.Status = "success";
+            response.ErrorMessage = "Not found any information!";
+            return Ok(response);
+        }
+
         [HttpPost("update")]
         public async Task<IActionResult> Update(ProductCreateUpdate request)
         {

@@ -16,8 +16,26 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> Get(string? searchValue)
         {
 
-            LsSuppllerRes response = new LsSuppllerRes();
+            ResponseModel<Supplier> response = new ResponseModel<Supplier>();
             List<Supplier> lsSuppliers = await HttpRequestsHelper.Get<List<Supplier>>(APIUrl + "get");
+            if (lsSuppliers != null)
+            {
+
+                response.Status = "success";
+                response.Data = lsSuppliers;
+                return Ok(response);
+            }
+            response.Status = "success";
+            response.ErrorMessage = "Not found any information!";
+            return Ok(response);
+        }
+        
+        [HttpGet("autocomplete-suppliers-by-name")]
+        public async Task<IActionResult> AutoCompleteSupplieresByName(string? searchValue)
+        {
+
+            ResponseModel<Supplier> response = new ResponseModel<Supplier>();
+            List<Supplier> lsSuppliers = await HttpRequestsHelper.Get<List<Supplier>>(APIUrl + "autocomplete-suppliers-by-name?searchValue=" + searchValue);
             if (lsSuppliers != null)
             {
 

@@ -23,6 +23,18 @@ namespace ManagementSystem.StoragesApi.Services
             return new List<Storage>();
         }
 
+        public IEnumerable<Storage> AutoCompleteStorage(string? valueSearch)
+        {
+            List<Storage> listStorages = _unitOfWork.StorageRepository.GetWithInclude(s => s.Status.Equals(ActiveStatus.Active)
+            && (s.StorageName.ToLower().Contains(valueSearch.Trim().ToLower())
+            || s.StorageCode.ToLower().Contains(valueSearch.Trim().ToLower())), "Branch").ToList();
+            if (listStorages.Any())
+            {
+                return listStorages;
+            }
+            return new List<Storage>();
+        }
+
         public Storage CreateStorage(Storage storage)
         {
             try

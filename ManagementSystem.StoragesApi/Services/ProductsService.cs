@@ -45,6 +45,36 @@ namespace ManagementSystem.StoragesApi.Services
             return listProduct;
         }
 
+        public IEnumerable<ProductInfo> AutoCompleteProduct(string? valueSearch)
+        {
+            string[] includes = { "Product", "Unit" };
+            if (valueSearch == null)
+            {
+                return new List<ProductInfo>();
+            }
+            List<ProductUnit> listProduct = _unitOfWork.ProductUnitRepository.GetWithInclude(s => (s.Product.ProductName.ToLower().Contains(valueSearch.Trim().ToLower())
+           || s.Barcode.ToLower().Contains(valueSearch.Trim().ToLower())), includes).ToList();
+            if (listProduct.Any())
+            {
+                List<ProductInfo> result = new List<ProductInfo>();
+                foreach(var item in listProduct)
+                {
+                    result.Add(new ProductInfo
+                    {
+                        ProductCode = item.Product.ProductCode,
+                        BarCode = item.Barcode,
+                        Price = item.Price,
+                        DefaultPurchasePrice = item.Product.DefaultPurchasePrice,
+                        ProductName = item.Product.ProductName,
+                        Tax = item.Product.Tax,
+                        Unit = item.Unit.UnitName
+                    });
+                }
+                return result;
+            }
+            return new List<ProductInfo>();
+        }
+
         public ProductCreateUpdate GetProductDetail(int productId)
         {
             try

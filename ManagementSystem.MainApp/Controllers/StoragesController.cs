@@ -31,6 +31,24 @@ namespace ManagementSystem.MainApp.Controllers
             return Ok(response);
         }
 
+        [HttpGet("autocomplete-storages")]
+        public async Task<IActionResult> AutoCompleteStorages(string? searchValue)
+        {
+
+            ResponseModel<Storage> response = new ResponseModel<Storage>();
+            List<Storage> lsStorages = await HttpRequestsHelper.Get<List<Storage>>(storageUrl + "autocomplete-storages?searchValue=" + searchValue);
+            if (lsStorages != null)
+            {
+
+                response.Status = "success";
+                response.Data = lsStorages;
+                return Ok(response);
+            }
+            response.Status = "success";
+            response.ErrorMessage = "Not found any information!";
+            return Ok(response);
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> Create(StorageInfo storage)
         {
