@@ -5,7 +5,7 @@ namespace ManagementSystem.Common.Models
 {
     public class ProductInfo
     {
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         public string ProductCode { get; set; }
         public string? BarCode { get; set; }
         public string ProductName { get; set; }
@@ -13,6 +13,7 @@ namespace ManagementSystem.Common.Models
         public int? CategoryId { get; set; }
         public int Price { get; set; }
         public int? Tax { get; set; }
+        public string Unit { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public int DefaultPurchasePrice { get; set; }
     }

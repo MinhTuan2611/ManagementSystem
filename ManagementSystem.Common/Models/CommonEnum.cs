@@ -34,7 +34,7 @@ namespace ManagementSystem.Common.Models
         DoubleEntry
     }
 
-    public enum PaymentMethod
+    public enum PaymentMethodEnum
     {
         [Description("Tiền Mặt")]
         Cash,

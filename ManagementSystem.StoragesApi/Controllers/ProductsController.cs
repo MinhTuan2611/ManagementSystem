@@ -29,17 +29,17 @@ namespace ManagementSystem.StoragesApi.Controllers
             return product;
         }
 
-        [HttpGet("autocomplete-storages")]
-        public IActionResult AutoCompleteStorages(string? searchValue)
+        [HttpGet("autocomplete-product")]
+        public IActionResult AutoCompleteProduct(string? searchValue)
         {
             var storages = _ProductService.AutoCompleteProduct(searchValue);
             if (storages != null)
             {
-                var lsStorages = storages as List<ProductUnit> ?? storages.ToList();
+                var lsStorages = storages as List<ProductInfo> ?? storages.ToList();
                 if (lsStorages.Any())
                     return Ok(lsStorages);
             }
-            return Ok(new List<ProductUnit>());
+            return Ok(new List<ProductInfo>());
         }
 
         [HttpPost("create")]

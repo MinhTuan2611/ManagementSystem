@@ -64,8 +64,8 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> AutoCompleteStorages(string? searchValue)
         {
 
-            ResponseModel<ProductUnit> response = new ResponseModel<ProductUnit>();
-            List<ProductUnit> lsProduct = await HttpRequestsHelper.Get<List<ProductUnit>>(APIUrl + "autocomplete-product?searchValue=" + searchValue);
+            ResponseModel<ProductInfo> response = new ResponseModel<ProductInfo>();
+           List<ProductInfo> lsProduct = await HttpRequestsHelper.Get<List<ProductInfo>>(APIUrl + "autocomplete-product?searchValue=" + searchValue);
             if (lsProduct != null)
             {
 

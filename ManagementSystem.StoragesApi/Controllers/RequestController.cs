@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.StoragesApi.Services;
+using ManagementSystem.Common.Models;
 
 namespace ManagementSystem.StoragesApi.Controllers
 {
@@ -35,10 +36,10 @@ namespace ManagementSystem.StoragesApi.Controllers
             return Ok(request);
         }
 
-        [HttpPost]
-        public ActionResult<Request> CreateRequest(Request request)
+        [HttpPost("create")]
+        public ActionResult<Request> CreateRequest(RequestApiModel<RequestModel> request)
         {
-            var createdRequest = _requestService.CreateRequest(request);
+            var createdRequest = _requestService.CreateRequest(request.Item);
             return CreatedAtAction(nameof(GetRequestById), new { id = createdRequest.RequestId }, createdRequest);
         }
 

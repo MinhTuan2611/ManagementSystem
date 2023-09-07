@@ -10,6 +10,7 @@ namespace ManagementSystem.Common.Entities
         public int VoucherNumber { get; set; }
         public int BranchId { get; set; }
         public int StorageId { get; set; }
+        public int SupplierId { get; set; }
         public int BillNumber { get; set; }
         public string DeliverName { get; set; }
         public string DeliverPhone { get; set; }
@@ -22,5 +23,6 @@ namespace ManagementSystem.Common.Entities
         public string? Note { get; set; }
         public Branch Branch { get; set; }
         public Storage Storage { get; set; }
+        public Supplier Supplier { get; set; }
     }
 }

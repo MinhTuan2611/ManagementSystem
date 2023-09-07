@@ -11,8 +11,10 @@ namespace ManagementSystem.Common.Entities
         public int UnitId { get; set; }
         public int UnitPrice { get; set; }
         public float Tax { get; set; }
+        public decimal ProductAmount { get; set; }
+        public decimal TaxAmount { get; set; }
+        public decimal Amount { get; set; }
         public string? Note { get; set; }
         public Product? Product { get; set; }
-        public Request? request { get; set; }
     }
 }
