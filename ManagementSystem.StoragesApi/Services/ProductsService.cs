@@ -64,6 +64,7 @@ namespace ManagementSystem.StoragesApi.Services
                 {
                     result.Add(new ProductInfo
                     {
+                        ProductId = item.ProductId,
                         ProductCode = item.Product.ProductCode,
                         BarCode = item.Barcode,
                         Price = item.Price,

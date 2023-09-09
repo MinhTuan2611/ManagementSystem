@@ -32,12 +32,12 @@ namespace ManagementSystem.StoragesApi.Controllers
         [HttpGet("autocomplete-product")]
         public IActionResult AutoCompleteProduct(string? searchValue)
         {
-            var storages = _ProductService.AutoCompleteProduct(searchValue);
-            if (storages != null)
+            var products = _ProductService.AutoCompleteProduct(searchValue);
+            if (products != null)
             {
-                var lsStorages = storages as List<ProductInfo> ?? storages.ToList();
-                if (lsStorages.Any())
-                    return Ok(lsStorages);
+                var lsProducts = products as List<ProductInfo> ?? products.ToList();
+                if (lsProducts.Any())
+                    return Ok(lsProducts);
             }
             return Ok(new List<ProductInfo>());
         }

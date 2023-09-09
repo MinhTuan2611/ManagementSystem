@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.StoragesApi.Services;
 using ManagementSystem.Common.Models;
+using ManagementSystem.StoragesApi.Data;
 
 namespace ManagementSystem.StoragesApi.Controllers
 {
@@ -12,13 +13,13 @@ namespace ManagementSystem.StoragesApi.Controllers
     {
         private readonly IRequestService _requestService;
 
-        public RequestController(IRequestService requestService)
+        public RequestController(StoragesDbContext context)
         {
-            _requestService = requestService;
+            _requestService = new RequestService(context);
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<Request>> GetListRequests()
+        [HttpGet("get")]
+        public ActionResult<IEnumerable<RequestInfo>> GetListRequests()
         {
             var requests = _requestService.GetListRequests();
             return Ok(requests);
@@ -40,7 +41,7 @@ namespace ManagementSystem.StoragesApi.Controllers
         public ActionResult<Request> CreateRequest(RequestApiModel<RequestModel> request)
         {
             var createdRequest = _requestService.CreateRequest(request.Item);
-            return CreatedAtAction(nameof(GetRequestById), new { id = createdRequest.RequestId }, createdRequest);
+            return Ok(createdRequest);
         }
 
         [HttpPut("{id}")]
