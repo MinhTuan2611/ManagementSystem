@@ -1382,8 +1382,9 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestId"), 1L, 1);
 
-                    b.Property<int>("BillNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("BillNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("BranchId")
                         .HasColumnType("int");
@@ -1494,7 +1495,7 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RequestId")
+                    b.Property<int>("RequestId")
                         .HasColumnType("int");
 
                     b.Property<float>("Tax")
@@ -1885,7 +1886,9 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasOne("ManagementSystem.Common.Entities.Request", null)
                         .WithMany("RequestItemId")
-                        .HasForeignKey("RequestId");
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
                 });

@@ -25,8 +25,8 @@ namespace ManagementSystem.StoragesApi.Controllers
             return Ok(requests);
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<Request> GetRequestById(int id)
+        [HttpGet("get/{id}")]
+        public ActionResult<RequestModel> GetRequestById(int id)
         {
             var request = _requestService.GetRequestById(id);
             if (request == null)

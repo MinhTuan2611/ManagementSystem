@@ -11,7 +11,7 @@ namespace ManagementSystem.Common.Entities
         public int BranchId { get; set; }
         public int StorageId { get; set; }
         public int SupplierId { get; set; }
-        public int BillNumber { get; set; }
+        public string BillNumber { get; set; }
         public string DeliverName { get; set; }
         public string DeliverPhone { get; set; }
         public string ReceiverName { get; set; }

@@ -6,6 +6,7 @@ namespace ManagementSystem.Common.Entities
     {
         [Key]
         public int RequestItemId { get; set; }
+        public int RequestId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
         public int UnitId { get; set; }

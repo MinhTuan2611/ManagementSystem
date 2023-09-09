@@ -71,7 +71,9 @@ namespace ManagementSystem.StoragesApi.Services
                         DefaultPurchasePrice = item.Product.DefaultPurchasePrice,
                         ProductName = item.Product.ProductName,
                         Tax = item.Product.Tax,
-                        Unit = item.Unit.UnitName
+                        Unit = item.Unit.UnitName,
+                        UnitId = item.Unit.UnitId,
+
                     });
                 }
                 return result;

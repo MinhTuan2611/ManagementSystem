@@ -29,6 +29,16 @@ namespace ManagementSystem.MainApp.Controllers
             response.ErrorMessage = "Not found any information!";
             return Ok(response);
         }
+        [HttpGet("get/{id}")]
+        public async Task<IActionResult> GetReceiptById(int id)
+        {
+            RequestModel receipt = await HttpRequestsHelper.Get<RequestModel>(APIUrl + "get/" + id);
+            if (receipt != null)
+            {
+                return Ok(receipt);
+            }
+            return Ok(null);
+        }
 
         [HttpPost("create")]
         public async Task<IActionResult> Create(RequestModel request)

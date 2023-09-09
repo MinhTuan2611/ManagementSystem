@@ -2,27 +2,15 @@ using ManagementSystem.Common.Entities;
 
 namespace ManagementSystem.Common.Models
 {
-    public class RequestItemModel
-    {
-        public int RequestItemId { get; set; }
-        public int ProductId { get; set; }
-        public int Quantity { get; set; }
-        public int UnitId { get; set; }
-        public int UnitPrice { get; set; }
-        public float Tax { get; set; } = 0;
-        public decimal ProductAmount { get; set; }
-        public decimal TaxAmount { get; set; }
-        public decimal Amount { get; set; }
-        public string? Note { get; set; }
-        public Product? Product { get; set; }
-    }
-
     public class ReceiptDetailModel
     {
         public int? RequestItemId { get; set; }
         public int ProductId { get; set; }
+        public string? ProductCode { get; set; }
+        public string? ProductName { get; set; }
         public int Quantity { get; set; }
         public int UnitId { get; set; }
+        public string? Unit { get; set; }
         public int UnitPrice { get; set; }
         public float Tax { get; set; } = 0;
         public decimal ProductAmount { get; set; }
@@ -64,7 +52,7 @@ namespace ManagementSystem.Common.Models
         public string BranchName { get; set; }
         public string StorageName { get; set; }
         public string SupplierName { get; set; }
-        public int BillNumber { get; set; }
+        public string BillNumber { get; set; }
         public string DeliverName { get; set; }
         public string? DeliverPhone { get; set; }
         public string ReceiverName { get; set; }

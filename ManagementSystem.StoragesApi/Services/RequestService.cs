@@ -49,9 +49,62 @@ namespace ManagementSystem.StoragesApi.Services
             return list;
         }
 
-        public Request GetRequestById(int requestId)
+        public RequestModel GetRequestById(int requestId)
         {
-            return _unitOfWork.RequestRepository.GetByID(requestId);
+            string[] includes = { "Branch", "Storage", "Supplier" };
+            Request request =  _unitOfWork.RequestRepository.GetWithInclude(r => r.RequestId == requestId, includes).FirstOrDefault();
+            if (request != null)
+            {
+                RequestModel receipt = new RequestModel
+                {
+                    RequestId = request.RequestId,
+                    BillNumber = request.BillNumber,
+                    VoucherNumber = request.RequestId,
+                    DeliverName = request.DeliverName,
+                    DeliverPhone = request.DeliverPhone,
+                    ReceiverName = request.ReceiverName,
+                    ReceiverPhone = request.ReceiverPhone,
+                    ReceivingDay = request.ReceivingDay,
+                    Signature = request.Signature,
+                    TotalAmount = request.TotalAmount,
+                    Status = EnumHelpers.GetEnumDescription(request.Status),
+                    Note = request.Note,
+                    UserId = request.UserId,
+                    PaymentMethod = request.PaymentMethod,
+                    Branch = request.Branch,
+                    Storage = request.Storage,
+                    Supplier = request.Supplier,
+                };
+
+                string[] includesItem = { "Product"};
+                string[] includeProduct = { "Product", "Unit" };
+                List<RequestItem> requestItems = _unitOfWork.RequestItemRepository.GetWithInclude(i => i.RequestId == requestId, includesItem).ToList();
+                List<ReceiptDetailModel> details = new List<ReceiptDetailModel>();
+                foreach (RequestItem item in requestItems) {
+                    ProductUnit productDetail = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.ProductId == item.ProductId && x.UnitId == item.UnitId && x.Status == ActiveStatus.Active, includeProduct).OrderBy(x => x.Id).FirstOrDefault();
+                    ReceiptDetailModel receiptDetail = new ReceiptDetailModel
+                    {
+                        RequestItemId = item.RequestItemId,
+                        ProductId = item.ProductId,
+                        Amount = item.Amount,
+                        Note = item.Note,
+                        ProductCode = productDetail.Product.ProductCode,
+                        ProductName = productDetail.Product.ProductName,
+                        Product = item.Product,
+                        ProductAmount = item.ProductAmount,
+                        Quantity = item.Quantity,
+                        Tax = item.Tax,
+                        TaxAmount = item.TaxAmount,
+                        UnitPrice = item.UnitPrice,
+                        Unit = productDetail.Unit.UnitName,
+                        UnitId = item.UnitId
+                    };
+                    details.Add(receiptDetail);
+                }
+                receipt.ReceiptDetails = details;
+                return receipt;
+            }
+            return null;
         }
 
         public Request CreateRequest(RequestModel request, int userId)
@@ -87,7 +140,7 @@ namespace ManagementSystem.StoragesApi.Services
                 BranchId = request.BranchId,
                 StorageId = request.StorageId,
                 SupplierId = request.SupplierId,
-                BillNumber = Convert.ToInt32(request.BillNumber),
+                BillNumber = request.BillNumber,
                 DeliverName = request.DeliverName,
                 DeliverPhone = request.DeliverPhone,
                 ReceiverName = request.ReceiverName,

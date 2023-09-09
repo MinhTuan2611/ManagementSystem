@@ -15,6 +15,7 @@ namespace ManagementSystem.Common.Models
         public int Price { get; set; }
         public int? Tax { get; set; }
         public string Unit { get; set; }
+        public int UnitId { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public int DefaultPurchasePrice { get; set; }
     }

@@ -21,6 +21,7 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
         private GenericRepository<Supplier> _supplierRepository;
         private GenericRepository<RequestSample> _requestSampleRepository;
         private GenericRepository<Request> _requestRepository;
+        private GenericRepository<RequestItem> _requestItemRepository;
         private GenericRepository<Customer> _customerRepository;
         private GenericRepository<Bill> _billRepository;
         private GenericRepository<BillDetail> _billDetailRepository;
@@ -200,6 +201,16 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
                 return _productSupplierRepository;
             }
         }
+        public GenericRepository<RequestItem> RequestItemRepository
+        {
+            get
+            {
+                if (_requestItemRepository == null)
+                    _requestItemRepository = new GenericRepository<RequestItem>(_context);
+                return _requestItemRepository;
+            }
+        }
+
         #endregion
 
         #region Public member methods...
