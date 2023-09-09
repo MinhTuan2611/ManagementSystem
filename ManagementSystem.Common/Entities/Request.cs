@@ -17,6 +17,9 @@ namespace ManagementSystem.Common.Entities
         public string ReceiverName { get; set; }
         public string ReceiverPhone { get; set; }
         public DateTime ReceivingDay { get; set; }
+        public int? TotalAmount { get; set; }
+        public string? Signature { get; set; }
+        public ReceiptStatus Status { get; set; } = ReceiptStatus.ChoDuyet;
         public PaymentMethodEnum PaymentMethod { get; set; }
         public List<RequestItem> RequestItemId { get; set; }
         public int UserId { get; set; }

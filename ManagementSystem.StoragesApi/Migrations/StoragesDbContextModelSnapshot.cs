@@ -1425,10 +1425,19 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<DateTime>("ReceivingDay")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Signature")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<int>("StorageId")
                         .HasColumnType("int");
 
                     b.Property<int>("SupplierId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalAmount")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")

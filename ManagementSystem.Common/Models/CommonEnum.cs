@@ -53,4 +53,16 @@ namespace ManagementSystem.Common.Models
         [Description("Ca Tối")]
         Evening
     }
+
+    public enum ReceiptStatus
+    {
+        [Description("Chờ duyệt")]
+        ChoDuyet,
+        [Description("Chờ xử lý")]
+        ChoXuLy,
+        [Description("Đã duyệt")]
+        DaDuyet,
+        [Description("Từ Chối")]
+        TuChoi
+    }
 }

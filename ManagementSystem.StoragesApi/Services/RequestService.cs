@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
@@ -37,6 +38,9 @@ namespace ManagementSystem.StoragesApi.Services
                     ReceiverPhone = request.ReceiverPhone,
                     ReceivingDay = request.ReceivingDay,
                     SupplierName = request.Supplier.DisplayName,
+                    Signature = request.Signature,
+                    TotalAmount = request.TotalAmount,
+                    Status = EnumHelpers.GetEnumDescription(request.Status),
                     Note = request.Note,
                     UserId = request.UserId,
                     PaymentMethod = request.PaymentMethod,
@@ -50,7 +54,7 @@ namespace ManagementSystem.StoragesApi.Services
             return _unitOfWork.RequestRepository.GetByID(requestId);
         }
 
-        public Request CreateRequest(RequestModel request)
+        public Request CreateRequest(RequestModel request, int userId)
         {
             if (request == null)
             {
@@ -90,9 +94,13 @@ namespace ManagementSystem.StoragesApi.Services
                 ReceiverPhone = request.ReceiverPhone,
                 ReceivingDay = request.ReceivingDay,
                 PaymentMethod = request.PaymentMethod,
+                TotalAmount = request.TotalAmount,
+                Signature = request.Signature,
                 Note = request.Note,
                 RequestItemId = items,
                 CreateDate = DateTime.Now,
+                UserId = userId,
+                CreateBy = userId,
                 ModifyDate = DateTime.Now,
             };
             try

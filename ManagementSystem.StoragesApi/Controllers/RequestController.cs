@@ -40,7 +40,7 @@ namespace ManagementSystem.StoragesApi.Controllers
         [HttpPost("create")]
         public ActionResult<Request> CreateRequest(RequestApiModel<RequestModel> request)
         {
-            var createdRequest = _requestService.CreateRequest(request.Item);
+            var createdRequest = _requestService.CreateRequest(request.Item, request.UserId);
             return Ok(createdRequest);
         }
 

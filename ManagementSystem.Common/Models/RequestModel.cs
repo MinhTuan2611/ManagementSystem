@@ -44,6 +44,9 @@ namespace ManagementSystem.Common.Models
         public string? DeliverPhone { get; set; }
         public string ReceiverName { get; set; }
         public string? ReceiverPhone { get; set; }
+        public int? TotalAmount { get; set; }
+        public string? Signature { get; set; }
+        public string? Status { get; set; }
         public DateTime ReceivingDay { get; set; }
         public PaymentMethodEnum PaymentMethod { get; set; }
         public List<ReceiptDetailModel> ReceiptDetails { get; set; }
@@ -68,13 +71,16 @@ namespace ManagementSystem.Common.Models
         public string? ReceiverPhone { get; set; }
         public DateTime ReceivingDay { get; set; }
         public PaymentMethodEnum PaymentMethod { get; set; }
+        public int? TotalAmount { get; set; }
+        public string? Signature { get; set; }
+        public string? Status { get; set; }
         public int? UserId { get; set; }
         public string? Note { get; set; }
     }
 
     public class RequestApiModel<T>
     {
-        public int? UserId { get; set; }
+        public int UserId { get; set; } = 0;
         public int? Id { get; set; }
         public T? Item { get; set; }
     }
