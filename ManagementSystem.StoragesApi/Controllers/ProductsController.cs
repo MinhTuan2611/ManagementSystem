@@ -70,5 +70,12 @@ namespace ManagementSystem.StoragesApi.Controllers
             ProductDetailInSale? product = _ProductService.GetProductDetailForSale(barcode);
             return Ok(product);
         }
+
+        [HttpGet("autocomplete-get-product-detail-for-sale")]
+        public IActionResult AutocompleteGetProductDetailForSale(string barcode)
+        {
+            List<ProductDetailInSale>? product = _ProductService.AutoCompleteGetProductDetailForSale(barcode);
+            return Ok(product);
+        }
     }
 }

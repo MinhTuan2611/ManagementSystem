@@ -100,5 +100,12 @@ namespace ManagementSystem.MainApp.Controllers
             ProductDetailInSale? product = await HttpRequestsHelper.Get<ProductDetailInSale>(APIUrl + "get-product-detail-for-sale?barcode=" + barcode);
             return Ok(product);
         }
+
+        [HttpGet("autocomplete-get-product-detail-for-sale")]
+        public async Task<IActionResult> AutocompleteGetProductDetailForSale(string barcode)
+        {
+            List<ProductDetailInSale>? product = await HttpRequestsHelper.Get<List<ProductDetailInSale>>(APIUrl + "autocomplete-get-product-detail-for-sale?barcode=" + barcode);
+            return Ok(product);
+        }
     }
 }
