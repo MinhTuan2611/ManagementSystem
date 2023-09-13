@@ -101,6 +101,7 @@ namespace ManagementSystem.StoragesApi.Services
                     productUnit.UnitId = units[i].UnitId;
                     productUnit.UnitExchange = units[i].UnitExchange;
                     productUnit.Price = units[i].Price;
+                    productUnit.GrossProfit = units[i].GrossProfit;
                     productUnit.OldPrice = units[i].OldPrice;
                     productUnit.Barcode = units[i].Barcode;
                     productUnit.IsPrimary = units[i].IsPrimary;
@@ -138,6 +139,7 @@ namespace ManagementSystem.StoragesApi.Services
                     productUnit.UnitId = request.Units[i].UnitId;
                     productUnit.UnitExchange = request.Units[i].UnitExchange;
                     productUnit.Price = request.Units[i].Price;
+                    productUnit.GrossProfit = request.Units[i].GrossProfit;
                     productUnit.OldPrice = request.Units[i].OldPrice;
                     productUnit.UnitId = request.Units[i].UnitId;
                     productUnit.Barcode = request.Units[i].Barcode;
@@ -277,6 +279,7 @@ namespace ManagementSystem.StoragesApi.Services
             currentUnit.UnitId = productDetail.UnitId;
             currentUnit.UnitName = productDetail.Unit?.UnitName;
             currentUnit.UnitExchange = productDetail.UnitExchange;
+            currentUnit.GrossProfit = productDetail.GrossProfit;
             currentUnit.Price = productDetail.Price;
             currentUnit.OldPrice = productDetail.OldPrice;
             currentUnit.Barcode = productDetail.Barcode;

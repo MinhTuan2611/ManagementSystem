@@ -55,6 +55,7 @@ namespace ManagementSystem.Common.Models
         public string? UnitName { get; set; }
         public int UnitExchange { get; set; }
         public int Price { get; set; }
+        public float GrossProfit { get; set; }
         public int OldPrice { get; set; } = 0;
         public bool IsPrimary { get; set; }
         public string? Barcode { get; set; }

@@ -417,6 +417,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<float>("GrossProfit")
+                        .HasColumnType("real");
+
                     b.Property<bool>("IsPrimary")
                         .HasColumnType("bit");
 
@@ -490,7 +493,7 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PaymentMethod")
+                    b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
 
                     b.Property<string>("ReceiverName")
@@ -519,6 +522,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.HasKey("RequestId");
 
                     b.HasIndex("BranchId");
+
+                    b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("StorageId");
 
@@ -903,6 +908,12 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ManagementSystem.Common.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ManagementSystem.Common.Entities.Storage", "Storage")
                         .WithMany()
                         .HasForeignKey("StorageId")
@@ -916,6 +927,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Branch");
+
+                    b.Navigation("PaymentMethod");
 
                     b.Navigation("Storage");
 

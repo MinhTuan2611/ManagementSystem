@@ -16,6 +16,7 @@ namespace ManagementSystem.Common.Entities
         public int UnitId { get; set; }
         [Required]
         public int UnitExchange { get; set; }
+        public float GrossProfit { get; set; }
         public int Price { get; set; }
         public int OldPrice { get; set; } = 0;
         [Required]
