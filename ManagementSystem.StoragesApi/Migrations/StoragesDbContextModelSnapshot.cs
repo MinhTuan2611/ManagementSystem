@@ -239,6 +239,13 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"), 1L, 1);
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("BirthDay")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("CreateBy")
                         .HasColumnType("int");
 
@@ -255,6 +262,10 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<int>("CustomerPoint")
                         .HasColumnType("int");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
@@ -490,7 +501,7 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PaymentMethod")
+                    b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
 
                     b.Property<string>("ReceiverName")
@@ -519,6 +530,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.HasKey("RequestId");
 
                     b.HasIndex("BranchId");
+
+                    b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("StorageId");
 
@@ -903,6 +916,12 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ManagementSystem.Common.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ManagementSystem.Common.Entities.Storage", "Storage")
                         .WithMany()
                         .HasForeignKey("StorageId")
@@ -916,6 +935,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Branch");
+
+                    b.Navigation("PaymentMethod");
 
                     b.Navigation("Storage");
 
