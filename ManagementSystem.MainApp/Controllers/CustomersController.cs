@@ -59,5 +59,21 @@ namespace ManagementSystem.MainApp.Controllers
 
             return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
         }
+
+        [HttpGet]
+        [Route("search-term")]
+        public async Task<IActionResult> GetCustomerBySearchTerm([FromQuery] string searchTerm)
+        {
+            List<Customer> customers = await HttpRequestsHelper.GetList<Customer>(Environment.StorageApiUrl + "customers/search-term?searchTerm=" + searchTerm.ToLower());
+
+            if (customers.Count == 0)
+                return BadRequest("Customers not found");
+
+            // Map Customer to CustomerDto to reponse
+            var customerDto = _mapper.Map<List<CustomerResponseDto>>(customers);
+
+            return Ok(customerDto);
+
+        }
     }
 }

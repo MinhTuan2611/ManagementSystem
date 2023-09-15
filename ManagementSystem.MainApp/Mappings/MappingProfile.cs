@@ -8,7 +8,9 @@ namespace ManagementSystem.MainApp.Mappings
     {
         public MappingProfile()
         {
+            // Map customer information
             CreateMap<Customer, NewCustomerRequestDto>().ReverseMap();
+            CreateMap<Customer, CustomerResponseDto>().ReverseMap();
         }
     }
 }

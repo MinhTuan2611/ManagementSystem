@@ -12,5 +12,10 @@ namespace ManagementSystem.MainApp.Dtos
         public string Gender { get; set; }
         public string Address { get; set; }
         public DateTime? BirthDay { get; set; }
+
+        [Phone]
+        [MaxLength(15)]
+        [RegularExpression(@"^[0-9]+$")]
+        public string PhoneNumber { get; set; }
     }
 }
