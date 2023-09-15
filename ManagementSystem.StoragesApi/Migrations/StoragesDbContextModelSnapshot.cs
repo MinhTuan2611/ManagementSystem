@@ -239,6 +239,13 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerId"), 1L, 1);
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("BirthDay")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("CreateBy")
                         .HasColumnType("int");
 
@@ -255,6 +262,10 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<int>("CustomerPoint")
                         .HasColumnType("int");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
