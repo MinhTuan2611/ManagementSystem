@@ -3,6 +3,7 @@ using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 namespace ManagementSystem.StoragesApi.Controllers
 {
@@ -49,6 +50,20 @@ namespace ManagementSystem.StoragesApi.Controllers
         {
             bool updated = _CustomersService.DeleteCustomer(customerId);
             return Ok(updated);
+        }
+
+        [HttpGet("search-term")]
+        public IActionResult SearchCustomer([FromQuery] string searchTerm)
+        {
+            // Check search term input is empty or not
+            string pattern = @"^[a-zA-Z0-9-]+$";
+            Regex rg = new Regex(pattern);
+
+            if (!rg.IsMatch(searchTerm)) // Search term is empty, we will get all customer
+                return Ok(_CustomersService.GetListCustomers());
+           
+            return Ok(_CustomersService.GetCustomerBySearchTerm(searchTerm));
+
         }
     }
 }

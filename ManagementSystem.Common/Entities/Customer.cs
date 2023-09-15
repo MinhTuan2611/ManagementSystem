@@ -22,5 +22,7 @@ namespace ManagementSystem.Common.Entities
         public string Address { get; set; }
         public DateTime? BirthDay { get; set; }
 
+        [MaxLength(15)]
+        public string PhoneNumber  { get; set; }
     }
 }

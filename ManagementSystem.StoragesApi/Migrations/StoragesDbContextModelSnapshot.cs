@@ -273,6 +273,11 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<DateTime>("ModifyDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
                     b.HasKey("CustomerId");
 
                     b.ToTable("Customers");

@@ -68,5 +68,22 @@ namespace ManagementSystem.StoragesApi.Services
                 return false;
             }
         }
+
+        public List<Customer> GetCustomerBySearchTerm(string searchTerm)
+        {
+            return _unitOfWork.CustomerRepository.GetManyQueryable(x => 
+                                                ConcatCustomerSearchTerm(x.CustomerName, x.PhoneNumber)
+                                                .Contains(searchTerm)).ToList();
+        }
+
+        // Private Function Handle
+        private string ConcatCustomerSearchTerm(string customerName, string phoneNumer)
+        {
+            List<string> strList = customerName.Split(" ").ToList();
+            string customerFristName = strList[strList.Count - 1].ToLower();
+            string lastThreePhoneNumber = string.IsNullOrEmpty(phoneNumer) ? "" : phoneNumer.Substring(phoneNumer.Length - 3);
+
+            return string.Format("{0}-{1}", customerFristName, lastThreePhoneNumber);
+        }
     }
 }

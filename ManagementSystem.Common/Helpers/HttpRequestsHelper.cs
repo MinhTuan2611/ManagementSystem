@@ -34,6 +34,17 @@ namespace ManagementSystem.Common.Helpers
             }
             return default(TResult);
         }
+        public static async Task<List<TResult>> GetList<TResult>(string url)
+        {
+            using var httpClient = new HttpClient();
+            var resLogin = await httpClient.GetAsync(url);
+            if (resLogin.IsSuccessStatusCode)
+            {
+                var content = await resLogin.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<TResult>>(content);
+            }
+            return null;
+        }
         public static async Task<TResult> Delete<TResult>(string url, object parameter)
         {
             using var httpClient = new HttpClient();
