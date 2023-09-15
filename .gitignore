@@ -42,3 +42,13 @@ ManagementSystem.AccountingApi/obj/Debug/net6.0/
 ManagementSystem.AccountingApi/bin/Debug/net6.0/
 
 ManagementSystem.AccountingApi/obj/
+
+ManagementSystem.MainApp/bin/Release/net6.0/
+
+ManagementSystem.AccountsApi/bin/Release/net6.0/
+
+ManagementSystem.Common/bin/Release/net6.0/
+
+ManagementSystem.MainApp/Properties/PublishProfiles/
+
+ManagementSystem.AccountsApi/Properties/PublishProfiles/

@@ -54,5 +54,21 @@ namespace ManagementSystem.MainApp.Controllers
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> Update(RequestModel request)
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+            RequestApiModel<RequestModel> payload = new RequestApiModel<RequestModel>();
+            payload.Item = request;
+            payload.UserId = Convert.ToInt32(userId);
+            payload.Id = request.RequestId ?? 0;
+            bool updated = await HttpRequestsHelper.Post<bool>(APIUrl + "update", payload);
+            if (updated != null)
+            {
+                return Ok(updated);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+        }
     }
 }

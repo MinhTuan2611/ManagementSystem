@@ -68,6 +68,7 @@ namespace ManagementSystem.StoragesApi.Services
                     Signature = request.Signature,
                     TotalAmount = request.TotalAmount,
                     Status = EnumHelpers.GetEnumDescription(request.Status),
+                    StatusCode = request.Status,
                     Note = request.Note,
                     UserId = request.UserId,
                     PaymentMethod = request.PaymentMethod,
@@ -170,23 +171,63 @@ namespace ManagementSystem.StoragesApi.Services
             return newRequest;
         }
 
-        public bool UpdateRequest(int requestId, Request updatedRequest)
+        public bool UpdateRequest(int requestId, RequestModel updatedRequest, int userId)
         {
-            var existingRequest = _unitOfWork.RequestRepository.GetByID(requestId);
-            if (existingRequest == null)
+            try
+            {
+                Request existingRequest = _unitOfWork.RequestRepository.GetByID(requestId);
+                if (existingRequest == null)
+                {
+                    return false;
+                }
+                var updatedRequestItems = _unitOfWork.RequestItemRepository
+                    .GetMany(rD => rD.RequestId == requestId).ToList();
+                existingRequest.Note = updatedRequest.Note;
+                existingRequest.PaymentMethod = updatedRequest.PaymentMethod;
+                existingRequest.BranchId = updatedRequest.Branch.BranchId;
+                existingRequest.StorageId = updatedRequest.Storage.StorageId;
+                existingRequest.SupplierId = updatedRequest.Supplier.SupplierId;
+                existingRequest.Note = updatedRequest.Note;
+                foreach (var item in updatedRequest.ReceiptDetails)
+                {
+                    int index = updatedRequestItems.FindIndex(rD => rD.RequestItemId == item.RequestItemId);
+                    updatedRequestItems[index].ProductId = item.ProductId;
+                    updatedRequestItems[index].ProductAmount = item.ProductAmount;
+                    updatedRequestItems[index].UnitPrice = item.UnitPrice;
+                    updatedRequestItems[index].Quantity = item.Quantity;
+                    updatedRequestItems[index].UnitId = item.UnitId;
+                    updatedRequestItems[index].Tax = item.Tax;
+                    updatedRequestItems[index].TaxAmount = item.TaxAmount;
+                    updatedRequestItems[index].Amount = item.Amount;
+                    updatedRequestItems[index].ModifyDate = DateTime.Now;
+                    updatedRequestItems[index].ModifyBy = userId;
+                }
+                existingRequest.RequestItemId = updatedRequestItems;
+
+                switch (updatedRequest.UpdateType)
+                {
+                    case -1:
+                        existingRequest.Status = ReceiptStatus.TuChoi; 
+                        break;
+                    case 0:
+                        existingRequest.Status = ReceiptStatus.ChoXuLy;
+                        break;
+                    case 1:
+                        existingRequest.Status = ReceiptStatus.DaDuyet;
+                        break;
+                }
+
+                _unitOfWork.RequestRepository.Update(existingRequest);
+                _unitOfWork.Save();
+                _unitOfWork.Dispose();
+
+                return true;
+            }
+            catch (Exception ex)
             {
                 return false;
             }
-
-            // Update the properties of the existing request with the new values
-            //existingRequest.RequestName = updatedRequest.RequestName;
-            existingRequest.BranchId = updatedRequest.BranchId;
-            existingRequest.StorageId = updatedRequest.StorageId;
-            existingRequest.Note = updatedRequest.Note;
-
-            _unitOfWork.Save();
-
-            return true;
+            
         }
 
         public bool DeleteRequest(int requestId)

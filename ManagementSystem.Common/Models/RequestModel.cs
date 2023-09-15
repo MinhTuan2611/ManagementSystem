@@ -35,6 +35,8 @@ namespace ManagementSystem.Common.Models
         public int? TotalAmount { get; set; }
         public string? Signature { get; set; }
         public string? Status { get; set; }
+        public ReceiptStatus? StatusCode { get; set; }
+        public int? UpdateType { get; set; }
         public DateTime ReceivingDay { get; set; }
         public PaymentMethodEnum PaymentMethod { get; set; }
         public List<ReceiptDetailModel> ReceiptDetails { get; set; }
@@ -69,26 +71,7 @@ namespace ManagementSystem.Common.Models
     public class RequestApiModel<T>
     {
         public int UserId { get; set; } = 0;
-        public int? Id { get; set; }
+        public int Id { get; set; } = 0;
         public T? Item { get; set; }
     }
-
-
-
-    //public class RequestedBranch
-    //{
-    //    public int BranchId { get; set; }
-    //    public string? BranchName { get; set; }
-    //    public string? BranchAddress { get; set; }
-    //    public string? BranchContactName { get; set; }
-    //    public string? BranchPhone { get; set; }
-    //}
-
-    //public class RequestedStorage
-    //{
-    //    public int StorageId { get; set; }
-    //    public string? StorageName { get; set; }
-    //    public string? StorageAddress { get; set; }
-    //    public string? StoragePhone { get; set; }
-    //}
 }

@@ -44,16 +44,11 @@ namespace ManagementSystem.StoragesApi.Controllers
             return Ok(createdRequest);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateRequest(int id, Request updatedRequest)
+        [HttpPost("update")]
+        public ActionResult<bool> UpdateRequest(RequestApiModel<RequestModel> updatedRequest)
         {
-            var result = _requestService.UpdateRequest(id, updatedRequest);
-            if (result)
-            {
-                return NoContent();
-            }
-
-            return NotFound();
+            var result = _requestService.UpdateRequest(updatedRequest.Id, updatedRequest.Item, updatedRequest.UserId);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]

@@ -15,6 +15,7 @@ namespace ManagementSystem.Common.Models
         public RequestedBranch Branch { get; set; }
         public RequestedStorage Storage { get; set; }
         public List<RequestSampleItemModel> Items { get; set; }
+        public int UpdateType { get; set; }
         public string? Note { get; set; }
         public int UserId { get; set; }
     }
