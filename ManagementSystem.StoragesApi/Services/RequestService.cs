@@ -192,16 +192,38 @@ namespace ManagementSystem.StoragesApi.Services
                 foreach (var item in updatedRequest.ReceiptDetails)
                 {
                     int index = updatedRequestItems.FindIndex(rD => rD.RequestItemId == item.RequestItemId);
-                    updatedRequestItems[index].ProductId = item.ProductId;
-                    updatedRequestItems[index].ProductAmount = item.ProductAmount;
-                    updatedRequestItems[index].UnitPrice = item.UnitPrice;
-                    updatedRequestItems[index].Quantity = item.Quantity;
-                    updatedRequestItems[index].UnitId = item.UnitId;
-                    updatedRequestItems[index].Tax = item.Tax;
-                    updatedRequestItems[index].TaxAmount = item.TaxAmount;
-                    updatedRequestItems[index].Amount = item.Amount;
-                    updatedRequestItems[index].ModifyDate = DateTime.Now;
-                    updatedRequestItems[index].ModifyBy = userId;
+                    if(index >= 0)
+                    {
+                        updatedRequestItems[index].ProductId = item.ProductId;
+                        updatedRequestItems[index].ProductAmount = item.ProductAmount;
+                        updatedRequestItems[index].UnitPrice = item.UnitPrice;
+                        updatedRequestItems[index].Quantity = item.Quantity;
+                        updatedRequestItems[index].UnitId = item.UnitId;
+                        updatedRequestItems[index].Tax = item.Tax;
+                        updatedRequestItems[index].TaxAmount = item.TaxAmount;
+                        updatedRequestItems[index].Amount = item.Amount;
+                        updatedRequestItems[index].ModifyDate = DateTime.Now;
+                        updatedRequestItems[index].ModifyBy = userId;
+                    } else
+                    {
+                        updatedRequestItems.Add(new RequestItem
+                        {
+                            ProductId = item.Product.ProductId,
+                            Amount = item.Amount,
+                            Quantity = item.Quantity,
+                            ProductAmount = item.ProductAmount,
+                            Tax = item.Tax,
+                            TaxAmount = item.TaxAmount,
+                            UnitId = item.UnitId,
+                            UnitPrice = item.UnitPrice,
+                            Note = item.Note,
+                            CreateDate = DateTime.Now,
+                            CreateBy = userId,
+                            ModifyDate = DateTime.Now,
+                            ModifyBy = userId,
+                        });
+                    }
+                    
                 }
                 existingRequest.RequestItemId = updatedRequestItems;
 
