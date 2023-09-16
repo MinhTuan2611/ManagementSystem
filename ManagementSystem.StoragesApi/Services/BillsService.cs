@@ -27,7 +27,7 @@ namespace ManagementSystem.StoragesApi.Services
             return bills;
         }
 
-        public bool CreateBill(BillInfo bill)
+        public BillInfo CreateBill(BillInfo bill)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace ManagementSystem.StoragesApi.Services
                 };
                 _unitOfWork.BillRepository.Insert(newBill);
                 _unitOfWork.Save();
-                
+                bill.BillId = newBill.BillId;
                 foreach (PaymentDetail detail in bill.Payments)
                 {
                     var paymentMethod = _unitOfWork.PaymentMethodRepository.GetFirst(x => x.PaymentMethodCode == detail.PaymentMethodCode);
@@ -54,6 +54,7 @@ namespace ManagementSystem.StoragesApi.Services
                     };
                     _unitOfWork.BillPaymentRepository.Insert(newPaymentDetail);
                     _unitOfWork.Save();
+                    detail.Id = newPaymentDetail.Id;
                 }
                 foreach (BillDetailInfo detail in bill.Details)
                 {
@@ -75,13 +76,14 @@ namespace ManagementSystem.StoragesApi.Services
                     };
                     _unitOfWork.BillDetailRepository.Insert(newDetail);
                     _unitOfWork.Save();
+                    detail.Id = newDetail.Id;
                 }
                 _unitOfWork.Dispose();
-                return true;
+                return bill;
             }
             catch (Exception ex)
             {
-                return false;
+                return null;
             }
 
         }
