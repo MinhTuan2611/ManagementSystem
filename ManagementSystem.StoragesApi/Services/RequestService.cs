@@ -21,7 +21,8 @@ namespace ManagementSystem.StoragesApi.Services
         public IEnumerable<RequestInfo> GetListRequests()
         {
             string[] includes = { "Branch", "Storage", "Supplier"  };
-            IQueryable<Request> requests = _unitOfWork.RequestRepository.GetWithInclude(r => true, includes);
+            IQueryable<Request> requests = _unitOfWork.RequestRepository.GetWithInclude(r => true, includes).OrderBy(r => r.Status)
+                    .ThenByDescending(r => r.ModifyDate);
             List<RequestInfo> list = new List<RequestInfo>();
             foreach (Request request in requests)
             {
