@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.StoragesApi.Controllers.SeedingData;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
@@ -25,7 +26,15 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<BillPayment> BillPayments { get; set; }
         public DbSet<RequestSample> RequestSamples { get; set; }
         public DbSet<Request> Requests { get; set; }
+        public DbSet<AnimalPartRefCode> AnimalPartRefCodes { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Category>().HasData(CategoriesSeeding.GetCategoies());
+            modelBuilder.Entity<AnimalPartRefCode>().HasData(AnimalPartRefCodesSeeding.GenerateAnimalPartRefCodes());
+        }
     }
 }
 
