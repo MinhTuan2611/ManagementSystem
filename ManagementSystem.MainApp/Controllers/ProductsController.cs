@@ -107,5 +107,17 @@ namespace ManagementSystem.MainApp.Controllers
             List<ProductDetailInSale>? product = await HttpRequestsHelper.Get<List<ProductDetailInSale>>(APIUrl + "autocomplete-get-product-detail-for-sale?barcode=" + barcode);
             return Ok(product);
         }
+
+        [HttpGet()]
+        [Route("auto-generate-product-code")]
+        public async Task<IActionResult> AutoGenerateProductCode([FromQuery] int categoryId, [FromQuery] string productName)
+        {
+            var response = await HttpRequestsHelper.Get<string>(APIUrl + 
+                    string.Format("auto-generate-product-code?categoryId={0}&productName={1}", categoryId, productName));
+            
+            if (string.IsNullOrEmpty(response))
+                return BadRequest("Can not generate Code because invalid category id or productname can not be found");
+            return Ok(response);
+        }
     }
 }

@@ -348,5 +348,30 @@ namespace ManagementSystem.StoragesApi.Services
             
             return productDetailInSales;
         }
+
+        public string GenerateProductCode(int categoryId, string productName)
+        {
+            string categoryRefCode = _unitOfWork.CategoryRepository.Get(x => x.CategoryId == categoryId)?.CategoryRefCode.ToString();
+            string animalPartRefCode = _unitOfWork.AnimalPartRefCodeRepository.Get(x => 
+                    CheckAnimalPartInProductName(productName, x.PartName.Split("/").ToList()))?.RefCode.ToString(); // Handle some part like Nọng/má
+
+            //// check category is valid
+            if (string.IsNullOrEmpty(categoryRefCode) || string.IsNullOrEmpty(animalPartRefCode))
+                return "";
+
+            // Add 0 to the left if the code < 5
+            categoryRefCode = categoryRefCode.PadLeft(5, '0');
+            return string.Format("{0}{1}", categoryRefCode, animalPartRefCode);
+        }
+
+        // private function check part name is in product name
+        private bool CheckAnimalPartInProductName(string productName, List<string> AniamlPartSplit)
+        {
+            foreach (var part in AniamlPartSplit)
+            if (productName.ToLower().Contains(part.ToLower()))
+                return true;
+            return false;
+                
+        }
     }
 }

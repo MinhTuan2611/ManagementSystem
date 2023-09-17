@@ -22,6 +22,132 @@ namespace ManagementSystem.StoragesApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.AnimalPartRefCode", b =>
+                {
+                    b.Property<int>("AnimalPartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AnimalPartId"), 1L, 1);
+
+                    b.Property<string>("PartName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RefCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("AnimalPartId");
+
+                    b.ToTable("AnimalPartRefCodes");
+
+                    b.HasData(
+                        new
+                        {
+                            AnimalPartId = 1,
+                            PartName = "Mũi",
+                            RefCode = "001"
+                        },
+                        new
+                        {
+                            AnimalPartId = 2,
+                            PartName = "Nọng/má",
+                            RefCode = "002"
+                        },
+                        new
+                        {
+                            AnimalPartId = 3,
+                            PartName = "Thủ/đầu",
+                            RefCode = "003"
+                        },
+                        new
+                        {
+                            AnimalPartId = 4,
+                            PartName = "Tai",
+                            RefCode = "004"
+                        },
+                        new
+                        {
+                            AnimalPartId = 5,
+                            PartName = "Cổ",
+                            RefCode = "005"
+                        },
+                        new
+                        {
+                            AnimalPartId = 6,
+                            PartName = "Sườn vai",
+                            RefCode = "006"
+                        },
+                        new
+                        {
+                            AnimalPartId = 7,
+                            PartName = "Thịt vai",
+                            RefCode = "007"
+                        },
+                        new
+                        {
+                            AnimalPartId = 8,
+                            PartName = "Bắp giò",
+                            RefCode = "008"
+                        },
+                        new
+                        {
+                            AnimalPartId = 9,
+                            PartName = "Dựng/Móng giò",
+                            RefCode = "009"
+                        },
+                        new
+                        {
+                            AnimalPartId = 10,
+                            PartName = "Mỡ lưng",
+                            RefCode = "010"
+                        },
+                        new
+                        {
+                            AnimalPartId = 11,
+                            PartName = "Cốt lết",
+                            RefCode = "011"
+                        },
+                        new
+                        {
+                            AnimalPartId = 12,
+                            PartName = "Thăn",
+                            RefCode = "012"
+                        },
+                        new
+                        {
+                            AnimalPartId = 13,
+                            PartName = "Sườn",
+                            RefCode = "013"
+                        },
+                        new
+                        {
+                            AnimalPartId = 14,
+                            PartName = "Ba rọi",
+                            RefCode = "014"
+                        },
+                        new
+                        {
+                            AnimalPartId = 15,
+                            PartName = "Thịt mông",
+                            RefCode = "015"
+                        },
+                        new
+                        {
+                            AnimalPartId = 16,
+                            PartName = "Thịt đùi",
+                            RefCode = "016"
+                        },
+                        new
+                        {
+                            AnimalPartId = 17,
+                            PartName = "Đuôi",
+                            RefCode = "017"
+                        });
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.Bill", b =>
                 {
                     b.Property<int>("BillId")
@@ -211,11 +337,18 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("CategoryRefCode")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CreateBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
@@ -223,12 +356,721 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<DateTime>("ModifyDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("ParentId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("CategoryId");
 
                     b.ToTable("Category");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            CategoryName = "CÔNG CỤ DỤNG CỤ",
+                            CategoryRefCode = 1,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6653),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6668),
+                            ParentId = 0,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            CategoryName = "HÀNG HOÁ",
+                            CategoryRefCode = 2,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6700),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6703),
+                            ParentId = 0,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            CategoryName = "DỊCH VỤ",
+                            CategoryRefCode = 2,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6704),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6704),
+                            ParentId = 0,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 4,
+                            CategoryName = "TƯƠI SỐNG",
+                            CategoryRefCode = 21,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6705),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6705),
+                            ParentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 5,
+                            CategoryName = "THỰC PHẨM CÔNG NGHỆ",
+                            CategoryRefCode = 22,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6706),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6706),
+                            ParentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 6,
+                            CategoryName = "SỮA",
+                            CategoryRefCode = 23,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6712),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6713),
+                            ParentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 7,
+                            CategoryName = "NƯỚC UỐNG",
+                            CategoryRefCode = 24,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6781),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6783),
+                            ParentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 8,
+                            CategoryName = "ĐỒ UỐNG CÓ CỒN",
+                            CategoryRefCode = 25,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6788),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6788),
+                            ParentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 9,
+                            CategoryName = "HOÁ MỸ PHẨM",
+                            CategoryRefCode = 26,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6789),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6789),
+                            ParentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 10,
+                            CategoryName = "ĐỒ GIA DỤNG",
+                            CategoryRefCode = 27,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6791),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6791),
+                            ParentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 11,
+                            CategoryName = "ĐỒ CHƠI TRẺ EM",
+                            CategoryRefCode = 28,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6792),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6792),
+                            ParentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 12,
+                            CategoryName = "NHÃN HÀNG RIÊNG",
+                            CategoryRefCode = 29,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6793),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6793),
+                            ParentId = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 13,
+                            CategoryName = "THANH TOÁN ĐIỆN TỬ",
+                            CategoryRefCode = 31,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6794),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6795),
+                            ParentId = 3,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 14,
+                            CategoryName = "CARD ĐIỆN THOẠI",
+                            CategoryRefCode = 32,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6795),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6796),
+                            ParentId = 3,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 15,
+                            CategoryName = "Thịt tươi Các Loại",
+                            CategoryRefCode = 211,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6796),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6797),
+                            ParentId = 4,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 16,
+                            CategoryName = "Hải Sản",
+                            CategoryRefCode = 212,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6798),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6798),
+                            ParentId = 4,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 17,
+                            CategoryName = "Rau Củ",
+                            CategoryRefCode = 213,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6799),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6799),
+                            ParentId = 4,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 18,
+                            CategoryName = "Trái Cây",
+                            CategoryRefCode = 214,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6800),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6801),
+                            ParentId = 4,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 19,
+                            CategoryName = "Thực Phẩm Đông Mát",
+                            CategoryRefCode = 215,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6802),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6802),
+                            ParentId = 4,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 20,
+                            CategoryName = "Bánh Kẹo",
+                            CategoryRefCode = 221,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6803),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6803),
+                            ParentId = 5,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 21,
+                            CategoryName = "Mì/bún/miến (noodle)",
+                            CategoryRefCode = 222,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6804),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6804),
+                            ParentId = 5,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 22,
+                            CategoryName = "Trà, Cà Phê",
+                            CategoryRefCode = 223,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6805),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6805),
+                            ParentId = 5,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 23,
+                            CategoryName = "Gia Vị",
+                            CategoryRefCode = 224,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6806),
+                            Description = "Các loại gia vị, nuoc tuong, nước mắm, đường muối…",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6806),
+                            ParentId = 5,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 24,
+                            CategoryName = "Đồ Ăn Vặt",
+                            CategoryRefCode = 225,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6807),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6807),
+                            ParentId = 5,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 25,
+                            CategoryName = "Gạo",
+                            CategoryRefCode = 226,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6808),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6808),
+                            ParentId = 5,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 26,
+                            CategoryName = "Kem",
+                            CategoryRefCode = 227,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6809),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6810),
+                            ParentId = 5,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 27,
+                            CategoryName = "Sữa thanh trùng",
+                            CategoryRefCode = 231,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6810),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6811),
+                            ParentId = 6,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 28,
+                            CategoryName = "Sữa tươi",
+                            CategoryRefCode = 232,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6811),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6812),
+                            ParentId = 6,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 29,
+                            CategoryName = "Sữa đặc",
+                            CategoryRefCode = 233,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6813),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6813),
+                            ParentId = 6,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 30,
+                            CategoryName = "Sữa bột",
+                            CategoryRefCode = 234,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6814),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6814),
+                            ParentId = 6,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 31,
+                            CategoryName = "Bia",
+                            CategoryRefCode = 251,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6815),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6815),
+                            ParentId = 8,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 32,
+                            CategoryName = "Rượu",
+                            CategoryRefCode = 252,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6816),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6816),
+                            ParentId = 8,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 33,
+                            CategoryName = "Tã, giấy các loại",
+                            CategoryRefCode = 261,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6817),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6817),
+                            ParentId = 9,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 34,
+                            CategoryName = "Chăm sóc cá nhân",
+                            CategoryRefCode = 262,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6819),
+                            Description = "Kem đánh răng, bàn chải đánh răng, các loại mỹ phẩm",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6819),
+                            ParentId = 9,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 35,
+                            CategoryName = "Hoá phẩm tẩy rửa",
+                            CategoryRefCode = 263,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6820),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6820),
+                            ParentId = 9,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 36,
+                            CategoryName = "Đồ điện gia dụng",
+                            CategoryRefCode = 271,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6821),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6821),
+                            ParentId = 10,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 37,
+                            CategoryName = "Đồ vệ sinh nhà cửa",
+                            CategoryRefCode = 272,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6822),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6822),
+                            ParentId = 10,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 38,
+                            CategoryName = "Đồ dùng phòng ăn",
+                            CategoryRefCode = 273,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6823),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6824),
+                            ParentId = 10,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 39,
+                            CategoryName = "Đồ dùng cho bếp",
+                            CategoryRefCode = 274,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6824),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6825),
+                            ParentId = 10,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 40,
+                            CategoryName = "Đồ dùng nhà tắm",
+                            CategoryRefCode = 275,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6825),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6826),
+                            ParentId = 10,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 41,
+                            CategoryName = "Đồ dùng phòng khách",
+                            CategoryRefCode = 276,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6826),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6827),
+                            ParentId = 10,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 42,
+                            CategoryName = "Đồ dùng phòng ngủ",
+                            CategoryRefCode = 277,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6828),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6828),
+                            ParentId = 10,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 43,
+                            CategoryName = "Đồ dùng tiện lợi",
+                            CategoryRefCode = 278,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6829),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6829),
+                            ParentId = 10,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 44,
+                            CategoryName = "Đồ dùng văn phòng",
+                            CategoryRefCode = 279,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6830),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6830),
+                            ParentId = 10,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 45,
+                            CategoryName = "Đồ dùng văn phòng",
+                            CategoryRefCode = 279,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6831),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6831),
+                            ParentId = 10,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 46,
+                            CategoryName = "Đồ dùng khác",
+                            CategoryRefCode = 280,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6832),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6832),
+                            ParentId = 10,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 47,
+                            CategoryName = "Gia súc",
+                            CategoryRefCode = 2111,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6833),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6833),
+                            ParentId = 15,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 48,
+                            CategoryName = "Gia cầm",
+                            CategoryRefCode = 2112,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6834),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6835),
+                            ParentId = 15,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 49,
+                            CategoryName = "Cá",
+                            CategoryRefCode = 2121,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6835),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6836),
+                            ParentId = 16,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 50,
+                            CategoryName = "Nhuyễn thể",
+                            CategoryRefCode = 2122,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6836),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6837),
+                            ParentId = 16,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 51,
+                            CategoryName = "Mực",
+                            CategoryRefCode = 2123,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6838),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6838),
+                            ParentId = 16,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 52,
+                            CategoryName = "Mực",
+                            CategoryRefCode = 2123,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6839),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6839),
+                            ParentId = 16,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 53,
+                            CategoryName = "Rau",
+                            CategoryRefCode = 2131,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6840),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6840),
+                            ParentId = 17,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 54,
+                            CategoryName = "Củ",
+                            CategoryRefCode = 2132,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6841),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6841),
+                            ParentId = 17,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 55,
+                            CategoryName = "Trái cây nội địa",
+                            CategoryRefCode = 2141,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6842),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6842),
+                            ParentId = 18,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 56,
+                            CategoryName = "Trái cây nhập khẩu",
+                            CategoryRefCode = 2142,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6843),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6843),
+                            ParentId = 18,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 57,
+                            CategoryName = "Đồ ngoại nhập",
+                            CategoryRefCode = 2151,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6844),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6844),
+                            ParentId = 19,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 58,
+                            CategoryName = "Thực phẩm khô",
+                            CategoryRefCode = 2151,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6845),
+                            Description = "Cá khô, khô mực",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6846),
+                            ParentId = 19,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 59,
+                            CategoryName = "Bò",
+                            CategoryRefCode = 21111,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6846),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6847),
+                            ParentId = 47,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 60,
+                            CategoryName = "Heo",
+                            CategoryRefCode = 21112,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6847),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6848),
+                            ParentId = 47,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 61,
+                            CategoryName = "Dê",
+                            CategoryRefCode = 21113,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6848),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6849),
+                            ParentId = 47,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 62,
+                            CategoryName = "Nai",
+                            CategoryRefCode = 21114,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6850),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6850),
+                            ParentId = 47,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 63,
+                            CategoryName = "Gà",
+                            CategoryRefCode = 21121,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6851),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6851),
+                            ParentId = 48,
+                            Status = 0
+                        },
+                        new
+                        {
+                            CategoryId = 64,
+                            CategoryName = "Vịt",
+                            CategoryRefCode = 21122,
+                            CreateDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6852),
+                            Description = "",
+                            ModifyDate = new DateTime(2023, 9, 16, 19, 9, 32, 712, DateTimeKind.Local).AddTicks(6852),
+                            ParentId = 48,
+                            Status = 0
+                        });
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Customer", b =>
