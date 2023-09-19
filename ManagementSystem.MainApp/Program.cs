@@ -1,4 +1,3 @@
-using ManagementSystem.MainApp.Mappings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -70,9 +69,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-
-// Add auto mapper
-builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 
