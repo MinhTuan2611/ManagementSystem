@@ -77,5 +77,17 @@ namespace ManagementSystem.StoragesApi.Controllers
             List<ProductDetailInSale>? product = _ProductService.AutoCompleteGetProductDetailForSale(barcode);
             return Ok(product);
         }
+
+        [HttpGet()]
+        [Route("auto-generate-product-code")]
+        public IActionResult GenerateProductCode([FromQuery] int categoryId, [FromQuery] string productName )
+        {
+            string generateCode = _ProductService.GenerateProductCode(categoryId, productName);
+
+            if (generateCode.Contains("can not be found."))
+                return StatusCode(StatusCodes.Status500InternalServerError, generateCode);
+
+            return Ok(generateCode);
+        }
     }
 }
