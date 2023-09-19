@@ -27,6 +27,8 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<RequestSample> RequestSamples { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<AnimalPartRefCode> AnimalPartRefCodes { get; set; }
+        public DbSet<RequestSampleItem> RequestSampleItems { get; set; }
+        public DbSet<ActivityLog> ActivityLog { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +36,8 @@ namespace ManagementSystem.StoragesApi.Data
 
             modelBuilder.Entity<Category>().HasData(CategoriesSeeding.GetCategoies());
             modelBuilder.Entity<AnimalPartRefCode>().HasData(AnimalPartRefCodesSeeding.GenerateAnimalPartRefCodes());
+
+            modelBuilder.Entity<RequestSampleItem>().HasKey(x => new {x.ProductId, x.RequestSampleId, x.UnitId});
         }
     }
 }

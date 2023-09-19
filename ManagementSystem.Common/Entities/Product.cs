@@ -23,5 +23,6 @@ namespace ManagementSystem.Common.Entities
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public int DefaultPurchasePrice { get; set; }
         public Category? Category { get; set; }
+        public List<RequestSampleItem> RequestSampleItems { get; set; }
     }
 }

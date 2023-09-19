@@ -1,4 +1,5 @@
-﻿using ManagementSystem.Common.Entities;
+﻿using AutoMapper;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
@@ -12,10 +13,12 @@ namespace ManagementSystem.StoragesApi.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly CustomersService _CustomersService;
+        private readonly IMapper _mapper;
 
-        public CustomersController(StoragesDbContext context)
+        public CustomersController(StoragesDbContext context, IMapper mapper)
         {
             _CustomersService = new CustomersService(context);
+            _mapper = mapper;
         }
         [HttpGet("get")]
         public List<Customer> Get()
@@ -30,12 +33,19 @@ namespace ManagementSystem.StoragesApi.Controllers
             return customer;
         }
         [HttpPost("create")]
-        public IActionResult Create(Customer customer)
+        public IActionResult Create([FromBody] NewCustomerRequestDto customerDto)
         {
-            var newCustomer = _CustomersService.CreateCustomer(customer);
-            if (newCustomer != null)
+            // Map customerDto to customer
+            var newCustomer = _mapper.Map<Customer>(customerDto);
+
+            // Add customer Metadata
+            newCustomer.CreateBy = customerDto.UserId;
+            newCustomer.ModifyBy = customerDto.UserId;
+
+            var result = _CustomersService.CreateCustomer(newCustomer);
+            if (result != null)
             {
-                return Ok(newCustomer);
+                return Ok(result);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
@@ -59,10 +69,20 @@ namespace ManagementSystem.StoragesApi.Controllers
             string pattern = @"^[a-zA-Z0-9-]+$";
             Regex rg = new Regex(pattern);
 
+            var customers = new List<Customer>();
+
             if (!rg.IsMatch(searchTerm)) // Search term is empty, we will get all customer
-                return Ok(_CustomersService.GetListCustomers());
-           
-            return Ok(_CustomersService.GetCustomerBySearchTerm(searchTerm));
+            {
+                customers = _CustomersService.GetListCustomers();
+            }
+            else
+            {
+                customers = _CustomersService.GetCustomerBySearchTerm(searchTerm);
+            }
+            // Map Customer to CustomerDto to reponse
+            var customerDto = _mapper.Map<List<CustomerResponseDto>>(customers);
+
+            return Ok(customerDto);
 
         }
     }
