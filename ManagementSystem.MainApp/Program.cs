@@ -15,9 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication();
-builder.Services.AddServerSentEvents();
-builder.Services.AddServerSentEvents<IServerSentEventsServices, ServerSentEventsServices>();
-builder.Services.AddScoped<IServerSentEventsServices, ServerSentEventsServices>();
+builder.Services.AddServerSentEvents<INotificationsServices, NotificationsServices>();
 builder.Services.AddAuthentication(option =>
 {
     option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -94,7 +92,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowAllOrigins");
 app.MapControllers();
-app.MapServerSentEvents<ServerSentEventsServices>("/api/sse", new ServerSentEventsOptions
+app.MapServerSentEvents<NotificationsServices>("/api/sse", new ServerSentEventsOptions
 {
     RequireAcceptHeader = false,
     OnPrepareAccept = response =>

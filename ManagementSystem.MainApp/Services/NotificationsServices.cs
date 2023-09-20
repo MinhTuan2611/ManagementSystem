@@ -3,9 +3,9 @@ using Microsoft.Extensions.Options;
 
 namespace ManagementSystem.MainApp.Services
 {
-    public class ServerSentEventsServices : ServerSentEventsService, IServerSentEventsServices
+    public class NotificationsServices : ServerSentEventsService, INotificationsServices
     {
-        public ServerSentEventsServices(IOptions<ServerSentEventsServiceOptions<ServerSentEventsServices>> options)
+        public NotificationsServices(IOptions<ServerSentEventsServiceOptions<NotificationsServices>> options)
             : base(options.ToBaseServerSentEventsServiceOptions())
         { }
         public async Task SendMessageAsync(string actionType, string eventId, string message, bool isCompleted = false)

@@ -13,9 +13,9 @@ namespace ManagementSystem.MainApp.Controllers
     [ApiController]
     public class BillsController : ControllerBase
     {
-        private readonly IServerSentEventsServices _serverSentEventsServices;
+        private readonly INotificationsServices _serverSentEventsServices;
 
-        public BillsController(IServerSentEventsServices serverSentEventsServices)
+        public BillsController(INotificationsServices serverSentEventsServices)
         {
             _serverSentEventsServices = serverSentEventsServices;
         }
@@ -45,7 +45,7 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> MomoIPN()
         {
             await _serverSentEventsServices.SendMessageAsync("MOMO_TRACKING", "1234", "Completed");
-            return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
+            return StatusCode(StatusCodes.Status204NoContent);
         }
     }
 }

@@ -3,7 +3,7 @@ using ManagementSystem.Common.Models;
 
 namespace ManagementSystem.MainApp.Services
 {
-    public interface IServerSentEventsServices : IServerSentEventsService
+    public interface INotificationsServices : IServerSentEventsService
     {
         public Task SendMessageAsync(string typeId, string eventId, string message, bool isCompleted = false);
     }
