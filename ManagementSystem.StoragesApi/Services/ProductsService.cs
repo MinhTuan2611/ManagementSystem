@@ -2,20 +2,23 @@
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.StoragesApi.Services
 {
     public class ProductsService
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly StoragesDbContext _storageContext;
         public ProductsService(StoragesDbContext context)
         {
             _unitOfWork = new UnitOfWork(context);
+            _storageContext = context;
         }
 
         public List<ProductListResponse> GetListProduct(string? searchValue, int? categoryId)
         {
-            string[] includes = { "Category" };
+            string[] includes = { "Category"};
             IQueryable<Product> products = _unitOfWork.ProductRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes);
             if(searchValue != null && searchValue != String.Empty)
             {
@@ -128,6 +131,7 @@ namespace ManagementSystem.StoragesApi.Services
                 product.Tax = request.Tax;
                 product.Price = request.Units[0].Price;
                 product.BarCode = request.Units[0].Barcode;
+                product.AccountId = request.AccountId;
 
                 _unitOfWork.ProductRepository.Insert(product);
                 _unitOfWork.Save();
@@ -147,6 +151,34 @@ namespace ManagementSystem.StoragesApi.Services
                     _unitOfWork.ProductUnitRepository.Insert(productUnit);
                     _unitOfWork.Save();
                 }
+
+                // Add Product Supplier
+                foreach (var item in request.ProductSuppliers)
+                {
+                     var supplier = new ProductSupplier()
+                     {
+                        ProductId = product.ProductId,
+                        SupplierId = item.SupplierId,
+                        CreateBy = request.ModifyBy,
+                        ModifyBy = request.ModifyBy,
+                     };
+
+                     _unitOfWork.ProductSupplierRepository.Insert(supplier);
+                     _unitOfWork.Save();                    
+                }
+
+
+                // Add activity logs
+                _storageContext.ActivityLog.Add(new ActivityLog()
+                {
+                    UserId = request.ModifyBy.Value,
+                    Action = "Create Product: " + product.ProductId.ToString(),
+                    Source = "Product",
+                    DateModified = DateTime.Now,
+                });
+
+                _storageContext.SaveChanges();
+
                 _unitOfWork.Dispose();
                 return true;
             } catch (Exception ex)
@@ -168,6 +200,7 @@ namespace ManagementSystem.StoragesApi.Services
                 product.Tax = request.Tax;
                 product.Price = request.Units[0].Price;
                 product.BarCode = request.Units[0].Barcode;
+                product.AccountId = request.AccountId;
                 product.ModifyBy = request.ModifyBy;
 
                 _unitOfWork.ProductRepository.Update(product);
@@ -190,8 +223,6 @@ namespace ManagementSystem.StoragesApi.Services
                 {
                     if (request.Units[i].Id != null)
                     {
-
-
                         ProductUnit productUnit = currentUnit.Where(x => x.Id == request.Units[i].Id).First();
                         productUnit.ProductId = product.ProductId;
                         productUnit.UnitId = request.Units[i].UnitId;
@@ -218,8 +249,40 @@ namespace ManagementSystem.StoragesApi.Services
                         _unitOfWork.ProductUnitRepository.Insert(productUnit);
                     }
                 }
+
                 _unitOfWork.Save();
+
+                // Update Supplier
+                var suppiers = _storageContext.ProductSuppliers.Where(x => x.ProductId == product.ProductId).ToList();
+
+                _storageContext.ProductSuppliers.RemoveRange(suppiers);
+
+                // Add Product Supplier
+                List<ProductSupplier> suppliers = new List<ProductSupplier>();
+                foreach (var item in request.ProductSuppliers)
+                {
+                    var supplier = new ProductSupplier()
+                    {
+                        ProductId = request.ProductId,
+                        SupplierId = item.SupplierId,
+                        CreateBy = request.ModifyBy,
+                        ModifyBy = request.ModifyBy,
+                    };
+
+                    _storageContext.ProductSuppliers.Add(supplier);
+                }
+                // Add activity logs
+                _storageContext.ActivityLog.Add(new ActivityLog()
+                {
+                    UserId = request.ModifyBy.Value,
+                    Action = "Update Product: " + product.ProductId.ToString(),
+                    Source = "Product",
+                    DateModified = DateTime.Now,
+                });
+
+                _storageContext.SaveChanges();
                 _unitOfWork.Dispose();
+
                 return true;
             }
             catch

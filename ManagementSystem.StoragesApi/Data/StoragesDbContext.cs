@@ -15,6 +15,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<Storage> Storages { get; set; }
         public DbSet<Unit> Unit { get; set; }
         public DbSet<Category> Category { get; set; }
+        public DbSet<TypesOfAccounts> TypesOfAccounts { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductStorage> ProductStorages { get; set; }
         public DbSet<ProductUnit> ProductUnit { get; set; }
@@ -29,6 +30,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<AnimalPartRefCode> AnimalPartRefCodes { get; set; }
         public DbSet<RequestSampleItem> RequestSampleItems { get; set; }
         public DbSet<ActivityLog> ActivityLog { get; set; }
+        public DbSet<ProductSupplier> ProductSuppliers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +40,7 @@ namespace ManagementSystem.StoragesApi.Data
             modelBuilder.Entity<AnimalPartRefCode>().HasData(AnimalPartRefCodesSeeding.GenerateAnimalPartRefCodes());
 
             modelBuilder.Entity<RequestSampleItem>().HasKey(x => new {x.ProductId, x.RequestSampleId, x.UnitId});
+            modelBuilder.Entity<ProductSupplier>().HasKey(x => new { x.SupplierId, x.ProductId });
         }
     }
 }

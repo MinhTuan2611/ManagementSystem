@@ -75,7 +75,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Recordingtransactions");
+                    b.ToTable("Recordingtransactions", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.TypesOfAccounts", b =>
@@ -123,7 +123,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("TypesOfAccounts");
+                    b.ToTable("TypesOfAccounts", (string)null);
                 });
 #pragma warning restore 612, 618
         }
