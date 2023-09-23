@@ -57,6 +57,7 @@ namespace ManagementSystem.StoragesApi.Services
                     _unitOfWork.BillPaymentRepository.Insert(newPaymentDetail);
                     _unitOfWork.Save();
                     detail.Id = newPaymentDetail.Id;
+                    detail.BillId = newBill.BillId;
                 }
                 foreach (BillDetailInfo detail in bill.Details)
                 {
@@ -79,6 +80,7 @@ namespace ManagementSystem.StoragesApi.Services
                     _unitOfWork.BillDetailRepository.Insert(newDetail);
                     _unitOfWork.Save();
                     detail.Id = newDetail.Id;
+                    detail.BillId = newDetail.BillId;
                 }
                 _unitOfWork.Dispose();
                 return bill;
@@ -98,7 +100,7 @@ namespace ManagementSystem.StoragesApi.Services
                     return false;
                 }
                 var billData = _unitOfWork.BillRepository.GetByID(bill.BillId);
-                billData.PaymentStatus = bill.PaymentStatus;
+                billData.PaymentStatus = PaymentStatus.Paid;
                 billData.IsAutoComplete = bill.IsAutoCompelte;
                 _unitOfWork.BillRepository.Update(billData);
                 _unitOfWork.Save();
@@ -121,7 +123,7 @@ namespace ManagementSystem.StoragesApi.Services
                             Amount = detail.Amount,
                             PaymentMethod = paymentMethod,
                             Bill = billData,
-                            PaymentStatus = detail.PaymentStatus,
+                            PaymentStatus = PaymentStatus.Paid,
                         };
                         _unitOfWork.BillPaymentRepository.Insert(newPaymentDetail);
                         _unitOfWork.Save();
