@@ -36,7 +36,8 @@ namespace ManagementSystem.StoragesApi.Services
                     totalAmount = bill.totalAmount,
                     totalPaid = bill.totalPaid,
                     totalChange = bill.totalChange,
-                    CustomerId = bill.CustomerId
+                    CustomerId = bill.CustomerId,
+                    PaymentStatus = PaymentStatus.UnPaid,
                 };
                 _unitOfWork.BillRepository.Insert(newBill);
                 _unitOfWork.Save();
@@ -51,6 +52,7 @@ namespace ManagementSystem.StoragesApi.Services
                         Amount = detail.Amount,
                         PaymentMethod = paymentMethod,
                         Bill = newBill,
+                        PaymentStatus = PaymentStatus.UnPaid,
                     };
                     _unitOfWork.BillPaymentRepository.Insert(newPaymentDetail);
                     _unitOfWork.Save();
@@ -86,6 +88,51 @@ namespace ManagementSystem.StoragesApi.Services
                 return null;
             }
 
+        }
+        public bool CompleteBill(BillInfo bill)
+        {
+            try
+            {
+                if(bill.BillId == null)
+                {
+                    return false;
+                }
+                var billData = _unitOfWork.BillRepository.GetByID(bill.BillId);
+                billData.PaymentStatus = bill.PaymentStatus;
+                billData.IsAutoComplete = bill.IsAutoCompelte;
+                _unitOfWork.BillRepository.Update(billData);
+                _unitOfWork.Save();
+                foreach (PaymentDetail detail in bill.Payments)
+                {
+                    var paymentMethod = _unitOfWork.PaymentMethodRepository.GetFirst(x => x.PaymentMethodCode == detail.PaymentMethodCode);
+                    if(detail.Id != null)
+                    {
+                        var paymentDetail = _unitOfWork.BillPaymentRepository.GetByID(detail.Id);
+                        paymentDetail.PaymentStatus = detail.PaymentStatus;
+                        paymentDetail.Amount = detail.Amount;
+                        _unitOfWork.BillPaymentRepository.Update(paymentDetail);
+                        _unitOfWork.Save();
+                    } else
+                    {
+                        var newPaymentDetail = new BillPayment
+                        {
+                            BillId = bill.BillId ?? 0,
+                            PaymentMethodId = paymentMethod.PaymentMethodId,
+                            Amount = detail.Amount,
+                            PaymentMethod = paymentMethod,
+                            Bill = billData,
+                            PaymentStatus = detail.PaymentStatus,
+                        };
+                        _unitOfWork.BillPaymentRepository.Insert(newPaymentDetail);
+                        _unitOfWork.Save();
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex) 
+            {
+                return false;
+            }
         }
     }
 }

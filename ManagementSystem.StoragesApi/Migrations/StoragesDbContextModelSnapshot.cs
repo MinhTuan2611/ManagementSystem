@@ -192,11 +192,17 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsAutoComplete")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ModifyDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("totalAmount")
                         .HasColumnType("int");
@@ -297,6 +303,12 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<int>("PaymentMethodId")
                         .HasColumnType("int");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentTransactionRef")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -399,9 +411,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 1,
                             CategoryName = "CÔNG CỤ DỤNG CỤ",
                             CategoryRefCode = 1,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6490),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5049),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6501),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5057),
                             ParentId = 0,
                             Status = 0
                         },
@@ -410,9 +422,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 2,
                             CategoryName = "HÀNG HOÁ",
                             CategoryRefCode = 2,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6510),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5065),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6510),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5065),
                             ParentId = 0,
                             Status = 0
                         },
@@ -421,9 +433,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 3,
                             CategoryName = "DỊCH VỤ",
                             CategoryRefCode = 2,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6511),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5066),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6512),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5067),
                             ParentId = 0,
                             Status = 0
                         },
@@ -432,9 +444,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 4,
                             CategoryName = "TƯƠI SỐNG",
                             CategoryRefCode = 21,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6513),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5068),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6513),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5068),
                             ParentId = 2,
                             Status = 0
                         },
@@ -443,9 +455,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 5,
                             CategoryName = "THỰC PHẨM CÔNG NGHỆ",
                             CategoryRefCode = 22,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6514),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5069),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6514),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5070),
                             ParentId = 2,
                             Status = 0
                         },
@@ -454,9 +466,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 6,
                             CategoryName = "SỮA",
                             CategoryRefCode = 23,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6518),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5075),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6518),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5075),
                             ParentId = 2,
                             Status = 0
                         },
@@ -465,9 +477,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 7,
                             CategoryName = "NƯỚC UỐNG",
                             CategoryRefCode = 24,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6519),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5077),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6520),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5077),
                             ParentId = 2,
                             Status = 0
                         },
@@ -476,9 +488,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 8,
                             CategoryName = "ĐỒ UỐNG CÓ CỒN",
                             CategoryRefCode = 25,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6520),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5078),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6521),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5079),
                             ParentId = 2,
                             Status = 0
                         },
@@ -487,9 +499,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 9,
                             CategoryName = "HOÁ MỸ PHẨM",
                             CategoryRefCode = 26,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6521),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5080),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6522),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5080),
                             ParentId = 2,
                             Status = 0
                         },
@@ -498,9 +510,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 10,
                             CategoryName = "ĐỒ GIA DỤNG",
                             CategoryRefCode = 27,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6523),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5082),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6524),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5083),
                             ParentId = 2,
                             Status = 0
                         },
@@ -509,9 +521,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 11,
                             CategoryName = "ĐỒ CHƠI TRẺ EM",
                             CategoryRefCode = 28,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6524),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5084),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6525),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5084),
                             ParentId = 2,
                             Status = 0
                         },
@@ -520,9 +532,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 12,
                             CategoryName = "NHÃN HÀNG RIÊNG",
                             CategoryRefCode = 29,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6526),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5085),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6526),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5086),
                             ParentId = 2,
                             Status = 0
                         },
@@ -531,9 +543,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 13,
                             CategoryName = "THANH TOÁN ĐIỆN TỬ",
                             CategoryRefCode = 31,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6527),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5087),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6527),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5087),
                             ParentId = 3,
                             Status = 0
                         },
@@ -542,9 +554,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 14,
                             CategoryName = "CARD ĐIỆN THOẠI",
                             CategoryRefCode = 32,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6528),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5089),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6528),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5089),
                             ParentId = 3,
                             Status = 0
                         },
@@ -553,9 +565,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 15,
                             CategoryName = "Thịt tươi Các Loại",
                             CategoryRefCode = 211,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6529),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5090),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6529),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5091),
                             ParentId = 4,
                             Status = 0
                         },
@@ -564,9 +576,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 16,
                             CategoryName = "Hải Sản",
                             CategoryRefCode = 212,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6530),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5092),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6530),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5092),
                             ParentId = 4,
                             Status = 0
                         },
@@ -575,9 +587,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 17,
                             CategoryName = "Rau Củ",
                             CategoryRefCode = 213,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6531),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5093),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6531),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5094),
                             ParentId = 4,
                             Status = 0
                         },
@@ -586,9 +598,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 18,
                             CategoryName = "Trái Cây",
                             CategoryRefCode = 214,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6533),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5096),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6533),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5096),
                             ParentId = 4,
                             Status = 0
                         },
@@ -597,9 +609,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 19,
                             CategoryName = "Thực Phẩm Đông Mát",
                             CategoryRefCode = 215,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6564),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5097),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6567),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5098),
                             ParentId = 4,
                             Status = 0
                         },
@@ -608,9 +620,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 20,
                             CategoryName = "Bánh Kẹo",
                             CategoryRefCode = 221,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6568),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5099),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6568),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5099),
                             ParentId = 5,
                             Status = 0
                         },
@@ -619,9 +631,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 21,
                             CategoryName = "Mì/bún/miến (noodle)",
                             CategoryRefCode = 222,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6569),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5101),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6570),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5101),
                             ParentId = 5,
                             Status = 0
                         },
@@ -630,9 +642,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 22,
                             CategoryName = "Trà, Cà Phê",
                             CategoryRefCode = 223,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6570),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5102),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6571),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5102),
                             ParentId = 5,
                             Status = 0
                         },
@@ -641,9 +653,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 23,
                             CategoryName = "Gia Vị",
                             CategoryRefCode = 224,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6572),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5141),
                             Description = "Các loại gia vị, nuoc tuong, nước mắm, đường muối…",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6572),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5141),
                             ParentId = 5,
                             Status = 0
                         },
@@ -652,9 +664,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 24,
                             CategoryName = "Đồ Ăn Vặt",
                             CategoryRefCode = 225,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6573),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5142),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6573),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5143),
                             ParentId = 5,
                             Status = 0
                         },
@@ -663,9 +675,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 25,
                             CategoryName = "Gạo",
                             CategoryRefCode = 226,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6574),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5144),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6574),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5144),
                             ParentId = 5,
                             Status = 0
                         },
@@ -674,9 +686,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 26,
                             CategoryName = "Kem",
                             CategoryRefCode = 227,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6575),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5146),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6575),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5146),
                             ParentId = 5,
                             Status = 0
                         },
@@ -685,9 +697,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 27,
                             CategoryName = "Sữa thanh trùng",
                             CategoryRefCode = 231,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6576),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5147),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6576),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5148),
                             ParentId = 6,
                             Status = 0
                         },
@@ -696,9 +708,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 28,
                             CategoryName = "Sữa tươi",
                             CategoryRefCode = 232,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6577),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5149),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6577),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5149),
                             ParentId = 6,
                             Status = 0
                         },
@@ -707,9 +719,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 29,
                             CategoryName = "Sữa đặc",
                             CategoryRefCode = 233,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6578),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5150),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6578),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5151),
                             ParentId = 6,
                             Status = 0
                         },
@@ -718,9 +730,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 30,
                             CategoryName = "Sữa bột",
                             CategoryRefCode = 234,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6579),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5152),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6580),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5152),
                             ParentId = 6,
                             Status = 0
                         },
@@ -729,9 +741,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 31,
                             CategoryName = "Bia",
                             CategoryRefCode = 251,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6580),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5153),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6581),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5154),
                             ParentId = 8,
                             Status = 0
                         },
@@ -740,9 +752,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 32,
                             CategoryName = "Rượu",
                             CategoryRefCode = 252,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6581),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5155),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6582),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5155),
                             ParentId = 8,
                             Status = 0
                         },
@@ -751,9 +763,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 33,
                             CategoryName = "Tã, giấy các loại",
                             CategoryRefCode = 261,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6583),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5156),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6583),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5157),
                             ParentId = 9,
                             Status = 0
                         },
@@ -762,9 +774,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 34,
                             CategoryName = "Chăm sóc cá nhân",
                             CategoryRefCode = 262,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6584),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5159),
                             Description = "Kem đánh răng, bàn chải đánh răng, các loại mỹ phẩm",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6585),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5159),
                             ParentId = 9,
                             Status = 0
                         },
@@ -773,9 +785,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 35,
                             CategoryName = "Hoá phẩm tẩy rửa",
                             CategoryRefCode = 263,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6586),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5161),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6586),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5161),
                             ParentId = 9,
                             Status = 0
                         },
@@ -784,9 +796,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 36,
                             CategoryName = "Đồ điện gia dụng",
                             CategoryRefCode = 271,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6587),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5162),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6587),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5162),
                             ParentId = 10,
                             Status = 0
                         },
@@ -795,9 +807,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 37,
                             CategoryName = "Đồ vệ sinh nhà cửa",
                             CategoryRefCode = 272,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6588),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5164),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6588),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5164),
                             ParentId = 10,
                             Status = 0
                         },
@@ -806,9 +818,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 38,
                             CategoryName = "Đồ dùng phòng ăn",
                             CategoryRefCode = 273,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6589),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5165),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6589),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5166),
                             ParentId = 10,
                             Status = 0
                         },
@@ -817,9 +829,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 39,
                             CategoryName = "Đồ dùng cho bếp",
                             CategoryRefCode = 274,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6590),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5167),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6590),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5167),
                             ParentId = 10,
                             Status = 0
                         },
@@ -828,9 +840,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 40,
                             CategoryName = "Đồ dùng nhà tắm",
                             CategoryRefCode = 275,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6591),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5168),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6591),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5169),
                             ParentId = 10,
                             Status = 0
                         },
@@ -839,9 +851,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 41,
                             CategoryName = "Đồ dùng phòng khách",
                             CategoryRefCode = 276,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6592),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5170),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6593),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5170),
                             ParentId = 10,
                             Status = 0
                         },
@@ -850,9 +862,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 42,
                             CategoryName = "Đồ dùng phòng ngủ",
                             CategoryRefCode = 277,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6593),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5171),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6594),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5172),
                             ParentId = 10,
                             Status = 0
                         },
@@ -861,9 +873,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 43,
                             CategoryName = "Đồ dùng tiện lợi",
                             CategoryRefCode = 278,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6594),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5173),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6595),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5173),
                             ParentId = 10,
                             Status = 0
                         },
@@ -872,9 +884,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 44,
                             CategoryName = "Đồ dùng văn phòng",
                             CategoryRefCode = 279,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6595),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5175),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6596),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5175),
                             ParentId = 10,
                             Status = 0
                         },
@@ -883,9 +895,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 45,
                             CategoryName = "Đồ dùng văn phòng",
                             CategoryRefCode = 279,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6597),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5176),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6597),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5177),
                             ParentId = 10,
                             Status = 0
                         },
@@ -894,9 +906,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 46,
                             CategoryName = "Đồ dùng khác",
                             CategoryRefCode = 280,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6598),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5178),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6598),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5178),
                             ParentId = 10,
                             Status = 0
                         },
@@ -905,9 +917,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 47,
                             CategoryName = "Gia súc",
                             CategoryRefCode = 2111,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6599),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5179),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6599),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5180),
                             ParentId = 15,
                             Status = 0
                         },
@@ -916,9 +928,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 48,
                             CategoryName = "Gia cầm",
                             CategoryRefCode = 2112,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6600),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5181),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6600),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5181),
                             ParentId = 15,
                             Status = 0
                         },
@@ -927,9 +939,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 49,
                             CategoryName = "Cá",
                             CategoryRefCode = 2121,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6601),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5182),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6601),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5183),
                             ParentId = 16,
                             Status = 0
                         },
@@ -938,9 +950,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 50,
                             CategoryName = "Nhuyễn thể",
                             CategoryRefCode = 2122,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6602),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5184),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6602),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5184),
                             ParentId = 16,
                             Status = 0
                         },
@@ -949,9 +961,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 51,
                             CategoryName = "Mực",
                             CategoryRefCode = 2123,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6603),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5185),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6604),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5186),
                             ParentId = 16,
                             Status = 0
                         },
@@ -960,9 +972,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 52,
                             CategoryName = "Mực",
                             CategoryRefCode = 2123,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6604),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5187),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6605),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5187),
                             ParentId = 16,
                             Status = 0
                         },
@@ -971,9 +983,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 53,
                             CategoryName = "Rau",
                             CategoryRefCode = 2131,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6605),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5188),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6606),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5189),
                             ParentId = 17,
                             Status = 0
                         },
@@ -982,9 +994,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 54,
                             CategoryName = "Củ",
                             CategoryRefCode = 2132,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6607),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5190),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6607),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5190),
                             ParentId = 17,
                             Status = 0
                         },
@@ -993,9 +1005,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 55,
                             CategoryName = "Trái cây nội địa",
                             CategoryRefCode = 2141,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6608),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5191),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6608),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5192),
                             ParentId = 18,
                             Status = 0
                         },
@@ -1004,9 +1016,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 56,
                             CategoryName = "Trái cây nhập khẩu",
                             CategoryRefCode = 2142,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6609),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5193),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6609),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5193),
                             ParentId = 18,
                             Status = 0
                         },
@@ -1015,9 +1027,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 57,
                             CategoryName = "Đồ ngoại nhập",
                             CategoryRefCode = 2151,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6610),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5194),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6610),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5195),
                             ParentId = 19,
                             Status = 0
                         },
@@ -1026,9 +1038,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 58,
                             CategoryName = "Thực phẩm khô",
                             CategoryRefCode = 2151,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6611),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5196),
                             Description = "Cá khô, khô mực",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6611),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5196),
                             ParentId = 19,
                             Status = 0
                         },
@@ -1037,9 +1049,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 59,
                             CategoryName = "Bò",
                             CategoryRefCode = 21111,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6612),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5197),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6612),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5198),
                             ParentId = 47,
                             Status = 0
                         },
@@ -1048,9 +1060,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 60,
                             CategoryName = "Heo",
                             CategoryRefCode = 21112,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6613),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5199),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6613),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5199),
                             ParentId = 47,
                             Status = 0
                         },
@@ -1059,9 +1071,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 61,
                             CategoryName = "Dê",
                             CategoryRefCode = 21113,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6614),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5200),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6614),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5201),
                             ParentId = 47,
                             Status = 0
                         },
@@ -1070,9 +1082,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 62,
                             CategoryName = "Nai",
                             CategoryRefCode = 21114,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6615),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5202),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6616),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5202),
                             ParentId = 47,
                             Status = 0
                         },
@@ -1081,9 +1093,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 63,
                             CategoryName = "Gà",
                             CategoryRefCode = 21121,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6616),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5203),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6617),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5204),
                             ParentId = 48,
                             Status = 0
                         },
@@ -1092,9 +1104,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                             CategoryId = 64,
                             CategoryName = "Vịt",
                             CategoryRefCode = 21122,
-                            CreateDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6617),
+                            CreateDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5205),
                             Description = "",
-                            ModifyDate = new DateTime(2023, 9, 19, 20, 15, 18, 940, DateTimeKind.Local).AddTicks(6618),
+                            ModifyDate = new DateTime(2023, 9, 23, 23, 31, 55, 823, DateTimeKind.Local).AddTicks(5205),
                             ParentId = 48,
                             Status = 0
                         });
@@ -1519,7 +1531,7 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.ToTable("RequestSamples");
                 });
 
-            modelBuilder.Entity("ManagementSystem.Common.Entities.RequestSampleItems", b =>
+            modelBuilder.Entity("ManagementSystem.Common.Entities.RequestSampleItem", b =>
                 {
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -1840,7 +1852,7 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Navigation("Supplier");
                 });
 
-            modelBuilder.Entity("ManagementSystem.Common.Entities.RequestSampleItems", b =>
+            modelBuilder.Entity("ManagementSystem.Common.Entities.RequestSampleItem", b =>
                 {
                     b.HasOne("ManagementSystem.Common.Entities.Product", "Product")
                         .WithMany("RequestSampleItems")

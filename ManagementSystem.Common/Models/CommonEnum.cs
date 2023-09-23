@@ -43,4 +43,10 @@ namespace ManagementSystem.Common.Models
         [Description("Công nợ/Chưa thanh toán")]
         OnDebt
     }
+    public enum PaymentStatus
+    {
+        UnPaid,
+        Paid,
+        Cancel
+    }
 }

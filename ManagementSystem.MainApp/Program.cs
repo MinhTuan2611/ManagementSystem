@@ -1,5 +1,4 @@
 using Lib.AspNetCore.ServerSentEvents;
-using ManagementSystem.MainApp.Mappings;
 using ManagementSystem.MainApp.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;

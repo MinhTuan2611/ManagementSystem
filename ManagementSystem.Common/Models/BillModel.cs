@@ -18,6 +18,8 @@ namespace ManagementSystem.Common.Models
         public int totalChange { get; set; } = 0;
         public int? CustomerId { get; set; }
         public string? CustomerName { get; set; }
+        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.UnPaid;
+        public bool IsAutoCompelte { get; set; } = false;
         public List<BillDetailInfo> Details { get; set; }
         public List<PaymentDetail> Payments { get; set; }
 
@@ -45,5 +47,6 @@ namespace ManagementSystem.Common.Models
         public string PaymentMethodCode { get; set; }
         public string? PaymentMethodName { get; set; }
         public int Amount { get; set; } = 0;
+        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.UnPaid;
     }
 }

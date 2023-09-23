@@ -33,5 +33,15 @@ namespace ManagementSystem.StoragesApi.Controllers
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
+        [HttpPost("complete-bill")]
+        public IActionResult CompleteBill(BillInfo bill)
+        {
+            var response = _BillsService.CompleteBill(bill);
+            if (response)
+            {
+                return Ok(response);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+        }
     }
 }

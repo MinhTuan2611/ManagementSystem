@@ -41,6 +41,16 @@ namespace ManagementSystem.MainApp.Controllers
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
         }
+        [HttpPost("complete-bill")]
+        public async Task<IActionResult> CompleteBill(BillInfo bill)
+        {
+            var response = await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + "bills/complete-bill", bill);
+            if (response)
+            {
+                return Ok(response);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
+        }
         [HttpPost("momo-ipn")]
         public async Task<IActionResult> MomoIPN()
         {
