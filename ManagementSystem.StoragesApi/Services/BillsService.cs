@@ -136,5 +136,16 @@ namespace ManagementSystem.StoragesApi.Services
                 return false;
             }
         }
+        public bool CheckMomoPayment(MomoRequestIPN request)
+        {
+            var orderId = Int32.Parse(request.OrderId.Split('-').Last());
+            var paymentMethod = _unitOfWork.PaymentMethodRepository.GetFirst(x => x.PaymentMethodCode == "MOMO");
+            var payment = _unitOfWork.BillPaymentRepository.GetFirst(x => x.BillId == orderId && x.PaymentMethodId == paymentMethod.PaymentMethodId);
+            if(payment.Amount != request.Amount)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

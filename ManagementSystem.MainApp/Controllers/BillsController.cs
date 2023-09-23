@@ -52,9 +52,16 @@ namespace ManagementSystem.MainApp.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
         }
         [HttpPost("momo-ipn")]
-        public async Task<IActionResult> MomoIPN()
+        public async Task<IActionResult> MomoIPN([FromBody] MomoRequestIPN request)
         {
-            await _serverSentEventsServices.SendMessageAsync("MOMO_TRACKING", "1234", "Completed");
+            //var response = await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + "bills/check-momo-payment", request);
+            if (request.ResultCode == 0)
+            {
+                await _serverSentEventsServices.SendMessageAsync("MOMO_TRACKING", "1234", "Completed");
+            } else
+            {
+                await _serverSentEventsServices.SendMessageAsync("MOMO_TRACKING", "1234", request.Message);
+            }
             return StatusCode(StatusCodes.Status204NoContent);
         }
     }

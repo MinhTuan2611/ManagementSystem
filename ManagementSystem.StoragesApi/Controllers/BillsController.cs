@@ -43,5 +43,11 @@ namespace ManagementSystem.StoragesApi.Controllers
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
+        [HttpPost("check-momo-payment")]
+        public IActionResult CompleteBill(MomoRequestIPN request)
+        {
+            var response = _BillsService.CheckMomoPayment(request);
+            return Ok(response);
+        }
     }
 }
