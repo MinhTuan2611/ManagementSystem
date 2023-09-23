@@ -1,4 +1,5 @@
 using ManagementSystem.StoragesApi.Data;
+using ManagementSystem.StoragesApi.Mappings;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Register Auto Mapping
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 

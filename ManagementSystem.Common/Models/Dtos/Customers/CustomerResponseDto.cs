@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ManagementSystem.MainApp.Dtos
+namespace ManagementSystem.Common.Models
 {
     public class CustomerResponseDto
     {

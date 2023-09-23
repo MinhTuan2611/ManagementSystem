@@ -1,5 +1,7 @@
+using AutoMapper;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,46 +13,75 @@ namespace ManagementSystem.StoragesApi.Controllers
     public class RequestSampleController : ControllerBase
     {
         private readonly IRequestSampleService _RequestSampleService;
+        private readonly IMapper _mapper;
 
-        public RequestSampleController(StoragesDbContext context)
+        public RequestSampleController(StoragesDbContext context, IMapper mapper)
         {
             _RequestSampleService = new RequestSampleService(context);
+            _mapper = mapper;
         }
-        [HttpGet("get")]
+
+        [HttpGet("get-samples")]
         public IActionResult Get()
         {
             var requests = _RequestSampleService.GetListRequestSamples();
             if (requests != null)
             {
-                var ls = requests as List<RequestSample> ?? requests.ToList();
-                if (ls.Any())
-                    return Ok(ls);
+                return Ok(requests);
+
+            }
+            return StatusCode(StatusCodes.Status404NotFound, "404 not found");
+        }
+
+        [HttpGet("get-sample")]
+        public IActionResult GetBySampleId([FromQuery]int sampleId)
+        {
+            var requests = _RequestSampleService.GetRequestSampleById(sampleId);
+            if (requests != null)
+            {
+                return Ok(requests);
+
             }
             return StatusCode(StatusCodes.Status404NotFound, "404 not found");
         }
 
         [HttpPost("create")]
-        public IActionResult Create(RequestSample requests)
+        public async Task<IActionResult> Create([FromBody] NewRequestSampleDto requests)
         {
-            var newrequests = _RequestSampleService.CreateRequestSample(requests);
+            var requestSample = _mapper.Map<RequestSample>(requests);
+
+            // Add Metadata
+            requestSample.CreateBy = requests.UserId;
+            requestSample.ModifyBy = requests.UserId;
+            requestSample.UserId = requests.UserId;
+
+            var newrequests = await _RequestSampleService.CreateRequestSample(requestSample);
             if (newrequests != null)
             {
-                return Ok(newrequests);
+                return Ok(true);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
 
         [HttpPost("update")]
-        public IActionResult Update(RequestSampleModel request)
+        public async Task<IActionResult> Update([FromBody] UpdateRequestSampleDto requests)
         {
-            bool updated = _RequestSampleService.UpdateRequestSample(request.Id, request);
+            var requestSample = _mapper.Map<RequestSample>(requests);
+
+            // Add Metadata
+            requestSample.CreateBy = requests.UserId;
+            requestSample.ModifyBy = requests.UserId;
+            requestSample.UserId = requests.UserId;
+
+            bool updated = await _RequestSampleService.UpdateRequestSample(requestSample);
             return Ok(updated);
         }
 
-        [HttpPost("delete")]
-        public IActionResult Delete(int id)
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> Delete([FromQuery] int requestId, [FromQuery] int userId)
         {
-            bool updated = _RequestSampleService.DeleteRequestSample(id);
+            bool updated = await _RequestSampleService.DeleteRequestSample(requestId, userId);
             return Ok(updated);
         }
     }

@@ -1,19 +1,20 @@
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos.RequestSamples;
 
 namespace ManagementSystem.StoragesApi.Services
 {
     public interface IRequestSampleService
     {
-        IEnumerable<RequestSample> GetListRequestSamples();
+        IEnumerable<ResponseSampleDto> GetListRequestSamples();
 
-        RequestSample GetRequestSampleById(int requestId);
+        Task<ResponseSampleDto> GetRequestSampleById(int requestId);
 
-        RequestSample CreateRequestSample(RequestSample request);
+        Task<RequestSample> CreateRequestSample(RequestSample request);
 
-        bool UpdateRequestSample(int requestId, RequestSampleModel request);
+        Task<bool> UpdateRequestSample(RequestSample requestSample);
 
-        bool DeleteRequestSample(int requestId);
+        Task<bool> DeleteRequestSample(int requestId, int userId);
 
     }
 }
