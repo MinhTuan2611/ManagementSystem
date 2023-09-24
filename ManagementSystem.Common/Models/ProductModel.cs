@@ -44,6 +44,8 @@ namespace ManagementSystem.Common.Models
         public int Price { get; set; }
         public int? Tax { get; set; }
         public int? AccountId { get; set; }
+        public BalanceType? BalanceType { get; set; }
+
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public int DefaultPurchasePrice { get; set; }
         public List<ProductUnitDetail> Units { get; set; }
