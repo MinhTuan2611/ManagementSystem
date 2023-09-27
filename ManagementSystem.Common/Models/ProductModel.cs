@@ -43,8 +43,8 @@ namespace ManagementSystem.Common.Models
         public int? CategoryId { get; set; }
         public int Price { get; set; }
         public int? Tax { get; set; }
-        public int? AccountId { get; set; }
-        public BalanceType? BalanceType { get; set; }
+        public int? CreditAccountId { get; set; }
+        public int? DebitAccountId { get; set; }
 
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public int DefaultPurchasePrice { get; set; }

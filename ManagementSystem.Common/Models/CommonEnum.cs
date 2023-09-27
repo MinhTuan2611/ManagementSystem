@@ -43,4 +43,14 @@ namespace ManagementSystem.Common.Models
         [Description("Công nợ/Chưa thanh toán")]
         OnDebt
     }
+
+    public enum EmployeeShift
+    {
+        [Description("Ca Sáng")]
+        Morning,
+        [Description("Ca Chiều")]
+        Affternoon,
+        [Description("Ca Tối")]
+        Evening
+    }
 }

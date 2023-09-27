@@ -24,11 +24,10 @@ namespace ManagementSystem.Common.Entities
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public int DefaultPurchasePrice { get; set; }
 
-        [ForeignKey("TypesOfAccounts")]
-        public int? AccountId { get; set; }
+        public int? CreditAccountId { get; set; }
+        public int? DebitAccountId { get; set; }
         public Category? Category { get; set; }
 
-        public TypesOfAccounts? TypesOfAccounts { get; set; }
         public List<RequestSampleItem> RequestSampleItems { get; set; }
     }
 }

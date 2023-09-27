@@ -1,4 +1,4 @@
-﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
@@ -131,7 +131,8 @@ namespace ManagementSystem.StoragesApi.Services
                 product.Tax = request.Tax;
                 product.Price = request.Units[0].Price;
                 product.BarCode = request.Units[0].Barcode;
-                product.AccountId = request.AccountId;
+                product.CreditAccountId = request.CreditAccountId;
+                product.DebitAccountId = request.DebitAccountId;
 
                 _unitOfWork.ProductRepository.Insert(product);
                 _unitOfWork.Save();
@@ -200,7 +201,8 @@ namespace ManagementSystem.StoragesApi.Services
                 product.Tax = request.Tax;
                 product.Price = request.Units[0].Price;
                 product.BarCode = request.Units[0].Barcode;
-                product.AccountId = request.AccountId;
+                product.CreditAccountId = request.CreditAccountId;
+                product.DebitAccountId = request.DebitAccountId;
                 product.ModifyBy = request.ModifyBy;
 
                 _unitOfWork.ProductRepository.Update(product);
@@ -215,7 +217,6 @@ namespace ManagementSystem.StoragesApi.Services
                         productUnit.Status = ActiveStatus.Inactive;
                         _unitOfWork.ProductUnitRepository.Update(productUnit);
                         _unitOfWork.Save();
-                        _unitOfWork.Dispose();
                     }
                 }
                 
@@ -285,7 +286,7 @@ namespace ManagementSystem.StoragesApi.Services
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
                 return false;
             }

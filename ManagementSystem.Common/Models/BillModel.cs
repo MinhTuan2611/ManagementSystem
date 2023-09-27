@@ -18,6 +18,8 @@ namespace ManagementSystem.Common.Models
         public int totalChange { get; set; } = 0;
         public int? CustomerId { get; set; }
         public string? CustomerName { get; set; }
+        public int? EmployeeShiftId { get; set; }
+        public int? BrandId { get; set; }
         public List<BillDetailInfo> Details { get; set; }
         public List<PaymentDetail> Payments { get; set; }
 
