@@ -26,12 +26,12 @@ namespace ManagementSystem.StoragesApi.Controllers
         [HttpPost("create")]
         public IActionResult Create(BillInfo bill)
         {
-            var isCreated = _BillsService.CreateBill(bill);
-            if (isCreated == true)
+            var result = _BillsService.CreateBill(bill);
+            if (result != 0)
             {
-                return Ok(isCreated);
+                return Ok(result);
             }
-            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong when create bill!");
         }
     }
 }

@@ -27,7 +27,7 @@ namespace ManagementSystem.StoragesApi.Services
             return bills;
         }
 
-        public bool CreateBill(BillInfo bill)
+        public int CreateBill(BillInfo bill)
         {
             try
             {
@@ -77,11 +77,11 @@ namespace ManagementSystem.StoragesApi.Services
                     _unitOfWork.Save();
                 }
                 _unitOfWork.Dispose();
-                return true;
+                return newBill.BillId;
             }
             catch (Exception ex)
             {
-                return false;
+                return 0;
             }
 
         }
