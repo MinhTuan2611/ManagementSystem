@@ -35,19 +35,19 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(BillInfo bill)
         {
-            var resultBill = await HttpRequestsHelper.Post<int>(Environment.StorageApiUrl + "bills/create", bill);
-            if (resultBill != 0) 
+            var resultBill = await HttpRequestsHelper.Post<BillInfo>(Environment.StorageApiUrl + "bills/create", bill);
+            if (resultBill != null) 
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
 
                 // Tao Phieu Xuat Kho
                 var inventoryVoucherDto = PrepareInventoryModel(bill);
                 inventoryVoucherDto.UserId = int.Parse(userId);
-                inventoryVoucherDto.BillId = resultBill;
+                inventoryVoucherDto.BillId = resultBill.BillId;
 
                 var isCreated = await HttpRequestsHelper.Post<bool>(Environment.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
 
-                return Ok(isCreated);
+                return Ok(resultBill);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when create bill");
         }

@@ -27,7 +27,7 @@ namespace ManagementSystem.StoragesApi.Controllers
         public IActionResult Create(BillInfo bill)
         {
             var result = _BillsService.CreateBill(bill);
-            if (result != 0)
+            if (result != null)
             {
                 return Ok(result);
             }
