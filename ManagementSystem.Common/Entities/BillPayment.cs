@@ -17,5 +17,7 @@ namespace ManagementSystem.Common.Entities
         public int Amount { get; set; } = 0;
         public Bill Bill { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
+        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.UnPaid;
+        public string? PaymentTransactionRef { get; set; }
     }
 }

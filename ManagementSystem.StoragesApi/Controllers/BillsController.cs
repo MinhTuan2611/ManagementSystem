@@ -1,4 +1,4 @@
-﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
@@ -32,6 +32,22 @@ namespace ManagementSystem.StoragesApi.Controllers
                 return Ok(result);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong when create bill!");
+        }
+        [HttpPost("complete-bill")]
+        public IActionResult CompleteBill(BillInfo bill)
+        {
+            var response = _BillsService.CompleteBill(bill);
+            if (response)
+            {
+                return Ok(response);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+        }
+        [HttpPost("check-momo-payment")]
+        public IActionResult CompleteBill(MomoRequestIPN request)
+        {
+            var response = _BillsService.CheckMomoPayment(request);
+            return Ok(response);
         }
     }
 }

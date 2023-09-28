@@ -1,3 +1,5 @@
+using Lib.AspNetCore.ServerSentEvents;
+using ManagementSystem.MainApp.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -12,6 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication();
+builder.Services.AddServerSentEvents<INotificationsServices, NotificationsServices>();
 builder.Services.AddAuthentication(option =>
 {
     option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -85,5 +88,14 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowAllOrigins");
 app.MapControllers();
+app.MapServerSentEvents<NotificationsServices>("/api/sse", new ServerSentEventsOptions
+{
+    RequireAcceptHeader = false,
+    OnPrepareAccept = response =>
+    {
+        response.Headers.Append("Cache-Control", "no-cache");
+        response.Headers.Append("X-Accel-Buffering", "no");
+    }
+});
 
 app.Run();
