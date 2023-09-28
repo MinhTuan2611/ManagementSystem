@@ -43,7 +43,7 @@ namespace ManagementSystem.MainApp.Controllers
                 // Tao Phieu Xuat Kho
                 var inventoryVoucherDto = PrepareInventoryModel(bill);
                 inventoryVoucherDto.UserId = int.Parse(userId);
-                isCreated = await HttpRequestsHelper.Post<bool>(Environment.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
+                var isCreated = await HttpRequestsHelper.Post<bool>(Environment.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
 
                 return Ok(response);
             }
