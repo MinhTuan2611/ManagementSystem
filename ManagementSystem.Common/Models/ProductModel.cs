@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models.Dtos;
 using System.ComponentModel.DataAnnotations;
 
 namespace ManagementSystem.Common.Models
@@ -42,9 +43,13 @@ namespace ManagementSystem.Common.Models
         public int? CategoryId { get; set; }
         public int Price { get; set; }
         public int? Tax { get; set; }
+        public int? CreditAccountId { get; set; }
+        public int? DebitAccountId { get; set; }
+
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public int DefaultPurchasePrice { get; set; }
         public List<ProductUnitDetail> Units { get; set; }
+        public List<ProductSupplierDto> ProductSuppliers { get; set; }
         public int? ModifyBy { get; set; }
     }
     public class ProductUnitDetail

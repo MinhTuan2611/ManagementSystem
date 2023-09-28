@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +23,11 @@ namespace ManagementSystem.Common.Entities
         public int? Tax { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public int DefaultPurchasePrice { get; set; }
+
+        public int? CreditAccountId { get; set; }
+        public int? DebitAccountId { get; set; }
         public Category? Category { get; set; }
+
         public List<RequestSampleItem> RequestSampleItems { get; set; }
     }
 }

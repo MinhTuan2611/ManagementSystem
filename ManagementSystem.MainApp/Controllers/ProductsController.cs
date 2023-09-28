@@ -52,6 +52,9 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(ProductCreateUpdate request)
         {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+            request.ModifyBy = int.Parse(userId);
+
             bool isCreated = await HttpRequestsHelper.Post<bool>(APIUrl + "create", request);
             if (isCreated)
             {
