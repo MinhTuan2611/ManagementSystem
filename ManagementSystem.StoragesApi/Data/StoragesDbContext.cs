@@ -29,6 +29,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<AnimalPartRefCode> AnimalPartRefCodes { get; set; }
         public DbSet<RequestSampleItem> RequestSampleItems { get; set; }
         public DbSet<ActivityLog> ActivityLog { get; set; }
+        public DbSet<ProductSupplier> ProductSuppliers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +39,7 @@ namespace ManagementSystem.StoragesApi.Data
             modelBuilder.Entity<AnimalPartRefCode>().HasData(AnimalPartRefCodesSeeding.GenerateAnimalPartRefCodes());
 
             modelBuilder.Entity<RequestSampleItem>().HasKey(x => new {x.ProductId, x.RequestSampleId, x.UnitId});
+            modelBuilder.Entity<ProductSupplier>().HasKey(x => new { x.SupplierId, x.ProductId });
         }
     }
 }

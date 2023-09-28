@@ -46,7 +46,7 @@ namespace ManagementSystem.MainApp.Controllers
 
         [HttpGet]
         [Route("search-term")]
-        public async Task<IActionResult> GetCustomerBySearchTerm([FromQuery] string searchTerm)
+        public async Task<IActionResult> GetCustomerBySearchTerm([FromQuery] string? searchTerm)
         {
             List<CustomerResponseDto> customers = await HttpRequestsHelper.GetList<CustomerResponseDto>(Environment.StorageApiUrl + "customers/search-term?searchTerm=" + searchTerm.ToLower());
 

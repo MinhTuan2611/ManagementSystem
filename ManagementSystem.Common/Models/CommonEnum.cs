@@ -49,4 +49,13 @@ namespace ManagementSystem.Common.Models
         Paid,
         Cancel
     }
+    public enum EmployeeShift
+    {
+        [Description("Ca Sáng")]
+        Morning,
+        [Description("Ca Chiều")]
+        Affternoon,
+        [Description("Ca Tối")]
+        Evening
+    }
 }

@@ -1,4 +1,5 @@
 using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Register DI
+builder.Services.AddScoped<IReceiptService, ReceiptService>();
+builder.Services.AddScoped<IInventoryVoucherService, InventoryVoucherService>();
+builder.Services.AddScoped<ILegerService, LegerService>();
 
 var app = builder.Build();
 

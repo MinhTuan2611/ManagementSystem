@@ -20,6 +20,8 @@ namespace ManagementSystem.Common.Models
         public string? CustomerName { get; set; }
         public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.UnPaid;
         public bool IsAutoCompelte { get; set; } = false;
+        public int? EmployeeShiftId { get; set; }
+        public int? BrandId { get; set; }
         public List<BillDetailInfo> Details { get; set; }
         public List<PaymentDetail> Payments { get; set; }
 
