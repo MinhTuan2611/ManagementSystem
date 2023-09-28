@@ -57,7 +57,7 @@ namespace ManagementSystem.MainApp.Controllers
             //var response = await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + "bills/check-momo-payment", request);
             if (request.ResultCode == 0)
             {
-                await _serverSentEventsServices.SendMessageAsync("MOMO_TRACKING", "1234", "Completed");
+                await _serverSentEventsServices.SendMessageAsync("MOMO_TRACKING", request.OrderId, "Completed");
             } else
             {
                 await _serverSentEventsServices.SendMessageAsync("MOMO_TRACKING", "1234", request.Message);
