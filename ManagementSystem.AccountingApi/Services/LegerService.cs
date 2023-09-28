@@ -2,8 +2,12 @@
 using ManagementSystem.AccountingApi.Repositories.GenericRepository;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace ManagementSystem.AccountingApi.Services
 {
@@ -15,59 +19,64 @@ namespace ManagementSystem.AccountingApi.Services
             _context = context;
         }
 
-        public LegerService()
+
+        public async Task<List<LegerResponseDto>> GetAllLegerInformation(SearchCriteria searchModel)
         {
+
+            try
+            {
+                string xmlString = SerializeToXml(searchModel);
+                var result = _context.LegerResponseDtos.FromSqlRaw(string.Format("EXEC sp_SearchLegers '{0}'", xmlString)).ToList();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
             
         }
 
-        public async Task<List<LegerResponseDto>> GetAllLegerInformation(int pageNumber, int pageSize)
+        public async Task<bool> CreateLegers(Leger leger)
         {
-            // await PaginatedList<Student>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize)
-
-            // Lay Thong Tin Phieu Thu
-            var receipers = await PaginatedList<Receipt>.CreateAsync(_context.Receipts.OrderByDescending(x => x.TransactionDate)
-                                                                        .AsNoTracking(), pageNumber, pageSize);
-
-
-            // Lay Thong Tin Phieu Chi
-            var paymentVouchers = await PaginatedList<PaymentVoucher>.CreateAsync(_context.PaymentVouchers.OrderByDescending(x => x.TransactionDate)
-                                                                        .AsNoTracking(), pageNumber, pageSize);
-
-            // Lay Thong Tin Phieu Xuat
-            var inventoryDeliveryVouchers = await PaginatedList<InventoryVoucher>.CreateAsync(_context.InventoryVouchers
-                                                                            .Include(x => x.Details)
-                                                                            .OrderByDescending(x => x.TransactionDate)
-                                                                            .AsNoTracking(), pageNumber, pageSize);
-
-            var legers = new List<LegerResponseDto>();
-
-            foreach (var item in receipers)
+            try
             {
-                legers.Add(new LegerResponseDto()
+                _context.Legers.Add(leger);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        // Private method handle function.
+        private static string SerializeToXml(SearchCriteria searchCriteria)
+        {
+            var xmlStringBuilder = new StringBuilder();
+
+            // Create an XmlWriter
+            using (var xmlWriter = XmlWriter.Create(xmlStringBuilder))
+            {
+                xmlWriter.WriteStartDocument();
+                xmlWriter.WriteStartElement("SearchCriteria");
+
+                foreach (var entry in searchCriteria.Criterias)
                 {
-                    TransactionDate = item.TransactionDate.ToString("dd/MM/yyyy"),
-                    CreitAccount = 0,
-                    DebitAccount = 0,
-                    DoccumentNumer = item.DocumentNumber,
-                    DocumentType = AccountingConstant.ReceiptType,
-                    UserId = item.UserId,
-                    Username = "",
-                    TotalMoney = item.TotalMoney,
-                });
-            
+                    xmlWriter.WriteStartElement("Criteria");
+                    xmlWriter.WriteElementString("Key", entry.Key);
+                    xmlWriter.WriteElementString("Value", entry.Value.ToString());
+                    xmlWriter.WriteEndElement();
+                }
+
+                xmlWriter.WriteEndElement();
+                xmlWriter.WriteEndDocument();
             }
 
-            foreach (var item in paymentVouchers)
-            {
-                legers.Add(new LegerResponseDto() { });
-            }
-
-            foreach (var item in inventoryDeliveryVouchers)
-            {
-                legers.Add(new LegerResponseDto() { });
-            }
-
-            return null;
+            return xmlStringBuilder.ToString();
         }
     }
 }

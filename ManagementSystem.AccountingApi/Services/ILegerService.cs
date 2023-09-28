@@ -1,9 +1,12 @@
-﻿using ManagementSystem.Common.Models.Dtos;
+﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 
 namespace ManagementSystem.AccountingApi.Services
 {
     public interface ILegerService
     {
-        public Task<List<LegerResponseDto>> GetAllLegerInformation(int pageNumber, int pageSize);
+        public Task<List<LegerResponseDto>> GetAllLegerInformation(SearchCriteria model);
+        public Task<bool> CreateLegers(Leger leger);
     }
 }
