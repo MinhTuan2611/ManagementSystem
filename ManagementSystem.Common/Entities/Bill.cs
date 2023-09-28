@@ -17,5 +17,7 @@ namespace ManagementSystem.Common.Entities
         public int totalChange { get; set; } = 0;
         public int? CustomerId { get; set; }
         public Customer? Customer { get; set; }
+        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.UnPaid;
+        public bool IsAutoComplete { get; set; }= false;
     }
 }

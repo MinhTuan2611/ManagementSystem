@@ -26,12 +26,28 @@ namespace ManagementSystem.StoragesApi.Controllers
         [HttpPost("create")]
         public IActionResult Create(BillInfo bill)
         {
-            var isCreated = _BillsService.CreateBill(bill);
-            if (isCreated == true)
+            var response = _BillsService.CreateBill(bill);
+            if (response != null)
             {
-                return Ok(isCreated);
+                return Ok(response);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+        }
+        [HttpPost("complete-bill")]
+        public IActionResult CompleteBill(BillInfo bill)
+        {
+            var response = _BillsService.CompleteBill(bill);
+            if (response)
+            {
+                return Ok(response);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+        }
+        [HttpPost("check-momo-payment")]
+        public IActionResult CompleteBill(MomoRequestIPN request)
+        {
+            var response = _BillsService.CheckMomoPayment(request);
+            return Ok(response);
         }
     }
 }

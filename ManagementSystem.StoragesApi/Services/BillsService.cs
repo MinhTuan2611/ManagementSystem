@@ -27,7 +27,7 @@ namespace ManagementSystem.StoragesApi.Services
             return bills;
         }
 
-        public bool CreateBill(BillInfo bill)
+        public BillInfo CreateBill(BillInfo bill)
         {
             try
             {
@@ -36,11 +36,12 @@ namespace ManagementSystem.StoragesApi.Services
                     totalAmount = bill.totalAmount,
                     totalPaid = bill.totalPaid,
                     totalChange = bill.totalChange,
-                    CustomerId = bill.CustomerId
+                    CustomerId = bill.CustomerId,
+                    PaymentStatus = PaymentStatus.UnPaid,
                 };
                 _unitOfWork.BillRepository.Insert(newBill);
                 _unitOfWork.Save();
-                
+                bill.BillId = newBill.BillId;
                 foreach (PaymentDetail detail in bill.Payments)
                 {
                     var paymentMethod = _unitOfWork.PaymentMethodRepository.GetFirst(x => x.PaymentMethodCode == detail.PaymentMethodCode);
@@ -51,9 +52,12 @@ namespace ManagementSystem.StoragesApi.Services
                         Amount = detail.Amount,
                         PaymentMethod = paymentMethod,
                         Bill = newBill,
+                        PaymentStatus = PaymentStatus.UnPaid,
                     };
                     _unitOfWork.BillPaymentRepository.Insert(newPaymentDetail);
                     _unitOfWork.Save();
+                    detail.Id = newPaymentDetail.Id;
+                    detail.BillId = newBill.BillId;
                 }
                 foreach (BillDetailInfo detail in bill.Details)
                 {
@@ -75,15 +79,73 @@ namespace ManagementSystem.StoragesApi.Services
                     };
                     _unitOfWork.BillDetailRepository.Insert(newDetail);
                     _unitOfWork.Save();
+                    detail.Id = newDetail.Id;
+                    detail.BillId = newDetail.BillId;
                 }
                 _unitOfWork.Dispose();
-                return true;
+                return bill;
             }
             catch (Exception ex)
             {
-                return false;
+                return null;
             }
 
+        }
+        public bool CompleteBill(BillInfo bill)
+        {
+            try
+            {
+                if(bill.BillId == null)
+                {
+                    return false;
+                }
+                var billData = _unitOfWork.BillRepository.GetByID(bill.BillId);
+                billData.PaymentStatus = PaymentStatus.Paid;
+                billData.IsAutoComplete = bill.IsAutoCompelte;
+                _unitOfWork.BillRepository.Update(billData);
+                _unitOfWork.Save();
+                foreach (PaymentDetail detail in bill.Payments)
+                {
+                    var paymentMethod = _unitOfWork.PaymentMethodRepository.GetFirst(x => x.PaymentMethodCode == detail.PaymentMethodCode);
+                    if(detail.Id != null)
+                    {
+                        var paymentDetail = _unitOfWork.BillPaymentRepository.GetByID(detail.Id);
+                        paymentDetail.PaymentStatus = detail.PaymentStatus;
+                        paymentDetail.Amount = detail.Amount;
+                        _unitOfWork.BillPaymentRepository.Update(paymentDetail);
+                        _unitOfWork.Save();
+                    } else
+                    {
+                        var newPaymentDetail = new BillPayment
+                        {
+                            BillId = bill.BillId ?? 0,
+                            PaymentMethodId = paymentMethod.PaymentMethodId,
+                            Amount = detail.Amount,
+                            PaymentMethod = paymentMethod,
+                            Bill = billData,
+                            PaymentStatus = PaymentStatus.Paid,
+                        };
+                        _unitOfWork.BillPaymentRepository.Insert(newPaymentDetail);
+                        _unitOfWork.Save();
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex) 
+            {
+                return false;
+            }
+        }
+        public bool CheckMomoPayment(MomoRequestIPN request)
+        {
+            var orderId = Int32.Parse(request.OrderId.Split('-').Last());
+            var paymentMethod = _unitOfWork.PaymentMethodRepository.GetFirst(x => x.PaymentMethodCode == "MOMO");
+            var payment = _unitOfWork.BillPaymentRepository.GetFirst(x => x.BillId == orderId && x.PaymentMethodId == paymentMethod.PaymentMethodId);
+            if(payment.Amount != request.Amount)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -84,7 +84,7 @@ namespace ManagementSystem.AccountsApi.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.User", b =>
@@ -122,7 +122,7 @@ namespace ManagementSystem.AccountsApi.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.UserRole", b =>
@@ -157,7 +157,7 @@ namespace ManagementSystem.AccountsApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRole");
+                    b.ToTable("UserRole", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.UserRole", b =>
