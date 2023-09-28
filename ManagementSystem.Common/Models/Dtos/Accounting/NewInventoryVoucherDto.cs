@@ -13,6 +13,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? CustomerId { get; set; }
         public int? EmployeeShiftId { get; set; }
         public int? BrandId { get; set; }
+        public int? BillId { get; set; }
         public string PurchasingRepresentive { get; set; }
         public string Note { get; set; } = "";
         public List<string> PaymentMethodCodes { get; set; }

@@ -1,6 +1,8 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models.Dtos;
+using ManagementSystem.Common.Models.Dtos.Accounting;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.AccountingApi.Services
@@ -8,9 +10,13 @@ namespace ManagementSystem.AccountingApi.Services
     public class ReceiptService : IReceiptService
     {
         private readonly AccountingDbContext _context;
-        public ReceiptService(AccountingDbContext context)
+        private readonly ILegerService _legerService;
+
+        public ReceiptService(AccountingDbContext context, ILegerService legerService)
         {
             _context = context;
+            _legerService = legerService;
+
         }
 
         public async Task<bool> CreateReceipt(NewReceiptRequestDto request)
@@ -26,6 +32,22 @@ namespace ManagementSystem.AccountingApi.Services
 
                 _context.Receipts.Add(receipt);
                 await _context.SaveChangesAsync();
+
+                await _legerService.CreateLegers(new Leger()
+                {
+                    CustomerId = receipt.CustomerId,
+                    TransactionDate = receipt.TransactionDate,
+                    DoccumentNumber = receipt.DocumentNumber,
+                    CreditAccount = request.CreditAccountId,
+                    DepositAccount = request.DebitAccountId,
+                    DoccumentType = AccountingConstant.InventoryDeliveryDocummentType,
+                    BillId = request.BillId,
+                    Amount = request.TotalMoney,
+                    UserId = request.UserId,
+                    StorageId = request.StorageId,
+                });
+
+                _context.SaveChanges();
 
                 return true;
             }
@@ -115,5 +137,6 @@ namespace ManagementSystem.AccountingApi.Services
                 return false;
             }
         }
+
     }
 }

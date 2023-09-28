@@ -10,10 +10,10 @@ namespace ManagementSystem.Common.Models.Dtos
     [Keyless]
     public class ProductResponseDto
     {
-        public string ProductName { get; set; }
-        public int Price { get; set; }
-        public int PriceBeforeTax { get; set; }
-        public int CreditAccountId { get; set; }
-        public int DebitAccountId { get; set; }
+        public string? ProductName { get; set; }
+        public int? Price { get; set; }
+        public int? PriceBeforeTax { get; set; }
+        public int? CreditAccountId { get; set; }
+        public int? DebitAccountId { get; set; }
     }
 }

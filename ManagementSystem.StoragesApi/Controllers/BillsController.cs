@@ -1,4 +1,4 @@
-﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
@@ -26,12 +26,12 @@ namespace ManagementSystem.StoragesApi.Controllers
         [HttpPost("create")]
         public IActionResult Create(BillInfo bill)
         {
-            var response = _BillsService.CreateBill(bill);
-            if (response != null)
+            var result = _BillsService.CreateBill(bill);
+            if (result != 0)
             {
-                return Ok(response);
+                return Ok(result);
             }
-            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong when create bill!");
         }
         [HttpPost("complete-bill")]
         public IActionResult CompleteBill(BillInfo bill)

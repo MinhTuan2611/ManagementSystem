@@ -39,15 +39,19 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(NewInventoryVoucherDto request)
         {
-            var isCreated = await _service.CreateInventoryDeliveryVoucher(request);
-            if (isCreated != 0)
+            var inventory = await _service.CreateInventoryVoucher(request);
+            if (inventory != null)
             {
                 var newReceiptDto = new NewReceiptRequestDto()
                 {
                     CustomerId = request.CustomerId,
-                    ForReason = string.Format(AccountingConstant.ReceiptReason, isCreated),
+                    ForReason = string.Format(AccountingConstant.ReceiptReason, inventory.DocummentNumber),
                     UserId = request.UserId,
-                    TotalMoney = request.Details.Sum(x => x.TotalMoneyAfterTax)
+                    TotalMoney = request.Details.Sum(x => x.TotalMoneyAfterTax),
+                    CreditAccountId = inventory.Details.SingleOrDefault(x => x.CreditAccount != null)?.CreditAccount,
+                    DebitAccountId = inventory.Details.SingleOrDefault(x => x.DebitAccount != null)?.DebitAccount,
+                    BillId = request.BillId,
+                    StorageId = inventory.Details.SingleOrDefault(x => x.StorageId != null).StorageId
                 };
                 
                 var receptResult = await  _receiptService.CreateReceipt(newReceiptDto);

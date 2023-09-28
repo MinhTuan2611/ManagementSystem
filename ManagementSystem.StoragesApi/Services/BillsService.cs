@@ -1,4 +1,4 @@
-﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
@@ -27,7 +27,7 @@ namespace ManagementSystem.StoragesApi.Services
             return bills;
         }
 
-        public BillInfo CreateBill(BillInfo bill)
+        public int CreateBill(BillInfo bill)
         {
             try
             {
@@ -83,11 +83,11 @@ namespace ManagementSystem.StoragesApi.Services
                     detail.BillId = newDetail.BillId;
                 }
                 _unitOfWork.Dispose();
-                return bill;
+                return newBill.BillId;
             }
             catch (Exception ex)
             {
-                return null;
+                return 0;
             }
 
         }

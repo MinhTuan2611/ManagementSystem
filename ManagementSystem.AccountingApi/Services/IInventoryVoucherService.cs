@@ -6,7 +6,7 @@ namespace ManagementSystem.AccountingApi.Services
 {
     public interface IInventoryVoucherService
     {
-        Task<bool> CreateInventoryDeliveryVoucher(NewInventoryVoucherDto request);
+        Task<InventoryVoucher> CreateInventoryVoucher(NewInventoryVoucherDto request);
         Task<bool> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request);
         Task<List<InventoryVoucherResponseDto>> GetInventoryVouchers(int page, int pageSize);
         Task<List<InventoryVoucherDetailResponseDto>> GetInventoryVoucherDetail(int documentNumber);

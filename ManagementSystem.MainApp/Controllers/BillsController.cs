@@ -1,4 +1,4 @@
-﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.MainApp.Services;
@@ -35,17 +35,19 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(BillInfo bill)
         {
-            var response = await HttpRequestsHelper.Post<BillInfo>(Environment.StorageApiUrl + "bills/create", bill);
-            if (response != null) 
+            var resultBill = await HttpRequestsHelper.Post<int>(Environment.StorageApiUrl + "bills/create", bill);
+            if (resultBill != 0) 
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
 
                 // Tao Phieu Xuat Kho
                 var inventoryVoucherDto = PrepareInventoryModel(bill);
                 inventoryVoucherDto.UserId = int.Parse(userId);
+                inventoryVoucherDto.BillId = resultBill;
+
                 var isCreated = await HttpRequestsHelper.Post<bool>(Environment.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
 
-                return Ok(response);
+                return Ok(isCreated);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when create bill");
         }

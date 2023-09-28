@@ -10,6 +10,6 @@ namespace ManagementSystem.Common.Models.Dtos.Accounting
     [Keyless]
     public class UnitResponseDto
     {
-        public string UnitName { get; set; }
+        public string? UnitName { get; set; }
     }
 }
