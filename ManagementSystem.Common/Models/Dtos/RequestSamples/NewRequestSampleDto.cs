@@ -11,7 +11,7 @@ namespace ManagementSystem.Common.Models
         public int UserId { get; set; }
         [Required]
         public string RequestSampleName { get; set; }
-        public string RequestSampleNote { get; set; }
+        public string? RequestSampleNote { get; set; }
         public List<RequestSampleItemDto> RequestSampleItems { get; set; }
     }
 }
