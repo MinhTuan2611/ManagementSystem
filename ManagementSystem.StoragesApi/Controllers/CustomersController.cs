@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
-using ManagementSystem.Common.Models.Dtos.Customers;
+using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
