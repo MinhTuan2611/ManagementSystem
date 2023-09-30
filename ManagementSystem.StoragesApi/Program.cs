@@ -1,5 +1,6 @@
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Mappings;
+using ManagementSystem.StoragesApi.SeedingData;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ var connectionString = builder.Configuration.GetConnectionString("StoragesDbConn
 builder.Services.AddDbContext<StoragesDbContext>(options =>
     options.UseSqlServer(connectionString));
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 
 // Add services to the container.
 
@@ -22,6 +24,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
+
+// Seeding Data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetService<StoragesDbContext>();
+    DataSeeder.SeedData(context);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
