@@ -133,6 +133,7 @@ namespace ManagementSystem.StoragesApi.Services
                 product.BarCode = request.Units[0].Barcode;
                 product.CreditAccountId = request.CreditAccountId;
                 product.DebitAccountId = request.DebitAccountId;
+                product.RevenueGroupId = request.RevenueGroupId;
 
                 _unitOfWork.ProductRepository.Insert(product);
                 _unitOfWork.Save();
@@ -203,6 +204,7 @@ namespace ManagementSystem.StoragesApi.Services
                 product.BarCode = request.Units[0].Barcode;
                 product.CreditAccountId = request.CreditAccountId;
                 product.DebitAccountId = request.DebitAccountId;
+                product.RevenueGroupId = request.RevenueGroupId;
                 product.ModifyBy = request.ModifyBy;
 
                 _unitOfWork.ProductRepository.Update(product);
