@@ -15,10 +15,12 @@ namespace ManagementSystem.MainApp.Controllers
     public class BillsController : ControllerBase
     {
         private readonly INotificationsServices _serverSentEventsServices;
+        private readonly IPaymentServices _paymentServices;
 
-        public BillsController(INotificationsServices serverSentEventsServices)
+        public BillsController(INotificationsServices serverSentEventsServices, IPaymentServices paymentService)
         {
             _serverSentEventsServices = serverSentEventsServices;
+            _paymentServices = paymentService;
         }
 
         [HttpGet("Get")]
@@ -101,6 +103,18 @@ namespace ManagementSystem.MainApp.Controllers
                 await _serverSentEventsServices.SendMessageAsync("MOMO_TRACKING", "1234", request.Message);
             }
             return StatusCode(StatusCodes.Status204NoContent);
+        }
+        [HttpPost("momo-create-transaction")]
+        public async Task<IActionResult> MomoCreateTransaction([FromBody] MomoCreateTransactionRequest request)
+        {
+            QuickPayResponse result = await _paymentServices.MomoCreatePayment(request.OrderId, request.Amount);
+            if (result == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when create bill");
+            } else
+            {
+                return Ok(result);
+            }
         }
     }
 }
