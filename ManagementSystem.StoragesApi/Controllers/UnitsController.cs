@@ -38,10 +38,10 @@ namespace ManagementSystem.StoragesApi.Controllers
             bool updated = _UnitsService.UpdateUnit(unit, userId);
             return Ok(updated);
         }
-        [HttpPost("delete")]
-        public IActionResult Delete(int unitId)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
         {
-            bool updated = _UnitsService.DeleteUnit(unitId);
+            bool updated = _UnitsService.DeleteUnit(id);
             return Ok(updated);
         }
     }
