@@ -1,7 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
-using ManagementSystem.StoragesApi.Controllers.SeedingData;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace ManagementSystem.StoragesApi.Data
 {
@@ -15,6 +13,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<Storage> Storages { get; set; }
         public DbSet<Unit> Unit { get; set; }
         public DbSet<Category> Category { get; set; }
+        public DbSet<RevenueGroup> RevenueGroups { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductStorage> ProductStorages { get; set; }
         public DbSet<ProductUnit> ProductUnit { get; set; }
@@ -34,9 +33,6 @@ namespace ManagementSystem.StoragesApi.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Category>().HasData(CategoriesSeeding.GetCategoies());
-            modelBuilder.Entity<AnimalPartRefCode>().HasData(AnimalPartRefCodesSeeding.GenerateAnimalPartRefCodes());
 
             modelBuilder.Entity<RequestSampleItem>().HasKey(x => new {x.ProductId, x.RequestSampleId, x.UnitId});
             modelBuilder.Entity<ProductSupplier>().HasKey(x => new { x.SupplierId, x.ProductId });

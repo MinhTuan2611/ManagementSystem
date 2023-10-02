@@ -45,7 +45,7 @@ namespace ManagementSystem.Common.Models
         public int? Tax { get; set; }
         public int? CreditAccountId { get; set; }
         public int? DebitAccountId { get; set; }
-
+        public int? RevenueGroupId { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public int DefaultPurchasePrice { get; set; }
         public List<ProductUnitDetail> Units { get; set; }

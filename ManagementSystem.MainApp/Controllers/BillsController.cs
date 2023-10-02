@@ -6,6 +6,7 @@ using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ManagementSystem.Common.Models.Dtos;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -48,6 +49,18 @@ namespace ManagementSystem.MainApp.Controllers
                 inventoryVoucherDto.BillId = resultBill.BillId;
 
                 var isCreated = await HttpRequestsHelper.Post<bool>(Environment.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
+
+                // Update Customer Point
+                if (bill.CustomerId != null)
+                {
+                    var customerUpdate = new UpdateCustomerPointDto()
+                    {
+                        CustomerId = bill.CustomerId,
+                        Amount = bill.Details.Sum(c => c.Amount)
+                    };
+
+                    await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + "customers/update_point", customerUpdate);
+                }
 
                 return Ok(resultBill);
             }

@@ -18,9 +18,9 @@ namespace ManagementSystem.AccountingApi.Controllers
 
         [HttpPost]
         [Route("search_results")]
-        public IActionResult SearchLegers([FromBody] SearchCriteria searchModel)
+        public async Task<IActionResult> SearchLegers([FromBody] SearchCriteria searchModel)
         {
-            var result = _legerService.GetAllLegerInformation(searchModel);
+            var result = await _legerService.GetAllLegerInformation(searchModel);
             return Ok(result);
         }
     }

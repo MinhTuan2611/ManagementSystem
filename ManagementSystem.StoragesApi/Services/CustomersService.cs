@@ -1,16 +1,21 @@
-﻿using ManagementSystem.Common.Entities;
+﻿using ManagementSystem.Common.Constants;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.StoragesApi.Services
 {
     public class CustomersService
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly StoragesDbContext _storageContext;
+
         public CustomersService(StoragesDbContext context)
         {
             _unitOfWork = new UnitOfWork(context);
+            _storageContext = context;
         }
 
         public List<Customer> GetListCustomers()
@@ -32,11 +37,12 @@ namespace ManagementSystem.StoragesApi.Services
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
                 return customer;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return null;
             }
-            
+
         }
         public bool UpdateCustomer(Customer customer, int userId)
         {
@@ -71,11 +77,32 @@ namespace ManagementSystem.StoragesApi.Services
 
         public List<Customer> GetCustomerBySearchTerm(string searchTerm)
         {
-            return _unitOfWork.CustomerRepository.GetManyQueryable(x => 
+            return _unitOfWork.CustomerRepository.GetManyQueryable(x =>
                                                 ConcatCustomerSearchTerm(x.CustomerName, x.PhoneNumber)
                                                 .Contains(searchTerm)).ToList();
         }
 
+        public bool UpdateCustomerPoint(int amount, int customerId)
+        {
+            try
+            {
+                    int customerPoint = amount / StorageContant.ConventPoint;
+
+                    string query = string.Format(@"
+                        UPDATE dbo.Customers
+                        SET CustomerPoint = {0}
+                        WHERE CustomerId = {1}
+                    ", customerPoint, customerId);
+
+                    var result = _storageContext.Database.ExecuteSqlRaw(query);
+                    
+                    return result == 1;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
         // Private Function Handle
         private string ConcatCustomerSearchTerm(string customerName, string phoneNumer)
         {

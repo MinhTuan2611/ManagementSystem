@@ -26,7 +26,7 @@ namespace ManagementSystem.AccountingApi.Services
             try
             {
                 string xmlString = SerializeToXml(searchModel);
-                var result = _context.LegerResponseDtos.FromSqlRaw(string.Format("EXEC sp_SearchLegers '{0}'", xmlString)).ToList();
+                var result = _context.LegerResponseDtos.FromSqlRaw(string.Format("EXEC sp_SearchLegers '{0}', {1}, {2}", xmlString, searchModel.PageNumber, searchModel.PageSize)).ToList();
 
                 return result;
             }

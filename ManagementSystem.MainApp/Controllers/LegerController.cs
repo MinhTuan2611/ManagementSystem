@@ -14,18 +14,18 @@ namespace ManagementSystem.MainApp.Controllers
     {
         private string APIUrl = Environment.AccountingApiUrl + "Leger/";
 
-        [HttpPost("create")]
+        [HttpPost("search_results")]
         public async Task<IActionResult> Create([FromBody] SearchCriteria searchModel)
         {
 
             ResponseModel<LegerResponseDto> response = new ResponseModel<LegerResponseDto>();
-            List<LegerResponseDto> vouchers = await HttpRequestsHelper.Post<List<LegerResponseDto>>(APIUrl + "search_results", searchModel);
+            List<LegerResponseDto> result = await HttpRequestsHelper.Post<List<LegerResponseDto>>(APIUrl + "search_results", searchModel);
 
-            if (vouchers != null)
+            if (result != null)
             {
 
                 response.Status = "success";
-                response.Data = vouchers;
+                response.Data = result;
                 return Ok(response);
             }
             response.Status = "success";

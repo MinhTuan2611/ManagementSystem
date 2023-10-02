@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -55,6 +56,14 @@ namespace ManagementSystem.StoragesApi.Controllers
             bool updated = _CustomersService.UpdateCustomer(customer, userId);
             return Ok(updated);
         }
+
+        [HttpPost("update_point")]
+        public IActionResult UpdateCustomerPoint([FromBody] UpdateCustomerPointDto model)
+        {
+            bool updated = _CustomersService.UpdateCustomerPoint(model.Amount.Value, model.CustomerId.Value);
+            return Ok(updated);
+        }
+
         [HttpPost("delete")]
         public IActionResult Delete(int customerId)
         {

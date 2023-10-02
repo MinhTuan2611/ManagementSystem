@@ -1,3 +1,4 @@
+using ManagementSystem.AccountsApi.SeedingData;
 using ManagementSystem.EmployeesApi.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication();
 var app = builder.Build();
+
+// Seeding Data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetService<AccountsDbContext>();
+    DataSeeder.SeedData(context);
+}
 
 // Configure the HTTP request pipeline.
 app.UseRouting();
