@@ -7,7 +7,7 @@ namespace ManagementSystem.StoragesApi.Services
     {
         public List<Unit> GetListUnits();
         public Unit CreateUnit(Unit unit);
-        public bool UpdateUnit(Unit unit, int userId);
+        public Unit UpdateUnit(Unit unit);
         public bool DeleteUnit(int unitId);
     }
 }
