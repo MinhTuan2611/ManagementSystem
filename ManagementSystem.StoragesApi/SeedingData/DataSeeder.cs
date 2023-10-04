@@ -9,10 +9,12 @@ namespace ManagementSystem.StoragesApi.SeedingData
         public static void SeedData(StoragesDbContext context)
         {
 
-            #region Init Animal Part RefCode
-            if (!context.AnimalPartRefCodes.Any())
+            try
             {
-                List<AnimalPartRefCode> animalPartRefCodes = new List<AnimalPartRefCode>()
+                #region Init Animal Part RefCode
+                if (!context.AnimalPartRefCodes.Any())
+                {
+                    List<AnimalPartRefCode> animalPartRefCodes = new List<AnimalPartRefCode>()
                 {
                     new AnimalPartRefCode()
                     {
@@ -100,16 +102,16 @@ namespace ManagementSystem.StoragesApi.SeedingData
                         RefCode = "017",
                     },
                 };
-                context.AnimalPartRefCodes.AddRange(animalPartRefCodes);
-                context.SaveChanges();
-            }
+                    context.AnimalPartRefCodes.AddRange(animalPartRefCodes);
+                    context.SaveChanges();
+                }
 
-            #endregion
+                #endregion
 
-            #region Init Category
-            if (!context.Category.Any())
-            {
-                List<Category> categories = new List<Category>()
+                #region Init Category
+                if (!context.Category.Any())
+                {
+                    List<Category> categories = new List<Category>()
                 {
                     // Seeding Category Level 1
                     new Category()
@@ -633,15 +635,15 @@ namespace ManagementSystem.StoragesApi.SeedingData
                     }
                 };
 
-                context.Category.AddRange(categories);
-                context.SaveChanges();
-            }
-            #endregion
+                    context.Category.AddRange(categories);
+                    context.SaveChanges();
+                }
+                #endregion
 
-            #region Init Revenue Groups
-            if (!context.RevenueGroups.Any())
-            {
-                var revenueGroups = new List<RevenueGroup>()
+                #region Init Revenue Groups
+                if (!context.RevenueGroups.Any())
+                {
+                    var revenueGroups = new List<RevenueGroup>()
                 {
                     new RevenueGroup()
                     {
@@ -653,10 +655,15 @@ namespace ManagementSystem.StoragesApi.SeedingData
                     }
                 };
 
-                context.RevenueGroups.AddRange(revenueGroups);
-                context.SaveChanges();
+                    context.RevenueGroups.AddRange(revenueGroups);
+                    context.SaveChanges();
+                }
+                #endregion
             }
-            #endregion
+            catch
+            {
+
+            }
         }
     }
 }

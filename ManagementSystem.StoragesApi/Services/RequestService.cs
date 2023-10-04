@@ -45,6 +45,10 @@ namespace ManagementSystem.StoragesApi.Services
                 ReceiverPhone = request.ReceiverPhone,
                 ReceivingDay = request.ReceivingDay,
                 PaymentMethod = request.PaymentMethod,
+                CreditAccount = request.CreditAccount,
+                CreditAmount = request.CreditAmount,
+                DebitAccount = request.DebitAccount,
+                DebitAmount = request.DebitAmount,
                 CreateDate = DateTime.Now
             };
             _unitOfWork.RequestRepository.Insert(newRequest);
@@ -66,7 +70,10 @@ namespace ManagementSystem.StoragesApi.Services
             existingRequest.BranchId = updatedRequest.BranchId;
             existingRequest.StorageId = updatedRequest.StorageId;
             existingRequest.Note = updatedRequest.Note;
-
+            existingRequest.CreditAccount = updatedRequest.CreditAccount;
+            existingRequest.CreditAmount = updatedRequest.CreditAmount;
+            existingRequest.DebitAccount = updatedRequest.DebitAccount;
+            existingRequest.DebitAmount = updatedRequest.DebitAmount;
             _unitOfWork.Save();
 
             return true;

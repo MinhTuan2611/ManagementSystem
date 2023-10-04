@@ -10,9 +10,11 @@ namespace ManagementSystem.Common.Constants
     {
         public const string ReceiptType = "THU";
         public const string InventoryDeliveryDocummentType = "XUAT";
+        public const string OtherAccountEntryType = "BUT TOAN KHAC";
         public const string PaymentVoucherType = "CHI";
 
         public const string XBAReason = "XBA";
+        public const string CCHReason = "CCH";
         public const string ReceiptReason = "Thu Tiền Xuất Hàng {0}. ";
     }
 }

@@ -34,6 +34,10 @@ namespace ManagementSystem.Common.Models
         public List<RequestItem> RequestItemId { get; set; }
         public int? UserId { get; set; }
         public string? Note { get; set; }
+        public int? CreditAccount { get; set; }
+        public int? CreditAmount { get; set; }
+        public int? DebitAccount { get; set; }
+        public int? DebitAmount { get; set; }
         public Branch? Branch { get; set; }
         public Storage? Storage { get; set; }
         public Supplier? Supplier { get; set; }
