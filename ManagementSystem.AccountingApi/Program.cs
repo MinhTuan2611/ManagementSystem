@@ -21,6 +21,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IReceiptService, ReceiptService>();
 builder.Services.AddScoped<IInventoryVoucherService, InventoryVoucherService>();
 builder.Services.AddScoped<ILegerService, LegerService>();
+builder.Services.AddScoped<IPaymentVoucherService, PaymentVoucherService>();
+builder.Services.AddScoped<IOtherAccountEntryService, OtherAccountEntryService>();
 
 var app = builder.Build();
 

@@ -17,10 +17,12 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpGet("get-customer-by-code")]
         public async Task<IActionResult> Get(string customerCode)
         {
-            Customer customer = await HttpRequestsHelper.Get<Customer>(Environment.StorageApiUrl + "customers/get-customer-by-code?customerCode=" + customerCode);
-            if (customer != null)
+            ResponseModel<Customer> response = new ResponseModel<Customer>();
+            List<Customer> customers = await HttpRequestsHelper.Get<List<Customer>>(Environment.StorageApiUrl + "customers/get-customer-by-code?customerCode=" + customerCode);
+
+            if (customers != null)
             {
-                return Ok(customer);
+                return Ok(customers);
             }
             return Ok("Customer not found");
         }
@@ -48,7 +50,7 @@ namespace ManagementSystem.MainApp.Controllers
         [Route("search-term")]
         public async Task<IActionResult> GetCustomerBySearchTerm([FromQuery] string? searchTerm)
         {
-            List<CustomerResponseDto> customers = await HttpRequestsHelper.GetList<CustomerResponseDto>(Environment.StorageApiUrl + "customers/search-term?searchTerm=" + searchTerm.ToLower());
+            List<CustomerResponseDto> customers = await HttpRequestsHelper.GetList<CustomerResponseDto>(Environment.StorageApiUrl + "customers/search-term?searchTerm=" + searchTerm);
 
             if (customers.Count == 0)
                 return BadRequest("Customers not found");

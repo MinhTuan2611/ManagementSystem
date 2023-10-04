@@ -1,4 +1,6 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos.Accounting;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.StoragesApi.Data
@@ -30,12 +32,16 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<ActivityLog> ActivityLog { get; set; }
         public DbSet<ProductSupplier> ProductSuppliers { get; set; }
 
+        // Response Value
+        public DbSet<CustomerResponseDto> customerResponseDtos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<RequestSampleItem>().HasKey(x => new {x.ProductId, x.RequestSampleId, x.UnitId});
             modelBuilder.Entity<ProductSupplier>().HasKey(x => new { x.SupplierId, x.ProductId });
+            modelBuilder.Entity<CustomerResponseDto>().ToTable(nameof(CustomerResponseDto), t => t.ExcludeFromMigrations());
         }
     }
 }

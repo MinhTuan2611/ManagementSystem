@@ -1,16 +1,13 @@
-﻿using ManagementSystem.Common.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ManagementSystem.Common.Entities
+namespace ManagementSystem.Common.Models.Dtos.Accounting
 {
-    public class PaymentVoucher
+    public class UpdatePaymentVoucherDto
     {
-        [Key]
         public int DocumentNumber { get; set; }
         public int? UserId { get; set; }
         public string? ReceiverName { get; set; }
@@ -23,7 +20,5 @@ namespace ManagementSystem.Common.Entities
         public int? ExchangeRate { get; set; }
         public int? NTMoney { get; set; }
         public int ShiftId { get; set; }
-        public DateTime TransactionDate { get; set; } = DateTime.Now;
-        public DateTime UpdatedDate { get; set; } = DateTime.Now;
     }
 }

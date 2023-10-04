@@ -331,8 +331,8 @@ namespace ManagementSystem.AccountingApi.Services
 
         public bool UpdateProductStorage(ProductStorageInformationDto dto, int productQuantity)
         {
-            if (dto.Quantity - productQuantity <= 0)
-                return false;
+            //if (dto.Quantity - productQuantity <= 0)
+            //    return false;
 
             string query = string.Format(@"
                 UPDATE StoragesDb.dbo.ProductStorages

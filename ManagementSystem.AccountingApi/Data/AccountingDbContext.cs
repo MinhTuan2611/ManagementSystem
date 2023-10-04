@@ -23,7 +23,9 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<ActivityLog> ActivityLog { get; set; }
         public DbSet<InventoryVoucherPaymentMethod> InventoryVoucherPaymentMethods { get; set; }
         public DbSet<Leger> Legers { get; set; }
+        public DbSet<OtherAccountEntry> OtherAccountEntries { get; set; }
 
+        
         // Add context to return tabbles
         public DbSet<InventoryVoucherResponseDto> InventoryVoucherResponseDto { get; set; }
         public DbSet<InventoryVoucherDetailResponseDto> InventoryVoucherDetailResponses { get; set; }
@@ -33,7 +35,9 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<UnitResponseDto> UnitResponseDtos  { get; set; }
         public DbSet<LegerResponseDto> LegerResponseDtos { get; set; }
         public DbSet<ProductStorageInformationDto> ProductStorageInformationDtos { get; set; }
-        
+        public DbSet<PaymentVoucherResponseDto> PaymentVoucherResponseDtos { get; set; }
+        public DbSet<OtherAccountEntryResponseDto> OtherAccountEntryResponseDtos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -50,6 +54,8 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<UnitResponseDto>().ToTable(nameof(UnitResponseDtos), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<ProductStorageInformationDto>().ToTable(nameof(ProductStorageInformationDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<LegerResponseDto>().ToTable(nameof(LegerResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<PaymentVoucherResponseDto>().ToTable(nameof(PaymentVoucherResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<OtherAccountEntryResponseDto>().ToTable(nameof(OtherAccountEntryResponseDto), t => t.ExcludeFromMigrations());
         }
     }
 }
