@@ -74,25 +74,8 @@ namespace ManagementSystem.StoragesApi.Controllers
         [HttpGet("search-term")]
         public IActionResult SearchCustomer([FromQuery] string searchTerm)
         {
-            // Check search term input is empty or not
-            string pattern = @"^[a-zA-Z0-9-]+$";
-            Regex rg = new Regex(pattern);
-
-            var customers = new List<Customer>();
-
-            if (!rg.IsMatch(searchTerm)) // Search term is empty, we will get all customer
-            {
-                customers = _CustomersService.GetListCustomers();
-            }
-            else
-            {
-                customers = _CustomersService.GetCustomerBySearchTerm(searchTerm);
-            }
-            // Map Customer to CustomerDto to reponse
-            var customerDto = _mapper.Map<List<CustomerResponseDto>>(customers);
-
-            return Ok(customerDto);
-
+            var customers = _CustomersService.GetCustomerBySearchTerm(searchTerm);
+            return Ok(customers);
         }
     }
 }

@@ -75,42 +75,44 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
-        public List<Customer> GetCustomerBySearchTerm(string searchTerm)
+        public List<CustomerResponseDto> GetCustomerBySearchTerm(string searchTerm)
         {
-            return _unitOfWork.CustomerRepository.GetManyQueryable(x =>
-                                                ConcatCustomerSearchTerm(x.CustomerName, x.PhoneNumber)
-                                                .Contains(searchTerm)).ToList();
+            string query = string.Format(@"
+                EXEC sp_search_customer_by_term '{0}'
+            ", searchTerm);
+
+            try
+            {
+                var customers = _storageContext.customerResponseDtos.FromSqlRaw(query).ToList();
+                return customers;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public bool UpdateCustomerPoint(int amount, int customerId)
         {
             try
             {
-                    int customerPoint = amount / StorageContant.ConventPoint;
+                int customerPoint = amount / StorageContant.ConventPoint;
 
-                    string query = string.Format(@"
+                string query = string.Format(@"
                         UPDATE dbo.Customers
                         SET CustomerPoint = {0}
                         WHERE CustomerId = {1}
                     ", customerPoint, customerId);
 
-                    var result = _storageContext.Database.ExecuteSqlRaw(query);
-                    
-                    return result == 1;
+                var result = _storageContext.Database.ExecuteSqlRaw(query);
+
+                return result == 1;
             }
             catch (Exception ex)
             {
                 return false;
             }
         }
-        // Private Function Handle
-        private string ConcatCustomerSearchTerm(string customerName, string phoneNumer)
-        {
-            List<string> strList = customerName.Split(" ").ToList();
-            string customerFristName = strList[strList.Count - 1].ToLower();
-            string lastThreePhoneNumber = string.IsNullOrEmpty(phoneNumer) ? "" : phoneNumer.Substring(phoneNumer.Length - 3);
 
-            return string.Format("{0}-{1}", customerFristName, lastThreePhoneNumber);
-        }
     }
 }

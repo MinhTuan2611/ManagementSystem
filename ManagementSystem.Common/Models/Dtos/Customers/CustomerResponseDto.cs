@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace ManagementSystem.Common.Models
 {
+    [Keyless]
     public class CustomerResponseDto
     {
         public string CustomerCode { get; set; }

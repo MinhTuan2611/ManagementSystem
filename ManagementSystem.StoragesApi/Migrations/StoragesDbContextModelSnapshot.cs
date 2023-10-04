@@ -46,7 +46,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasKey("ActivityId");
 
-                    b.ToTable("ActivityLog", (string)null);
+                    b.ToTable("ActivityLog");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.AnimalPartRefCode", b =>
@@ -68,7 +68,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasKey("AnimalPartId");
 
-                    b.ToTable("AnimalPartRefCodes", (string)null);
+                    b.ToTable("AnimalPartRefCodes");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Bill", b =>
@@ -113,7 +113,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Bills", (string)null);
+                    b.ToTable("Bills");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.BillDetail", b =>
@@ -168,7 +168,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("BillDetails", (string)null);
+                    b.ToTable("BillDetails");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.BillPayment", b =>
@@ -212,7 +212,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("PaymentMethodId");
 
-                    b.ToTable("BillPayments", (string)null);
+                    b.ToTable("BillPayments");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Branch", b =>
@@ -257,7 +257,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasKey("BranchId");
 
-                    b.ToTable("Branches", (string)null);
+                    b.ToTable("Branches");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Category", b =>
@@ -299,7 +299,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Category", (string)null);
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Customer", b =>
@@ -351,7 +351,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasKey("CustomerId");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.PaymentMethod", b =>
@@ -387,7 +387,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasKey("PaymentMethodId");
 
-                    b.ToTable("PaymentMethods", (string)null);
+                    b.ToTable("PaymentMethods");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Product", b =>
@@ -457,7 +457,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("RevenueGroupId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ProductStorage", b =>
@@ -495,7 +495,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("StorageId");
 
-                    b.ToTable("ProductStorages", (string)null);
+                    b.ToTable("ProductStorages");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ProductSupplier", b =>
@@ -522,7 +522,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductSuppliers", (string)null);
+                    b.ToTable("ProductSuppliers");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ProductUnit", b =>
@@ -578,7 +578,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("ProductUnit", (string)null);
+                    b.ToTable("ProductUnit");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Request", b =>
@@ -600,6 +600,18 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreditAccount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreditAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DebitAccount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DebitAmount")
+                        .HasColumnType("int");
 
                     b.Property<string>("DeliverName")
                         .IsRequired()
@@ -654,7 +666,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("Requests", (string)null);
+                    b.ToTable("Requests");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.RequestItem", b =>
@@ -713,7 +725,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("RequestId");
 
-                    b.ToTable("RequestItem", (string)null);
+                    b.ToTable("RequestItem");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.RequestSample", b =>
@@ -756,7 +768,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("RequestSamples", (string)null);
+                    b.ToTable("RequestSamples");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.RequestSampleItem", b =>
@@ -792,7 +804,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("RequestSampleItems", (string)null);
+                    b.ToTable("RequestSampleItems");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.RevenueGroup", b =>
@@ -809,7 +821,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasKey("RevenueGroupId");
 
-                    b.ToTable("RevenueGroups", (string)null);
+                    b.ToTable("RevenueGroups");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Storage", b =>
@@ -856,7 +868,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasIndex("BranchId");
 
-                    b.ToTable("Storages", (string)null);
+                    b.ToTable("Storages");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Supplier", b =>
@@ -902,7 +914,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasKey("SupplierId");
 
-                    b.ToTable("Suppliers", (string)null);
+                    b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Unit", b =>
@@ -931,7 +943,38 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasKey("UnitId");
 
-                    b.ToTable("Unit", (string)null);
+                    b.ToTable("Unit");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.CustomerResponseDto", b =>
+                {
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("BirthDay")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CustomerPoint")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("CustomerResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Bill", b =>
