@@ -1,6 +1,6 @@
 ﻿using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
-using ManagementSystem.Common.Models.Dtos.Accounting;
+using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.StoragesApi.Data
@@ -34,6 +34,8 @@ namespace ManagementSystem.StoragesApi.Data
 
         // Response Value
         public DbSet<CustomerResponseDto> customerResponseDtos { get; set; }
+        public DbSet<BillSearchingResponseDto> billSearchingResponseDtos { get; set; }
+        public DbSet<BillDetailResponseDto> BillDetailResponseDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,6 +44,8 @@ namespace ManagementSystem.StoragesApi.Data
             modelBuilder.Entity<RequestSampleItem>().HasKey(x => new {x.ProductId, x.RequestSampleId, x.UnitId});
             modelBuilder.Entity<ProductSupplier>().HasKey(x => new { x.SupplierId, x.ProductId });
             modelBuilder.Entity<CustomerResponseDto>().ToTable(nameof(CustomerResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<BillSearchingResponseDto>().ToTable(nameof(BillSearchingResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<BillDetailResponseDto>().ToTable(nameof(BillDetailResponseDto), t => t.ExcludeFromMigrations());
         }
     }
 }

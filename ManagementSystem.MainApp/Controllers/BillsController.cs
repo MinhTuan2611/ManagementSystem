@@ -48,8 +48,10 @@ namespace ManagementSystem.MainApp.Controllers
                 inventoryVoucherDto.UserId = int.Parse(userId);
                 inventoryVoucherDto.BillId = resultBill.BillId;
 
-                var isCreated = await HttpRequestsHelper.Post<bool>(Environment.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
+                var inventoryResult = await HttpRequestsHelper.Post<bool>(Environment.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
 
+                if (inventoryResult == null)
+                    return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created but faild when create Inventory Voucher");
                 // Update Customer Point
                 if (bill.CustomerId != null)
                 {
@@ -59,7 +61,9 @@ namespace ManagementSystem.MainApp.Controllers
                         Amount = bill.Details.Sum(c => c.Amount)
                     };
 
-                    await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + "customers/update_point", customerUpdate);
+                    var customerUpdateFlag = await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + "customers/update_point", customerUpdate);
+                    if (!customerUpdateFlag)
+                        return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created, inventory created but faild when Update customer point");
                 }
 
                 return Ok(resultBill);
@@ -128,6 +132,44 @@ namespace ManagementSystem.MainApp.Controllers
             {
                 return Ok(result);
             }
+        }
+
+        [HttpPost("search_results")]
+        public async Task<IActionResult> Create([FromBody] SearchCriteria searchModel)
+        {
+
+            ResponseModel<BillSearchingResponseDto> response = new ResponseModel<BillSearchingResponseDto>();
+            List<BillSearchingResponseDto> result = await HttpRequestsHelper.Post<List<BillSearchingResponseDto>>(Environment.StorageApiUrl + "bills/search_results", searchModel);
+
+            if (result != null)
+            {
+
+                response.Status = "success";
+                response.Data = result;
+                return Ok(response);
+            }
+            response.Status = "success";
+            response.ErrorMessage = "Not found any information!";
+            return Ok(response);
+        }
+
+        [HttpGet("get-detail")]
+        public async Task<IActionResult> GetBillDetail([FromQuery] int billId)
+        {
+
+            ResponseModel<BillDetailResponseDto> response = new ResponseModel<BillDetailResponseDto>();
+            List<BillDetailResponseDto> result = await HttpRequestsHelper.Get<List<BillDetailResponseDto>>(Environment.StorageApiUrl + "bills/get-detail?billId=" + billId);
+
+            if (result != null)
+            {
+
+                response.Status = "success";
+                response.Data = result;
+                return Ok(response);
+            }
+            response.Status = "success";
+            response.ErrorMessage = "Not found any information!";
+            return Ok(response);
         }
     }
 }

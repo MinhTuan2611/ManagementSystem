@@ -66,7 +66,7 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> Update(UpdateInventoryVoucherDto request)
         {
-            bool updated = await _service.UpdateInventoryDeliveryVoucher(request);
+            var updated = await _service.UpdateInventoryDeliveryVoucher(request);
             return Ok(updated);
         }
     }

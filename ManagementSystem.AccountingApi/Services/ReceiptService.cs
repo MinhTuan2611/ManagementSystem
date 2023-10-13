@@ -19,7 +19,7 @@ namespace ManagementSystem.AccountingApi.Services
 
         }
 
-        public async Task<bool> CreateReceipt(NewReceiptRequestDto request)
+        public async Task<Receipt> CreateReceipt(NewReceiptRequestDto request)
         {
             try
             {
@@ -49,11 +49,11 @@ namespace ManagementSystem.AccountingApi.Services
 
                 _context.SaveChanges();
 
-                return true;
+                return receipt;
             }
             catch (Exception ex)
             {
-                return false;
+                return null;
             }
         }
 
@@ -114,14 +114,14 @@ namespace ManagementSystem.AccountingApi.Services
             return receipts;
         }
 
-        public async Task<bool> UpdateReceipt(UpdateReceiptRequestDto request)
+        public async Task<Receipt> UpdateReceipt(UpdateReceiptRequestDto request)
         {
             try
             {
                 var receipt = _context.Receipts.FirstOrDefault(x => x.DocumentNumber == request.DocumentNumber);
 
                 if (receipt == null)
-                    return false;
+                    return null;
 
                 receipt.CustomerId = request.CustomerId;
                 receipt.ForReason = request.ForReason;
@@ -130,11 +130,11 @@ namespace ManagementSystem.AccountingApi.Services
 
                 await _context.SaveChangesAsync();
 
-                return true;
+                return receipt;
             }
             catch (Exception ex)
             {
-                return false;
+                return null;
             }
         }
 

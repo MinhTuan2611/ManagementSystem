@@ -7,6 +7,6 @@ namespace ManagementSystem.AccountingApi.Services
     public interface ILegerService
     {
         public Task<List<LegerResponseDto>> GetAllLegerInformation(SearchCriteria model);
-        public Task<bool> CreateLegers(Leger leger);
+        public Task<Leger> CreateLegers(Leger leger);
     }
 }
