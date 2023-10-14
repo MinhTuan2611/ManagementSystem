@@ -5,6 +5,8 @@ using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -170,7 +172,83 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
-        public async Task<List<BillDetailResponseDto>> GetBillDetail(int billId)
+        public async Task<BillResponseDto> GetBillDetail(int billId)
+        {
+            var billDetails = await GetBillDetailHandler(billId);
+            var billPayments = await GetBillPaymentMethods(billId);
+
+            var billResponse = new BillResponseDto();
+            billResponse.BillId = billId;
+            billResponse.BillDetails = billDetails;
+            billResponse.BillPaymentMethods = billPayments;
+
+            return billResponse;
+        }
+
+        public async Task<UpdateBillRequestDto> UpdateBill(UpdateBillRequestDto model)
+        {
+            if (model == null)
+                return null;
+            try
+            {
+                var existingBill = _context.Bills.SingleOrDefault(x => x.BillId == model.BillId);
+
+                if (existingBill == null)
+                    return null;
+
+                existingBill.totalChange = model.totalChange;
+                existingBill.totalPaid = model.totalPaid;
+                existingBill.totalChange = model.totalChange;
+                existingBill.CustomerId = model.CustomerId;
+                existingBill.ModifyBy = model.UserId;
+                existingBill.ModifyDate = DateTime.Now;
+
+                // Update Bill Details
+                foreach (var item in model.BillDetail)
+                {
+                    var billDetail = _context.BillDetails.SingleOrDefault(x => x.Id == item.Id);
+                    if (billDetail != null)
+                    {
+                        billDetail.ProductId = item.ProductId;
+                        billDetail.UnitId = item.UnitId;
+                        billDetail.DiscountAmount = item.DiscountAmount;
+                        billDetail.DiscountByPercentage = item.DiscountByPercentage;
+                        billDetail.DiscountByPercentage = item.DiscountByPercentage;
+                        billDetail.Quantity = item.Quantity;
+                        billDetail.Amount = item.Amount;
+                        billDetail.ModifyBy = model.UserId;
+                        billDetail.ModifyDate = DateTime.Now;
+                    }
+                }
+
+                // Update Bill Payment Methods
+                foreach (var item in model.PaymentMethods)
+                {
+                    var billPayment = _context.BillPayments.SingleOrDefault(x => x.Id == item.Id);
+                    if (billPayment != null)
+                    {
+                        var paymentMethodId = GetPaymentMethod(item.PaymentMethodCode);
+
+                        billPayment.PaymentMethodId = paymentMethodId.Value;
+                        billPayment.Amount = item.Amount;
+                        billPayment.PaymentTransactionRef = item.PaymentTransactionRef;
+                        billPayment.ModifyBy = model.UserId;
+                        billPayment.ModifyDate = DateTime.Now;
+                    }
+                }
+
+                _context.SaveChanges();
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        #region Handle Get Data
+        private async Task<List<BillDetailResponseDto>> GetBillDetailHandler(int billId)
         {
             string query = string.Format(@"
                 SELECT b.Id
@@ -200,5 +278,48 @@ namespace ManagementSystem.StoragesApi.Services
                 return null;
             }
         }
+
+        private async Task<List<BillPaymentDetailResponseDto>> GetBillPaymentMethods(int billId)
+        {
+            string query = string.Format(@"
+ 	                SELECT b.Id
+			                ,b.Amount
+			                ,b.PaymentTransactionRef
+			                ,p.PaymentMethodCode
+			                ,P.PaymentMethodName
+	                FROM dbo.BillPayments b
+	                JOIN dbo.PaymentMethods p ON b.PaymentMethodId = p.PaymentMethodId
+	                WHERE b.BillId = {0}
+            ", billId);
+
+            try
+            {
+                var result = _context.BillPaymentDetailResponseDtos.FromSqlRaw(query).ToList();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        private int? GetPaymentMethod(string paymentMethodCode)
+        {
+            string query = string.Format(@"
+                SELECT PaymentMethodId
+		                ,PaymentMethodCode
+		                ,PaymentMethodName
+                FROM dbo.PaymentMethods p
+                WHERE p.PaymentMethodCode = '{0}'"
+            , paymentMethodCode);
+
+            var result = _context.PaymentMethodDtos
+                        .FromSqlRaw(query)
+                        .AsEnumerable()
+                        .FirstOrDefault()?.PaymentMethodId;
+
+            return result;
+        }
+        #endregion
     }
 }

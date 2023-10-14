@@ -39,7 +39,7 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> Create(BillInfo bill)
         {
             var resultBill = await HttpRequestsHelper.Post<BillInfo>(Environment.StorageApiUrl + "bills/create", bill);
-            if (resultBill != null) 
+            if (resultBill != null)
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
 
@@ -81,7 +81,7 @@ namespace ManagementSystem.MainApp.Controllers
             model.EmployeeShiftId = bill.EmployeeShiftId;
             model.BrandId = bill.BrandId;
             model.PaymentMethodCodes = bill.Payments.Select(x => x.PaymentMethodCode).ToList();
-            
+
             var inventoryDetails = new List<InventoryVoucherDetailDto>();
             foreach (var item in bill.Details)
             {
@@ -115,7 +115,8 @@ namespace ManagementSystem.MainApp.Controllers
             if (request.ResultCode == 0)
             {
                 await _serverSentEventsServices.SendMessageAsync("MOMO_TRACKING", request.OrderId, "Completed");
-            } else
+            }
+            else
             {
                 await _serverSentEventsServices.SendMessageAsync("MOMO_TRACKING", "1234", request.Message);
             }
@@ -128,7 +129,8 @@ namespace ManagementSystem.MainApp.Controllers
             if (result == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when create bill");
-            } else
+            }
+            else
             {
                 return Ok(result);
             }
@@ -157,19 +159,40 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> GetBillDetail([FromQuery] int billId)
         {
 
-            ResponseModel<BillDetailResponseDto> response = new ResponseModel<BillDetailResponseDto>();
-            List<BillDetailResponseDto> result = await HttpRequestsHelper.Get<List<BillDetailResponseDto>>(Environment.StorageApiUrl + "bills/get-detail?billId=" + billId);
+            ResponseModel<BillResponseDto> response = new ResponseModel<BillResponseDto>();
+            var result = await HttpRequestsHelper.Get<BillResponseDto>(Environment.StorageApiUrl + "bills/get-detail?billId=" + billId);
+
+            var resultResponse = new List<BillResponseDto>();
+            resultResponse.Add(result);
 
             if (result != null)
             {
 
                 response.Status = "success";
-                response.Data = result;
+                response.Data = resultResponse;
                 return Ok(response);
             }
+
             response.Status = "success";
             response.ErrorMessage = "Not found any information!";
             return Ok(response);
         }
+
+        [HttpPost("update-bill")]
+        public async Task<IActionResult> UpdateBill([FromBody] UpdateBillRequestDto model)
+        {
+            if (model == null)
+                return BadRequest("Invalid model");
+
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+            model.UserId = int.Parse(userId);
+
+            var resultBill = await HttpRequestsHelper.Post<BillInfo>(Environment.StorageApiUrl + "bills/update-bill", model);
+            if (resultBill != null)
+                return Ok(resultBill);
+
+            return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when uPDATE bill");
+        }
+
     }
 }
