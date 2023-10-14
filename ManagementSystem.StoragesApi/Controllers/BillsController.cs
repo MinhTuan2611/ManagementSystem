@@ -49,5 +49,21 @@ namespace ManagementSystem.StoragesApi.Controllers
             var response = _BillsService.CheckMomoPayment(request);
             return Ok(response);
         }
+
+        [HttpPost("search_results")]
+        public async Task<IActionResult> SearchBills([FromBody] SearchCriteria criteria)
+        {
+            var result = await _BillsService.SearchBills(criteria);
+
+            return Ok(result);
+        }
+
+        [HttpGet("get-detail")]
+        public async Task<IActionResult> GetBillDetail([FromQuery] int billId)
+        {
+            var result = await _BillsService.GetBillDetail(billId);
+
+            return Ok(result);
+        }
     }
 }

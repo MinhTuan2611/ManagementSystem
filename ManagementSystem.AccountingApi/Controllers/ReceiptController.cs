@@ -34,10 +34,10 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(NewReceiptRequestDto request)
         {
-            var isCreated = await _service.CreateReceipt(request);
-            if (isCreated == true)
+            var result = await _service.CreateReceipt(request);
+            if (result != null)
             {
-                return Ok(isCreated);
+                return Ok(result);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
@@ -45,7 +45,7 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> Update(UpdateReceiptRequestDto request)
         {
-            bool updated = await _service.UpdateReceipt(request);
+            var updated = await _service.UpdateReceipt(request);
             return Ok(updated);
         }
     }

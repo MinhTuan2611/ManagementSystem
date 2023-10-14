@@ -1,5 +1,6 @@
 ﻿using ManagementSystem.AccountingApi.Data;
 using ManagementSystem.AccountingApi.Repositories.GenericRepository;
+using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
@@ -25,7 +26,7 @@ namespace ManagementSystem.AccountingApi.Services
 
             try
             {
-                string xmlString = SerializeToXml(searchModel);
+                string xmlString = XMLCommonFunction.SerializeToXml(searchModel);
                 var result = _context.LegerResponseDtos.FromSqlRaw(string.Format("EXEC sp_SearchLegers '{0}', {1}, {2}", xmlString, searchModel.PageNumber, searchModel.PageSize)).ToList();
 
                 return result;
@@ -35,48 +36,23 @@ namespace ManagementSystem.AccountingApi.Services
                 return null;
             }
 
-            
         }
 
-        public async Task<bool> CreateLegers(Leger leger)
+        public async Task<Leger> CreateLegers(Leger leger)
         {
             try
             {
                 _context.Legers.Add(leger);
                 await _context.SaveChangesAsync();
 
-                return true;
+                return leger;
             }
             catch (Exception ex)
             {
-                return false;
+                return null;
             }
         }
 
-        // Private method handle function.
-        private static string SerializeToXml(SearchCriteria searchCriteria)
-        {
-            var xmlStringBuilder = new StringBuilder();
 
-            // Create an XmlWriter
-            using (var xmlWriter = XmlWriter.Create(xmlStringBuilder))
-            {
-                xmlWriter.WriteStartDocument();
-                xmlWriter.WriteStartElement("SearchCriteria");
-
-                foreach (var entry in searchCriteria.Criterias)
-                {
-                    xmlWriter.WriteStartElement("Criteria");
-                    xmlWriter.WriteElementString("Key", entry.Key);
-                    xmlWriter.WriteElementString("Value", entry.Value.ToString());
-                    xmlWriter.WriteEndElement();
-                }
-
-                xmlWriter.WriteEndElement();
-                xmlWriter.WriteEndDocument();
-            }
-
-            return xmlStringBuilder.ToString();
-        }
     }
 }

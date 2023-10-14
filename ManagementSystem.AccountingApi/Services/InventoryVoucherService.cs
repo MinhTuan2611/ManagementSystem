@@ -100,14 +100,14 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<bool> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request)
+        public async Task<InventoryVoucher> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request)
         {
             try
             {
                 var inventory = _context.InventoryVouchers.Include(x => x.Details)
                                                             .FirstOrDefault(x => x.DocummentNumber == request.DocummentNumber);
                 if (inventory == null)
-                    return false;
+                    return null;
 
                 inventory.UserId = request.UserId;
                 inventory.PurchasingRepresentive = request.PurchasingRepresentive;
@@ -151,7 +151,7 @@ namespace ManagementSystem.AccountingApi.Services
                         bool result = UpdateProductStorage(productStorage, detail.Quantity);
 
                         if (!result)
-                            return false;
+                            return null;
                     }
                 }
                 await _context.SaveChangesAsync();
@@ -178,11 +178,11 @@ namespace ManagementSystem.AccountingApi.Services
                 });
                 await _context.SaveChangesAsync();
 
-                return true;
+                return inventory;
             }
             catch (Exception ex)
             {
-                return false;
+                return null;
             }
         }
 

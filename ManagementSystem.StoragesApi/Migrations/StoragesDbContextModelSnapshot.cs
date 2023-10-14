@@ -977,6 +977,72 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.ToTable("CustomerResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.BillDetailResponseDto", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"), 1L, 1);
+
+                    b.Property<int?>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BillId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DiscountAmount")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("DiscountByPercentage")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("DiscountPercentage")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UnitId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UnitName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BillDetailResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.BillSearchingResponseDto", b =>
+                {
+                    b.Property<int>("BillId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("totalAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("totalChange")
+                        .HasColumnType("int");
+
+                    b.Property<int>("totalPaid")
+                        .HasColumnType("int");
+
+                    b.ToTable("BillSearchingResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.Bill", b =>
                 {
                     b.HasOne("ManagementSystem.Common.Entities.Customer", "Customer")

@@ -15,6 +15,11 @@ namespace ManagementSystem.Common.Models
             {
                 PageSize = 10;
             }
+
+            if (PageNumber <= 0)
+            {
+                PageNumber = 1;
+            }
         }
         public IDictionary<string, object> Criterias { get; set; }
         public int PageNumber { get; set; }
