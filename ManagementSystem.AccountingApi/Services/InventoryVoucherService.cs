@@ -1,9 +1,9 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
-using ManagementSystem.Common.Entities.Accountings;
+using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.Common.Models.Dtos.Accounting;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -30,8 +30,8 @@ namespace ManagementSystem.AccountingApi.Services
                 inventory.ReasonFor = AccountingConstant.XBAReason;
                 inventory.Note = request.Note;
                 inventory.RepresentivePhone = "";
-                //inventory.PaymentMethodId = request.PaymentMethodId;
                 inventory.CustomerId = request.CustomerId;
+                inventory.StorageId = GetProductStorageDto(request.BrandId.Value, request.Details[0].ProductId).StorageId;
 
                 _context.InventoryVouchers.Add(inventory);
                 _context.SaveChanges();
@@ -40,7 +40,7 @@ namespace ManagementSystem.AccountingApi.Services
                 {
                     var product = GetProductInformation(detail.ProductId);
                     var unit = GetUnitInformation(detail.UnitId);
-                    var productStorage = GetProductStorageDto(request.BrandId.Value, detail.Quantity);
+                    var productStorage = GetProductStorageDto(request.BrandId.Value, detail.ProductId);
 
                     var item = new InventoryVoucherDetail();
                     item.DocummentNumber = inventory.DocummentNumber;
@@ -58,7 +58,6 @@ namespace ManagementSystem.AccountingApi.Services
                     //item.TaxMoney = detail.TaxMoney;
                     item.TotalMoneyAfterTax = detail.TotalMoneyAfterTax;
                     item.Note = detail.Note;
-                    item.StorageId = productStorage.StorageId;
 
                     _context.InventoryVoucherDetails.Add(item);
 
@@ -69,17 +68,6 @@ namespace ManagementSystem.AccountingApi.Services
                         if (!result)
                             return null;
                     }
-                }
-
-                foreach (var code in request.PaymentMethodCodes)
-                {
-                    var method = GetPaymentInformation(code);
-
-                    var inventoryPaymentMethod = new InventoryVoucherPaymentMethod();
-                    inventoryPaymentMethod.DocumentNumber = inventory.DocummentNumber;
-                    inventoryPaymentMethod.PaymentMethodId = inventoryPaymentMethod.PaymentMethodId;
-
-                    _context.InventoryVoucherPaymentMethods.Add(inventoryPaymentMethod);
                 }
 
                 // Add activity logs
@@ -124,7 +112,7 @@ namespace ManagementSystem.AccountingApi.Services
                 {
                     var product = GetProductInformation(detail.ProductId);
                     var unit = GetUnitInformation(detail.UnitId);
-                    var productStorage = GetProductStorageDto(request.BrandId.Value, detail.Quantity);
+                    var productStorage = GetProductStorageDto(request.BrandId.Value, detail.ProductId);
 
                     var item = new InventoryVoucherDetail();
                     item.DocummentNumber = inventory.DocummentNumber;
@@ -142,7 +130,6 @@ namespace ManagementSystem.AccountingApi.Services
                     //item.TaxMoney = detail.TaxMoney;
                     item.TotalMoneyAfterTax = detail.TotalMoneyAfterTax;
                     item.Note = detail.Note;
-                    item.StorageId = productStorage.StorageId;
 
                     _context.InventoryVoucherDetails.Add(item);
 
@@ -154,20 +141,9 @@ namespace ManagementSystem.AccountingApi.Services
                             return null;
                     }
                 }
-                await _context.SaveChangesAsync();
-
-                var paymentMethods = _context.InventoryVoucherPaymentMethods.Where(x => x.DocumentNumber == request.DocummentNumber).ToList();
-                _context.InventoryVoucherPaymentMethods.RemoveRange(paymentMethods);
-                foreach (var id in request.PaymentMethodIds)
-                {
-                    var inventoryPaymentMethod = new InventoryVoucherPaymentMethod();
-                    inventoryPaymentMethod.DocumentNumber = request.DocummentNumber;
-                    inventoryPaymentMethod.PaymentMethodId = id;
-
-                    _context.InventoryVoucherPaymentMethods.Add(inventoryPaymentMethod);
-                }
 
                 await _context.SaveChangesAsync();
+
                 // Add activity logs
                 _context.ActivityLog.Add(new ActivityLog()
                 {
@@ -192,6 +168,9 @@ namespace ManagementSystem.AccountingApi.Services
                 SELECT p.ProductId
 		                ,p.ProductName
 		                ,p.ProductCode
+						,p.DefaultPurchasePrice
+						,p.BarCode
+						,p.Tax
 		                ,u.UnitName
 		                ,p.Price
 		                ,details.Quantity
@@ -203,9 +182,9 @@ namespace ManagementSystem.AccountingApi.Services
 		                ,details.DebitAccountMoney
 		                ,details.CreditAccountMoney
 		                ,details.PaymentDiscountMoney
-		                ,details.TaxMoney
 		                ,details.TotalMoneyAfterTax
 		                ,details.Note
+                        ,details.TaxMoney
                 FROM InventoryVoucherDetails details
                 JOIN StoragesDb.dbo.Products p ON p.ProductId = details.ProductId
                 JOIN StoragesDb.dbo.ProductUnit pu ON p.ProductId = pu.ProductId
@@ -219,71 +198,35 @@ namespace ManagementSystem.AccountingApi.Services
 
                 return results;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return null;
             }
         }
 
-        public async Task<List<InventoryVoucherResponseDto>> GetInventoryVouchers(int page = 1, int pageSize = 10)
+        public async Task<List<InventoryVoucherResponseDto>> GetInventoryVouchers(SearchCriteria searchModel)
         {
-            string query = string.Format(@"
-        SELECT DISTINCT iv.DocummentNumber
-		                ,iv.CustomerId
-		                ,c.CustomerName
-		                ,iv.PurchasingRepresentive
-		                ,iv.RepresentivePhone
-		                ,iv.Note
-		                ,iv.UserId
-		                ,u.FirstName
-		                ,u.LastName
-		                ,u.Email
-		                ,u.PhoneNumber
-		                ,iv.ReasonFor
-		                ,p.PaymentMethodName
-		                ,iv.TransactionDate
-						,s.StorageName
-                FROM InventoryVouchers iv
-				JOIN InventoryVoucherDetails id ON iv.DocummentNumber = id.DocummentNumber
-				LEFT JOIN InventoryVoucherPaymentMethods ipm ON iv.DocummentNumber = ipm.DocumentNumber
-                LEFT JOIN StoragesDb.dbo.customers c ON iv.CustomerId = c.CustomerId
-                JOIN AccountsDb.dbo.Users u ON iv.UserId = u.UserId
-                LEFT JOIN StoragesDb.dbo.PaymentMethods p ON p.PaymentMethodId = ipm.PaymentMethodId
-				LEFT JOIN StoragesDb.dbo.Storages s ON s.StorageId = id.StorageId
-                ORDER BY iv.TransactionDate DESC
-                OFFSET ({0} - 1)*{1} ROWS
-                FETCH NEXT {1} ROWS ONLY
-            ", page, pageSize);
-
             try
             {
-                var result = _context.InventoryVoucherResponseDto.FromSqlRaw(query)
-                 .ToList();
+                string xmlString = XMLCommonFunction.SerializeToXml(searchModel);
+                var result = _context.InventoryVoucherResponseDto.FromSqlRaw(string.Format("EXEC sp_SearchInventoryVoucher '{0}', {1}, {2}", xmlString, searchModel.PageNumber, searchModel.PageSize)).AsNoTracking().ToList();
 
-                return result;
+                List <InventoryVoucherResponseDto> response = new List <InventoryVoucherResponseDto>();
+                foreach (var item in result)
+                {
+                    var billPaymentMethods = await GetBillPaymentMethods(item.BillId.Value);
+
+                    item.PaymentMethods = billPaymentMethods;
+
+                    response.Add(item);
+                }
+
+                return response;
             }
             catch (Exception ex)
             {
-                return null; ;
+                return null;
             }
-        }
-
-        // Private Funtion Handling Get Data
-
-        private ProductResponseDto GetProductInformation(int productId)
-        {
-            string query = string.Format(@"
-                    SELECT	p.ProductName
-		                    ,p.Price
-		                    ,p.Price * (1 + Tax/100) AS PriceBeforeTax
-		                    ,p.CreditAccountId
-		                    ,p.DebitAccountId
-                    FROM StoragesDb.dbo.Products p
-                    WHERE p.ProductId = {0}
-            ", productId);
-
-            var product = _context.ProductResponseDtos.FromSqlRaw(query).FirstOrDefault();
-
-            return product;
         }
 
         public PaymentMethodResponseDto GetPaymentInformation(string paymentMethodCode)
@@ -346,5 +289,48 @@ namespace ManagementSystem.AccountingApi.Services
 
             return result == 0 ? false : true;
         }
+
+        #region Private Function Handle
+        private async Task<List<BillPaymentDetailResponseDto>> GetBillPaymentMethods(int billId)
+        {
+            string query = string.Format(@"
+ 	                SELECT b.Id
+			                ,b.Amount
+			                ,b.PaymentTransactionRef
+			                ,p.PaymentMethodCode
+			                ,P.PaymentMethodName
+	                FROM StoragesDb.dbo.BillPayments b
+	                JOIN StoragesDb.dbo.PaymentMethods p ON b.PaymentMethodId = p.PaymentMethodId
+	                WHERE b.BillId = {0}
+            ", billId);
+
+            try
+            {
+                var result = _context.BillPaymentDetailResponseDtos.FromSqlRaw(query).ToList();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        private ProductResponseDto GetProductInformation(int productId)
+        {
+            string query = string.Format(@"
+                    SELECT	p.ProductName
+		                    ,p.Price
+		                    ,p.Price * (1 + Tax/100) AS PriceBeforeTax
+		                    ,p.CreditAccountId
+		                    ,p.DebitAccountId
+                    FROM StoragesDb.dbo.Products p
+                    WHERE p.ProductId = {0}
+            ", productId);
+
+            var product = _context.ProductResponseDtos.FromSqlRaw(query).FirstOrDefault();
+
+            return product;
+        }
+        #endregion
     }
 }

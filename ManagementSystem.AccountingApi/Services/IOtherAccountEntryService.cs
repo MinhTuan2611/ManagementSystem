@@ -1,5 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
-using ManagementSystem.Common.Models.Dtos.Accounting;
+using ManagementSystem.Common.Models.Dtos;
 
 namespace ManagementSystem.AccountingApi.Services
 {

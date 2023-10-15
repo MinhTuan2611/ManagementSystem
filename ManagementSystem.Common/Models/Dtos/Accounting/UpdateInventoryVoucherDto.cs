@@ -33,6 +33,5 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? PaymentMethodId { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public List<InventoryVoucherDetailDto> Details { get; set; }
-        public List<int> PaymentMethodIds { get; set; }
     }
 }

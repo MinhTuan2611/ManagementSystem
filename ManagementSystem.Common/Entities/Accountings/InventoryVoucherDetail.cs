@@ -20,7 +20,6 @@ namespace ManagementSystem.Common.Entities
         public int? TaxMoney { get; set; }
         public int? TotalMoneyAfterTax { get; set; }
         public string? Note { get; set; }
-        public int? StorageId { get; set; }
         public InventoryVoucher InventoryVoucher { get; set; }
 
     }

@@ -1,7 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
-using ManagementSystem.Common.Entities.Accountings;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.Common.Models.Dtos.Accounting;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net;
@@ -12,6 +10,7 @@ namespace ManagementSystem.AccountingApi.Data
     {
         public AccountingDbContext(DbContextOptions<AccountingDbContext> options) : base(options)
         {
+
         }
 
         public DbSet<TypesOfAccounts> TypesOfAccounts { get; set; }
@@ -21,7 +20,6 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<InventoryVoucherDetail> InventoryVoucherDetails { get; set; }
         public DbSet<PaymentVoucher> PaymentVouchers { get; set; }
         public DbSet<ActivityLog> ActivityLog { get; set; }
-        public DbSet<InventoryVoucherPaymentMethod> InventoryVoucherPaymentMethods { get; set; }
         public DbSet<Leger> Legers { get; set; }
         public DbSet<OtherAccountEntry> OtherAccountEntries { get; set; }
 
@@ -37,13 +35,13 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<ProductStorageInformationDto> ProductStorageInformationDtos { get; set; }
         public DbSet<PaymentVoucherResponseDto> PaymentVoucherResponseDtos { get; set; }
         public DbSet<OtherAccountEntryResponseDto> OtherAccountEntryResponseDtos { get; set; }
+        public DbSet<BillPaymentDetailResponseDto> BillPaymentDetailResponseDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<InventoryVoucherDetail>().HasKey(x => new { x.DocummentNumber, x.ProductId });
-            modelBuilder.Entity<InventoryVoucherPaymentMethod>().HasKey(x => new { x.DocumentNumber, x.PaymentMethodId });
 
             // Exclude migration tables
             modelBuilder.Entity<InventoryVoucherResponseDto>().ToTable(nameof(InventoryVoucherResponseDto), t => t.ExcludeFromMigrations());
@@ -56,6 +54,7 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<LegerResponseDto>().ToTable(nameof(LegerResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<PaymentVoucherResponseDto>().ToTable(nameof(PaymentVoucherResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<OtherAccountEntryResponseDto>().ToTable(nameof(OtherAccountEntryResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<BillPaymentDetailResponseDto>().ToTable(nameof(BillPaymentDetailResponseDto), t => t.ExcludeFromMigrations());
         }
     }
 }

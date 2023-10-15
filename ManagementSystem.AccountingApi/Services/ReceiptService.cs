@@ -2,7 +2,6 @@
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.Common.Models.Dtos.Accounting;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.AccountingApi.Services

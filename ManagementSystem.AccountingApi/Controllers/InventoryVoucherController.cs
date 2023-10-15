@@ -3,7 +3,6 @@ using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.Common.Models.Dtos.Accounting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,10 +21,10 @@ namespace ManagementSystem.AccountingApi.Controllers
 
         }
 
-        [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll([FromQuery] int? page = 1, [FromQuery] int? pageSize = 10)
+        [HttpPost("search-result")]
+        public async Task<IActionResult> SearchInventory([FromBody]SearchCriteria searchModel)
         {
-            var result = await _service.GetInventoryVouchers(page.Value, pageSize.Value);
+            var result = await _service.GetInventoryVouchers(searchModel);
             return Ok(result);
         }
 
@@ -51,7 +50,7 @@ namespace ManagementSystem.AccountingApi.Controllers
                     CreditAccountId = inventory.Details.SingleOrDefault(x => x.CreditAccount != null)?.CreditAccount,
                     DebitAccountId = inventory.Details.SingleOrDefault(x => x.DebitAccount != null)?.DebitAccount,
                     BillId = request.BillId,
-                    StorageId = inventory.Details.SingleOrDefault(x => x.StorageId != null).StorageId
+                    StorageId = inventory.StorageId,
                 };
                 
                 var receptResult = await  _receiptService.CreateReceipt(newReceiptDto);

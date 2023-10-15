@@ -1,5 +1,5 @@
 ﻿using ManagementSystem.AccountingApi.Services;
-using ManagementSystem.Common.Models.Dtos.Accounting;
+using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

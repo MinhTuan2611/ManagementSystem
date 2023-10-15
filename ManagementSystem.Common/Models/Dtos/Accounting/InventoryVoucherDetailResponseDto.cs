@@ -8,6 +8,9 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? ProductId { get; set; }
         public string? ProductName { get; set; }
         public string? ProductCode { get; set; }
+        public int? DefaultPurchasePrice { get; set; }
+        public string? BarCode { get; set; }
+        public int? Tax { get; set; }
         public string? UnitName { get; set; }
         public int? Price { get; set; }
         public int? Quantity { get; set; }
