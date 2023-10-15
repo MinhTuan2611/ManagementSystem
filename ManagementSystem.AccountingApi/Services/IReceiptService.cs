@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 
 namespace ManagementSystem.AccountingApi.Services
@@ -7,7 +8,7 @@ namespace ManagementSystem.AccountingApi.Services
     {
         Task<Receipt> CreateReceipt(NewReceiptRequestDto request);
         Task<Receipt> UpdateReceipt(UpdateReceiptRequestDto request);
-        Task<List<ReceiptResponseDto>> GetAllReceipts(int? page = 1, int? pageSize = 10);
+        Task<List<ReceiptResponseDto>> GetAllReceipts(SearchCriteria searchModel);
         Task<ReceiptResponseDto> GetReceptByDocumentNumber(int documentNumber);
     }
 }

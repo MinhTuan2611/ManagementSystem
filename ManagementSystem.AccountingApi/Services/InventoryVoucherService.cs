@@ -31,7 +31,8 @@ namespace ManagementSystem.AccountingApi.Services
                 inventory.Note = request.Note;
                 inventory.RepresentivePhone = "";
                 inventory.CustomerId = request.CustomerId;
-                inventory.StorageId = GetProductStorageDto(request.BrandId.Value, request.Details[0].ProductId).StorageId;
+                inventory.StorageId = GetProductStorageDto(request.BrandId.Value, request.Details[0].ProductId)?.StorageId;
+                inventory.BillId = request.BillId;
 
                 _context.InventoryVouchers.Add(inventory);
                 _context.SaveChanges();
@@ -211,13 +212,15 @@ namespace ManagementSystem.AccountingApi.Services
                 string xmlString = XMLCommonFunction.SerializeToXml(searchModel);
                 var result = _context.InventoryVoucherResponseDto.FromSqlRaw(string.Format("EXEC sp_SearchInventoryVoucher '{0}', {1}, {2}", xmlString, searchModel.PageNumber, searchModel.PageSize)).AsNoTracking().ToList();
 
-                List <InventoryVoucherResponseDto> response = new List <InventoryVoucherResponseDto>();
+                List<InventoryVoucherResponseDto> response = new List<InventoryVoucherResponseDto>();
                 foreach (var item in result)
                 {
-                    var billPaymentMethods = await GetBillPaymentMethods(item.BillId.Value);
+                    if (item.BillId != null)
+                    {
+                        var billPaymentMethods = await GetBillPaymentMethods(item.BillId.Value);
 
-                    item.PaymentMethods = billPaymentMethods;
-
+                        item.PaymentMethods = billPaymentMethods;
+                    }
                     response.Add(item);
                 }
 
