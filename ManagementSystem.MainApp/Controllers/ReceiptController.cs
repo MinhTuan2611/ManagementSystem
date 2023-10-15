@@ -12,12 +12,12 @@ namespace ManagementSystem.MainApp.Controllers
     {
         private string APIUrl = Environment.AccountingApiUrl + "Receipt/";
 
-        [HttpGet("get")]
-        public async Task<IActionResult> Get([FromQuery] int? page = 1, [FromQuery] int? pageSize = 10)
+        [HttpPost("search-result")]
+        public async Task<IActionResult> SearchReceipts(SearchCriteria searchModel)
         {
 
             ResponseModel<ReceiptResponseDto> response = new ResponseModel<ReceiptResponseDto>();
-            List<ReceiptResponseDto> vouchers = await HttpRequestsHelper.Get<List<ReceiptResponseDto>>(APIUrl + "get-all?page=" + page + "&pageSize=" + pageSize);
+            List<ReceiptResponseDto> vouchers = await HttpRequestsHelper.Post<List<ReceiptResponseDto>>(APIUrl + "search-result", searchModel);
 
             if (vouchers != null)
             {

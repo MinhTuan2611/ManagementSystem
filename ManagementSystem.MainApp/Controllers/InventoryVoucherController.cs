@@ -2,7 +2,6 @@
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.Common.Models.Dtos.Accounting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementSystem.MainApp.Controllers
@@ -13,12 +12,12 @@ namespace ManagementSystem.MainApp.Controllers
     {
         private string APIUrl = Environment.AccountingApiUrl + "InventoryVoucher/";
 
-        [HttpGet("get")]
-        public async Task<IActionResult> Get([FromQuery] int? page = 1, [FromQuery] int? pageSize = 10)
+        [HttpPost("search-result")]
+        public async Task<IActionResult> Get([FromBody] SearchCriteria searchModel)
         {
 
             ResponseModel<InventoryVoucherResponseDto> response = new ResponseModel<InventoryVoucherResponseDto>();
-            List<InventoryVoucherResponseDto> vouchers = await HttpRequestsHelper.Get<List<InventoryVoucherResponseDto>>(APIUrl + "get-all?page=" + page + "&pageSize=" + pageSize);
+            List<InventoryVoucherResponseDto> vouchers = await HttpRequestsHelper.Post<List<InventoryVoucherResponseDto>>(APIUrl + "search-result", searchModel);
 
             if (vouchers != null)
             {

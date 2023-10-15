@@ -1,7 +1,7 @@
 ﻿using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
-using ManagementSystem.Common.Models.Dtos.Accounting;
+using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

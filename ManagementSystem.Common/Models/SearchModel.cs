@@ -9,18 +9,6 @@ namespace ManagementSystem.Common.Models
     [Serializable]
     public class SearchCriteria
     {
-        public SearchCriteria()
-        {
-            if (PageSize <= 0)
-            {
-                PageSize = 10;
-            }
-
-            if (PageNumber <= 0)
-            {
-                PageNumber = 1;
-            }
-        }
         public IDictionary<string, object> Criterias { get; set; }
         public int PageNumber { get; set; }
         public int PageSize { get; set; }

@@ -1,5 +1,6 @@
 ﻿using ManagementSystem.AccountingApi.Services;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,10 @@ namespace ManagementSystem.AccountingApi.Controllers
             _service = service;
         }
 
-        [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll([FromQuery] int? page = 1, [FromQuery] int? pageSize = 10)
+        [HttpPost("search-result")]
+        public async Task<IActionResult> GetAll(SearchCriteria searchModel)
         {
-            var result = await _service.GetAllReceipts(page.Value, pageSize.Value);
+            var result = await _service.GetAllReceipts(searchModel);
             return Ok(result);
         }
 

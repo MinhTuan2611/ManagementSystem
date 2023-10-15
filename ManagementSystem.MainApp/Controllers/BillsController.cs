@@ -48,7 +48,7 @@ namespace ManagementSystem.MainApp.Controllers
                 inventoryVoucherDto.UserId = int.Parse(userId);
                 inventoryVoucherDto.BillId = resultBill.BillId;
 
-                var inventoryResult = await HttpRequestsHelper.Post<bool>(Environment.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
+                var inventoryResult = await HttpRequestsHelper.Post<InventoryVoucher>(Environment.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
 
                 if (inventoryResult == null)
                     return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created but faild when create Inventory Voucher");
@@ -80,7 +80,6 @@ namespace ManagementSystem.MainApp.Controllers
             model.PurchasingRepresentive = bill.CustomerId == null ? "" : bill.CustomerName;
             model.EmployeeShiftId = bill.EmployeeShiftId;
             model.BrandId = bill.BrandId;
-            model.PaymentMethodCodes = bill.Payments.Select(x => x.PaymentMethodCode).ToList();
 
             var inventoryDetails = new List<InventoryVoucherDetailDto>();
             foreach (var item in bill.Details)

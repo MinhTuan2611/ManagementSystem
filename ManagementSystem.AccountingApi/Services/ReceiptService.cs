@@ -1,8 +1,9 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.Common.Models.Dtos.Accounting;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.AccountingApi.Services
@@ -57,37 +58,18 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<List<ReceiptResponseDto>> GetAllReceipts(int? page = 1, int? pageSize = 10)
+        public async Task<List<ReceiptResponseDto>> GetAllReceipts(SearchCriteria searchModel)
         {
-            string query = string.Format(@"
-                SELECT r.DocumentNumber
-		                ,r.TransactionDate
-		                ,c.CustomerId
-		                ,c.CustomerName
-		                ,c.CustomerName AS Payer
-		                ,r.ForReason
-		                ,r.TotalMoney
-		                ,u.UserId
-		                ,u.UserName AS Cashier
-                FROM Receipts r
-                JOIN StoragesDB.dbo.Customers c ON r.CustomerId = c.CustomerId
-                JOIN AccountsDb.dbo.Users u ON u.UserId = r.UserId
-
-                ORDER BY r.TransactionDate DESC
-                OFFSET ({0}-1)*{1} ROWS
-                FETCH NEXT {1} ROWS ONLY
-            ", page, pageSize);
-
             try
             {
-                var receipts = _context.ReceiptResponseDtos.FromSqlRaw(query).ToList();
+                string xmlString = XMLCommonFunction.SerializeToXml(searchModel);
+                var result = _context.ReceiptResponseDtos.FromSqlRaw(string.Format("EXEC sp_SearchReceipts '{0}', {1}, {2}", xmlString, searchModel.PageNumber, searchModel.PageSize)).AsNoTracking().ToList();
 
-                return receipts;
+                return result;
             }
             catch (Exception ex)
             {
-
-                throw ex;
+                return null;
             }
         }
 
