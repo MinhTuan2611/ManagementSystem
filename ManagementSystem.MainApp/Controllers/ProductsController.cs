@@ -1,6 +1,7 @@
 ﻿using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -67,7 +68,7 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> AutoCompleteStorages(string? searchValue)
         {
 
-            ResponseModel<ProductInfo> response = new ResponseModel<ProductInfo>();
+           ResponseModel<ProductInfo> response = new ResponseModel<ProductInfo>();
            List<ProductInfo> lsProduct = await HttpRequestsHelper.Get<List<ProductInfo>>(APIUrl + "autocomplete-product?searchValue=" + searchValue);
             if (lsProduct != null)
             {
@@ -120,6 +121,26 @@ namespace ManagementSystem.MainApp.Controllers
             
             if (string.IsNullOrEmpty(response))
                 return BadRequest("Can not generate Code because invalid category id or productname can not be found");
+            return Ok(response);
+        }
+
+        [HttpGet()]
+        [Route("random-selected-products")]
+        public async Task<IActionResult> AutoSelectedProducts([FromQuery] int items, [FromQuery] int? brandId)
+        {
+            ResponseModel<ProductAutoGenerationResponseDto> response = new ResponseModel<ProductAutoGenerationResponseDto>();
+            var result = await HttpRequestsHelper.Get<List<ProductAutoGenerationResponseDto>>(APIUrl +
+                    string.Format("random-selected-products?items={0}&productName={1}", items, brandId));
+            
+            if (result != null)
+            {
+
+                response.Status = "success";
+                response.Data = result;
+                return Ok(response);
+            }
+            response.Status = "success";
+            response.ErrorMessage = "Not found any information!";
             return Ok(response);
         }
     }

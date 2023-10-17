@@ -89,5 +89,14 @@ namespace ManagementSystem.StoragesApi.Controllers
 
             return Ok(generateCode);
         }
+
+        [HttpGet()]
+        [Route("random-selected-products")]
+        public IActionResult GenerateProductCode([FromQuery] int items, [FromQuery] int? brandId)
+        {
+            var result = _ProductService.AutoRandomProducts(items, brandId);
+
+            return Ok(result);
+        }
     }
 }

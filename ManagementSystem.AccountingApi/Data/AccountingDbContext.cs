@@ -22,6 +22,11 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<ActivityLog> ActivityLog { get; set; }
         public DbSet<Leger> Legers { get; set; }
         public DbSet<OtherAccountEntry> OtherAccountEntries { get; set; }
+        public DbSet<ShiftEndReport> ShiftEndReports { get; set; }
+        public DbSet<ShiftHandovers> ShiftHandovers { get; set; }
+        public DbSet<ShiftHandoverCashDetail> ShiftHandoverCashDetails { get; set; }
+        public DbSet<InventoryAuditDetail> InventoryAuditDetails { get; set; }
+        public DbSet<ShiftReport> ShiftReports { get; set; }
 
         
         // Add context to return tabbles
@@ -42,6 +47,8 @@ namespace ManagementSystem.AccountingApi.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<InventoryVoucherDetail>().HasKey(x => new { x.DocummentNumber, x.ProductId });
+            modelBuilder.Entity<ShiftHandoverCashDetail>().HasKey(x => new {x.ShiftEndId, x.Denomination});
+            modelBuilder.Entity<InventoryAuditDetail>().HasKey(x => new {x.ShiftEndId, x.ProductId, x.UnitId});
 
             // Exclude migration tables
             modelBuilder.Entity<InventoryVoucherResponseDto>().ToTable(nameof(InventoryVoucherResponseDto), t => t.ExcludeFromMigrations());
