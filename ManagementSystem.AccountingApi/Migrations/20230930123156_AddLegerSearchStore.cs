@@ -81,8 +81,8 @@ namespace ManagementSystem.AccountingApi.Migrations
 					-- Return result
 					SET @sqlQuery = CONCAT('
 						SELECT  l.TransactionDate
-								,l.CreditAccount
-								,l.DepositAccount
+								,rc.AccountCode AS CreditAccount
+								,rd.AccountCode AS DepositAccount
 								,l.DoccumentType
 								,l.DoccumentNumber
 								,l.BillId
@@ -91,6 +91,8 @@ namespace ManagementSystem.AccountingApi.Migrations
 								,l.Amount
 						FROM Legers l
 						JOIN AccountsDb.dbo.Users u ON l.UserId = u.UserId
+						LEFT JOIN dbo.TypesOfAccounts rc ON l.CreditAccount = rc.AccountId
+						LEFT JOIN dbo.TypesOfAccounts rd ON l.DepositAccount = rd.AccountId
 						LEFT JOIN StoragesDb.dbo.Customers c on l.CustomerId = c.CustomerId
 						LEFT JOIN StoragesDb.dbo.Storages s ON l.StorageId = s.StorageId
 						WHERE 1 = 1
