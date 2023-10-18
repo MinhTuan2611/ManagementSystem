@@ -23,6 +23,7 @@ builder.Services.AddScoped<IInventoryVoucherService, InventoryVoucherService>();
 builder.Services.AddScoped<ILegerService, LegerService>();
 builder.Services.AddScoped<IPaymentVoucherService, PaymentVoucherService>();
 builder.Services.AddScoped<IOtherAccountEntryService, OtherAccountEntryService>();
+builder.Services.AddScoped<IEmployeeShiftReportService, EmployeeShiftReportService>();
 
 var app = builder.Build();
 

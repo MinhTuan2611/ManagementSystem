@@ -1,8 +1,6 @@
 ﻿using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Net;
 
 namespace ManagementSystem.AccountingApi.Data
 {
@@ -22,6 +20,11 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<ActivityLog> ActivityLog { get; set; }
         public DbSet<Leger> Legers { get; set; }
         public DbSet<OtherAccountEntry> OtherAccountEntries { get; set; }
+        public DbSet<ShiftEndReport> ShiftEndReports { get; set; }
+        public DbSet<ShiftHandovers> ShiftHandovers { get; set; }
+        public DbSet<ShiftHandoverCashDetail> ShiftHandoverCashDetails { get; set; }
+        public DbSet<InventoryAuditDetail> InventoryAuditDetails { get; set; }
+        public DbSet<ShiftReport> ShiftReports { get; set; }
 
         
         // Add context to return tabbles
@@ -36,12 +39,17 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<PaymentVoucherResponseDto> PaymentVoucherResponseDtos { get; set; }
         public DbSet<OtherAccountEntryResponseDto> OtherAccountEntryResponseDtos { get; set; }
         public DbSet<BillPaymentDetailResponseDto> BillPaymentDetailResponseDtos { get; set; }
+        public DbSet<ShiftEndResponseDto> ShiftEndResponseDtos { get; set; }
+        public DbSet<ShiftHandoverResponseDto> ShiftHandoverResponseDtos { get; set; }
+        public DbSet<ShiftReportResponseDto> ShiftReportResponseDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<InventoryVoucherDetail>().HasKey(x => new { x.DocummentNumber, x.ProductId });
+            modelBuilder.Entity<ShiftHandoverCashDetail>().HasKey(x => new {x.ShiftEndId, x.Denomination});
+            modelBuilder.Entity<InventoryAuditDetail>().HasKey(x => new {x.ShiftEndId, x.ProductId, x.UnitId});
 
             // Exclude migration tables
             modelBuilder.Entity<InventoryVoucherResponseDto>().ToTable(nameof(InventoryVoucherResponseDto), t => t.ExcludeFromMigrations());
@@ -55,6 +63,9 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<PaymentVoucherResponseDto>().ToTable(nameof(PaymentVoucherResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<OtherAccountEntryResponseDto>().ToTable(nameof(OtherAccountEntryResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<BillPaymentDetailResponseDto>().ToTable(nameof(BillPaymentDetailResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ShiftEndResponseDto>().ToTable(nameof(ShiftEndResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ShiftHandoverResponseDto>().ToTable(nameof(ShiftHandoverResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ShiftReportResponseDto>().ToTable(nameof(ShiftReportResponseDto), t => t.ExcludeFromMigrations());
         }
     }
 }

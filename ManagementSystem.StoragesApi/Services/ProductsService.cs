@@ -1,5 +1,6 @@
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
@@ -430,6 +431,36 @@ namespace ManagementSystem.StoragesApi.Services
             return string.Format("{0}{1}", categoryRefCode, animalPartRefCode);
         }
 
+        public List<ProductAutoGenerationResponseDto> AutoRandomProducts(int items, int? brandId)
+        {
+
+            string query = string.Format(@"
+                SELECT TOP {0} P.ProductId
+	                  ,p.ProductCode
+	                  ,p.ProductName
+	                  ,u.UnitId
+	                  ,u.UnitName
+	                  ,ps.Quantity AS TotalSystemAmount
+                FROM dbo.Products p
+                JOIN dbo.ProductUnit pu  ON pu.ProductId = p.ProductId
+                JOIN dbo.Unit u ON u.UnitId = pu.UnitId
+                LEFT JOIN dbo.ProductStorages ps ON ps.ProductId = p.ProductId
+                LEFT JOIN dbo.Storages s ON s.StorageId = ps.StorageId
+                LEFT JOIN dbo.Branches b ON b.BranchId = s.BranchId
+                ORDER BY NEWID()
+                ",items);
+
+            try
+            {
+                var result = _storageContext.ProductAutoGenerationResponseDtos.FromSqlRaw(query).ToList();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         // private function check part name is in product name
         private bool CheckAnimalPartInProductName(string productName, List<string> AniamlPartSplit)
         {

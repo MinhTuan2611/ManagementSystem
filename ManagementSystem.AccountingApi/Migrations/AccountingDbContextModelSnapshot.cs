@@ -49,6 +49,28 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("ActivityLog");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryAuditDetail", b =>
+                {
+                    b.Property<int>("ShiftEndId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ActualAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SystemAmount")
+                        .HasColumnType("int");
+
+                    b.HasKey("ShiftEndId", "ProductId", "UnitId");
+
+                    b.ToTable("InventoryAuditDetails");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryVoucher", b =>
                 {
                     b.Property<int>("DocummentNumber")
@@ -377,6 +399,164 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("Recordingtransactions");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftEndReport", b =>
+                {
+                    b.Property<int>("ShiftEndId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShiftEndId"), 1L, 1);
+
+                    b.Property<int?>("CompanyMoneyTransferred")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ShiftEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ShiftEndId");
+
+                    b.ToTable("ShiftEndReports");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftHandoverCashDetail", b =>
+                {
+                    b.Property<int>("ShiftEndId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Denomination")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.HasKey("ShiftEndId", "Denomination");
+
+                    b.ToTable("ShiftHandoverCashDetails");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftHandovers", b =>
+                {
+                    b.Property<int>("HandoverId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HandoverId"), 1L, 1);
+
+                    b.Property<int?>("CashHandover")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanyMoneyTransferred")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("HandoverTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ReceiverUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SenderUserI2")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SenderUserId1")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShiftEndId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("StorageId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalShiftMoney")
+                        .HasColumnType("int");
+
+                    b.HasKey("HandoverId");
+
+                    b.HasIndex("ShiftEndId");
+
+                    b.ToTable("ShiftHandovers");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftReport", b =>
+                {
+                    b.Property<int>("ReportId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReportId"), 1L, 1);
+
+                    b.Property<int>("ActualMoneyForNextShift")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExcessMoney")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("HandoverId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LackOfMoney")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OtherExpense")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RemindMoneyForNextShift")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReportDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalBill")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalCardAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalCashAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalExpenses")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalInternalConsumption")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalMOMOAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalRevenue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalShiftInMoney")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalVoucherAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserCreatedId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReportId");
+
+                    b.HasIndex("HandoverId");
+
+                    b.ToTable("ShiftReports");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.TypesOfAccounts", b =>
                 {
                     b.Property<int>("AccountId")
@@ -425,8 +605,36 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("TypesOfAccounts");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.BillPaymentDetailResponseDto", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"), 1L, 1);
+
+                    b.Property<int?>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentMethodCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentMethodName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentTransactionRef")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BillPaymentDetailResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.InventoryVoucherDetailResponseDto", b =>
                 {
+                    b.Property<string>("BarCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CreditAccount")
                         .HasColumnType("int");
 
@@ -437,6 +645,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("DebitAccountMoney")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DefaultPurchasePrice")
                         .HasColumnType("int");
 
                     b.Property<string>("Note")
@@ -463,6 +674,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Tax")
+                        .HasColumnType("int");
+
                     b.Property<int?>("TaxAccount")
                         .HasColumnType("int");
 
@@ -483,6 +697,9 @@ namespace ManagementSystem.AccountingApi.Migrations
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.InventoryVoucherResponseDto", b =>
                 {
+                    b.Property<int?>("BillId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
@@ -508,15 +725,6 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PaymentAmount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PaymentMethodCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PaymentMethodName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -730,12 +938,121 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("ReceiptResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftEndResponseDto", b =>
+                {
+                    b.Property<int>("ShiftEndId")
+                        .HasColumnType("int");
+
+                    b.ToTable("ShiftEndResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftHandoverResponseDto", b =>
+                {
+                    b.Property<int?>("CurShiftAmount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("HandoverDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("HandoverId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PreShiftAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShiftName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TotalAmount")
+                        .HasColumnType("int");
+
+                    b.ToTable("ShiftHandoverResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftReportResponseDto", b =>
+                {
+                    b.Property<int?>("ActualMoneyForNextShift")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ExcessMoney")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LackOfMoney")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OtherExpense")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RemindMoneyForNextShift")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ShiftEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShiftName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TotalBill")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalCardAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalCashAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalExpenses")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalInternalConsumption")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalMOMOAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalRevenue")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalShiftInMoney")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalVoucherAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("ShiftReportResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.UnitResponseDto", b =>
                 {
                     b.Property<string>("UnitName")
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("UnitResponseDtos", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryAuditDetail", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.ShiftEndReport", "ShiftEndReport")
+                        .WithMany("InventoryAuditDetails")
+                        .HasForeignKey("ShiftEndId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShiftEndReport");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryVoucherDetail", b =>
@@ -749,9 +1066,47 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Navigation("InventoryVoucher");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftHandoverCashDetail", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.ShiftEndReport", "ShiftEndReport")
+                        .WithMany("ShiftHandoverCashDetails")
+                        .HasForeignKey("ShiftEndId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShiftEndReport");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftHandovers", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.ShiftEndReport", "ShiftEndReport")
+                        .WithMany()
+                        .HasForeignKey("ShiftEndId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShiftEndReport");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftReport", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.ShiftHandovers", "ShiftHandovers")
+                        .WithMany()
+                        .HasForeignKey("HandoverId");
+
+                    b.Navigation("ShiftHandovers");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryVoucher", b =>
                 {
                     b.Navigation("Details");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftEndReport", b =>
+                {
+                    b.Navigation("InventoryAuditDetails");
+
+                    b.Navigation("ShiftHandoverCashDetails");
                 });
 #pragma warning restore 612, 618
         }
