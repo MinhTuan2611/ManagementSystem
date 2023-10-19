@@ -6,8 +6,8 @@ namespace ManagementSystem.Common.Models.Dtos
     public class LegerResponseDto
     {
         public DateTime TransactionDate { get; set; }
-        public int? DepositAccount { get; set; }
-        public int? CreditAccount { get; set; }
+        public string? DepositAccount { get; set; }
+        public string? CreditAccount { get; set; }
         public int? DoccumentNumber { get; set; }
         public string? DoccumentType { get; set; }
         public int? BillId { get; set; }

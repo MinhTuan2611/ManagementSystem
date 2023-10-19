@@ -47,10 +47,9 @@ namespace ManagementSystem.AccountingApi.Controllers
                     ForReason = string.Format(AccountingConstant.ReceiptReason, inventory.DocummentNumber),
                     UserId = request.UserId,
                     TotalMoney = request.Details.Sum(x => x.TotalMoneyAfterTax),
-                    CreditAccountId = inventory.Details.SingleOrDefault(x => x.CreditAccount != null)?.CreditAccount,
-                    DebitAccountId = inventory.Details.SingleOrDefault(x => x.DebitAccount != null)?.DebitAccount,
                     BillId = request.BillId,
                     StorageId = inventory.StorageId,
+                    InventoryDocumentNumber = inventory.DocummentNumber
                 };
                 
                 var receptResult = await  _receiptService.CreateReceipt(newReceiptDto);

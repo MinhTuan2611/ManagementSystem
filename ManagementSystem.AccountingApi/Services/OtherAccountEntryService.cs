@@ -33,13 +33,14 @@ namespace ManagementSystem.AccountingApi.Services
                 _context.OtherAccountEntries.Add(otherAccountEntry);
                 _context.SaveChanges();
 
+                var accounts = GetAccountInfor(newOtherAccountEntry.Reason);
                 await _legerService.CreateLegers(new Leger()
                 {
                     CustomerId = newOtherAccountEntry.CustomerId,
                     TransactionDate = otherAccountEntry.TransactionDate,
                     DoccumentNumber = otherAccountEntry.DocumentNumber,
-                    CreditAccount = otherAccountEntry.AccountId,
-                    DepositAccount = otherAccountEntry.AccountId,
+                    CreditAccount = accounts?.CreditAccount,
+                    DepositAccount = accounts?.DebitAccount,
                     DoccumentType = AccountingConstant.OtherAccountEntryType,
                     BillId = 0,
                     Amount = otherAccountEntry.Amount.Value,
@@ -172,5 +173,29 @@ namespace ManagementSystem.AccountingApi.Services
                 return null;
             }
         }
+
+        #region Private Handle function
+        private AccountsDto GetAccountInfor(string reason)
+        {
+            var query = string.Format(@"
+                SELECT tc.AccountCode AS CreditAccount
+		                ,td.AccountCode AS DebitAccount
+                FROM  dbo.Recordingtransactions rt
+                JOIN dbo.TypesOfAccounts tc ON tc.AccountId = rt.CreditAccountId
+                JOIN dbo.TypesOfAccounts td ON td.AccountId = rt.DebitAccountId
+                WHERE rt.ReasonCode = '{0}'
+            ", reason);
+
+            try
+            {
+                var result = _context.AccountDtos.FromSqlRaw(query).FirstOrDefault();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #endregion
     }
 }

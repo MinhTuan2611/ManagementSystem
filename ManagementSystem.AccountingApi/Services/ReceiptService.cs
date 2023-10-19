@@ -5,6 +5,7 @@ using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ManagementSystem.AccountingApi.Services
 {
@@ -34,13 +35,15 @@ namespace ManagementSystem.AccountingApi.Services
                 _context.Receipts.Add(receipt);
                 await _context.SaveChangesAsync();
 
+                var accounts = GetAccountInfor(request.InventoryDocumentNumber);
+
                 await _legerService.CreateLegers(new Leger()
                 {
                     CustomerId = receipt.CustomerId,
                     TransactionDate = receipt.TransactionDate,
                     DoccumentNumber = receipt.DocumentNumber,
-                    CreditAccount = request.CreditAccountId,
-                    DepositAccount = request.DebitAccountId,
+                    CreditAccount = accounts?.CreditAccount,
+                    DepositAccount = accounts?.DebitAccount,
                     DoccumentType = AccountingConstant.InventoryDeliveryDocummentType,
                     BillId = request.BillId,
                     Amount = request.TotalMoney,
@@ -119,6 +122,31 @@ namespace ManagementSystem.AccountingApi.Services
                 return null;
             }
         }
+
+        #region Private Handle function
+        private AccountsDto GetAccountInfor(int documentNumber)
+        {
+            var query = string.Format(@"
+                SELECT tc.AccountCode AS CreditAccount
+		                ,td.AccountCode AS DebitAccount
+                FROM dbo.InventoryVouchers i
+                JOIN dbo.Recordingtransactions rt ON i.ReasonFor = rt.ReasonCode
+                JOIN dbo.TypesOfAccounts tc ON tc.AccountId = rt.CreditAccountId
+                JOIN dbo.TypesOfAccounts td ON td.AccountId = rt.DebitAccountId
+                WHERE i.DocummentNumber = {0}
+            ", documentNumber);
+
+            try
+            {
+                var result = _context.AccountDtos.FromSqlRaw(query).FirstOrDefault();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #endregion
 
     }
 }

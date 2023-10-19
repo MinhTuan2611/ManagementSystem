@@ -186,14 +186,14 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("BillId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CreditAccount")
-                        .HasColumnType("int");
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DepositAccount")
-                        .HasColumnType("int");
+                    b.Property<string>("DepositAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DoccumentNumber")
                         .HasColumnType("int");
@@ -603,6 +603,17 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.HasKey("AccountId");
 
                     b.ToTable("TypesOfAccounts");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.AccountsDto", b =>
+                {
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DebitAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("AccountsDto", null, t => t.ExcludeFromMigrations());
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.BillPaymentDetailResponseDto", b =>

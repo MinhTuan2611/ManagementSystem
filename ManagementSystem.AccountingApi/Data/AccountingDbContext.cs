@@ -42,6 +42,7 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<ShiftEndResponseDto> ShiftEndResponseDtos { get; set; }
         public DbSet<ShiftHandoverResponseDto> ShiftHandoverResponseDtos { get; set; }
         public DbSet<ShiftReportResponseDto> ShiftReportResponseDtos { get; set; }
+        public DbSet<AccountsDto> AccountDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,6 +67,7 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<ShiftEndResponseDto>().ToTable(nameof(ShiftEndResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<ShiftHandoverResponseDto>().ToTable(nameof(ShiftHandoverResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<ShiftReportResponseDto>().ToTable(nameof(ShiftReportResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<AccountsDto>().ToTable(nameof(AccountsDto), t => t.ExcludeFromMigrations());
         }
     }
 }

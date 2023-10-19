@@ -37,13 +37,15 @@ namespace ManagementSystem.AccountingApi.Services
                 _context.PaymentVouchers.Add(paymentVoucher);
                 _context.SaveChanges();
 
+                var accounts = GetAccountInfor(paymentVoucher.Reason);
+
                 await _legerService.CreateLegers(new Leger()
                 {
                     CustomerId = null,
                     TransactionDate = paymentVoucher.TransactionDate,
                     DoccumentNumber = paymentVoucher.DocumentNumber,
-                    CreditAccount = newPaymentVoucher.CreditAccount,
-                    DepositAccount = newPaymentVoucher.DebitAccount,
+                    CreditAccount = accounts?.CreditAccount,
+                    DepositAccount = accounts?.DebitAccount,
                     DoccumentType = AccountingConstant.PaymentVoucherType,
                     BillId = 0,
                     Amount = newPaymentVoucher.TotalMoneyVND.Value,
@@ -175,5 +177,29 @@ namespace ManagementSystem.AccountingApi.Services
                 return null;
             }
         }
+
+        #region Private Handle function
+        private AccountsDto GetAccountInfor(string reason)
+        {
+            var query = string.Format(@"
+                SELECT tc.AccountCode AS CreditAccount
+		                ,td.AccountCode AS DebitAccount
+                FROM  dbo.Recordingtransactions rt
+                JOIN dbo.TypesOfAccounts tc ON tc.AccountId = rt.CreditAccountId
+                JOIN dbo.TypesOfAccounts td ON td.AccountId = rt.DebitAccountId
+                WHERE rt.ReasonCode = '{0}'
+            ", reason);
+
+            try
+            {
+                var result = _context.AccountDtos.FromSqlRaw(query).FirstOrDefault();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        #endregion
     }
 }
