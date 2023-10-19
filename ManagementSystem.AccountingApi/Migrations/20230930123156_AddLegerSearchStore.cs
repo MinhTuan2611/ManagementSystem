@@ -48,9 +48,10 @@ namespace ManagementSystem.AccountingApi.Migrations
 
 					INSERT INTO #web_column_mapping VALUES('FromDate', 'FORMAT(l.TransactionDate, ''yyyy-MM-dd'')', '>=')
 					INSERT INTO #web_column_mapping VALUES('ToDate', 'FORMAT(l.TransactionDate, ''yyyy-MM-dd'')', '<=')
-					INSERT INTO #web_column_mapping VALUES('Storage', 's.StorageName', '=')
-					INSERT INTO #web_column_mapping VALUES('SpecialAccount', '', '=')
-					INSERT INTO #web_column_mapping VALUES('Customer', 'c.CustomerName', '=')
+					INSERT INTO #web_column_mapping VALUES('BillId', 'l.BillId', '=')
+					INSERT INTO #web_column_mapping VALUES('CustomerName', 'c.CustomerName', '=')
+					INSERT INTO #web_column_mapping VALUES('CustomerCode', 'c.CustomerCode', '=')
+					INSERT INTO #web_column_mapping VALUES('CustomerId', 'c.CustomerId', '=')
 					INSERT INTO #web_column_mapping VALUES('Employee', 'u.UserName', '=')
 					INSERT INTO #web_column_mapping VALUES('DocumentType', 'l.DoccumentType', '=')
 					INSERT INTO #web_column_mapping VALUES('DoccumentNumber', 'l.DoccumentNumber', '=')
@@ -65,11 +66,14 @@ namespace ManagementSystem.AccountingApi.Migrations
 
 					-- Handle SpecialAccount
 					SELECT @sqlQuery_condition = CONCAT(@sqlQuery_condition,+ ' AND '
-										+ '(l.CreditAccount IN (' + CONVERT(VARCHAR(MAX), xml_parsed.[Value]) + ')'
-										+ ' OR l.DepositAccount IN (' + CONVERT(VARCHAR(MAX), xml_parsed.[Value]) + '))'
-										+ (CHAR(10)) )
+										+ '(l.CreditAccount IN (' + CONVERT(VARCHAR(MAX), xml_parsed.[Value]) + ')'+ (CHAR(10)) )
 					FROM @SearchCriteriaTable xml_parsed
-					WHERE xml_parsed.[Key] = 'SpecificAccount'
+					WHERE xml_parsed.[Key] = 'CreditAccount'
+
+					SELECT @sqlQuery_condition = CONCAT(@sqlQuery_condition,+ ' AND '	
+										+ 'l.DepositAccount IN (' + CONVERT(VARCHAR(MAX), xml_parsed.[Value]) + '))' + (CHAR(10)) )
+					FROM @SearchCriteriaTable xml_parsed
+					WHERE xml_parsed.[Key] = 'DebitAccount'
 
 					-- Handle Pagination
 					SET @pagingString = CONCAT(@pagingString,' 
@@ -81,8 +85,8 @@ namespace ManagementSystem.AccountingApi.Migrations
 					-- Return result
 					SET @sqlQuery = CONCAT('
 						SELECT  l.TransactionDate
-								,rc.AccountCode AS CreditAccount
-								,rd.AccountCode AS DepositAccount
+								,l.CreditAccount
+								,l.DepositAccount
 								,l.DoccumentType
 								,l.DoccumentNumber
 								,l.BillId
@@ -91,8 +95,6 @@ namespace ManagementSystem.AccountingApi.Migrations
 								,l.Amount
 						FROM Legers l
 						JOIN AccountsDb.dbo.Users u ON l.UserId = u.UserId
-						LEFT JOIN dbo.TypesOfAccounts rc ON l.CreditAccount = rc.AccountId
-						LEFT JOIN dbo.TypesOfAccounts rd ON l.DepositAccount = rd.AccountId
 						LEFT JOIN StoragesDb.dbo.Customers c on l.CustomerId = c.CustomerId
 						LEFT JOIN StoragesDb.dbo.Storages s ON l.StorageId = s.StorageId
 						WHERE 1 = 1
