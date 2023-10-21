@@ -13,4 +13,9 @@ namespace ManagementSystem.Common.Models
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
     }
+    public class MultipleSearchResult
+    {
+        public List<CustomerResponseDto> CustomerResponses { get; set; }
+        public List<ProductListResponse> ProductResponses { get; set; }
+    }
 }
