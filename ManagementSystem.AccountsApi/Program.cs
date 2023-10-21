@@ -9,7 +9,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("AcountsDbConnStr");
+var connectionString = builder.Configuration.GetConnectionString("AccountsDbConnStr");
 builder.Services.AddDbContext<AccountsDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -27,7 +27,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetService<AccountsDbContext>();
-    DataSeeder.SeedData(context);
+    //DataSeeder.SeedData(context);
 }
 
 // Configure the HTTP request pipeline.

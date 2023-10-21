@@ -40,7 +40,7 @@ namespace ManagementSystem.StoragesApi.Services
                     ProductCode = productToList[i].ProductCode,
                     BarCode = productToList[i].BarCode,
                     CategoryId = productToList[i].CategoryId,
-                    CategoryName = productToList[i].Category.CategoryName,
+                    CategoryName = productToList[i].Category?.CategoryName,
                     Price = productToList[i].Price,
                     DefaultPurchasePrice = productToList[i].DefaultPurchasePrice,
                 };

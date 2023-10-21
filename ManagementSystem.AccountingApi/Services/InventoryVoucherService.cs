@@ -31,7 +31,7 @@ namespace ManagementSystem.AccountingApi.Services
                 inventory.Note = request.Note;
                 inventory.RepresentivePhone = "";
                 inventory.CustomerId = request.CustomerId;
-                inventory.StorageId = GetProductStorageDto(request.BrandId.Value, request.Details[0].ProductId)?.StorageId;
+                inventory.StorageId = GetProductStorageDto(request.BrandId ?? 1, request.Details[0].ProductId)?.StorageId ?? null;
                 inventory.BillId = request.BillId;
 
                 _context.InventoryVouchers.Add(inventory);
@@ -41,7 +41,7 @@ namespace ManagementSystem.AccountingApi.Services
                 {
                     var product = GetProductInformation(detail.ProductId);
                     var unit = GetUnitInformation(detail.UnitId);
-                    var productStorage = GetProductStorageDto(request.BrandId.Value, detail.ProductId);
+                    var productStorage = GetProductStorageDto(request.BrandId ?? 1, detail.ProductId);
 
                     var item = new InventoryVoucherDetail();
                     item.DocummentNumber = inventory.DocummentNumber;
@@ -275,7 +275,7 @@ namespace ManagementSystem.AccountingApi.Services
             return productStorage;
         }
 
-        public bool UpdateProductStorage(ProductStorageInformationDto dto, int productQuantity)
+        public bool UpdateProductStorage(ProductStorageInformationDto dto, float productQuantity)
         {
             //if (dto.Quantity - productQuantity <= 0)
             //    return false;

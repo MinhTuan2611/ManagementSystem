@@ -8,6 +8,11 @@
     "secrets1": {
       "type": "secrets.user",
       "dynamicId": null
+    },
+    "mssql2": {
+      "secretStore": "LocalSecretsFile",
+      "type": "mssql.onprem",
+      "connectionId": "ConnectionStrings:AccountsDbConnStr"
     }
   }
 }

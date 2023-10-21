@@ -8,6 +8,7 @@ namespace ManagementSystem.AccountsApi.SeedingData
         public static void SeedData(AccountsDbContext dbContext)
         {
             #region Init Employee Shift
+            var a = dbContext.EmployeeShifts.ToArray();
             if (!dbContext.EmployeeShifts.Any())
             {
                 var employeeShift = new List<EmployeeShift>()
