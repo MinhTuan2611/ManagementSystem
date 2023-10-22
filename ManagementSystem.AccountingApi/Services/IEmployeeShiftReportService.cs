@@ -6,9 +6,11 @@ namespace ManagementSystem.AccountingApi.Services
 {
     public interface IEmployeeShiftReportService
     {
-        Task<ShiftEndReport> CreateShiftEndReport(NewEmployeeShiftEndRequestDto model);
+        ShiftEndReport CreateShiftEndReport(NewEmployeeShiftEndRequestDto model);
         Task<List<ShiftHandoverResponseDto>> GetAllShiftHandover(SearchCriteria criteria);
         Task<ShiftHandoverResponseDto> GetShiftHandover(int handoverId);
         Task<ShiftReportResponseDto> GetShiftReport(int shiftEndId);
+        Task<List<ShiftEndResponseDto>> SearchShiftEndReports(SearchCriteria criteria);
+        Task<ShiftEndResponseDto> GetLastestShiftEnd();
     }
 }

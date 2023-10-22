@@ -3,7 +3,7 @@
 namespace ManagementSystem.Common.Models.Dtos
 {
     [Keyless]
-    public class ShiftEndResponseDto
+    public class ShiftEndReportView
     {
         public int ShiftEndId { get; set; }
         public int? UserId { get; set; }
@@ -13,7 +13,14 @@ namespace ManagementSystem.Common.Models.Dtos
         public DateTime ShiftEndDate { get; set; } = DateTime.Now;
         public int? CompanyMoneyTransferred { get; set; }
 
-        public List<CashDetailDto> CashDetails { get; set; }
-        public List<InventoryAuditDetailDto> InventoryAuditDetails { get; set; }
+        public int Denomination { get; set; }
+        public int Amount { get; set; }
+
+        public int ProductId { get; set; }
+        public string? ProductName { get; set; }
+        public int UnitId { get; set; }
+        public string? UnitName { get; set; }
+        public int ActualAmount { get; set; }
+        public int SystemAmount { get; set; }
     }
 }

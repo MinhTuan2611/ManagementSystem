@@ -18,9 +18,9 @@ namespace ManagementSystem.AccountingApi.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateShiftEndReport([FromBody] NewEmployeeShiftEndRequestDto model)
+        public IActionResult CreateShiftEndReport([FromBody] NewEmployeeShiftEndRequestDto model)
         {
-            var result = await _service.CreateShiftEndReport(model);
+            var result = _service.CreateShiftEndReport(model);
 
             return Ok(result != null ? true: false);
         }
@@ -37,6 +37,22 @@ namespace ManagementSystem.AccountingApi.Controllers
         public async Task<IActionResult> GetShiftReport([FromQuery] int shiftEndId)
         {
             var result = await _service.GetShiftReport(shiftEndId);
+
+            return Ok(result);
+        }
+
+        [HttpPost("search_shift-end_reports")]
+        public async Task<IActionResult> SearchShiftEndReports([FromBody] SearchCriteria criteria)
+        {
+            var result = await _service.SearchShiftEndReports(criteria);
+
+            return Ok(result);
+        }
+
+        [HttpGet("get-lastest-shift-end")]
+        public async Task<IActionResult> GetLastestShiftEnd()
+        {
+            var result = await _service.GetLastestShiftEnd();
 
             return Ok(result);
         }
