@@ -46,7 +46,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("ActivityId");
 
-                    b.ToTable("ActivityLog");
+                    b.ToTable("ActivityLog", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryAuditDetail", b =>
@@ -68,7 +68,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("ShiftEndId", "ProductId", "UnitId");
 
-                    b.ToTable("InventoryAuditDetails");
+                    b.ToTable("InventoryAuditDetails", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryVoucher", b =>
@@ -117,7 +117,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("DocummentNumber");
 
-                    b.ToTable("InventoryVouchers");
+                    b.ToTable("InventoryVouchers", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryVoucherDetail", b =>
@@ -152,8 +152,8 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("Price")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<float?>("Quantity")
+                        .HasColumnType("real");
 
                     b.Property<int?>("TaxAccount")
                         .HasColumnType("int");
@@ -164,12 +164,12 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("TotalMoneyAfterTax")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TotalMoneyBeforeTax")
-                        .HasColumnType("int");
+                    b.Property<float?>("TotalMoneyBeforeTax")
+                        .HasColumnType("real");
 
                     b.HasKey("DocummentNumber", "ProductId");
 
-                    b.ToTable("InventoryVoucherDetails");
+                    b.ToTable("InventoryVoucherDetails", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Leger", b =>
@@ -213,7 +213,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("LegerId");
 
-                    b.ToTable("Legers");
+                    b.ToTable("Legers", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.OtherAccountEntry", b =>
@@ -253,7 +253,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("DocumentNumber");
 
-                    b.ToTable("OtherAccountEntries");
+                    b.ToTable("OtherAccountEntries", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.PaymentVoucher", b =>
@@ -305,7 +305,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("DocumentNumber");
 
-                    b.ToTable("PaymentVouchers");
+                    b.ToTable("PaymentVouchers", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Receipt", b =>
@@ -340,7 +340,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("DocumentNumber");
 
-                    b.ToTable("Receipts");
+                    b.ToTable("Receipts", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Recordingtransaction", b =>
@@ -396,7 +396,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Recordingtransactions");
+                    b.ToTable("Recordingtransactions", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftEndReport", b =>
@@ -421,7 +421,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("ShiftEndId");
 
-                    b.ToTable("ShiftEndReports");
+                    b.ToTable("ShiftEndReports", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftHandoverCashDetail", b =>
@@ -437,7 +437,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("ShiftEndId", "Denomination");
 
-                    b.ToTable("ShiftHandoverCashDetails");
+                    b.ToTable("ShiftHandoverCashDetails", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftHandovers", b =>
@@ -485,7 +485,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasIndex("ShiftEndId");
 
-                    b.ToTable("ShiftHandovers");
+                    b.ToTable("ShiftHandovers", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftReport", b =>
@@ -554,7 +554,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasIndex("HandoverId");
 
-                    b.ToTable("ShiftReports");
+                    b.ToTable("ShiftReports", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.TypesOfAccounts", b =>
@@ -602,7 +602,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("TypesOfAccounts");
+                    b.ToTable("TypesOfAccounts", (string)null);
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.AccountsDto", b =>
@@ -771,11 +771,11 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("BillId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CreditAccount")
-                        .HasColumnType("int");
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DepositAccount")
-                        .HasColumnType("int");
+                    b.Property<string>("DepositAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("DoccumentNumber")
                         .HasColumnType("int");
@@ -949,10 +949,78 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("ReceiptResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
-            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftEndResponseDto", b =>
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftEndReportView", b =>
                 {
+                    b.Property<int>("ActualAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanyMoneyTransferred")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Denomination")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ShiftEndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ShiftEndId")
                         .HasColumnType("int");
+
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShiftName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SystemAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UnitName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("ShiftEndReportView", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftEndResponseDto", b =>
+                {
+                    b.Property<int?>("CompanyMoneyTransferred")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ShiftEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ShiftEndId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShiftName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.ToTable("ShiftEndResponseDto", null, t => t.ExcludeFromMigrations());
                 });

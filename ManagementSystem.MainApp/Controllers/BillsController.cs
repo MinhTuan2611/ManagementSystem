@@ -38,14 +38,16 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(BillInfo bill)
         {
+            var userId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+            bill.UserId = userId;
+
             var resultBill = await HttpRequestsHelper.Post<BillInfo>(Environment.StorageApiUrl + "bills/create", bill);
             if (resultBill != null)
             {
-                var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
 
                 // Tao Phieu Xuat Kho
                 var inventoryVoucherDto = PrepareInventoryModel(bill);
-                inventoryVoucherDto.UserId = int.Parse(userId);
+                inventoryVoucherDto.UserId = userId;
                 inventoryVoucherDto.BillId = resultBill.BillId;
 
                 var inventoryResult = await HttpRequestsHelper.Post<InventoryVoucher>(Environment.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);

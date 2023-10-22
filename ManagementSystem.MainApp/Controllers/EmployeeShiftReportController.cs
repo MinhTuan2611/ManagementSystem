@@ -10,6 +10,7 @@ namespace ManagementSystem.MainApp.Controllers
     public class EmployeeShiftReportController : ControllerBase
     {
         private string APIUrl = Environment.AccountingApiUrl + "EmployeeShiftReport/";
+
         [HttpPost("create")]
         public async Task<IActionResult> Create(NewEmployeeShiftEndRequestDto request)
         {
@@ -25,7 +26,7 @@ namespace ManagementSystem.MainApp.Controllers
         }
 
         [HttpPost("search_results")]
-        public async Task<IActionResult> Create([FromBody] SearchCriteria searchModel)
+        public async Task<IActionResult> SearchShiftHandovers([FromBody] SearchCriteria searchModel)
         {
 
             ResponseModel<ShiftHandoverResponseDto> response = new ResponseModel<ShiftHandoverResponseDto>();
@@ -71,6 +72,46 @@ namespace ManagementSystem.MainApp.Controllers
             ResponseModel<ShiftHandoverResponseDto> response = new ResponseModel<ShiftHandoverResponseDto>();
             ShiftHandoverResponseDto detail = await HttpRequestsHelper.Get<ShiftHandoverResponseDto>(APIUrl + "get-shift-handover-by-id?handoverId=" + handoverId);
             List<ShiftHandoverResponseDto> responseData = new List<ShiftHandoverResponseDto>();
+            responseData.Add(detail);
+
+            if (detail != null)
+            {
+
+                response.Status = "success";
+                response.Data = responseData;
+                return Ok(response);
+            }
+            response.Status = "success";
+            response.ErrorMessage = "Not found any information!";
+            return Ok(response);
+        }
+
+        [HttpPost("search_shift-end_reports")]
+        public async Task<IActionResult> SearchShiftEndReports([FromBody] SearchCriteria searchModel)
+        {
+
+            ResponseModel<ShiftEndResponseDto> response = new ResponseModel<ShiftEndResponseDto>();
+            List<ShiftEndResponseDto> result = await HttpRequestsHelper.Post<List<ShiftEndResponseDto>>(APIUrl + "search_shift-end_reports", searchModel);
+
+            if (result != null)
+            {
+
+                response.Status = "success";
+                response.Data = result;
+                return Ok(response);
+            }
+            response.Status = "success";
+            response.ErrorMessage = "Not found any information!";
+            return Ok(response);
+        }
+
+        [HttpGet("get-lastest-shift-end")]
+        public async Task<IActionResult> GetLastestShiftEnd()
+        {
+
+            ResponseModel<ShiftEndResponseDto> response = new ResponseModel<ShiftEndResponseDto>();
+            ShiftEndResponseDto detail = await HttpRequestsHelper.Get<ShiftEndResponseDto>(APIUrl + "get-lastest-shift-end");
+            List <ShiftEndResponseDto> responseData = new List<ShiftEndResponseDto>();
             responseData.Add(detail);
 
             if (detail != null)

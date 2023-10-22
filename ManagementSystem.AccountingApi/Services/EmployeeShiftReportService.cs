@@ -4,7 +4,6 @@ using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
 
 namespace ManagementSystem.AccountingApi.Services
 {
@@ -16,21 +15,18 @@ namespace ManagementSystem.AccountingApi.Services
             _context = context;
         }
 
-        public async Task<ShiftEndReport> CreateShiftEndReport(NewEmployeeShiftEndRequestDto model)
+        public ShiftEndReport CreateShiftEndReport(NewEmployeeShiftEndRequestDto model)
         {
             try
             {
                 int storageId = 0;
                 int shiftEndId = 0;
                 var shiftEnd = new ShiftEndReport();
-                var existingShift = await GetShiftEndWithShiftIdAndDate(model.ShiftId.Value, DateTime.Now.ToString("yyyy-MM-dd"));
+                var existingShift = IsExistsShiftEndReports(model.ShiftId.Value, DateTime.Now.ToString("yyyy-MM-dd"));
 
-                if (existingShift != null)
+                if (existingShift <= 0)
                 {
-                    shiftEndId = existingShift.ShiftEndId;
-                }
-                else
-                {
+
                     shiftEnd.CompanyMoneyTransferred = model.CompanyMoneyTransferred;
                     shiftEnd.UserId = model.UserId;
                     shiftEnd.ShiftId = model.ShiftId;
@@ -75,12 +71,12 @@ namespace ManagementSystem.AccountingApi.Services
                         Source = "ShiftEndReport",
                         DateModified = DateTime.Now,
                     });
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
 
                     return shiftEnd;
                 }
 
-                shiftEnd.ShiftEndId = existingShift.ShiftEndId;
+                shiftEnd.ShiftId = existingShift;
                 return shiftEnd;
             }
             catch (Exception ex)
@@ -190,6 +186,41 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
+        public async Task<List<ShiftEndResponseDto>> SearchShiftEndReports(SearchCriteria criteria)
+        {
+            string xmlString = XMLCommonFunction.SerializeToXml(criteria);
+            string sqlQuery = string.Format("EXEC dbo.sp_SearchShiftEndReports '{0}', {1}, {2}", xmlString, criteria.PageNumber, criteria.PageSize);
+
+            try
+            {
+                var data = GetShiftEndReportData(sqlQuery);
+                var result = MapShiftEndReportViewToDto(data).ToList();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<ShiftEndResponseDto> GetLastestShiftEnd()
+        {
+            string sqlQuery = "SELECT * FROM dbo.ShiftEndReportView_latest";
+
+            try
+            {
+                var data = GetShiftEndReportData(sqlQuery);
+                var result = MapShiftEndReportViewToDto(data).FirstOrDefault();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         #region Private function handle
         private string GenerateFilePath()
         {
@@ -236,25 +267,89 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        private async Task<ShiftEndResponseDto> GetShiftEndWithShiftIdAndDate(int shiftId, string dateString)
+        private int IsExistsShiftEndReports(int shiftId, string dateString)
         {
             try
             {
                 string query = string.Format(@"
-                    SELECT ShiftEndId
+                    SELECT ShiftEndId AS Value
                     FROM dbo.ShiftEndReports
                     WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = '{0}'
                     AND ShiftId = {1}
                 ", dateString, shiftId);
 
-                var result = _context.ShiftEndResponseDtos.FromSqlRaw(query).FirstOrDefault();
+                var count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value; // Create a DbSet for a scalar type (int)
 
-                return result;
+                return count;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+        public IEnumerable<ShiftEndReportView> GetShiftEndReportData(string sqlQuery)
+        {
+            try
+            {
+                return _context.ShiftEndReportViews.FromSqlRaw(sqlQuery).ToList();
             }
             catch (Exception ex)
             {
                 return null;
             }
+
+        }
+        private IEnumerable<ShiftEndResponseDto> MapShiftEndReportViewToDto(IEnumerable<ShiftEndReportView> reportViews)
+        {
+            var groupByResult = reportViews.GroupBy(x => new {x.ShiftId, x.UserId, x.UserName, x.ShiftEndId, x.ShiftEndDate,x.CompanyMoneyTransferred, x.ShiftName }).ToList();
+
+            var result = new List<ShiftEndResponseDto>();
+
+            foreach(var item in groupByResult)
+            {
+                var detail = new ShiftEndResponseDto();
+
+                detail.ShiftEndId = item.Key.ShiftEndId;
+                detail.UserId = item.Key.UserId;
+                detail.UserName = item.Key.UserName;
+                detail.ShiftId = item.Key.ShiftId;
+                detail.ShiftName = item.Key.ShiftName;
+                detail.ShiftEndDate = item.Key.ShiftEndDate;
+                detail.CompanyMoneyTransferred = item.Key.CompanyMoneyTransferred;
+
+                var cashDetails = new List<CashDetailDto>();
+                var inventoryDetails = new List<InventoryAuditDetailDto>();
+
+                foreach(var detatilInfor in item)
+                {
+                    var cash = new CashDetailDto
+                    {
+                        Denomination = detatilInfor.Denomination,
+                        Amount = detatilInfor.Amount
+                    };
+
+                    var inventory = new InventoryAuditDetailDto
+                    {
+                        ProductId = detatilInfor.ProductId,
+                        ProductName = detatilInfor.ProductName,
+                        ActualAmount = detatilInfor.ActualAmount,
+                        SystemAmount = detatilInfor.SystemAmount,
+                        UnitId = detatilInfor.UnitId,
+                        UnitName = detatilInfor.UnitName
+                    };
+
+                    cashDetails.Add(cash);
+                    inventoryDetails.Add(inventory);
+                }
+
+                detail.CashDetails = cashDetails;
+                detail.InventoryAuditDetails = inventoryDetails;
+
+                result.Add(detail);
+            }
+
+            return result;
         }
         #endregion
     }
