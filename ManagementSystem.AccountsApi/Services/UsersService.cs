@@ -1,18 +1,21 @@
-﻿using ManagementSystem.AccountsApi.Models;
-using ManagementSystem.AccountsApi.Repositories.UnitOfWork;
+﻿using ManagementSystem.AccountsApi.Repositories.UnitOfWork;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.EmployeesApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.AccountsApi.Services
 {
     public class UsersService : IUsersService
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly AccountsDbContext _context;
 
         public UsersService(AccountsDbContext context)
         {
             _unitOfWork = new UnitOfWork(context);
+            _context = context;
         }
 
         public IEnumerable<UserInfo> GetAllUsers(string? searchValue)
@@ -21,11 +24,12 @@ namespace ManagementSystem.AccountsApi.Services
             if (searchValue == null)
             {
                 users = _unitOfWork.UserRepository.GetAll().ToList();
-            } else
+            }
+            else
             {
-                users = _unitOfWork.UserRepository.GetMany(u=> u.UserName.Contains(searchValue)
-                || u.FirstName.Contains(searchValue) 
-                || u.LastName.Contains(searchValue) 
+                users = _unitOfWork.UserRepository.GetMany(u => u.UserName.Contains(searchValue)
+                || u.FirstName.Contains(searchValue)
+                || u.LastName.Contains(searchValue)
                 || (u.Email != null && u.Email.Contains(searchValue))
                 || (u.PhoneNumber != null && u.PhoneNumber.Contains(searchValue))).ToList();
             }
@@ -51,7 +55,7 @@ namespace ManagementSystem.AccountsApi.Services
                         RoleIds = roles
                     });
                 };
-                return usersRes;
+            return usersRes;
             return null;
         }
 
@@ -116,10 +120,11 @@ namespace ManagementSystem.AccountsApi.Services
                         _unitOfWork.Save();
                     }
                     return user.UserId;
-                } else { return -1; }
+                }
+                else { return -1; }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return -1;
             }
@@ -135,7 +140,7 @@ namespace ManagementSystem.AccountsApi.Services
             User user = _unitOfWork.UserRepository.GetFirst(u => u.UserId == UserId);
             if (user != null)
             {
-                user.FirstName = UserEntity.FirstName; 
+                user.FirstName = UserEntity.FirstName;
                 user.LastName = UserEntity.LastName;
                 user.Email = UserEntity.Email;
                 user.PhoneNumber = UserEntity.PhoneNumber;
@@ -158,6 +163,24 @@ namespace ManagementSystem.AccountsApi.Services
                     }
                     _unitOfWork.Save();
                 }
+
+                var userBrand = GetUserBranch(UserId);
+                if (userBrand != null)
+                {
+                    UpdateUserBrand(UserId, UserEntity.BranchId.Value);
+                }
+                else
+                {
+                    var newUserBrand = new UserBranch()
+                    {
+                        BranchId = UserEntity.BranchId,
+                        UserId = UserId
+                    };
+
+                    _context.UserBranchs.Add(newUserBrand);
+                    _context.SaveChanges();
+                }
+
                 return true;
             }
             return false;
@@ -173,5 +196,48 @@ namespace ManagementSystem.AccountsApi.Services
             }
             return roles;
         }
+
+        #region Private handle methods
+        private UserBrandDto GetUserBranch(int userId)
+        {
+            string query = string.Format(@"
+                SELECT UserId
+                        ,BranchId
+                FROM dbo.UserBranchs
+                WHERE UserId = {0}
+            ", userId);
+
+            try
+            {
+                var result = _context.UserBrandDtos.FromSqlRaw(query).FirstOrDefault();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        private bool UpdateUserBrand(int userId, int brandId)
+        {
+            string query = string.Format(@"
+                UPDATE dbo.UserBranchs
+                SET BranchId = {0}
+                WHERE UserId = {1}
+            ", brandId, userId);
+
+            try
+            {
+                var result = _context.Database.ExecuteSqlRaw(query);
+
+                return result > 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        #endregion
     }
 }

@@ -1,13 +1,7 @@
 ﻿using ManagementSystem.AccountsApi.Services;
 using ManagementSystem.EmployeesApi.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using Microsoft.AspNetCore.Authorization;
-using ManagementSystem.Common.Helpers;
-using ManagementSystem.AccountsApi.Models;
 using ManagementSystem.Common.Models;
-using ManagementSystem.Common.Entities;
 
 namespace ManagementSystem.AccountsApi.Controllers
 {

@@ -84,7 +84,7 @@ namespace ManagementSystem.AccountsApi.Migrations
 
                     b.HasKey("RoleId");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.User", b =>
@@ -122,7 +122,28 @@ namespace ManagementSystem.AccountsApi.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.UserBranch", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserBranchs");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.UserRole", b =>
@@ -157,7 +178,29 @@ namespace ManagementSystem.AccountsApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRole", (string)null);
+                    b.ToTable("UserRole");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.UserBrandDto", b =>
+                {
+                    b.Property<int?>("BrandId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.ToTable("UserBrandDto", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.UserBranch", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.UserRole", b =>
