@@ -85,17 +85,28 @@ namespace ManagementSystem.StoragesApi.Migrations
 
 					-- Return result
 					SET @sqlQuery = CONCAT('
-							SELECT b.BillId
+														SELECT b.BillId
 									,b.totalAmount
 									,b.totalPaid
 									,b.totalChange
 									,b.CustomerId
+									,u.UserId
+									,u.UserName
+									,s.ShiftId
+									,s.ShiftName
+									,bc.BranchId
+									,bc.BranchName
+									,b.CreateDate
 									, CASE
 										WHEN COALESCE(c.CustomerName, '''') = '''' THEN N''Khách Lẻ''
 										ELSE c.CustomerName
 									END AS CustomerName
 							FROM dbo.Bills b
 							LEFT JOIN dbo.Customers c ON b.CustomerId = c.CustomerId
+							LEFT JOIN AccountsDb.dbo.Users u ON b.CreateBy = u.UserId
+							LEFT JOIN AccountsDb.dbo.EmployeeShifts s ON s.ShiftId = b.ShiftId
+							LEFT JOIN AccountsDb.dbo.UserBranchs ub ON ub.UserId = u.UserId
+							LEFT JOIN dbo.Branches bc ON ub.BranchId = bc.BranchId
 						WHERE 1 = 1
 					', @sqlQuery_condition, @orderBy, @pagingString)
 

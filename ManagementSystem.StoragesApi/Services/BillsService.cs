@@ -1,4 +1,4 @@
-using ManagementSystem.Common;
+﻿using ManagementSystem.Common;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
@@ -6,6 +6,7 @@ using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection.Metadata.Ecma335;
 
 namespace ManagementSystem.StoragesApi.Services
@@ -39,6 +40,13 @@ namespace ManagementSystem.StoragesApi.Services
         {
             try
             {
+                int billHour = DateTime.Now.Hour;
+                var employeeShift = GetEmployeeShifts().FirstOrDefault(x => x.StartTime <= billHour && billHour <= x.EndTime);
+                if (employeeShift == null)
+                {
+                    employeeShift.ShiftId = 2;
+                }
+
                 var newBill = new Bill
                 {
                     totalAmount = bill.totalAmount,
@@ -46,6 +54,9 @@ namespace ManagementSystem.StoragesApi.Services
                     totalChange = bill.totalChange,
                     CustomerId = bill.CustomerId,
                     PaymentStatus = PaymentStatus.UnPaid,
+                    CreateBy = bill.UserId,
+                    ModifyBy = bill.UserId,
+                    ShiftId = employeeShift.ShiftId
                 };
                 _unitOfWork.BillRepository.Insert(newBill);
                 _unitOfWork.Save();
@@ -176,11 +187,18 @@ namespace ManagementSystem.StoragesApi.Services
         {
             var billDetails = await GetBillDetailHandler(billId);
             var billPayments = await GetBillPaymentMethods(billId);
-
+            var billInformation = GetBillById(billId);
             var billResponse = new BillResponseDto();
+;
             billResponse.BillId = billId;
-            billResponse.BillDetails = billDetails;
-            billResponse.BillPaymentMethods = billPayments;
+            billResponse.totalChange = billInformation.totalChange;
+            billResponse.totalPaid = billResponse.totalPaid;
+            billResponse.totalAmount = billInformation.totalAmount;
+            billResponse.CustomerId = billInformation?.CustomerId;
+            billResponse.CustomerName = billInformation?.CustomerName;
+            billResponse.TotalBillAmount = billPayments.Sum(x => x.Amount.Value);
+            billResponse.Details = billDetails;
+            billResponse.Payments = billPayments;
 
             return billResponse;
         }
@@ -319,6 +337,63 @@ namespace ManagementSystem.StoragesApi.Services
                         .FirstOrDefault()?.PaymentMethodId;
 
             return result;
+        }
+
+        private List<EmployeeShiftInformationDto> GetEmployeeShifts()
+        {
+            string query = @"
+                SELECT ShiftId
+		                ,ShiftName
+		                ,StartHour AS StartTime
+		                ,EndHour AS EndTime
+                FROM AccountsDb.dbo.EmployeeShifts
+            ";
+
+            try
+            {
+                var result = _context.EmployeeShiftInformationDtos.FromSqlRaw(query).ToList();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null; ;
+            }
+        }
+
+        private BillSearchingResponseDto GetBillById(int billId)
+        {
+            string query = string.Format(@"
+							SELECT b.BillId
+									,b.totalAmount
+									,b.totalPaid
+									,b.totalChange
+									,b.CustomerId
+									,NULL AS UserId
+									,NULL AS UserName
+									,NULL AS ShiftId
+									,NULL AS ShiftName
+									,NULL AS BranchId
+									,NULL AS BranchName
+									,NULL AS CreateDate
+									, CASE
+										WHEN COALESCE(c.CustomerName, '') = '' THEN N'Khách Lẻ'
+										ELSE c.CustomerName
+									END AS CustomerName
+							FROM dbo.Bills b
+							LEFT JOIN dbo.Customers c ON b.CustomerId = c.CustomerId
+							WHERE b.BillId = {0}
+            ", billId);
+
+            try
+            {
+                var result = _context.billSearchingResponseDtos.FromSqlRaw(query).FirstOrDefault();
+                
+                return result;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
         #endregion
     }
