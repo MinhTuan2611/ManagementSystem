@@ -1,6 +1,7 @@
 ﻿using ManagementSystem.AccountingApi.Data;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 
@@ -106,7 +107,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<List<PaymentVoucherResponseDto>> GetPaymentVouchers(int? page = 1, int? pageSize = 10)
+        public async Task<TPagination<PaymentVoucherResponseDto>> GetPaymentVouchers(int? page = 1, int? pageSize = 10)
         {
             try
             {
@@ -132,7 +133,13 @@ namespace ManagementSystem.AccountingApi.Services
                     FETCH NEXT {1} ROWS ONLY
                 ", page, pageSize);
 
-                var result = await _context.PaymentVoucherResponseDtos.FromSqlRaw(query).ToListAsync();
+                var data = await _context.PaymentVoucherResponseDtos.FromSqlRaw(query).ToListAsync();
+                int totalRecords = _context.PaymentVouchers.Count();
+
+                var result = new TPagination<PaymentVoucherResponseDto>();
+                result.Items = data;
+                result.TotalItems = totalRecords;
+
                 return result;
             }
             catch (Exception ex)

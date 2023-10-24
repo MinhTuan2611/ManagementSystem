@@ -20,7 +20,7 @@ namespace ManagementSystem.AccountingApi.Controllers
         [Route("get")]
         public async Task<IActionResult> GetPaymentVouchers([FromQuery] int? page = 1, [FromQuery] int? pageSize = 10)
         {
-            var result = await _service.GetPaymentVouchers();
+            var result = await _service.GetPaymentVouchers(page, pageSize);
 
             return Ok(result);
         }

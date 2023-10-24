@@ -1,10 +1,14 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Repositories;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ManagementSystem.AccountingApi.Services
@@ -13,11 +17,13 @@ namespace ManagementSystem.AccountingApi.Services
     {
         private readonly AccountingDbContext _context;
         private readonly ILegerService _legerService;
+        private IConfiguration _configuration;
 
-        public ReceiptService(AccountingDbContext context, ILegerService legerService)
+        public ReceiptService(AccountingDbContext context, ILegerService legerService, IConfiguration configuration)
         {
             _context = context;
             _legerService = legerService;
+            _configuration = configuration;
 
         }
 
@@ -61,13 +67,34 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<List<ReceiptResponseDto>> GetAllReceipts(SearchCriteria searchModel)
+        public async Task<TPagination<ReceiptResponseDto>> GetAllReceipts(SearchCriteria criteria)
         {
             try
             {
-                string xmlString = XMLCommonFunction.SerializeToXml(searchModel);
-                var result = _context.ReceiptResponseDtos.FromSqlRaw(string.Format("EXEC sp_SearchReceipts '{0}', {1}, {2}", xmlString, searchModel.PageNumber, searchModel.PageSize)).AsNoTracking().ToList();
+                string xmlString = XMLCommonFunction.SerializeToXml(criteria);
 
+                // Your DbContextFactory and DbContext creation code
+                var dbContextFactory = new DbContextFactory(_configuration);
+                using var dbContext = dbContextFactory.CreateDbContext<AccountingDbContext>("AcountingsDbConnStr");
+
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@xmlString", xmlString )
+                };
+
+                int pageNumber = criteria.PageNumber <= 0 ? 1 : criteria.PageNumber;
+                int pageSize = criteria.PageSize <= 0 ? 10 : criteria.PageSize;
+
+                var executeResult = await GenericSearchRepository<ReceiptResponseDto>.ExecutePagedStoredProcedureCommonAsync<ReceiptResponseDto>
+                                                                                    (dbContext, "sp_SearchReceipts", pageNumber, pageSize, parameters);
+
+                // Process the results
+                List<ReceiptResponseDto> pagedData = executeResult.Item1;
+                int totalRecords = executeResult.Item2;
+
+                var result = new TPagination<ReceiptResponseDto>();
+                result.Items = pagedData;
+                result.TotalItems = totalRecords;
                 return result;
             }
             catch (Exception ex)

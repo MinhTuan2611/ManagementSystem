@@ -14,9 +14,9 @@ namespace ManagementSystem.StoragesApi.Controllers
     {
         private readonly BillsService _BillsService;
 
-        public BillsController(StoragesDbContext context)
+        public BillsController(StoragesDbContext context, IConfiguration configuration)
         {
-            _BillsService = new BillsService(context);
+            _BillsService = new BillsService(context, configuration);
         }
         [HttpGet("get")]
         public List<ListBillResponse> Get()

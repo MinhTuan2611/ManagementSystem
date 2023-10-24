@@ -1,18 +1,26 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Repositories;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.Xml;
 
 namespace ManagementSystem.AccountingApi.Services
 {
     public class EmployeeShiftReportService : IEmployeeShiftReportService
     {
         private readonly AccountingDbContext _context;
-        public EmployeeShiftReportService(AccountingDbContext context)
+        private readonly IConfiguration _configuration;
+
+        public EmployeeShiftReportService(AccountingDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public ShiftEndReport CreateShiftEndReport(NewEmployeeShiftEndRequestDto model)
@@ -88,13 +96,34 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<List<ShiftHandoverResponseDto>> GetAllShiftHandover(SearchCriteria criteria)
+        public async Task<TPagination<ShiftHandoverResponseDto>> GetAllShiftHandover(SearchCriteria criteria)
         {
             try
             {
                 string xmlString = XMLCommonFunction.SerializeToXml(criteria);
-                var result = _context.ShiftHandoverResponseDtos.FromSqlRaw(string.Format("EXEC sp_shift_handovers '{0}', {1}, {2}", xmlString, criteria.PageNumber, criteria.PageSize)).ToList();
 
+                // Your DbContextFactory and DbContext creation code
+                var dbContextFactory = new DbContextFactory(_configuration);
+                using var dbContext = dbContextFactory.CreateDbContext<AccountingDbContext>("AcountingsDbConnStr");
+
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@xmlString", xmlString )
+                };
+
+                int pageNumber = criteria.PageNumber <= 0 ? 1 : criteria.PageNumber;
+                int pageSize = criteria.PageSize <= 0 ? 10 : criteria.PageSize;
+
+                var executeResult = await GenericSearchRepository<ShiftHandoverResponseDto>.ExecutePagedStoredProcedureCommonAsync<ShiftHandoverResponseDto>
+                                                                                    (dbContext, "sp_shift_handovers", pageNumber, pageSize, parameters);
+
+                // Process the results
+                List<ShiftHandoverResponseDto> pagedData = executeResult.Item1;
+                int totalRecords = executeResult.Item2;
+
+                var result = new TPagination<ShiftHandoverResponseDto>();
+                result.Items = pagedData;
+                result.TotalItems = totalRecords;
                 return result;
             }
             catch (Exception ex)
@@ -186,15 +215,36 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<List<ShiftEndResponseDto>> SearchShiftEndReports(SearchCriteria criteria)
+        public async Task<TPagination<ShiftEndResponseDto>> SearchShiftEndReports(SearchCriteria criteria)
         {
-            string xmlString = XMLCommonFunction.SerializeToXml(criteria);
-            string sqlQuery = string.Format("EXEC dbo.sp_SearchShiftEndReports '{0}', {1}, {2}", xmlString, criteria.PageNumber, criteria.PageSize);
-
             try
             {
-                var data = GetShiftEndReportData(sqlQuery);
-                var result = MapShiftEndReportViewToDto(data).ToList();
+                string xmlString = XMLCommonFunction.SerializeToXml(criteria);
+
+                // Your DbContextFactory and DbContext creation code
+                var dbContextFactory = new DbContextFactory(_configuration);
+                using var dbContext = dbContextFactory.CreateDbContext<AccountingDbContext>("AcountingsDbConnStr");
+
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@xmlString", xmlString )
+                };
+
+                int pageNumber = criteria.PageNumber <= 0 ? 1 : criteria.PageNumber;
+                int pageSize = criteria.PageSize <= 0 ? 10 : criteria.PageSize;
+
+                var executeResult = await GenericSearchRepository<ShiftEndReportView>.ExecutePagedStoredProcedureCommonAsync<ShiftEndReportView>
+                                                                                    (dbContext, "sp_SearchShiftEndReports", pageNumber, pageSize, parameters);
+
+                // Process the results
+                List<ShiftEndReportView> pagedData = executeResult.Item1;
+                int totalRecords = executeResult.Item2;
+
+                var mapResult = MapShiftEndReportViewToDto(pagedData).ToList();
+
+                var result = new TPagination<ShiftEndResponseDto>();
+                result.Items = mapResult;
+                result.TotalItems = totalRecords;
 
                 return result;
             }
@@ -221,6 +271,46 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
+        public async Task<ShiftEndResponseDto> GetShiftEndById(int shiftEndId)
+        {
+            string sqlQuery = string.Format(@"
+                SELECT s.ShiftEndId
+		                ,s.UserId
+		                ,u.UserName
+		                ,es.ShiftId
+		                ,es.ShiftName
+		                ,s.ShiftEndDate
+		                ,s.CompanyMoneyTransferred
+		                ,sh.Denomination
+		                ,sh.Amount
+		                ,sa.ProductId
+		                ,p.ProductName
+		                ,ui.UnitId
+		                ,ui.UnitName
+		                ,sa.ActualAmount
+		                ,sa.SystemAmount
+                FROM dbo.ShiftEndReports s
+                LEFT JOIN dbo.InventoryAuditDetails sa ON sa.ShiftEndId = s.ShiftEndId
+                LEFT JOIN dbo.ShiftHandoverCashDetails sh ON sh.ShiftEndId = s.ShiftEndId
+                LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = s.UserId
+                LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
+                LEFT JOIN StoragesDb.dbo.Products p ON p.ProductId = sa.ProductId
+                LEFT JOIN StoragesDb.dbo.Unit ui ON sa.UnitId = ui.UnitId
+                WHERE s.ShiftEndId = {0}
+                ", shiftEndId);
+
+            try
+            {
+                var data = GetShiftEndReportData(sqlQuery);
+                var result = MapShiftEndReportViewToDto(data).FirstOrDefault();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         #region Private function handle
         private string GenerateFilePath()
         {
@@ -321,7 +411,7 @@ namespace ManagementSystem.AccountingApi.Services
                 var cashDetails = new List<CashDetailDto>();
                 var inventoryDetails = new List<InventoryAuditDetailDto>();
 
-                foreach(var detatilInfor in item)
+                foreach(var detatilInfor in item.Select(x => new {x.Denomination, x.Amount}).Distinct())
                 {
                     var cash = new CashDetailDto
                     {
@@ -329,6 +419,14 @@ namespace ManagementSystem.AccountingApi.Services
                         Amount = detatilInfor.Amount
                     };
 
+                    
+
+                    cashDetails.Add(cash);
+                    
+                }
+
+                foreach (var detatilInfor in item.Select(x => new { x.ProductId, x.ProductName, x.ActualAmount, x.SystemAmount, x.UnitId, x.UnitName }).Distinct())
+                {
                     var inventory = new InventoryAuditDetailDto
                     {
                         ProductId = detatilInfor.ProductId,
@@ -338,11 +436,9 @@ namespace ManagementSystem.AccountingApi.Services
                         UnitId = detatilInfor.UnitId,
                         UnitName = detatilInfor.UnitName
                     };
-
-                    cashDetails.Add(cash);
                     inventoryDetails.Add(inventory);
                 }
-
+                
                 detail.CashDetails = cashDetails;
                 detail.InventoryAuditDetails = inventoryDetails;
 

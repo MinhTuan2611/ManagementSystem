@@ -1,8 +1,5 @@
 using ManagementSystem.AccountingApi.Data;
 using ManagementSystem.AccountingApi.Services;
-using ManagementSystem.Common;
-using ManagementSystem.Common.MigrationConfigurations;
-using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,22 +26,22 @@ builder.Services.AddScoped<IOtherAccountEntryService, OtherAccountEntryService>(
 builder.Services.AddScoped<IEmployeeShiftReportService, EmployeeShiftReportService>();
 
 
-// Excluded migration tables
-var migrationConfigs = new MigrationsConfiguration();
+//// Excluded migration tables
+//var migrationConfigs = new MigrationsConfiguration();
 
-var excludedTables = AccountingTableName.GenerateExcludedTableName();
-var count = excludedTables.Count;
-for (int i = 0; i < count; i++)
-{
-    var name = excludedTables[i];
+////var excludedTables = AccountingTableName.GenerateExcludedTableName();
+////var count = excludedTables.Count;
+////for (int i = 0; i < count; i++)
+////{
+////    var name = excludedTables[i];
 
-    // Modify the collection if needed
-    migrationConfigs.ExcludedTableNames.Add(name);
-}
+////    // Modify the collection if needed
+////    migrationConfigs.ExcludedTableNames.Add(name);
+////}
 
-migrationConfigs.ExcludedTableTypes.Add(typeof(ScalarResult<int>));
+////migrationConfigs.ExcludedTableTypes.Add(typeof(ScalarResult<int>));
 
-builder.Services.AddSingleton(migrationConfigs);
+//builder.Services.AddSingleton(migrationConfigs);
 
 var app = builder.Build();
 

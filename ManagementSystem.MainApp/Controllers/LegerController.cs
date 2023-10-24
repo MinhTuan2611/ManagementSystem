@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
@@ -14,23 +15,17 @@ namespace ManagementSystem.MainApp.Controllers
     {
         private string APIUrl = Environment.AccountingApiUrl + "Leger/";
 
+
         [HttpPost("search_results")]
-        public async Task<IActionResult> Create([FromBody] SearchCriteria searchModel)
+        public async Task<IActionResult> SearchInventory([FromBody] SearchCriteria searchModel)
         {
 
-            ResponseModel<LegerResponseDto> response = new ResponseModel<LegerResponseDto>();
-            List<LegerResponseDto> result = await HttpRequestsHelper.Post<List<LegerResponseDto>>(APIUrl + "search_results", searchModel);
+            var result = await HttpRequestsHelper.Post<TPagination<LegerResponseDto>>(APIUrl + "search_results", searchModel);
 
             if (result != null)
-            {
+                return Ok(result);
 
-                response.Status = "success";
-                response.Data = result;
-                return Ok(response);
-            }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
         }
     }
 }

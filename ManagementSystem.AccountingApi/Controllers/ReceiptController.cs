@@ -18,7 +18,7 @@ namespace ManagementSystem.AccountingApi.Controllers
             _service = service;
         }
 
-        [HttpPost("search-result")]
+        [HttpPost("search_results")]
         public async Task<IActionResult> GetAll(SearchCriteria searchModel)
         {
             var result = await _service.GetAllReceipts(searchModel);
