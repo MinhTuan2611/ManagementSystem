@@ -17,9 +17,9 @@ namespace ManagementSystem.StoragesApi.Controllers
             _ProductService = new ProductsService(context);
         }
         [HttpGet("get")]
-        public List<ProductListResponse> Get(string? searchValue,int? categoryId )
+        public List<ProductListResponse> Get(string? searchValue,int? categoryId, int pageSize = 0, int pageNumber = 0)
         {
-            var products = _ProductService.GetListProduct(searchValue, categoryId);
+            var products = _ProductService.GetListProduct(searchValue, categoryId, pageSize, pageNumber);
             return products;
         }
         [HttpGet("get-detail")]

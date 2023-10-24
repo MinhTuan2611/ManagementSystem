@@ -13,13 +13,13 @@ namespace ManagementSystem.MainApp.Controllers
     public class SearchController : ControllerBase
     {
         [HttpGet("Search")]
-        public async Task<IActionResult> Get([FromQuery] string? searchTerm)
+        public async Task<IActionResult> Get([FromQuery] string? searchValue)
         {
             MultipleSearchResult response = new MultipleSearchResult();
             List<CustomerResponseDto> customers = new List<CustomerResponseDto>();
-            customers = await HttpRequestsHelper.GetList<CustomerResponseDto>(Environment.StorageApiUrl + "customers/search-term?searchTerm=" + searchTerm);
+            customers = await HttpRequestsHelper.GetList<CustomerResponseDto>(Environment.StorageApiUrl + "customers/search-term?searchTerm=" + searchValue);
             List<ProductListResponse> products = new List<ProductListResponse>();
-            products = await HttpRequestsHelper.Get<List<ProductListResponse>>(Environment.StorageApiUrl + "products/" + "get?searchValue=" + searchTerm);
+            products = await HttpRequestsHelper.Get<List<ProductListResponse>>(Environment.StorageApiUrl + "products/" + "get?searchValue=" + searchValue + "&pageNumber=1&pageSize=9");
             response.CustomerResponses = customers;
             response.ProductResponses = products;
             return Ok(response);

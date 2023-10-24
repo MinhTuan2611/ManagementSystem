@@ -4,6 +4,7 @@ using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -17,7 +18,7 @@ namespace ManagementSystem.StoragesApi.Services
             _storageContext = context;
         }
 
-        public List<ProductListResponse> GetListProduct(string? searchValue, int? categoryId)
+        public List<ProductListResponse> GetListProduct(string? searchValue, int? categoryId, int pageSize, int pageNumber)
         {
             string[] includes = { "Category"};
             IQueryable<Product> products = _unitOfWork.ProductRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes);
@@ -29,7 +30,15 @@ namespace ManagementSystem.StoragesApi.Services
             {
                 products = products.Where(x => x.CategoryId == categoryId);
             }
-            var productToList = products.ToList();
+            var productToList = new List<Product>();
+            if (pageSize != 0 && pageNumber != 0)
+            {
+                productToList = products.Skip((pageNumber - 1) * pageSize)
+                   .Take(pageSize).ToList();
+            } else
+            {
+                productToList = products.ToList();
+            }
             var listProduct = new List<ProductListResponse>();
             for (int i = 0; i < productToList.Count; i++)
             {
