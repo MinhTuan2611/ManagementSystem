@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ManagementSystem.Common.Models.Dtos;
+using ManagementSystem.Common.GenericModels;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -137,23 +138,17 @@ namespace ManagementSystem.MainApp.Controllers
             }
         }
 
+
         [HttpPost("search_results")]
-        public async Task<IActionResult> Create([FromBody] SearchCriteria searchModel)
+        public async Task<IActionResult> SearchShiftHandovers([FromBody] SearchCriteria searchModel)
         {
 
-            ResponseModel<BillSearchingResponseDto> response = new ResponseModel<BillSearchingResponseDto>();
-            List<BillSearchingResponseDto> result = await HttpRequestsHelper.Post<List<BillSearchingResponseDto>>(Environment.StorageApiUrl + "bills/search_results", searchModel);
+            var result = await HttpRequestsHelper.Post<TPagination<BillSearchingResponseDto>>(Environment.StorageApiUrl + "bills/search_results", searchModel);
 
             if (result != null)
-            {
+                return Ok(result);
 
-                response.Status = "success";
-                response.Data = result;
-                return Ok(response);
-            }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
         }
 
         [HttpGet("get-detail")]

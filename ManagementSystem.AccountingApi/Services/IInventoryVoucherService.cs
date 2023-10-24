@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 
@@ -8,7 +9,7 @@ namespace ManagementSystem.AccountingApi.Services
     {
         Task<InventoryVoucher> CreateInventoryVoucher(NewInventoryVoucherDto request);
         Task<InventoryVoucher> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request);
-        Task<List<InventoryVoucherResponseDto>> GetInventoryVouchers(SearchCriteria searchModel);
+        Task<TPagination<InventoryVoucherResponseDto>> GetInventoryVouchers(SearchCriteria criteria);
         Task<List<InventoryVoucherDetailResponseDto>> GetInventoryVoucherDetail(int documentNumber);
     }
 }

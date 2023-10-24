@@ -1,9 +1,12 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Repositories;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -12,10 +15,12 @@ namespace ManagementSystem.AccountingApi.Services
     public class InventoryVoucherService : IInventoryVoucherService
     {
         private readonly AccountingDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public InventoryVoucherService(AccountingDbContext context)
+        public InventoryVoucherService(AccountingDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
 
@@ -205,15 +210,35 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<List<InventoryVoucherResponseDto>> GetInventoryVouchers(SearchCriteria searchModel)
+        public async Task<TPagination<InventoryVoucherResponseDto>> GetInventoryVouchers(SearchCriteria criteria)
         {
             try
             {
-                string xmlString = XMLCommonFunction.SerializeToXml(searchModel);
-                var result = _context.InventoryVoucherResponseDto.FromSqlRaw(string.Format("EXEC sp_SearchInventoryVoucher '{0}', {1}, {2}", xmlString, searchModel.PageNumber, searchModel.PageSize)).AsNoTracking().ToList();
+                string xmlString = XMLCommonFunction.SerializeToXml(criteria);
+
+                // Your DbContextFactory and DbContext creation code
+                var dbContextFactory = new DbContextFactory(_configuration);
+                using var dbContext = dbContextFactory.CreateDbContext<AccountingDbContext>("AcountingsDbConnStr");
+
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@xmlString", xmlString )
+                };
+
+                int pageNumber = criteria.PageNumber <= 0 ? 1 : criteria.PageNumber;
+                int pageSize = criteria.PageSize <= 0 ? 10 : criteria.PageSize;
+
+                var executeResult = await GenericSearchRepository<InventoryVoucherResponseDto>.ExecutePagedStoredProcedureCommonAsync<InventoryVoucherResponseDto>
+                                                                                    (dbContext, "sp_SearchInventoryVoucher", pageNumber, pageSize, parameters);
+
+                // Process the results
+                List<InventoryVoucherResponseDto> pagedData = executeResult.Item1;
+                int totalRecords = executeResult.Item2;
+
+
 
                 List<InventoryVoucherResponseDto> response = new List<InventoryVoucherResponseDto>();
-                foreach (var item in result)
+                foreach (var item in pagedData)
                 {
                     if (item.BillId != null)
                     {
@@ -224,7 +249,11 @@ namespace ManagementSystem.AccountingApi.Services
                     response.Add(item);
                 }
 
-                return response;
+                var result = new TPagination<InventoryVoucherResponseDto>();
+                result.Items = response;
+                result.TotalItems = totalRecords;
+
+                return result;
             }
             catch (Exception ex)
             {

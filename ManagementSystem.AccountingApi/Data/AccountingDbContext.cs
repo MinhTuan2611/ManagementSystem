@@ -11,11 +11,9 @@ namespace ManagementSystem.AccountingApi.Data
 {
     public class AccountingDbContext : DbContext
     {
-        private readonly MigrationsConfiguration _migrationConfiguration;
 
-        public AccountingDbContext(DbContextOptions<AccountingDbContext> options, MigrationsConfiguration migrationConfiguration) : base(options)
+        public AccountingDbContext(DbContextOptions<AccountingDbContext> options) : base(options)
         {
-            _migrationConfiguration = migrationConfiguration;
         }
 
         public DbSet<TypesOfAccounts> TypesOfAccounts { get; set; }
@@ -59,37 +57,53 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<ShiftHandoverCashDetail>().HasKey(x => new { x.ShiftEndId, x.Denomination });
             modelBuilder.Entity<InventoryAuditDetail>().HasKey(x => new { x.ShiftEndId, x.ProductId, x.UnitId });
 
-            // Dynamic Response functions
+            modelBuilder.Entity<InventoryVoucherResponseDto>().ToTable(nameof(InventoryVoucherResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<InventoryVoucherDetailResponseDto>().ToTable(nameof(InventoryVoucherDetailResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ReceiptResponseDto>().ToTable(nameof(ReceiptResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ProductResponseDto>().ToTable(nameof(ProductResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<PaymentMethodResponseDto>().ToTable(nameof(PaymentMethodResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<UnitResponseDto>().ToTable(nameof(UnitResponseDtos), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ProductStorageInformationDto>().ToTable(nameof(ProductStorageInformationDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<LegerResponseDto>().ToTable(nameof(LegerResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<PaymentVoucherResponseDto>().ToTable(nameof(PaymentVoucherResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<OtherAccountEntryResponseDto>().ToTable(nameof(OtherAccountEntryResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<BillPaymentDetailResponseDto>().ToTable(nameof(BillPaymentDetailResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ShiftEndResponseDto>().ToTable(nameof(ShiftEndResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ShiftHandoverResponseDto>().ToTable(nameof(ShiftHandoverResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ShiftReportResponseDto>().ToTable(nameof(ShiftReportResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<AccountsDto>().ToTable(nameof(AccountsDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ShiftEndReportView>().ToTable(nameof(ShiftEndReportView), t => t.ExcludeFromMigrations());
+            //// Dynamic Response functions
 
-            foreach (var entityType in AccountingTableName.GenerateDynamicResponseDbSet())
-            {
-                modelBuilder.Entity(entityType);
-            }
+            //foreach (var entityType in AccountingTableName.GenerateDynamicResponseDbSet())
+            //{
+            //    modelBuilder.Entity(entityType);
+            //}
 
-            // Exclude migration tables
-            ConfigureExcluedTables(modelBuilder);
+            //// Exclude migration tables
+            //ConfigureExcluedTables(modelBuilder);
 
         }
         private void ConfigureExcluedTables(ModelBuilder modelBuilder)
         {
-            try
-            {
-                var entityTypes = modelBuilder.Model.GetEntityTypes().ToList();
-                int count = entityTypes.Count();
-                for (int i = 0 ; i < count; i++)
-                {
-                    var entityType = entityTypes[i];
-                    var tableName = entityType.GetTableName();
-                    if (_migrationConfiguration.ExcludedTableTypes.Contains(entityType.ClrType) ||
-                        _migrationConfiguration.ExcludedTableNames.Contains(tableName))
-                    {
-                        modelBuilder.Ignore(entityType.ClrType);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-            }
+            //try
+            //{
+            //    var entityTypes = modelBuilder.Model.GetEntityTypes().ToList();
+            //    int count = entityTypes.Count();
+            //    for (int i = 0 ; i < count; i++)
+            //    {
+            //        var entityType = entityTypes[i];
+            //        var tableName = entityType.GetTableName();
+            //        if (_migrationConfiguration.ExcludedTableTypes.Contains(entityType.ClrType) ||
+            //            _migrationConfiguration.ExcludedTableNames.Contains(tableName))
+            //        {
+            //            modelBuilder.Ignore(entityType.ClrType);
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //}
         }
 
         public IEnumerable<TEntity> ExecuteSqlForEntity<TEntity>(string sql) where TEntity : class

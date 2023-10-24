@@ -21,7 +21,7 @@ namespace ManagementSystem.AccountingApi.Controllers
 
         }
 
-        [HttpPost("search-result")]
+        [HttpPost("search_results")]
         public async Task<IActionResult> SearchInventory([FromBody]SearchCriteria searchModel)
         {
             var result = await _service.GetInventoryVouchers(searchModel);

@@ -57,6 +57,14 @@ namespace ManagementSystem.AccountingApi.Controllers
             return Ok(result);
         }
 
+        [HttpGet("get-shiftend-by-id")]
+        public async Task<IActionResult> GetShiftEndById([FromQuery] int shiftEndId)
+        {
+            var result = await _service.GetShiftEndById(shiftEndId);
+
+            return Ok(result);
+        }
+
         [HttpGet("get-shift-handover-by-id")]
         public async Task<IActionResult> GetShiftHandover([FromQuery] int handoverId)
         {

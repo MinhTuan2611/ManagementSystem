@@ -46,7 +46,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("ActivityId");
 
-                    b.ToTable("ActivityLog", (string)null);
+                    b.ToTable("ActivityLog");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryAuditDetail", b =>
@@ -68,7 +68,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("ShiftEndId", "ProductId", "UnitId");
 
-                    b.ToTable("InventoryAuditDetails", (string)null);
+                    b.ToTable("InventoryAuditDetails");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryVoucher", b =>
@@ -117,7 +117,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("DocummentNumber");
 
-                    b.ToTable("InventoryVouchers", (string)null);
+                    b.ToTable("InventoryVouchers");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryVoucherDetail", b =>
@@ -169,7 +169,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("DocummentNumber", "ProductId");
 
-                    b.ToTable("InventoryVoucherDetails", (string)null);
+                    b.ToTable("InventoryVoucherDetails");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Leger", b =>
@@ -213,7 +213,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("LegerId");
 
-                    b.ToTable("Legers", (string)null);
+                    b.ToTable("Legers");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.OtherAccountEntry", b =>
@@ -253,7 +253,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("DocumentNumber");
 
-                    b.ToTable("OtherAccountEntries", (string)null);
+                    b.ToTable("OtherAccountEntries");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.PaymentVoucher", b =>
@@ -305,7 +305,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("DocumentNumber");
 
-                    b.ToTable("PaymentVouchers", (string)null);
+                    b.ToTable("PaymentVouchers");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Receipt", b =>
@@ -340,7 +340,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("DocumentNumber");
 
-                    b.ToTable("Receipts", (string)null);
+                    b.ToTable("Receipts");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Recordingtransaction", b =>
@@ -396,7 +396,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Recordingtransactions", (string)null);
+                    b.ToTable("Recordingtransactions");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftEndReport", b =>
@@ -421,7 +421,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("ShiftEndId");
 
-                    b.ToTable("ShiftEndReports", (string)null);
+                    b.ToTable("ShiftEndReports");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftHandoverCashDetail", b =>
@@ -437,7 +437,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("ShiftEndId", "Denomination");
 
-                    b.ToTable("ShiftHandoverCashDetails", (string)null);
+                    b.ToTable("ShiftHandoverCashDetails");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftHandovers", b =>
@@ -485,7 +485,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasIndex("ShiftEndId");
 
-                    b.ToTable("ShiftHandovers", (string)null);
+                    b.ToTable("ShiftHandovers");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftReport", b =>
@@ -554,7 +554,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasIndex("HandoverId");
 
-                    b.ToTable("ShiftReports", (string)null);
+                    b.ToTable("ShiftReports");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.TypesOfAccounts", b =>
@@ -602,7 +602,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("TypesOfAccounts", (string)null);
+                    b.ToTable("TypesOfAccounts");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.AccountsDto", b =>

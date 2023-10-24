@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
@@ -17,20 +18,13 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> Get([FromQuery] int? page = 1, [FromQuery] int? pageSize = 10)
         {
 
-            ResponseModel<PaymentVoucherResponseDto> response = new ResponseModel<PaymentVoucherResponseDto>();
-            List<PaymentVoucherResponseDto> products = await HttpRequestsHelper.Get<List<PaymentVoucherResponseDto>>(APIUrl + "get");
-            if (products != null)
-            {
+            var result = await HttpRequestsHelper.Get<TPagination<PaymentVoucherResponseDto>>(APIUrl + string.Format("get?page={0}&pageSize={1}", page, pageSize));
 
-                response.Status = "success";
-                response.Data = products;
-                return Ok(response);
-            }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+            if (result != null)
+                return Ok(result);
+
+            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
         }
-
         [HttpGet("get-detail")]
         public async Task<IActionResult> GetDetail(int? documentNumber)
         {

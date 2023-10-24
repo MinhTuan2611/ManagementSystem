@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
@@ -12,24 +13,18 @@ namespace ManagementSystem.MainApp.Controllers
     {
         private string APIUrl = Environment.AccountingApiUrl + "Receipt/";
 
-        [HttpPost("search-result")]
-        public async Task<IActionResult> SearchReceipts(SearchCriteria searchModel)
+        [HttpPost("search_results")]
+        public async Task<IActionResult> SearchInventory([FromBody] SearchCriteria searchModel)
         {
 
-            ResponseModel<ReceiptResponseDto> response = new ResponseModel<ReceiptResponseDto>();
-            List<ReceiptResponseDto> vouchers = await HttpRequestsHelper.Post<List<ReceiptResponseDto>>(APIUrl + "search-result", searchModel);
+            var result = await HttpRequestsHelper.Post<TPagination<ReceiptResponseDto>>(APIUrl + "search_results", searchModel);
 
-            if (vouchers != null)
-            {
+            if (result != null)
+                return Ok(result);
 
-                response.Status = "success";
-                response.Data = vouchers;
-                return Ok(response);
-            }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
         }
+
         [HttpGet("get-detail")]
         public async Task<IActionResult> GetDetail([FromQuery] int documentNumber)
         {

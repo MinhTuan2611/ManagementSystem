@@ -1,11 +1,14 @@
 ﻿using ManagementSystem.Common;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection.Metadata.Ecma335;
 
@@ -15,10 +18,12 @@ namespace ManagementSystem.StoragesApi.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly StoragesDbContext _context;
+        private IConfiguration _configuration;
 
-        public BillsService(StoragesDbContext context)
+        public BillsService(StoragesDbContext context, IConfiguration configuration)
         {
             _unitOfWork = new UnitOfWork(context);
+            _configuration = configuration;
             _context = context;
         }
 
@@ -168,12 +173,34 @@ namespace ManagementSystem.StoragesApi.Services
             return true;
         }
 
-        public async Task<List<BillSearchingResponseDto>> SearchBills(SearchCriteria searchModel)
+        public async Task<TPagination<BillSearchingResponseDto>> SearchBills(SearchCriteria criteria)
         {
             try
             {
-                string xmlString = XMLCommonFunction.SerializeToXml(searchModel);
-                var result = _context.billSearchingResponseDtos.FromSqlRaw(string.Format("EXEC sp_SearchBills '{0}', {1}, {2}", xmlString, searchModel.PageNumber, searchModel.PageSize)).ToList();
+                string xmlString = XMLCommonFunction.SerializeToXml(criteria);
+
+                // Your DbContextFactory and DbContext creation code
+                var dbContextFactory = new DbContextFactory(_configuration);
+                using var dbContext = dbContextFactory.CreateDbContext<StoragesDbContext>("StoragesDbConnStr");
+
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@xmlString", xmlString )
+                };
+
+                int pageNumber = criteria.PageNumber <= 0 ? 1 : criteria.PageNumber;
+                int pageSize = criteria.PageSize <= 0 ? 10 : criteria.PageSize;
+
+                var executeResult = await GenericSearchRepository<BillSearchingResponseDto>.ExecutePagedStoredProcedureCommonAsync<BillSearchingResponseDto>
+                                                                                    (dbContext, "sp_SearchBills", pageNumber, pageSize, parameters);
+
+                // Process the results
+                List<BillSearchingResponseDto> pagedData = executeResult.Item1;
+                int totalRecords = executeResult.Item2;
+
+                var result = new TPagination<BillSearchingResponseDto>();
+                result.Items = pagedData;
+                result.TotalItems = totalRecords;
 
                 return result;
             }

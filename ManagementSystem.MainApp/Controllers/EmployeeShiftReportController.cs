@@ -1,4 +1,6 @@
-﻿using ManagementSystem.Common.Helpers;
+﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
+using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -29,19 +31,12 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> SearchShiftHandovers([FromBody] SearchCriteria searchModel)
         {
 
-            ResponseModel<ShiftHandoverResponseDto> response = new ResponseModel<ShiftHandoverResponseDto>();
-            List<ShiftHandoverResponseDto> result = await HttpRequestsHelper.Post<List<ShiftHandoverResponseDto>>(APIUrl + "search_results", searchModel);
+           var result = await HttpRequestsHelper.Post<TPagination<ShiftHandoverResponseDto>>(APIUrl + "search_results", searchModel);
 
             if (result != null)
-            {
+                return Ok(result);
 
-                response.Status = "success";
-                response.Data = result;
-                return Ok(response);
-            }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
         }
 
         [HttpGet("get-shift-report")]
@@ -89,20 +84,12 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpPost("search_shift-end_reports")]
         public async Task<IActionResult> SearchShiftEndReports([FromBody] SearchCriteria searchModel)
         {
-
-            ResponseModel<ShiftEndResponseDto> response = new ResponseModel<ShiftEndResponseDto>();
-            List<ShiftEndResponseDto> result = await HttpRequestsHelper.Post<List<ShiftEndResponseDto>>(APIUrl + "search_shift-end_reports", searchModel);
+            var result = await HttpRequestsHelper.Post<TPagination<ShiftEndResponseDto>>(APIUrl + "search_shift-end_reports", searchModel);
 
             if (result != null)
-            {
+                return Ok(result);
 
-                response.Status = "success";
-                response.Data = result;
-                return Ok(response);
-            }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
         }
 
         [HttpGet("get-lastest-shift-end")]
@@ -112,6 +99,27 @@ namespace ManagementSystem.MainApp.Controllers
             ResponseModel<ShiftEndResponseDto> response = new ResponseModel<ShiftEndResponseDto>();
             ShiftEndResponseDto detail = await HttpRequestsHelper.Get<ShiftEndResponseDto>(APIUrl + "get-lastest-shift-end");
             List <ShiftEndResponseDto> responseData = new List<ShiftEndResponseDto>();
+            responseData.Add(detail);
+
+            if (detail != null)
+            {
+
+                response.Status = "success";
+                response.Data = responseData;
+                return Ok(response);
+            }
+            response.Status = "success";
+            response.ErrorMessage = "Not found any information!";
+            return Ok(response);
+        }
+
+        [HttpGet("get-shiftend-by-id")]
+        public async Task<IActionResult> GetShiftEndById([FromQuery] int shiftEndId)
+        {
+
+            ResponseModel<ShiftEndResponseDto> response = new ResponseModel<ShiftEndResponseDto>();
+            ShiftEndResponseDto detail = await HttpRequestsHelper.Get<ShiftEndResponseDto>(APIUrl + "get-shiftend-by-id?shiftEndId=" + shiftEndId);
+            List<ShiftEndResponseDto> responseData = new List<ShiftEndResponseDto>();
             responseData.Add(detail);
 
             if (detail != null)

@@ -20,7 +20,7 @@ namespace ManagementSystem.AccountingApi.Controllers
         [Route("get")]
         public async Task<IActionResult> GetOtherAccountEntries([FromQuery] int? page = 1, [FromQuery] int? pageSize = 10)
         {
-            var result = await _service.GetOtherAccountEntries();
+            var result = await _service.GetOtherAccountEntries(page, pageSize);
 
             return Ok(result);
         }
