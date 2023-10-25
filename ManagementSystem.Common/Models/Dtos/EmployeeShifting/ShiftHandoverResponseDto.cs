@@ -12,10 +12,21 @@ namespace ManagementSystem.Common.Models.Dtos
     {
         public int? HandoverId { get; set; }
         public int? ShiftId { get; set; }
+        public int? ShiftEndId { get; set; }
         public string? ShiftName { get; set; }
         public DateTime? HandoverDate { get; set; }
         public int? TotalAmount { get; set; }
         public int? PreShiftAmount { get; set; }
         public int? CurShiftAmount { get; set; }
+        public int? SenderId1 { get; set; }
+        public string? SenderName1 { get; set; }
+        public int? SenderId2 { get; set; }
+        public string? SenderUser2 { get; set; }
+        public int? ReceiverId { get; set; }
+        public string? ReceiverName { get; set; }
+        public int? StorageId { get; set; }
+        public string? StorageName { get; set; }
+        public string? Note { get; set; }
+        public string? Status { get; set; }
     }
 }

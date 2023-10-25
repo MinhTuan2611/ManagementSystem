@@ -31,21 +31,21 @@ namespace ManagementSystem.Common
         {
             return new List<Type>()
             {
-               typeof(InventoryVoucherResponseDto),
-                typeof(InventoryVoucherDetailResponseDto),
-                typeof(ReceiptResponseDto),
-                typeof(ProductResponseDto),
-                typeof(PaymentMethodResponseDto),
-                typeof(UnitResponseDto),
-                typeof(LegerResponseDto),
-                typeof(ProductStorageInformationDto),
-                typeof(PaymentVoucherResponseDto),
-                typeof(BillPaymentDetailResponseDto),
-                typeof(OtherAccountEntryResponseDto),
-                typeof(ShiftEndResponseDto),
-                typeof(ShiftHandoverResponseDto),
-                typeof(ShiftReportResponseDto),
-                typeof(AccountsDto),
+               //typeof(InventoryVoucherResponseDto),
+               // typeof(InventoryVoucherDetailResponseDto),
+               // typeof(ReceiptResponseDto),
+               // typeof(ProductResponseDto),
+               // typeof(PaymentMethodResponseDto),
+               // typeof(UnitResponseDto),
+               // typeof(LegerResponseDto),
+               // typeof(ProductStorageInformationDto),
+               // typeof(PaymentVoucherResponseDto),
+               // typeof(BillPaymentDetailResponseDto),
+               // typeof(OtherAccountEntryResponseDto),
+               // typeof(ShiftEndResponseDto),
+               // typeof(ShiftHandoverResponseDto),
+               // typeof(ShiftReportResponseDto),
+               // typeof(AccountsDto),
                 typeof(ScalarResult<int>)
             };
         }

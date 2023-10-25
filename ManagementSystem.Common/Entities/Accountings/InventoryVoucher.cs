@@ -1,5 +1,6 @@
 ﻿using ManagementSystem.Common.Models;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ManagementSystem.Common.Entities
 {
@@ -19,7 +20,12 @@ namespace ManagementSystem.Common.Entities
         public DateTime TransactionDate { get; set; } = DateTime.Now;
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
         public string? Note { get; set; }
+
+        [ForeignKey("DocumentGroup")]
+        public int? GroupId { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
+
+        public DocumentGroup DocumentGroup { get; set; }
         public List<InventoryVoucherDetail> Details { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementSystem.MainApp.Controllers
@@ -132,6 +133,14 @@ namespace ManagementSystem.MainApp.Controllers
             response.Status = "success";
             response.ErrorMessage = "Not found any information!";
             return Ok(response);
+        }
+
+        [HttpGet("check-completed-shift-end")]
+        public async Task<IActionResult> CheckCompletedShiftEnd([FromQuery] int shiftId)
+        {
+            var result = await HttpRequestsHelper.Get<bool>(APIUrl + "check-completed-shift-end?shiftId=" + shiftId);
+
+           return Ok(result);
         }
     }
 }

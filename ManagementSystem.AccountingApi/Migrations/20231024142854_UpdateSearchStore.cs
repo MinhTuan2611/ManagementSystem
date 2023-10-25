@@ -110,126 +110,133 @@ namespace ManagementSystem.AccountingApi.Migrations
 		");
 
             migrationBuilder.Sql(@"
-			CREATE OR ALTER PROCEDURE dbo.sp_SearchShiftEndReports
-								@xmlString NVARCHAR(MAX)
-								,@pageNumber INT = 1
-								,@pageSize INT = 10
-								,@TotalRecords INT OUTPUT
-							AS
-							BEGIN
-								DECLARE @sqlQuery VARCHAR(MAX)
-										,@sqlQuery_condition VARCHAR(MAX)
-										,@pagingString VARCHAR(MAX)
-										,@orderBy VARCHAR(MAX)
+				CREATE OR ALTER PROCEDURE dbo.sp_SearchShiftEndReports
+					@xmlString NVARCHAR(MAX)
+					,@pageNumber INT = 1
+					,@pageSize INT = 10
+					,@TotalRecords INT OUTPUT
+				AS
+				BEGIN
+					DECLARE @sqlQuery VARCHAR(MAX)
+							,@sqlQuery_condition VARCHAR(MAX)
+							,@pagingString VARCHAR(MAX)
+							,@orderBy VARCHAR(MAX)
 
-								DECLARE @xml XML
-								SET @xml = CAST(@xmlString AS XML)
+					DECLARE @xml XML
+					SET @xml = CAST(@xmlString AS XML)
 
-								-- Create a table variable to store the parsed values
-								DECLARE @SearchCriteriaTable TABLE
-								(
-									[Key] NVARCHAR(255),
-									[Value] NVARCHAR(255)
-								)
+					-- Create a table variable to store the parsed values
+					DECLARE @SearchCriteriaTable TABLE
+					(
+						[Key] NVARCHAR(255),
+						[Value] NVARCHAR(255)
+					)
 
-								-- Insert the values from XML into the table variable
-								INSERT INTO @SearchCriteriaTable ([Key], [Value])
-								SELECT
-									Criteria.value('(Key)[1]', 'NVARCHAR(255)') AS [Key],
-									Criteria.value('(Value)[1]', 'NVARCHAR(255)') AS [Value]
-								FROM @xml.nodes('/SearchCriteria/Criteria') AS SearchCriteria(Criteria)
+					-- Insert the values from XML into the table variable
+					INSERT INTO @SearchCriteriaTable ([Key], [Value])
+					SELECT
+						Criteria.value('(Key)[1]', 'NVARCHAR(255)') AS [Key],
+						Criteria.value('(Value)[1]', 'NVARCHAR(255)') AS [Value]
+					FROM @xml.nodes('/SearchCriteria/Criteria') AS SearchCriteria(Criteria)
 
-								-- Map to create dynamic condition
-								DROP TABLE IF EXISTS #web_column_mapping
-								CREATE TABLE #web_column_mapping
-								(
-									WEB_COLUMN VARCHAR(128)
-									,DB_COLUMN_ALIAS VARCHAR(MAX)
-									,DB_COLUMN_OPERATION VARCHAR(8) DEFAULT ' = '
-								)
+					-- Map to create dynamic condition
+					DROP TABLE IF EXISTS #web_column_mapping
+					CREATE TABLE #web_column_mapping
+					(
+						WEB_COLUMN VARCHAR(128)
+						,DB_COLUMN_ALIAS VARCHAR(MAX)
+						,DB_COLUMN_OPERATION VARCHAR(8) DEFAULT ' = '
+					)
 
-								INSERT INTO #web_column_mapping VALUES('FromDate', 'FORMAT(s.ShiftEndDate, ''yyyy-MM-dd'')', '>=')
-								INSERT INTO #web_column_mapping VALUES('ToDate', 'FORMAT(s.ShiftEndDate, ''yyyy-MM-dd'')', '<=')
+					INSERT INTO #web_column_mapping VALUES('FromDate', 'FORMAT(s.ShiftEndDate, ''yyyy-MM-dd'')', '>=')
+					INSERT INTO #web_column_mapping VALUES('ToDate', 'FORMAT(s.ShiftEndDate, ''yyyy-MM-dd'')', '<=')
 
-								SELECT @sqlQuery_condition = CONCAT(@sqlQuery_condition,+ ' AND '
-													+ col_map.DB_COLUMN_ALIAS
-													+ col_map.DB_COLUMN_OPERATION
-													+ '''' + xml_parsed.[Value] + ''''
-													+ (CHAR(10)) )
-								FROM @SearchCriteriaTable xml_parsed
-								JOIN #web_column_mapping col_map ON xml_parsed.[Key] = col_map.WEB_COLUMN
+					SELECT @sqlQuery_condition = CONCAT(@sqlQuery_condition,+ ' AND '
+										+ col_map.DB_COLUMN_ALIAS
+										+ col_map.DB_COLUMN_OPERATION
+										+ '''' + xml_parsed.[Value] + ''''
+										+ (CHAR(10)) )
+					FROM @SearchCriteriaTable xml_parsed
+					JOIN #web_column_mapping col_map ON xml_parsed.[Key] = col_map.WEB_COLUMN
 
-								-- Handle Pagination
-								SET @pagingString = CONCAT(@pagingString,' 
-																	OFFSET ', CONVERT(NVARCHAR(30), @PageNumber - 1), '*', CONVERT(NVARCHAR(30),@pageSize), ' ROWS 
-																	FETCH NEXT ', CONVERT(NVARCHAR(30), @pageSize), ' ROWS ONLY ')
-								-- Handle OrderBy
-								SET @orderBy = 'ORDER BY s.ShiftEndDate DESC'
+					-- Handle Pagination
+					SET @pagingString = CONCAT(@pagingString,' 
+														OFFSET ', CONVERT(NVARCHAR(30), @PageNumber - 1), '*', CONVERT(NVARCHAR(30),@pageSize), ' ROWS 
+														FETCH NEXT ', CONVERT(NVARCHAR(30), @pageSize), ' ROWS ONLY ')
+					-- Handle OrderBy
+					SET @orderBy = 'ORDER BY s.ShiftEndDate DESC'
 
-								-- Create a temporary table
-								CREATE TABLE #tmp_records (
-									ShiftEndId INT,
-									UserId INT,
-									UserName NVARCHAR(255),
-									ShiftId INT,
-									ShiftName NVARCHAR(255),
-									ShiftEndDate DATETIME,
-									CompanyMoneyTransferred INT,
-									Denomination INT,
-									Amount INT,
-									ProductId INT,
-									ProductName NVARCHAR(255),
-									UnitId INT,
-									UnitName NVARCHAR(255),
-									ActualAmount INT,
-									SystemAmount INT
-								);
+					-- Create a temporary table
+					CREATE TABLE #tmp_records (
+						ShiftEndId INT,
+						UserId INT,
+						UserName NVARCHAR(255),
+						ShiftId INT,
+						ShiftName NVARCHAR(255),
+						ShiftEndDate DATETIME,
+						CompanyMoneyTransferred INT,
+						Denomination INT,
+						Amount INT,
+						ProductId INT,
+						ProductName NVARCHAR(255),
+						UnitId INT,
+						UnitName NVARCHAR(255),
+						ActualAmount INT,
+						SystemAmount INT,
+						BranchId INT,
+						BranchName NVARCHAR(255)
+					);
 
-								-- Return result
-								SET @sqlQuery = CONCAT('
-										INSERT INTO #tmp_records
-										SELECT s.ShiftEndId
-											,s.UserId
-											,u.UserName
-											,es.ShiftId
-											,es.ShiftName
-											,s.ShiftEndDate
-											,s.CompanyMoneyTransferred
-											,sh.Denomination
-											,sh.Amount
-											,sa.ProductId
-											,p.ProductName
-											,ui.UnitId
-											,ui.UnitName
-											,COALESCE(sa.ActualAmount, 0) AS ActualAmount
-											,COALESCE(sa.SystemAmount, 0) AS SystemAmount
-										FROM dbo.ShiftEndReports s
-										LEFT JOIN dbo.InventoryAuditDetails sa ON sa.ShiftEndId = s.ShiftEndId
-										LEFT JOIN dbo.ShiftHandoverCashDetails sh ON sh.ShiftEndId = s.ShiftEndId
-										LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = s.UserId
-										LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
-										LEFT JOIN StoragesDb.dbo.Products p ON p.ProductId = sa.ProductId
-										LEFT JOIN StoragesDb.dbo.Unit ui ON sa.UnitId = ui.UnitId
-										WHERE 1 = 1
-								', @sqlQuery_condition)
+					-- Return result
+					SET @sqlQuery = CONCAT('
+						   INSERT INTO #tmp_records
+						   SELECT s.ShiftEndId
+								,s.UserId
+								,u.UserName
+								,es.ShiftId
+								,es.ShiftName
+								,s.ShiftEndDate
+								,s.CompanyMoneyTransferred
+								,sh.Denomination
+								,sh.Amount
+								,sa.ProductId
+								,p.ProductName
+								,ui.UnitId
+								,ui.UnitName
+								,COALESCE(sa.ActualAmount, 0) AS ActualAmount
+								,COALESCE(sa.SystemAmount, 0) AS SystemAmount
+								,b.BranchId
+								,b.BranchName
+						   FROM dbo.ShiftEndReports s
+						   LEFT JOIN dbo.InventoryAuditDetails sa ON sa.ShiftEndId = s.ShiftEndId
+						   LEFT JOIN dbo.ShiftHandoverCashDetails sh ON sh.ShiftEndId = s.ShiftEndId
+						   LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = s.UserId
+						   LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
+						   LEFT JOIN StoragesDb.dbo.Products p ON p.ProductId = sa.ProductId
+						   LEFT JOIN StoragesDb.dbo.Unit ui ON sa.UnitId = ui.UnitId
+						   LEFT JOIN AccountsDb.dbo.UserBranchs ub ON ub.UserId = u.UserId
+						   LEFT JOIN StoragesDb.dbo.Branches b ON b.BranchId = ub.BranchId
+						   WHERE 1 = 1
+					', @sqlQuery_condition)
 
-								EXEC (@sqlQuery)
+					EXEC (@sqlQuery)
 
-								SELECT @TotalRecords = COUNT(DISTINCT ShiftEndId) FROM #tmp_records
+					SELECT @TotalRecords = COUNT(DISTINCT ShiftEndId) FROM #tmp_records
 
-								DROP TABLE IF EXISTS #tmp_return_ids
-								SELECT ShiftEndId
-								INTO #tmp_return_ids
-								FROM #tmp_records
-								GROUP BY ShiftEndId
-								ORDER BY 1 DESC
-								OFFSET (@PageNumber - 1) * @PageSize ROWS FETCH NEXT @pageSize ROWS ONLY
+					DROP TABLE IF EXISTS #tmp_return_ids
+					SELECT ShiftEndId
+					INTO #tmp_return_ids
+					FROM #tmp_records
+					GROUP BY ShiftEndId
+					ORDER BY 1 DESC
+					OFFSET (@PageNumber - 1) * @PageSize ROWS FETCH NEXT @pageSize ROWS ONLY
 
-								SELECT t1.*
-								FROM #tmp_records t1
-								JOIN #tmp_return_ids t2 ON t2.ShiftEndId = t1.ShiftEndId
-							END        
-			GO");
+					SELECT DISTINCT t1.*
+					FROM #tmp_records t1
+					JOIN #tmp_return_ids t2 ON t2.ShiftEndId = t1.ShiftEndId
+				END        
+			GO
+			");
 
             migrationBuilder.Sql(@"CREATE OR ALTER PROCEDURE dbo.sp_SearchInventoryVoucher
 								@xmlString NVARCHAR(MAX)
@@ -562,6 +569,366 @@ namespace ManagementSystem.AccountingApi.Migrations
 						END
 		GO
 
+		");
+
+		migrationBuilder.Sql(@"
+		CREATE OR ALTER PROCEDURE dbo.sp_generate_shift_handover
+		(
+			@ShiftEndId INT
+			,@storateId INT
+			,@brandId INT
+		)
+		AS
+		BEGIN
+
+			DECLARE @shiftStart INT
+					,@shiftEnd INT
+					,@totalRevenue INT
+					,@totalBills INT
+					,@totalPayment INT
+					,@shiftInReceiveMoney INT
+					,@reportingUser INT
+					,@CompanyMoneyTransferred INT
+					,@handoverId INT = 0
+					,@shiftId INT
+					,@TotalRealAmountInShift INT
+					,@totalCash INT
+					,@totalRealReminingAmount INT
+					,@totalDiffAmount INT
+
+			SELECT @shiftStart = s.StartHour
+					,@shiftEnd = s.EndHour
+					,@reportingUser = se.UserId
+					,@CompanyMoneyTransferred = se.CompanyMoneyTransferred
+					,@shiftId = se.ShiftId
+			FROM dbo.ShiftEndReports se
+			JOIN AccountsDb.dbo.EmployeeShifts s ON s.ShiftId = se.ShiftId
+			WHERE ShiftEndId = @ShiftEndId
+
+				-- Tinh tien dau ca
+			;WITH cte
+			AS
+			(
+				SELECT TOP 1 CashHandover
+				FROM dbo.ShiftHandovers
+				ORDER BY HandoverId DESC
+			)
+
+			SELECT @shiftInReceiveMoney = CashHandover
+			FROM cte
+
+			-- Tinh tong tien theo tung loai thanh toan
+						-- Calculate total amout for each payment methods
+
+					DROP TABLE IF EXISTS #totalAmountByMethods
+					;WITH cte
+					AS
+					(
+						SELECT p.PaymentMethodCode
+							,SUM(bp.Amount) AS TotalAmount
+						FROM StoragesDb.dbo.Bills b
+						JOIN StoragesDb.dbo.BillPayments bp ON bp.BillId = b.BillId
+						JOIN StoragesDb.dbo.PaymentMethods p ON p.PaymentMethodId = bp.PaymentMethodId
+						JOIN AccountsDb.dbo.EmployeeShifts s ON s.ShiftId = b.ShiftId
+						JOIN dbo.ShiftEndReports ser ON ser.ShiftId = b.ShiftId
+													 AND ser.ShiftEndId = @ShiftEndId
+						WHERE FORMAT(b.CreateDate, 'yyyy-MM-dd') =  FORMAT(GETDATE(), 'yyyy-MM-dd')
+						GROUP BY p.PaymentMethodCode
+					)
+
+					SELECT *
+					INTO #totalAmountByMethods
+					FROM
+					(
+						SELECT PaymentMethodCode
+								,TotalAmount
+						FROM cte
+					) AS t
+					PIVOT
+					(
+						SUM(TotalAmount)
+						FOR PaymentMethodCode IN (
+							[MOMO], [CASH], [CARD], [BANKING])
+					) AS pivot_table
+
+			-- Calculate total shift in cash money
+
+			-- Calculate Total Revenue
+			SELECT @totalRevenue = COALESCE(SUM(bp.Amount), 0)
+					,@totalBills = COALESCE(COUNT(DISTINCT b.BillId), 0)
+			FROM StoragesDb.dbo.Bills b
+			JOIN StoragesDb.dbo.BillPayments bp ON bp.BillId = b.BillId
+			WHERE FORMAT(b.CreateDate, 'yyyy-MM-dd') =  FORMAT(GETDATE(), 'yyyy-MM-dd')
+			AND DATEPART(HOUR, b.CreateDate) >= @shiftStart
+			AND DATEPART(HOUR, b.CreateDate) <= @shiftEnd
+
+			-- Calculate Total payment
+
+			SELECT @totalPayment = COALESCE(SUM(p.TotalMoneyVND), 0)
+			FROM dbo.PaymentVouchers p
+			WHERE FORMAT(p.TransactionDate, 'yyyy-MM-dd') =  FORMAT(GETDATE(), 'yyyy-MM-dd')
+			AND DATEPART(HOUR, p.TransactionDate) >= @shiftStart
+			AND DATEPART(HOUR, p.TransactionDate) <= @shiftEnd
+
+			-- Tinh tien thu duoc thuc te trong ca
+			SELECT @totalCash = COALESCE(SUM(Denomination * Amount), 0)
+			FROM dbo.ShiftHandoverCashDetails
+			WHERE ShiftEndId = @ShiftEndId
+
+			SET @TotalRealAmountInShift = COALESCE(@totalCash, 0) - COALESCE(@CompanyMoneyTransferred, 0) + COALESCE(@totalPayment, 0)
+
+			-- Tinh tien thuc te con lai
+			SET @totalRealReminingAmount = COALESCE(@TotalRealAmountInShift, 0) - COALESCE(@totalPayment, 0)
+
+			-- Tinh Tien thua thieu
+
+			SELECT @totalDiffAmount = COALESCE(@TotalRealAmountInShift, 0) - (COALESCE(CASH, 0) + COALESCE(@shiftInReceiveMoney, 0))
+			FROM #totalAmountByMethods
+
+			BEGIN TRY
+				BEGIN TRANSACTION
+		
+				-- Tao 3 phieu chi
+				DECLARE @OutputTbl TABLE (ID INT)
+
+				-- Phieu ket chuyen
+				INSERT INTO dbo.PaymentVouchers
+				(
+					BranchId,
+					DebitAccount,
+					CreditAccount,
+					Reason,
+					Description,
+					TransactionDate,
+					UpdatedDate,
+					ShiftId,
+					ExchangeRate,
+					NTMoney,
+					ReceiverName,
+					TotalMoneyVND,
+					UserId
+				)
+				SELECT @brandId
+						,td.AccountCode
+						,tc.AccountCode
+						,r.ReasonCode
+						,r.ReasonName
+						,GETDATE()
+						,GETDATE()
+						,@shiftId
+						,0
+						,0
+						,''
+						,@TotalRealAmountInShift
+						,@reportingUser
+				FROM dbo.Recordingtransactions r
+				LEFT JOIN dbo.TypesOfAccounts tc ON r.CreditAccountId = tc.AccountId
+				LEFT JOIN dbo.TypesOfAccounts td ON r.DebitAccountId = td.AccountId
+				WHERE r.ReasonCode = 'KETCHUYEN'
+
+				INSERT INTO @OutputTbl VALUES(@@IDENTITY)
+
+				-- Phieu but toan 2
+				INSERT INTO dbo.PaymentVouchers
+				(
+					BranchId,
+					DebitAccount,
+					CreditAccount,
+					Reason,
+					Description,
+					TransactionDate,
+					UpdatedDate,
+					ShiftId,
+					ExchangeRate,
+					NTMoney,
+					ReceiverName,
+					TotalMoneyVND,
+					UserId
+				)
+				SELECT @brandId
+						,td.AccountCode
+						,tc.AccountCode
+						,r.ReasonCode
+						,r.ReasonName
+						,GETDATE()
+						,GETDATE()
+						,@shiftId
+						,0
+						,0
+						,''
+						,@totalRealReminingAmount
+						,@reportingUser
+				FROM dbo.Recordingtransactions r
+				LEFT JOIN dbo.TypesOfAccounts tc ON r.CreditAccountId = tc.AccountId
+				LEFT JOIN dbo.TypesOfAccounts td ON r.DebitAccountId = td.AccountId
+				WHERE r.ReasonCode = 'TIEN'
+				INSERT INTO @OutputTbl VALUES(@@IDENTITY)
+
+				--	Tao phieu thua thieu
+				DECLARE @reportFilter VARCHAR(128) = 'THIEU'
+				IF @totalDiffAmount > 0
+				BEGIN
+					SET @reportFilter = 'THUA'
+				END
+
+				INSERT INTO dbo.PaymentVouchers
+				(
+					BranchId,
+					DebitAccount,
+					CreditAccount,
+					Reason,
+					Description,
+					TransactionDate,
+					UpdatedDate,
+					ShiftId,
+					ExchangeRate,
+					NTMoney,
+					ReceiverName,
+					TotalMoneyVND,
+					UserId
+				)
+				SELECT @brandId
+						,td.AccountCode
+						,tc.AccountCode
+						,r.ReasonCode
+						,r.ReasonName
+						,GETDATE()
+						,GETDATE()
+						,@shiftId
+						,0
+						,0
+						,''
+						,@totalDiffAmount
+						,@reportingUser
+				FROM dbo.Recordingtransactions r
+				LEFT JOIN dbo.TypesOfAccounts tc ON r.CreditAccountId = tc.AccountId
+				LEFT JOIN dbo.TypesOfAccounts td ON r.DebitAccountId = td.AccountId
+				WHERE r.ReasonCode = @reportFilter
+				INSERT INTO @OutputTbl VALUES(@@IDENTITY)
+
+				SELECT *
+				FROM @OutputTbl
+
+				-- Tao But toan
+				INSERT INTO dbo.Legers
+				(
+					TransactionDate,
+					CreditAccount,
+					DepositAccount,
+					DoccumentType,
+					DoccumentNumber,
+					BillId,
+					CustomerId,
+					Amount,
+					UserId,
+					StorageId
+				)
+				SELECT SYSDATETIME()
+						,P.CreditAccount
+						,p.DebitAccount
+						,'CHI'
+						,a.ID
+						,NULL
+						,NULL
+						,COALESCE(p.TotalMoneyVND, 0)
+						,p.UserId
+						,@storateId
+				FROM @OutputTbl a
+				JOIN dbo.PaymentVouchers p ON a.ID = p.DocumentNumber
+
+				IF NOT EXISTS (SELECT 1 FROM dbo.ShiftHandovers WHERE ShiftEndId = @ShiftEndId)
+				BEGIN
+				INSERT INTO dbo.ShiftHandovers
+				(
+					StorageId,
+					CashHandover,
+					SenderUserId1,
+					SenderUserI2,
+					ReceiverUserId,
+					TotalShiftMoney,
+					CompanyMoneyTransferred,
+					Note,
+					Status,
+					ShiftEndId,
+					HandoverTime
+				)
+				VALUES
+				(   @storateId,
+					COALESCE(@TotalRealAmountInShift, 0),         -- CashHandover - int
+					@reportingUser,         -- SenderUserId1 - int
+					NULL,         -- SenderUserI2 - int
+					NULL,         -- ReceiverUserId - int
+					COALESCE(@TotalRealAmountInShift, 0),  -- TotalShiftMoney - int
+					@CompanyMoneyTransferred,
+					NULL,         -- Note - nvarchar(max)
+					NULL,         -- Status - nvarchar(max)
+					@ShiftEndId,            -- ShiftEndId - int
+					SYSDATETIME() -- HandoverTime - datetime2(7)
+					)
+
+					SET @handoverId = @@IDENTITY
+				END
+
+				IF @handoverId > 0
+				BEGIN
+
+					INSERT INTO dbo.ShiftReports
+					(
+						ShiftId,
+						UserCreatedId,
+						HandoverId,
+						TotalBill,
+						TotalShiftInMoney,
+						TotalRevenue,
+						TotalCashAmount,
+						TotalVoucherAmount,
+						TotalInternalConsumption,
+						TotalMOMOAmount,
+						TotalExpenses,
+						OtherExpense,
+						ActualMoneyForNextShift,
+						RemindMoneyForNextShift,
+						ExcessMoney,
+						LackOfMoney,
+						ReportDate,
+						TotalCardAmount
+					)
+					SELECT @shiftId,         -- ShiftId - int
+						@reportingUser,         -- UserCreatedId - int
+						@handoverId,         -- HandoverId - int
+						@totalBills,            -- TotalBill - int
+						COALESCE(@shiftInReceiveMoney, 0),            -- TotalShiftInMoney - int
+						@totalRevenue,            -- TotalRevenue - int
+						COALESCE(CASH, 0),            -- TotalCashAmount - int
+						0,            -- TotalVoucherAmount - int
+						0,            -- TotalInternalConsumption - int
+						COALESCE(MOMO, 0),            -- TotalMOMOAmount - int
+						COALESCE(@totalPayment, 0),            -- TotalExpenses - int
+						@totalPayment,            -- OtherExpense - int
+						COALESCE(@TotalRealAmountInShift, 0),            -- ActualMoneyForNextShift - int
+						@totalCash + @shiftInReceiveMoney - @totalPayment,            -- RemindMoneyForNextShift - int
+						@totalDiffAmount,            -- ExcessMoney - int
+						@totalDiffAmount,            -- LackOfMoney - int
+						SYSDATETIME(), -- ReportDate - datetime2(7)
+						COALESCE(CARD, 0) + COALESCE(BANKING, 0)
+					FROM #totalAmountByMethods
+
+				END
+
+				COMMIT
+			END TRY
+			BEGIN CATCH
+				IF @@TRANCOUNT > 0
+				BEGIN
+					ROLLBACK
+			
+				END
+
+				DECLARE @ErrorMessage VARCHAR(MAX) = ERROR_MESSAGE();
+				THROW 51000, @ErrorMessage, 1;
+			END CATCH
+		END
+		GO
 		");
         }
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
@@ -20,6 +21,11 @@ namespace ManagementSystem.Common.Entities
         public DateTime TransactionDate { get; set; } = DateTime.Now;
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
+
+        [ForeignKey("DocumentGroup")]
+        public int? GroupId { get; set; }
+
+        public DocumentGroup DocumentGroup { get; set; }
 
     }
 }

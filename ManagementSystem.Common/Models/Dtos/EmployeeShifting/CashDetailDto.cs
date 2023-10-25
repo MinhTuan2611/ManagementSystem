@@ -8,7 +8,7 @@ namespace ManagementSystem.Common.Models.Dtos
 {
     public class CashDetailDto
     {
-        public int Denomination { get; set; }
-        public int Amount { get; set; }
+        public int? Denomination { get; set; }
+        public int? Amount { get; set; }
     }
 }

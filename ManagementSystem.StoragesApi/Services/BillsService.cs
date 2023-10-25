@@ -46,10 +46,21 @@ namespace ManagementSystem.StoragesApi.Services
             try
             {
                 int billHour = DateTime.Now.Hour;
-                var employeeShift = GetEmployeeShifts().FirstOrDefault(x => x.StartTime <= billHour && billHour <= x.EndTime);
-                if (employeeShift == null)
+                int shiftId = 1;
+
+                if (bill.BranchId == null)
                 {
-                    employeeShift.ShiftId = 2;
+                    var employeeShift = GetEmployeeShifts().FirstOrDefault(x => x.StartTime <= billHour && billHour <= x.EndTime);
+                    if (employeeShift == null)
+                    {
+                        shiftId = 2;
+                    }
+
+                    shiftId = employeeShift.ShiftId;
+                }
+                else
+                {
+                    shiftId = bill.BranchId.Value;
                 }
 
                 var newBill = new Bill
@@ -61,7 +72,7 @@ namespace ManagementSystem.StoragesApi.Services
                     PaymentStatus = PaymentStatus.UnPaid,
                     CreateBy = bill.UserId,
                     ModifyBy = bill.UserId,
-                    ShiftId = employeeShift.ShiftId
+                    ShiftId = shiftId
                 };
                 _unitOfWork.BillRepository.Insert(newBill);
                 _unitOfWork.Save();
@@ -216,7 +227,7 @@ namespace ManagementSystem.StoragesApi.Services
             var billPayments = await GetBillPaymentMethods(billId);
             var billInformation = GetBillById(billId);
             var billResponse = new BillResponseDto();
-;
+            ;
             billResponse.BillId = billId;
             billResponse.totalChange = billInformation.totalChange;
             billResponse.totalPaid = billResponse.totalPaid;
@@ -414,10 +425,10 @@ namespace ManagementSystem.StoragesApi.Services
             try
             {
                 var result = _context.billSearchingResponseDtos.FromSqlRaw(query).FirstOrDefault();
-                
+
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }

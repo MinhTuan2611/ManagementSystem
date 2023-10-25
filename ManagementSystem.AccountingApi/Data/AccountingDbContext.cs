@@ -1,11 +1,7 @@
 ﻿using ManagementSystem.Common;
 using ManagementSystem.Common.Entities;
-using ManagementSystem.Common.MigrationConfigurations;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Net;
-using System.Runtime.Intrinsics.X86;
 
 namespace ManagementSystem.AccountingApi.Data
 {
@@ -75,10 +71,10 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<ShiftEndReportView>().ToTable(nameof(ShiftEndReportView), t => t.ExcludeFromMigrations());
             //// Dynamic Response functions
 
-            //foreach (var entityType in AccountingTableName.GenerateDynamicResponseDbSet())
-            //{
-            //    modelBuilder.Entity(entityType);
-            //}
+            foreach (var entityType in AccountingTableName.GenerateDynamicResponseDbSet())
+            {
+                modelBuilder.Entity(entityType);
+            }
 
             //// Exclude migration tables
             //ConfigureExcluedTables(modelBuilder);

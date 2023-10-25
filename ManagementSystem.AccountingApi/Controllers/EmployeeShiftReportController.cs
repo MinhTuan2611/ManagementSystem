@@ -73,5 +73,12 @@ namespace ManagementSystem.AccountingApi.Controllers
             return Ok(result);
         }
 
+        [HttpGet("check-completed-shift-end")]
+        public async Task<IActionResult> CheckCompleteShiftEnd([FromQuery] int shiftId)
+        {
+            var result = await _service.IsCompletedShiftEnd(shiftId);
+
+            return Ok(result);
+        }
     }
 }

@@ -21,7 +21,8 @@ namespace ManagementSystem.Common.Models
         public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.UnPaid;
         public bool IsAutoCompelte { get; set; } = false;
         public int? EmployeeShiftId { get; set; }
-        public int? BrandId { get; set; }
+        public int? BranchId { get; set; }
+        public int? ShiftId { get; set; }
         public int? UserId { get; set; }
         public List<BillDetailInfo> Details { get; set; }
         public List<PaymentDetail> Payments { get; set; }
