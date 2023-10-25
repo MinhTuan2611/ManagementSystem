@@ -28,6 +28,8 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<ShiftReport> ShiftReports { get; set; }
         public DbSet<ShiftEndReportView> ShiftEndReportViews { get; set; }
 
+        public DbSet<DocumentGroup> DocumentGroups { get; set; }
+
         // Add context to return tabbles
         public DbSet<InventoryVoucherResponseDto> InventoryVoucherResponseDto { get; set; }
         public DbSet<InventoryVoucherDetailResponseDto> InventoryVoucherDetailResponses { get; set; }

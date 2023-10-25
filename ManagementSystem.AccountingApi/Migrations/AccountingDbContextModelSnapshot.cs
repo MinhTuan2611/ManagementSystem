@@ -49,6 +49,20 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("ActivityLog");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.DocumentGroup", b =>
+                {
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GroupName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("GroupId");
+
+                    b.ToTable("DocumentGroups");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryAuditDetail", b =>
                 {
                     b.Property<int>("ShiftEndId")
@@ -85,6 +99,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -116,6 +133,8 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("DocummentNumber");
+
+                    b.HasIndex("GroupId");
 
                     b.ToTable("InventoryVouchers");
                 });
@@ -236,6 +255,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -252,6 +274,8 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("DocumentNumber");
+
+                    b.HasIndex("GroupId");
 
                     b.ToTable("OtherAccountEntries");
                 });
@@ -277,6 +301,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ExchangeRate")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
                     b.Property<int?>("NTMoney")
@@ -305,6 +332,8 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasKey("DocumentNumber");
 
+                    b.HasIndex("GroupId");
+
                     b.ToTable("PaymentVouchers");
                 });
 
@@ -323,6 +352,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -339,6 +371,8 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("DocumentNumber");
+
+                    b.HasIndex("GroupId");
 
                     b.ToTable("Receipts");
                 });
@@ -949,27 +983,41 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("ReceiptResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
-            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftEndReportView", b =>
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ScalarResult<int>", b =>
                 {
-                    b.Property<int>("ActualAmount")
+                    b.Property<int>("Value")
                         .HasColumnType("int");
 
-                    b.Property<int>("Amount")
+                    b.ToTable("ScalarResult<int>");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftEndReportView", b =>
+                {
+                    b.Property<int?>("ActualAmount")
                         .HasColumnType("int");
+
+                    b.Property<int?>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BranchName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CompanyMoneyTransferred")
                         .HasColumnType("int");
 
-                    b.Property<int>("Denomination")
+                    b.Property<int?>("Denomination")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ShiftEndDate")
+                    b.Property<DateTime?>("ShiftEndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("ShiftEndId")
@@ -981,10 +1029,10 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("ShiftName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SystemAmount")
+                    b.Property<int?>("SystemAmount")
                         .HasColumnType("int");
 
-                    b.Property<int>("UnitId")
+                    b.Property<int?>("UnitId")
                         .HasColumnType("int");
 
                     b.Property<string>("UnitName")
@@ -1001,10 +1049,16 @@ namespace ManagementSystem.AccountingApi.Migrations
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftEndResponseDto", b =>
                 {
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BranchName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CompanyMoneyTransferred")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ShiftEndDate")
+                    b.Property<DateTime?>("ShiftEndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("ShiftEndId")
@@ -1036,13 +1090,46 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("HandoverId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("PreShiftAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReceiverName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SenderId1")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SenderId2")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderName1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderUser2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ShiftEndId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ShiftId")
                         .HasColumnType("int");
 
                     b.Property<string>("ShiftName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("StorageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StorageName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TotalAmount")
@@ -1134,6 +1221,15 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Navigation("ShiftEndReport");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryVoucher", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.DocumentGroup", "DocumentGroup")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.Navigation("DocumentGroup");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryVoucherDetail", b =>
                 {
                     b.HasOne("ManagementSystem.Common.Entities.InventoryVoucher", "InventoryVoucher")
@@ -1143,6 +1239,33 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .IsRequired();
 
                     b.Navigation("InventoryVoucher");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.OtherAccountEntry", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.DocumentGroup", "DocumentGroup")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.Navigation("DocumentGroup");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.PaymentVoucher", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.DocumentGroup", "DocumentGroup")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.Navigation("DocumentGroup");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.Receipt", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.DocumentGroup", "DocumentGroup")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.Navigation("DocumentGroup");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftHandoverCashDetail", b =>

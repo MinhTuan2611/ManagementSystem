@@ -77,8 +77,8 @@ namespace ManagementSystem.AccountingApi.Migrations
 						SELECT sr.ShiftEndId
 							,SUM(sd.Denomination * sd.Amount) AS TotalBill
 						FROM dbo.ShiftEndReports sr
-						JOIN dbo.ShiftHandoverCashDetails sD ON sd.ShiftEndId = sr.ShiftEndId
-						JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
+						LEFT JOIN dbo.ShiftHandoverCashDetails sD ON sd.ShiftEndId = sr.ShiftEndId
+						LEFT JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
 						WHERE 1 = 1
 						', @sqlQuery_condition,
 						'GROUP BY sr.ShiftEndId
