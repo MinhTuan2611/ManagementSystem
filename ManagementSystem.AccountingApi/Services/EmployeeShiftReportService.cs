@@ -3,11 +3,15 @@ using ManagementSystem.AccountingApi.Repositories;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.GenericModels;
+using ManagementSystem.Common.Loggers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.IO;
+using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Xml;
 
 namespace ManagementSystem.AccountingApi.Services
@@ -16,11 +20,13 @@ namespace ManagementSystem.AccountingApi.Services
     {
         private readonly AccountingDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly string _path = string.Empty;
 
         public EmployeeShiftReportService(AccountingDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
+            _path = @"C:\\Logs\\EmployeeShift";
         }
 
         public ShiftEndReport CreateShiftEndReport(NewEmployeeShiftEndRequestDto model)
@@ -89,8 +95,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
-                var errorLogger = new ErrorLogger(GenerateFilePath());
-                errorLogger.LogError("Function CreateShiftEndReport: " + ex.Message);
+                var logger = new LogWriter("Function CreateShiftEndReport: " + ex.Message, _path);
 
                 return null;
             }
@@ -170,6 +175,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function GetShiftReport: " + ex.Message, _path);
                 return null;
             }
         }
@@ -177,30 +183,64 @@ namespace ManagementSystem.AccountingApi.Services
         public async Task<ShiftHandoverResponseDto> GetShiftHandover(int handoverId)
         {
             string query = string.Format(@"
-                ;WITH cte
-                AS
-                (
-	                SELECT sr.ShiftEndId
-		                ,SUM(sd.Denomination * sd.Amount) AS TotalBill
-	                FROM dbo.ShiftEndReports sr
-	                JOIN dbo.ShiftHandoverCashDetails sD ON sd.ShiftEndId = sr.ShiftEndId
-	                JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
-	                WHERE sh.HandoverId = {0}
-	                GROUP BY sr.ShiftEndId
-                )
+                  ;WITH cte
+                  AS
+                  (
+                      SELECT sr.ShiftEndId
+                          ,SUM(sd.Denomination * sd.Amount) AS TotalBill
+                      FROM dbo.ShiftEndReports sr
+                      LEFT JOIN dbo.ShiftHandoverCashDetails sD ON sd.ShiftEndId = sr.ShiftEndId
+                      LEFT JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
+                      WHERE sh.HandoverId = {0}
+                      GROUP BY sr.ShiftEndId
+                  ),
+                  preData
+                  AS
+                  (
+	                SELECT *, 6 AS KeyJoin
+	                FROM dbo.ShiftReports 
+	                WHERE  HandoverId = 
+		                (
+			                SELECT MAX(HandoverId)
+			                FROM dbo.ShiftHandovers
+			                WHERE HandoverId < {0}
+		                )
+                  ),
+                  cte_users
+                  AS
+                  (
+		                SELECT *
+		                FROM AccountsDb.dbo.Users
+                  )
 
-                SELECT sh.HandoverId
-		                ,es.ShiftId
-		                ,es.ShiftName
-		                ,sh.HandoverTime AS HandoverDate
-		                ,t.TotalBill AS TotalAmount
-		                ,s.TotalShiftInMoney AS CurShiftAmount
-		                ,LAG(s.TotalShiftInMoney) OVER (ORDER BY sr.ShiftEndId) AS PreShiftAmount
-                FROM cte t
-                JOIN dbo.ShiftEndReports sr ON sr.ShiftEndId = t.ShiftEndId
-                JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
-                JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
-                JOIN dbo.ShiftReports s ON s.HandoverId = sh.HandoverId
+                  SELECT sh.HandoverId
+                          ,es.ShiftId
+                          ,sr.ShiftEndId
+                          ,es.ShiftName
+                          ,sh.HandoverTime AS HandoverDate
+                          ,COALESCE(t.TotalBill, 0) AS TotalAmount
+                          ,s.TotalShiftInMoney AS CurShiftAmount
+                          ,COALESCE(pre.TotalShiftInMoney, 0) AS PreShiftAmount
+		                  ,sender1.UserId AS SenderId1
+		                  ,sender1.UserName AS SenderName1
+		                  ,sender2.UserId AS SenderId2
+		                  ,sender2.UserName AS SenderUser2
+		                  ,receiver.UserId AS ReceiverId
+		                  ,receiver.UserName AS ReceiverName
+		                  ,sto.StorageId
+		                  ,sto.StorageName
+		                  ,sh.Note
+		                  ,sh.Status
+                  FROM cte t
+                  JOIN dbo.ShiftEndReports sr ON sr.ShiftEndId = t.ShiftEndId
+                  JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
+                  JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
+                  JOIN dbo.ShiftReports s ON s.HandoverId = sh.HandoverId
+                  LEFT JOIN preData pre ON pre.KeyJoin = sh.HandoverId
+                  JOIN cte_users sender1 ON sh.SenderUserId1 = sender1.UserId
+                  LEFT JOIN cte_users sender2 ON sh.SenderUserI2 = sender2.UserId
+                  LEFT JOIN cte_users receiver ON sh.ReceiverUserId = receiver.UserId
+                  LEFT JOIN StoragesDb.DBO.Storages sto ON SH.StorageId = sto.StorageId
             ", handoverId);
 
             try
@@ -211,6 +251,8 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function GetShiftHandover: " + ex.Message, _path);
+
                 return null;
             }
         }
@@ -274,28 +316,32 @@ namespace ManagementSystem.AccountingApi.Services
         public async Task<ShiftEndResponseDto> GetShiftEndById(int shiftEndId)
         {
             string sqlQuery = string.Format(@"
-                SELECT s.ShiftEndId
-		                ,s.UserId
-		                ,u.UserName
-		                ,es.ShiftId
-		                ,es.ShiftName
-		                ,s.ShiftEndDate
-		                ,s.CompanyMoneyTransferred
-		                ,sh.Denomination
-		                ,sh.Amount
-		                ,sa.ProductId
-		                ,p.ProductName
-		                ,ui.UnitId
-		                ,ui.UnitName
-		                ,sa.ActualAmount
-		                ,sa.SystemAmount
-                FROM dbo.ShiftEndReports s
-                LEFT JOIN dbo.InventoryAuditDetails sa ON sa.ShiftEndId = s.ShiftEndId
-                LEFT JOIN dbo.ShiftHandoverCashDetails sh ON sh.ShiftEndId = s.ShiftEndId
-                LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = s.UserId
-                LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
-                LEFT JOIN StoragesDb.dbo.Products p ON p.ProductId = sa.ProductId
-                LEFT JOIN StoragesDb.dbo.Unit ui ON sa.UnitId = ui.UnitId
+                            SELECT s.ShiftEndId
+								,s.UserId
+								,u.UserName
+								,es.ShiftId
+								,es.ShiftName
+								,s.ShiftEndDate
+								,s.CompanyMoneyTransferred
+								,sh.Denomination
+								,sh.Amount
+								,sa.ProductId
+								,p.ProductName
+								,ui.UnitId
+								,ui.UnitName
+								,COALESCE(sa.ActualAmount, 0) AS ActualAmount
+								,COALESCE(sa.SystemAmount, 0) AS SystemAmount
+								,b.BranchId
+								,b.BranchName
+						   FROM dbo.ShiftEndReports s
+						   LEFT JOIN dbo.InventoryAuditDetails sa ON sa.ShiftEndId = s.ShiftEndId
+						   LEFT JOIN dbo.ShiftHandoverCashDetails sh ON sh.ShiftEndId = s.ShiftEndId
+						   LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = s.UserId
+						   LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
+						   LEFT JOIN StoragesDb.dbo.Products p ON p.ProductId = sa.ProductId
+						   LEFT JOIN StoragesDb.dbo.Unit ui ON sa.UnitId = ui.UnitId
+						   LEFT JOIN AccountsDb.dbo.UserBranchs ub ON ub.UserId = u.UserId
+						   LEFT JOIN StoragesDb.dbo.Branches b ON b.BranchId = ub.BranchId
                 WHERE s.ShiftEndId = {0}
                 ", shiftEndId);
 
@@ -308,24 +354,34 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter(ex.Message, _path);
                 return null;
             }
         }
-        #region Private function handle
-        private string GenerateFilePath()
+
+        public async Task<bool> IsCompletedShiftEnd(int shiftId)
         {
-            DateTime now = DateTime.Now;
+            try
+            {
+                string query = string.Format(@"
+                        SELECT COUNT(1) AS Value
+                        FROM dbo.ShiftEndReports s
+                        JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = s.ShiftEndId
+                        WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
+                        AND COALESCE(sh.ReceiverUserId, '') <> ''
+                        AND s.ShiftId = {0}", shiftId);
 
-            // Create the date and time components in the desired format
-            string datePart = now.ToString("yyyyMMdd");
-            string timePart = now.ToString("HHmmss");
+                int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
 
-            // Combine them into a single path
-            string path = @$"C://logs/ShiftEndReport/{datePart}/{timePart}.txt";
-
-            return path;
+                return count > 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
+        #region Private function handle
         private ProductStorageInformationDto GetProductStorageDto(int productId)
         {
             string query = string.Format(@"
@@ -382,21 +438,23 @@ namespace ManagementSystem.AccountingApi.Services
         {
             try
             {
-                return _context.ShiftEndReportViews.FromSqlRaw(sqlQuery).ToList();
+                var result = _context.ShiftEndReportViews.FromSqlRaw(sqlQuery).ToList();
+
+                return result;
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
 
         }
         private IEnumerable<ShiftEndResponseDto> MapShiftEndReportViewToDto(IEnumerable<ShiftEndReportView> reportViews)
         {
-            var groupByResult = reportViews.GroupBy(x => new {x.ShiftId, x.UserId, x.UserName, x.ShiftEndId, x.ShiftEndDate,x.CompanyMoneyTransferred, x.ShiftName }).ToList();
+            var groupByResult = reportViews.GroupBy(x => new { x.ShiftId, x.UserId, x.UserName, x.ShiftEndId, x.ShiftEndDate, x.CompanyMoneyTransferred, x.ShiftName, x.BranchId, x.BranchName }).ToList();
 
             var result = new List<ShiftEndResponseDto>();
 
-            foreach(var item in groupByResult)
+            foreach (var item in groupByResult)
             {
                 var detail = new ShiftEndResponseDto();
 
@@ -407,11 +465,13 @@ namespace ManagementSystem.AccountingApi.Services
                 detail.ShiftName = item.Key.ShiftName;
                 detail.ShiftEndDate = item.Key.ShiftEndDate;
                 detail.CompanyMoneyTransferred = item.Key.CompanyMoneyTransferred;
+                detail.BranchId = item.Key.BranchId;
+                detail.BranchName = item.Key.BranchName;
 
                 var cashDetails = new List<CashDetailDto>();
                 var inventoryDetails = new List<InventoryAuditDetailDto>();
 
-                foreach(var detatilInfor in item.Select(x => new {x.Denomination, x.Amount}).Distinct())
+                foreach (var detatilInfor in item.Select(x => new { x.Denomination, x.Amount }).Distinct())
                 {
                     var cash = new CashDetailDto
                     {
@@ -419,10 +479,10 @@ namespace ManagementSystem.AccountingApi.Services
                         Amount = detatilInfor.Amount
                     };
 
-                    
+
 
                     cashDetails.Add(cash);
-                    
+
                 }
 
                 foreach (var detatilInfor in item.Select(x => new { x.ProductId, x.ProductName, x.ActualAmount, x.SystemAmount, x.UnitId, x.UnitName }).Distinct())
@@ -438,7 +498,7 @@ namespace ManagementSystem.AccountingApi.Services
                     };
                     inventoryDetails.Add(inventory);
                 }
-                
+
                 detail.CashDetails = cashDetails;
                 detail.InventoryAuditDetails = inventoryDetails;
 

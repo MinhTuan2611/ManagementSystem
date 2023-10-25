@@ -1,4 +1,5 @@
-﻿using ManagementSystem.Common.Entities;
+﻿
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models.Dtos;
 

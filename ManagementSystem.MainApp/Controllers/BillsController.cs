@@ -82,7 +82,7 @@ namespace ManagementSystem.MainApp.Controllers
             model.CustomerId = bill.CustomerId;
             model.PurchasingRepresentive = bill.CustomerId == null ? "" : bill.CustomerName;
             model.EmployeeShiftId = bill.EmployeeShiftId;
-            model.BrandId = bill.BrandId;
+            model.BrandId = bill.BranchId;
 
             var inventoryDetails = new List<InventoryVoucherDetailDto>();
             foreach (var item in bill.Details)

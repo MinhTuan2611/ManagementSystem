@@ -10,17 +10,19 @@ namespace ManagementSystem.Common.Models.Dtos
         public string? UserName { get; set; }
         public int? ShiftId { get; set; }
         public string? ShiftName { get; set; }
-        public DateTime ShiftEndDate { get; set; } = DateTime.Now;
+        public DateTime? ShiftEndDate { get; set; } = DateTime.Now;
         public int? CompanyMoneyTransferred { get; set; }
+        public int? BranchId { get; set; }
+        public string? BranchName { get; set; }
 
-        public int Denomination { get; set; }
-        public int Amount { get; set; }
+        public int? Denomination { get; set; }
+        public int? Amount { get; set; }
 
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
         public string? ProductName { get; set; }
-        public int UnitId { get; set; }
+        public int? UnitId { get; set; }
         public string? UnitName { get; set; }
-        public int ActualAmount { get; set; }
-        public int SystemAmount { get; set; }
+        public int? ActualAmount { get; set; }
+        public int? SystemAmount { get; set; }
     }
 }
