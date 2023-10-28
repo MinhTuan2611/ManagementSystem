@@ -369,11 +369,11 @@ namespace ManagementSystem.AccountingApi.Services
                         JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = s.ShiftEndId
                         WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
                         AND COALESCE(sh.ReceiverUserId, '') <> ''
-                        AND s.ShiftId = {0}", shiftId);
+                        ", shiftId);
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
 
-                return count > 0;
+                return count == 0;
             }
             catch (Exception ex)
             {
