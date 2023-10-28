@@ -88,9 +88,19 @@ namespace ManagementSystem.AccountingApi.Services
                     _context.SaveChanges();
 
                     return shiftEnd;
+                } else
+                {
+                    var shiftHandover = _context.ShiftHandovers.Where(x => x.ShiftEndId == existingShift).FirstOrDefault();
+                    if(shiftHandover != null)
+                    {
+                        shiftHandover.ReceiverUserId = model.UserId;
+                        _context.ShiftHandovers.Update(shiftHandover);
+                        _context.SaveChanges();
+                    }
                 }
 
                 shiftEnd.ShiftId = existingShift;
+
                 return shiftEnd;
             }
             catch (Exception ex)
@@ -368,7 +378,7 @@ namespace ManagementSystem.AccountingApi.Services
                         FROM dbo.ShiftEndReports s
                         JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = s.ShiftEndId
                         WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
-                        AND COALESCE(sh.ReceiverUserId, '') <> ''
+                        AND COALESCE(sh.ReceiverUserId, '') = ''
                         ", shiftId);
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
