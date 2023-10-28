@@ -7,8 +7,8 @@ namespace ManagementSystem.AccountingApi.Services
 {
     public interface IReceiptService
     {
-        Task<Receipt> CreateReceipt(NewReceiptRequestDto request);
-        Task<Receipt> UpdateReceipt(UpdateReceiptRequestDto request);
+        Task<ReceiptVoucher> CreateReceipt(NewReceiptRequestDto request);
+        Task<ReceiptVoucher> UpdateReceipt(UpdateReceiptRequestDto request);
         Task<TPagination<ReceiptResponseDto>> GetAllReceipts(SearchCriteria searchModel);
         Task<ReceiptResponseDto> GetReceptByDocumentNumber(int documentNumber);
     }

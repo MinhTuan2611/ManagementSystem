@@ -1,5 +1,4 @@
 ﻿using ManagementSystem.AccountingApi.Data;
-using ManagementSystem.AccountingApi.Repositories;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.GenericModels;
@@ -8,11 +7,6 @@ using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.IO;
-using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
-using System.Xml;
 
 namespace ManagementSystem.AccountingApi.Services
 {

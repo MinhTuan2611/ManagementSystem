@@ -1,26 +1,23 @@
 ﻿using ManagementSystem.AccountingApi.Data;
 using ManagementSystem.Common;
-using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace ManagementSystem.AccountingApi.Services
 {
-    public class LegerService : ILegerService
+    public class DocumentGroupService : IDocumentGroupService
     {
-        private readonly AccountingDbContext _context;
         private readonly IConfiguration _configuration;
-
-        public LegerService(AccountingDbContext context, IConfiguration configuration)
+        private readonly AccountingDbContext _context;
+        public DocumentGroupService(IConfiguration configuration, AccountingDbContext context)
         {
-            _context = context;
             _configuration = configuration;
+            _context = context;
         }
-
-
-        public async Task<TPagination<LegerResponseDto>> GetAllLegerInformation(SearchCriteria criteria)
+        public async Task<TPagination<DocumentGroupResponseDto>> GetAllLegerInformation(SearchCriteria criteria)
         {
             try
             {
@@ -37,14 +34,14 @@ namespace ManagementSystem.AccountingApi.Services
                 int pageNumber = criteria.PageNumber <= 0 ? 1 : criteria.PageNumber;
                 int pageSize = criteria.PageSize <= 0 ? 10 : criteria.PageSize;
 
-                var executeResult = await GenericSearchRepository<LegerResponseDto>.ExecutePagedStoredProcedureCommonAsync<LegerResponseDto>
-                                                                                    (dbContext, "sp_SearchLegers", pageNumber, pageSize, parameters);
+                var executeResult = await GenericSearchRepository<DocumentGroupResponseDto>.ExecutePagedStoredProcedureCommonAsync<DocumentGroupResponseDto>
+                                                                                    (dbContext, "sp_SearchDocumentGroup", pageNumber, pageSize, parameters);
 
                 // Process the results
-                List<LegerResponseDto> pagedData = executeResult.Item1;
+                List<DocumentGroupResponseDto> pagedData = executeResult.Item1;
                 int totalRecords = executeResult.Item2;
 
-                var result = new TPagination<LegerResponseDto>();
+                var result = new TPagination<DocumentGroupResponseDto>();
                 result.Items = pagedData;
                 result.TotalItems = totalRecords;
                 return result;
@@ -53,24 +50,6 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 return null;
             }
-
         }
-
-        public async Task<Leger> CreateLegers(Leger leger)
-        {
-            try
-            {
-                _context.Legers.Add(leger);
-                await _context.SaveChangesAsync();
-
-                return leger;
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
-
     }
 }

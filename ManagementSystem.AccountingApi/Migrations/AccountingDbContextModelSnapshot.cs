@@ -49,6 +49,106 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("ActivityLog");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.CreditVoucher", b =>
+                {
+                    b.Property<int>("DocumentNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentNumber"), 1L, 1);
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ForReason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalMoney")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DocumentNumber");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("CreditVouchers");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.DebitVoucher", b =>
+                {
+                    b.Property<int>("DocumentNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentNumber"), 1L, 1);
+
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DebitAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ExchangeRate")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NTMoney")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceiverName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalMoneyVND")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DocumentNumber");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("DebitVouchers");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.DocumentGroup", b =>
                 {
                     b.Property<int>("GroupId")
@@ -291,11 +391,11 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("BranchId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CreditAccount")
-                        .HasColumnType("int");
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("DebitAccount")
-                        .HasColumnType("int");
+                    b.Property<string>("DebitAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -337,7 +437,7 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("PaymentVouchers");
                 });
 
-            modelBuilder.Entity("ManagementSystem.Common.Entities.Receipt", b =>
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ReceiptVoucher", b =>
                 {
                     b.Property<int>("DocumentNumber")
                         .ValueGeneratedOnAdd()
@@ -374,7 +474,7 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.HasIndex("GroupId");
 
-                    b.ToTable("Receipts");
+                    b.ToTable("ReceiptVouchers");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Recordingtransaction", b =>
@@ -675,6 +775,43 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("BillPaymentDetailResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.CreditVoucherResponseDto", b =>
+                {
+                    b.Property<string>("Cashier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DocumentNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ForReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Payer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentMethodName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TotalMoney")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.ToTable("CreditVoucherResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.InventoryVoucherDetailResponseDto", b =>
                 {
                     b.Property<string>("BarCode")
@@ -817,6 +954,10 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("DoccumentType")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("LegerDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime2");
 
@@ -865,6 +1006,20 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("OtherAccountEntryResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.PaymentMethodDto", b =>
+                {
+                    b.Property<string>("PaymentMethodCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentMethodName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("PaymentMethodDto");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.PaymentMethodResponseDto", b =>
@@ -989,6 +1144,15 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("int");
 
                     b.ToTable("ScalarResult<int>");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ScalarResult<string>", b =>
+                {
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("ScalarResult<string>");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftEndReportView", b =>
@@ -1210,6 +1374,65 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("UnitResponseDtos", null, t => t.ExcludeFromMigrations());
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Models.RecTransInfoResponseDto", b =>
+                {
+                    b.Property<string>("CreditAccountId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DebitAccountId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExpenseItem")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReasonCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReasonGroup")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReasonName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.ToTable("RecTransInfoResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.CreditVoucher", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.DocumentGroup", "DocumentGroup")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.Navigation("DocumentGroup");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.DebitVoucher", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.DocumentGroup", "DocumentGroup")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
+                    b.Navigation("DocumentGroup");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryAuditDetail", b =>
                 {
                     b.HasOne("ManagementSystem.Common.Entities.ShiftEndReport", "ShiftEndReport")
@@ -1259,7 +1482,7 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Navigation("DocumentGroup");
                 });
 
-            modelBuilder.Entity("ManagementSystem.Common.Entities.Receipt", b =>
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ReceiptVoucher", b =>
                 {
                     b.HasOne("ManagementSystem.Common.Entities.DocumentGroup", "DocumentGroup")
                         .WithMany()

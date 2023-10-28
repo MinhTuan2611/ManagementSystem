@@ -1,4 +1,5 @@
-﻿using ManagementSystem.Common.Models.Dtos;
+﻿using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 
 namespace ManagementSystem.Common
 {
@@ -46,7 +47,14 @@ namespace ManagementSystem.Common
                // typeof(ShiftHandoverResponseDto),
                // typeof(ShiftReportResponseDto),
                // typeof(AccountsDto),
-                typeof(ScalarResult<int>)
+                typeof(ScalarResult<int>),
+                typeof(ScalarResult<string>),
+                typeof(PaymentMethodDto),
+                typeof(AccountsDto),
+                typeof(RecTransInfoResponseDto),
+                typeof(CreditVoucherResponseDto),
+                typeof(DebitVoucherResponseDto),
+                typeof(DocumentGroupResponseDto)
             };
         }
     }

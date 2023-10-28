@@ -10,7 +10,7 @@
         public int? BillId { get; set; }
         public string PurchasingRepresentive { get; set; }
         public string Note { get; set; } = "";
-
+        public int CashPaymentAmount { get; set; }
         public List<InventoryVoucherDetailDto> Details { get; set; }
     }
 }
