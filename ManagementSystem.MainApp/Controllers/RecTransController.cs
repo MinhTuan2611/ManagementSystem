@@ -18,7 +18,7 @@ namespace ManagementSystem.MainApp.Controllers
         {
 
             LsRecTransRes response = new LsRecTransRes();
-            List<RecTransInfo> lsRecTrans = await HttpRequestsHelper.Get<List<RecTransInfo>>(recTransUrl + "get");
+            List<RecTransInfoResponseDto> lsRecTrans = await HttpRequestsHelper.Get<List<RecTransInfoResponseDto>>(recTransUrl + "get");
             if (lsRecTrans != null)
             {
 
