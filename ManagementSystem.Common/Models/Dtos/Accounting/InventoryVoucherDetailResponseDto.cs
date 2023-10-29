@@ -13,12 +13,12 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? Tax { get; set; }
         public string? UnitName { get; set; }
         public int? Price { get; set; }
-        public int? Quantity { get; set; }
+        public float? Quantity { get; set; }
         public int? DebitAccount { get; set; }
         public int? CreditAccount { get; set; }
         public int? PaymentDiscountAccount { get; set; }
         public int? TaxAccount { get; set; }
-        public int? TotalMoneyBeforeTax { get; set; }
+        public float? TotalMoneyBeforeTax { get; set; }
         public int? DebitAccountMoney { get; set; }
         public int? CreditAccountMoney { get; set; }
         public int? PaymentDiscountMoney { get; set; }

@@ -174,7 +174,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<TPagination<DebitVoucherResponseDto>> GetAllDebitVouchers(SearchCriteria criteria)
+        public async Task<TPagination<DebitVoucherResponseDto>> SearchDebitVouchers(SearchCriteria criteria)
         {
             try
             {

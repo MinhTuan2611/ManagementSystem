@@ -17,7 +17,7 @@ namespace ManagementSystem.MainApp.Controllers
 
 
         [HttpPost("search_results")]
-        public async Task<IActionResult> SearchInventory([FromBody] SearchCriteria searchModel)
+        public async Task<IActionResult> SearchLegers([FromBody] SearchCriteria searchModel)
         {
 
             var result = await HttpRequestsHelper.Post<TPagination<LegerResponseDto>>(APIUrl + "search_results", searchModel);
