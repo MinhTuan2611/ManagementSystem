@@ -30,16 +30,15 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> GetDetail([FromQuery]int documentNumber)
         {
 
-            ResponseModel<List<InventoryVoucherResponseDto>> response = new ResponseModel<List<InventoryVoucherResponseDto>>();
-            List<InventoryVoucherResponseDto> detail = await HttpRequestsHelper.Get<List<InventoryVoucherResponseDto>>(APIUrl + "get-by-document-number?documentNumber=" + documentNumber);
-            List<List<InventoryVoucherResponseDto>> responseData = new List<List<InventoryVoucherResponseDto>>();
-            responseData.Add(detail);
+            ResponseModel<InventoryVoucherDetailResponseDto> response = new ResponseModel<InventoryVoucherDetailResponseDto>();
+            var detail = await HttpRequestsHelper.Get<List<InventoryVoucherDetailResponseDto>>(APIUrl + "get-by-document-number?documentNumber=" + documentNumber);
+
 
             if (detail != null)
             {
 
                 response.Status = "success";
-                response.Data = responseData;
+                response.Data = detail;
                 return Ok(response);
             }
             response.Status = "success";
