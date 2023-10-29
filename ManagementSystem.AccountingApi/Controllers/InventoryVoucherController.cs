@@ -22,7 +22,7 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("search_results")]
         public async Task<IActionResult> SearchInventory([FromBody]SearchCriteria searchModel)
         {
-            var result = await _service.GetInventoryVouchers(searchModel);
+            var result = await _service.SearchInventoryVouchers(searchModel);
             return Ok(result);
         }
 

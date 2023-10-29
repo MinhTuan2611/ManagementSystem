@@ -25,6 +25,18 @@ namespace ManagementSystem.MainApp.Controllers
             return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
         }
 
+        [HttpPost("search_results")]
+        public async Task<IActionResult> SearchOtherEntries([FromBody] SearchCriteria searchModel)
+        {
+
+            var result = await HttpRequestsHelper.Post<TPagination<OtherAccountEntryResponseDto>>(APIUrl + "search_results", searchModel);
+
+            if (result != null)
+                return Ok(result);
+
+            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
+        }
+
         [HttpGet("get-detail")]
         public async Task<IActionResult> GetDetail(int? documentNumber)
         {

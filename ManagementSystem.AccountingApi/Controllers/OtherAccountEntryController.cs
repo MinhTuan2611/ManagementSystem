@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.AccountingApi.Services;
+using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +49,14 @@ namespace ManagementSystem.AccountingApi.Controllers
         public async Task<IActionResult> UpdateOtherAccountEntry([FromBody] UpdateOtherAccountEntryDto updateOtherAccountEntryDto)
         {
             var result = await _service.UpdateAccountEntry(updateOtherAccountEntryDto);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("search_results")]
+        public async Task<IActionResult> SearchOtherEntriess([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _service.SearchOtherAccountEntries(searchModel);
             return Ok(result);
         }
     }

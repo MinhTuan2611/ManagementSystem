@@ -9,7 +9,7 @@ namespace ManagementSystem.AccountingApi.Services
     {
         Task<ReceiptVoucher> CreateReceipt(NewReceiptRequestDto request);
         Task<ReceiptVoucher> UpdateReceipt(UpdateReceiptRequestDto request);
-        Task<TPagination<ReceiptResponseDto>> GetAllReceipts(SearchCriteria searchModel);
+        Task<TPagination<ReceiptResponseDto>> SearchReceipts(SearchCriteria searchModel);
         Task<ReceiptResponseDto> GetReceptByDocumentNumber(int documentNumber);
     }
 }

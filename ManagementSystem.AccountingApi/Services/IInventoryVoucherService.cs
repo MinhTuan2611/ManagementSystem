@@ -9,7 +9,7 @@ namespace ManagementSystem.AccountingApi.Services
     {
         Task<InventoryVoucher> CreateInventoryVoucher(NewInventoryVoucherDto request);
         Task<InventoryVoucher> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request);
-        Task<TPagination<InventoryVoucherResponseDto>> GetInventoryVouchers(SearchCriteria criteria);
+        Task<TPagination<InventoryVoucherResponseDto>> SearchInventoryVouchers(SearchCriteria criteria);
         Task<List<InventoryVoucherDetailResponseDto>> GetInventoryVoucherDetail(int documentNumber);
     }
 }

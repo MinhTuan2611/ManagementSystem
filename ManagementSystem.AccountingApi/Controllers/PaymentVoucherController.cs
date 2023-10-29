@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.AccountingApi.Services;
+using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -50,5 +51,12 @@ namespace ManagementSystem.AccountingApi.Controllers
             return Ok(result);
         }
 
+        [HttpPost]
+        [Route("search_results")]
+        public async Task<IActionResult> SearchPaymentVouchers([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _service.SearchPaymentVoucherInformation(searchModel);
+            return Ok(result);
+        }
     }
 }

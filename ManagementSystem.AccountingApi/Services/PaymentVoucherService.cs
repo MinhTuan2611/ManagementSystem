@@ -1,9 +1,13 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.GenericModels;
+using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace ManagementSystem.AccountingApi.Services
 {
@@ -11,11 +15,13 @@ namespace ManagementSystem.AccountingApi.Services
     {
         private readonly AccountingDbContext _context;
         private readonly ILegerService _legerService;
+        private IConfiguration _configuration;
 
-        public PaymentVoucherService(AccountingDbContext context, ILegerService legerService)
+        public PaymentVoucherService(AccountingDbContext context, ILegerService legerService, IConfiguration configuration)
         {
             _context = context;
             _legerService = legerService;
+            _configuration = configuration;
         }
 
         public async Task<PaymentVoucher> CreatePaymentVoucher(NewPaymentVoucherDto newPaymentVoucher)
@@ -67,6 +73,41 @@ namespace ManagementSystem.AccountingApi.Services
                 await _context.SaveChangesAsync();
 
                 return paymentVoucher;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<TPagination<PaymentVoucherResponseDto>> SearchPaymentVoucherInformation(SearchCriteria criteria)
+        {
+            try
+            {
+                string xmlString = XMLCommonFunction.SerializeToXml(criteria);
+
+                // Your DbContextFactory and DbContext creation code
+                var dbContextFactory = new DbContextFactory(_configuration);
+                using var dbContext = dbContextFactory.CreateDbContext<AccountingDbContext>("AcountingsDbConnStr");
+                var parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@xmlString", xmlString )
+                };
+
+                int pageNumber = criteria.PageNumber <= 0 ? 1 : criteria.PageNumber;
+                int pageSize = criteria.PageSize <= 0 ? 10 : criteria.PageSize;
+
+                var executeResult = await GenericSearchRepository<PaymentVoucherResponseDto>.ExecutePagedStoredProcedureCommonAsync<PaymentVoucherResponseDto>
+                                                                                    (dbContext, "sp_SearchPaymentVouchers", pageNumber, pageSize, parameters);
+
+                // Process the results
+                List<PaymentVoucherResponseDto> pagedData = executeResult.Item1;
+                int totalRecords = executeResult.Item2;
+
+                var result = new TPagination<PaymentVoucherResponseDto>();
+                result.Items = pagedData;
+                result.TotalItems = totalRecords;
+                return result;
             }
             catch (Exception ex)
             {

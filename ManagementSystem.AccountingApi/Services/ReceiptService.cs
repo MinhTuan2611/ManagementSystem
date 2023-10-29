@@ -64,7 +64,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<TPagination<ReceiptResponseDto>> GetAllReceipts(SearchCriteria criteria)
+        public async Task<TPagination<ReceiptResponseDto>> SearchReceipts(SearchCriteria criteria)
         {
             try
             {

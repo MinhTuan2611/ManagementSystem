@@ -104,7 +104,7 @@ namespace ManagementSystem.AccountingApi.Services
             return null;
         }
 
-        public async Task<TPagination<CreditVoucherResponseDto>> GetAllCreditVouchers(SearchCriteria criteria)
+        public async Task<TPagination<CreditVoucherResponseDto>> SearchCreditVouchers(SearchCriteria criteria)
         {
             try
             {

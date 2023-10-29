@@ -9,7 +9,7 @@ namespace ManagementSystem.AccountingApi.Services
     {
         Task<CreditVoucher> CreateCreditVoucher(NewCreditVoucherRequestDto request);
         Task<CreditVoucher> UpdateCreditVoucher(UpdateCreditVoucherRequestDto request);
-        Task<TPagination<CreditVoucherResponseDto>> GetAllCreditVouchers(SearchCriteria searchModel);
+        Task<TPagination<CreditVoucherResponseDto>> SearchCreditVouchers(SearchCriteria searchModel);
         Task<CreditVoucherResponseDto> GetCreditVouchereByDocumentNumber(int documentNumber);
     }
 }

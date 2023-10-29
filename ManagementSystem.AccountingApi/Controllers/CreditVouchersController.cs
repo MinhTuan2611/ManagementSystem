@@ -35,7 +35,7 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("search_results")]
         public async Task<IActionResult> GetAll(SearchCriteria searchModel)
         {
-            var result = await _service.GetAllCreditVouchers(searchModel);
+            var result = await _service.SearchCreditVouchers(searchModel);
             return Ok(result);
         }
 

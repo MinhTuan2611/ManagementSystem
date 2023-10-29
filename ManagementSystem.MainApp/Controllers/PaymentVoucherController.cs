@@ -72,5 +72,17 @@ namespace ManagementSystem.MainApp.Controllers
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong when update Other Account entry!");
         }
+
+        [HttpPost("search_results")]
+        public async Task<IActionResult> SearchPaymentVouchers([FromBody] SearchCriteria searchModel)
+        {
+
+            var result = await HttpRequestsHelper.Post<TPagination<PaymentVoucherResponseDto>>(APIUrl + "search_results", searchModel);
+
+            if (result != null)
+                return Ok(result);
+
+            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
+        }
     }
 }

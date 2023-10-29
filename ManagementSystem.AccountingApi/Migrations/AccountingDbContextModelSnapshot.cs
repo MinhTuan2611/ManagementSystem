@@ -796,6 +796,10 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("Payer")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PaymentMethodCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PaymentMethodName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -810,6 +814,85 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("int");
 
                     b.ToTable("CreditVoucherResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.DebitVoucherResponseDto", b =>
+                {
+                    b.Property<string>("BranchCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BranchName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DocumentNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EmployeeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ExchangeRate")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NTMoney")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentMethodCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentMethodName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReceiverName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TotalMoneyVND")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.ToTable("DebitVoucherResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.DocumentGroupResponseDto", b =>
+                {
+                    b.Property<int?>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BillId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepositAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DoccumentNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DoccumentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LegerDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.ToTable("DocumentGroupResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.InventoryVoucherDetailResponseDto", b =>
@@ -853,8 +936,8 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<float?>("Quantity")
+                        .HasColumnType("real");
 
                     b.Property<int?>("Tax")
                         .HasColumnType("int");
@@ -868,8 +951,8 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("TotalMoneyAfterTax")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TotalMoneyBeforeTax")
-                        .HasColumnType("int");
+                    b.Property<float?>("TotalMoneyBeforeTax")
+                        .HasColumnType("real");
 
                     b.Property<string>("UnitName")
                         .HasColumnType("nvarchar(max)");

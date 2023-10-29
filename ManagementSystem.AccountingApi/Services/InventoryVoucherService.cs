@@ -172,30 +172,30 @@ namespace ManagementSystem.AccountingApi.Services
         public async Task<List<InventoryVoucherDetailResponseDto>> GetInventoryVoucherDetail(int documentNumber)
         {
             string query = string.Format(@"
-                SELECT p.ProductId
-		                ,p.ProductName
-		                ,p.ProductCode
-						,p.DefaultPurchasePrice
-						,p.BarCode
-						,p.Tax
-		                ,u.UnitName
-		                ,p.Price
-		                ,details.Quantity
-		                ,details.DebitAccount
-		                ,details.CreditAccount
-		                ,details.PaymentDiscountAccount
-		                ,details.TaxAccount
-		                ,details.TotalMoneyBeforeTax
-		                ,details.DebitAccountMoney
-		                ,details.CreditAccountMoney
-		                ,details.PaymentDiscountMoney
-		                ,details.TotalMoneyAfterTax
-		                ,details.Note
-                        ,details.TaxMoney
-                FROM InventoryVoucherDetails details
-                JOIN StoragesDb.dbo.Products p ON p.ProductId = details.ProductId
-                JOIN StoragesDb.dbo.ProductUnit pu ON p.ProductId = pu.ProductId
-                JOIN StoragesDb.dbo.Unit u ON pu.UnitId = u.UnitId
+ SELECT p.ProductId
+         ,p.ProductName
+         ,p.ProductCode
+		,p.DefaultPurchasePrice
+		,p.BarCode
+		,p.Tax
+         ,u.UnitName
+         ,p.Price
+         ,details.Quantity
+         ,details.debitaccount
+         ,details.creditaccount
+         ,details.PaymentDiscountAccount
+         ,details.TaxAccount
+         ,details.TotalMoneyBeforeTax
+         ,details.DebitAccountMoney
+         ,details.CreditAccountMoney
+         ,details.PaymentDiscountMoney
+         ,details.TotalMoneyAfterTax
+         ,details.Note
+         ,details.TaxMoney
+ FROM InventoryVoucherDetails details
+ JOIN StoragesDb.dbo.Products p ON p.ProductId = details.ProductId
+ JOIN StoragesDb.dbo.ProductUnit pu ON p.ProductId = pu.ProductId
+ JOIN StoragesDb.dbo.Unit u ON pu.UnitId = u.UnitId
                 WHERE details.DocummentNumber = {0}
             ", documentNumber);
 
@@ -211,7 +211,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<TPagination<InventoryVoucherResponseDto>> GetInventoryVouchers(SearchCriteria criteria)
+        public async Task<TPagination<InventoryVoucherResponseDto>> SearchInventoryVouchers(SearchCriteria criteria)
         {
             try
             {

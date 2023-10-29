@@ -29,7 +29,7 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("search_results")]
         public async Task<IActionResult> GetAll(SearchCriteria searchModel)
         {
-            var result = await _service.GetAllDebitVouchers(searchModel);
+            var result = await _service.SearchDebitVouchers(searchModel);
             return Ok(result);
         }
 

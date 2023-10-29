@@ -10,7 +10,7 @@ namespace ManagementSystem.AccountingApi.Services
     {
         public Task<DebitVoucher> CreateDebitVoucher(NewDebitVoucherRequestDto requestDto);
         public Task<DebitVoucher> UpdateDebitVoucher(UpdateDebitVoucherRequestDto requestDto);
-        Task<TPagination<DebitVoucherResponseDto>> GetAllDebitVouchers(SearchCriteria searchModel);
+        Task<TPagination<DebitVoucherResponseDto>> SearchDebitVouchers(SearchCriteria searchModel);
         Task<DebitVoucherResponseDto> GetDebitVouchereByDocumentNumber(int documentNumber);
     }
 }
