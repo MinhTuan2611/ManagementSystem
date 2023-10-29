@@ -434,8 +434,8 @@ namespace ManagementSystem.AccountingApi.Migrations
 								,r.TotalMoney
 								,u.UserId
 								,u.UserName AS Cashier
-						FROM Receipts r
-						JOIN StoragesDB.dbo.Customers c ON r.CustomerId = c.CustomerId
+						FROM ReceiptVouchers r
+						LEFT JOIN StoragesDB.dbo.Customers c ON r.CustomerId = c.CustomerId
 						JOIN AccountsDb.dbo.Users u ON u.UserId = r.UserId
 					WHERE 1 = 1
 				', @sqlQuery_condition)

@@ -25,7 +25,7 @@ namespace ManagementSystem.Common.Models
 
     public class LsRecTransRes : ResponseModel
     {
-        public List<RecTransInfo>? RecTrans { get; set; }
+        public List<RecTransInfoResponseDto>? RecTrans { get; set; }
     }
 
     public class LsTypeOfAccountingsRes : ResponseModel
