@@ -1,9 +1,7 @@
 ﻿using ManagementSystem.AccountingApi.Services;
 using ManagementSystem.Common.Constants;
-using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementSystem.AccountingApi.Controllers
@@ -46,7 +44,7 @@ namespace ManagementSystem.AccountingApi.Controllers
                     CustomerId = request.CustomerId,
                     ForReason = string.Format(AccountingConstant.ReceiptReason, inventory.DocummentNumber),
                     UserId = request.UserId,
-                    TotalMoney = request.Details.Sum(x => x.TotalMoneyAfterTax),
+                    TotalMoney = request.CashPaymentAmount,
                     BillId = request.BillId,
                     StorageId = inventory.StorageId,
                     InventoryDocumentNumber = inventory.DocummentNumber

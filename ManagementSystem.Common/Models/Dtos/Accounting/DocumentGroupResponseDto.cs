@@ -3,7 +3,7 @@
 namespace ManagementSystem.Common.Models.Dtos
 {
     [Keyless]
-    public class LegerResponseDto
+    public class DocumentGroupResponseDto
     {
         public DateTime TransactionDate { get; set; }
         public string? DepositAccount { get; set; }

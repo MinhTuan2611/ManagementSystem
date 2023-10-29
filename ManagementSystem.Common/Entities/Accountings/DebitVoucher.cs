@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ManagementSystem.Common.Models.Dtos
+namespace ManagementSystem.Common.Entities
 {
-    public class UpdatePaymentVoucherDto
+    public class DebitVoucher
     {
+        [Key]
         public int DocumentNumber { get; set; }
         public int? UserId { get; set; }
         public string? ReceiverName { get; set; }
-        public int? BranchId { get; set; }
         public string? DebitAccount { get; set; }
         public string? CreditAccount { get; set; }
         public string? Reason { get; set; }
@@ -20,5 +17,12 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? ExchangeRate { get; set; }
         public int? NTMoney { get; set; }
         public int ShiftId { get; set; }
+        public DateTime TransactionDate { get; set; } = DateTime.Now;
+        public DateTime UpdatedDate { get; set; } = DateTime.Now;
+        public int PaymentMethodId { get; set; }
+
+        [ForeignKey("DocumentGroup")]
+        public int? GroupId { get; set; }
+        public DocumentGroup DocumentGroup { get; set; }
     }
 }

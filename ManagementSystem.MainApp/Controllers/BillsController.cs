@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.Common.GenericModels;
+using ManagementSystem.Common.Constants;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -55,6 +56,7 @@ namespace ManagementSystem.MainApp.Controllers
 
                 if (inventoryResult == null)
                     return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created but faild when create Inventory Voucher");
+
                 // Update Customer Point
                 if (bill.CustomerId != null)
                 {
@@ -67,6 +69,12 @@ namespace ManagementSystem.MainApp.Controllers
                     var customerUpdateFlag = await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + "customers/update_point", customerUpdate);
                     if (!customerUpdateFlag)
                         return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created, inventory created but faild when Update customer point");
+
+                    bill.BillId = resultBill.BillId;
+                    var creditVouchers = await GenerateVoucherWithAnotherPaymentMethods(bill, userId);
+
+                    if (creditVouchers.Count == 0)
+                        return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created, inventory created, customer update point but faild when create Credit Voucher");
                 }
 
                 return Ok(resultBill);
@@ -74,32 +82,6 @@ namespace ManagementSystem.MainApp.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when create bill");
         }
 
-        // Create private function Handler.
-        private NewInventoryVoucherDto PrepareInventoryModel(BillInfo bill)
-        {
-            var model = new NewInventoryVoucherDto();
-
-            model.CustomerId = bill.CustomerId;
-            model.PurchasingRepresentive = bill.CustomerId == null ? "" : bill.CustomerName;
-            model.EmployeeShiftId = bill.EmployeeShiftId;
-            model.BrandId = bill.BranchId;
-
-            var inventoryDetails = new List<InventoryVoucherDetailDto>();
-            foreach (var item in bill.Details)
-            {
-                var inventoryDetail = new InventoryVoucherDetailDto();
-
-                inventoryDetail.ProductId = item.ProductId;
-                inventoryDetail.Quantity = item.Quantity;
-                inventoryDetail.TotalMoneyAfterTax = item.Amount;
-                inventoryDetail.UnitId = item.UnitId;
-
-                inventoryDetails.Add(inventoryDetail);
-            }
-
-            model.Details = inventoryDetails;
-            return model;
-        }
         [HttpPost("complete-bill")]
         public async Task<IActionResult> CompleteBill(BillInfo bill)
         {
@@ -190,5 +172,63 @@ namespace ManagementSystem.MainApp.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when uPDATE bill");
         }
 
+        #region Private handle function
+        // Create private function Handler.
+        private NewInventoryVoucherDto PrepareInventoryModel(BillInfo bill)
+        {
+            var model = new NewInventoryVoucherDto();
+
+            model.CustomerId = bill.CustomerId;
+            model.PurchasingRepresentive = bill.CustomerId == null ? "" : bill.CustomerName;
+            model.EmployeeShiftId = bill.EmployeeShiftId;
+            model.BrandId = bill.BranchId;
+
+            var inventoryDetails = new List<InventoryVoucherDetailDto>();
+            foreach (var item in bill.Details)
+            {
+                var inventoryDetail = new InventoryVoucherDetailDto();
+
+                inventoryDetail.ProductId = item.ProductId;
+                inventoryDetail.Quantity = item.Quantity;
+                inventoryDetail.TotalMoneyAfterTax = item.Amount;
+                inventoryDetail.UnitId = item.UnitId;
+
+                inventoryDetails.Add(inventoryDetail);
+            }
+            model.CashPaymentAmount = bill.Payments.Where(x => x.PaymentMethodCode == StorageContant.CashPaymentMethodCode).Sum(x => x.Amount);
+
+            model.Details = inventoryDetails;
+            return model;
+        }
+
+        private async Task<List<CreditVoucher>> GenerateVoucherWithAnotherPaymentMethods(BillInfo bill, int userId)
+        {
+            var paymentMethods = bill.Payments.Where(x => x.PaymentMethodCode != StorageContant.CashPaymentMethodCode);
+            List<CreditVoucher> creditVouchers = new List<CreditVoucher>();
+
+            foreach (var item in paymentMethods)
+            {
+                var creditVoucher = new NewCreditVoucherRequestDto()
+                {
+                       CustomerId = bill.CustomerId,
+                       TotalMoney = item.Amount,
+                       UserId = userId,
+                       BillId = bill.BillId,
+                       BrandId = bill.BranchId,
+                       PaymentMethodCode = item.PaymentMethodCode,
+                       GroupId = AccountingConstant.AutoGenerateDocumentGroup
+                };
+
+                var result = await HttpRequestsHelper.Post<CreditVoucher>(Environment.AccountingApiUrl + "CreditVouchers/create", creditVoucher);
+
+                if (result != null)
+                {
+                    creditVouchers.Add(result);
+                }
+            }
+
+            return creditVouchers;
+        }
+        #endregion
     }
 }

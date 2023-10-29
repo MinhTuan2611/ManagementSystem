@@ -1,20 +1,15 @@
 ﻿using ManagementSystem.Common.Models;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ManagementSystem.Common.Entities
 {
-    public class Receipt
+    public class ReceiptVoucher
     {
         [Key]
         public int DocumentNumber { get; set; }
         public int? CustomerId { get; set; }
+        //public string? ExtenalCustomer { get; set; }
         public string ForReason { get; set; }
         public int TotalMoney { get; set; }
         public int UserId { get; set; }

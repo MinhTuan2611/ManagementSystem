@@ -1,5 +1,6 @@
 ﻿using ManagementSystem.Common;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,7 @@ namespace ManagementSystem.AccountingApi.Data
 
         public DbSet<TypesOfAccounts> TypesOfAccounts { get; set; }
         public DbSet<Recordingtransaction> Recordingtransactions { get; set; }
-        public DbSet<Receipt> Receipts { get; set; }
+        public DbSet<ReceiptVoucher> ReceiptVouchers { get; set; }
         public DbSet<InventoryVoucher> InventoryVouchers { get; set; }
         public DbSet<InventoryVoucherDetail> InventoryVoucherDetails { get; set; }
         public DbSet<PaymentVoucher> PaymentVouchers { get; set; }
@@ -27,6 +28,11 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<InventoryAuditDetail> InventoryAuditDetails { get; set; }
         public DbSet<ShiftReport> ShiftReports { get; set; }
         public DbSet<ShiftEndReportView> ShiftEndReportViews { get; set; }
+
+        public DbSet<DocumentGroup> DocumentGroups { get; set; }
+
+        public DbSet<CreditVoucher> CreditVouchers { get; set; }
+        public DbSet<DebitVoucher> DebitVouchers { get; set; }
 
         // Add context to return tabbles
         public DbSet<InventoryVoucherResponseDto> InventoryVoucherResponseDto { get; set; }
@@ -69,6 +75,10 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<ShiftReportResponseDto>().ToTable(nameof(ShiftReportResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<AccountsDto>().ToTable(nameof(AccountsDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<ShiftEndReportView>().ToTable(nameof(ShiftEndReportView), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<CreditVoucherResponseDto>().ToTable(nameof(CreditVoucherResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<RecTransInfoResponseDto>().ToTable(nameof(RecTransInfoResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<DebitVoucherResponseDto>().ToTable(nameof(DebitVoucherResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<DocumentGroupResponseDto>().ToTable(nameof(DocumentGroupResponseDto), t => t.ExcludeFromMigrations());
             //// Dynamic Response functions
 
             foreach (var entityType in AccountingTableName.GenerateDynamicResponseDbSet())
@@ -106,7 +116,7 @@ namespace ManagementSystem.AccountingApi.Data
         {
             if (AccountingTableName.GenerateDynamicResponseDbSet().Contains(typeof(TEntity)))
             {
-                return Set<TEntity>().FromSqlRaw(sql).AsNoTracking().ToList();
+                return Set<TEntity>().FromSqlRaw(sql).ToList();
             }
             else
             {
@@ -117,7 +127,7 @@ namespace ManagementSystem.AccountingApi.Data
         // Create a function to calculate a scalar value
         public TResult CalculateScalarFunction<TResult>(string sql) where TResult : class
         {
-            var resultCollection = Set<TResult>().FromSqlRaw(sql).AsNoTracking().ToList();
+            var resultCollection = Set<TResult>().FromSqlRaw(sql).ToList();
 
             // Now you can safely modify resultCollection if needed
 

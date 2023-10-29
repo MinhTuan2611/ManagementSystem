@@ -23,7 +23,7 @@ namespace ManagementSystem.AccountingApi.Controllers
             var records = _RecordingtransactionsService.GetAll();
             if (records != null)
             {
-                var lsRecords = records as List<RecTransInfo> ?? records.ToList();
+                var lsRecords = records as List<RecTransInfoResponseDto> ?? records.ToList();
                 if (lsRecords.Any())
                     return Ok(lsRecords);
             }

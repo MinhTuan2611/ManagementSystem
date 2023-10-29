@@ -77,8 +77,8 @@ namespace ManagementSystem.AccountingApi.Migrations
 						SELECT sr.ShiftEndId
 							,SUM(sd.Denomination * sd.Amount) AS TotalBill
 						FROM dbo.ShiftEndReports sr
-						JOIN dbo.ShiftHandoverCashDetails sD ON sd.ShiftEndId = sr.ShiftEndId
-						JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
+						LEFT JOIN dbo.ShiftHandoverCashDetails sD ON sd.ShiftEndId = sr.ShiftEndId
+						LEFT JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
 						WHERE 1 = 1
 						', @sqlQuery_condition,
 						'GROUP BY sr.ShiftEndId
@@ -563,9 +563,18 @@ namespace ManagementSystem.AccountingApi.Migrations
 							SELECT @TotalRecords = COUNT(1) FROM #tmp_records
 				
 							SELECT *
-							FROM #tmp_records
-							ORDER BY TransactionDate DESC
-							OFFSET (@PageNumber - 1) * @PageSize ROWS FETCH NEXT @pageSize ROWS ONLY
+									,CASE
+										WHEN id.DocummentNumber IS NOT NULL THEN id.Note
+										WHEN pv.DocumentNumber IS NOT NULL THEN pv.Description
+										WHEN oa.DocumentNumber IS NOT NULL THEN oa.PaymentDescription
+										WHEN dv.DocumentNumber IS NOT NULL THEN dv.Description
+									ELSE ''
+									END AS LegerDescription
+							FROM #tmp_records t
+							LEFT JOIN dbo.InventoryVouchers id ON t.DoccumentNumber = id.DocummentNumber
+							LEFT JOIN dbo.PaymentVouchers pv ON pv.DocumentNumber = t.DoccumentNumber
+							LEFT JOIN dbo.OtherAccountEntries oa ON t.DoccumentNumber = oa.DocumentNumber
+							LEFT JOIN dbo.DebitVouchers dv ON dv.DocumentNumber = t.DoccumentNumber
 						END
 		GO
 

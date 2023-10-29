@@ -48,19 +48,17 @@ namespace ManagementSystem.StoragesApi.Services
                 int billHour = DateTime.Now.Hour;
                 int shiftId = 1;
 
-                if (bill.BranchId == null)
+                if (bill.ShiftId == null)
                 {
                     var employeeShift = GetEmployeeShifts().FirstOrDefault(x => x.StartTime <= billHour && billHour <= x.EndTime);
                     if (employeeShift == null)
                     {
                         shiftId = 2;
                     }
-
-                    shiftId = employeeShift.ShiftId;
                 }
                 else
                 {
-                    shiftId = bill.BranchId.Value;
+                    shiftId = bill.ShiftId.Value;
                 }
 
                 var newBill = new Bill

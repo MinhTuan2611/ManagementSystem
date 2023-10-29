@@ -13,6 +13,6 @@ namespace ManagementSystem.Common.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
         public int GroupId { get; set; }
-        public int GroupName { get; set; }
+        public string GroupName { get; set; }
     }
 }
