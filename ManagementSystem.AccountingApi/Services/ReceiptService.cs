@@ -112,9 +112,9 @@ namespace ManagementSystem.AccountingApi.Services
 		                ,r.TotalMoney
 		                ,u.UserId
 		                ,u.UserName AS Cashier
-                FROM Receipts r
-                JOIN StoragesDB.dbo.Customers c ON r.CustomerId = c.CustomerId
-                JOIN AccountsDb.dbo.Users u ON u.UserId = r.UserId
+                FROM ReceiptVouchers r
+                LEFT JOIN StoragesDB.dbo.Customers c ON r.CustomerId = c.CustomerId
+                LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = r.UserId
                 WHERE r.DocumentNumber = {0}
             ", documentNumbers);
 

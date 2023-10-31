@@ -7,8 +7,6 @@ using ManagementSystem.Common.Loggers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace ManagementSystem.AccountingApi.Services
 {
