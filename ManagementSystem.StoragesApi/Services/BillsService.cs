@@ -1,6 +1,7 @@
 ﻿using ManagementSystem.Common;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.GenericModels;
+using ManagementSystem.Common.Loggers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
@@ -19,12 +20,15 @@ namespace ManagementSystem.StoragesApi.Services
         private readonly UnitOfWork _unitOfWork;
         private readonly StoragesDbContext _context;
         private IConfiguration _configuration;
+        private readonly string _path = string.Empty;
 
         public BillsService(StoragesDbContext context, IConfiguration configuration)
         {
             _unitOfWork = new UnitOfWork(context);
             _configuration = configuration;
             _context = context;
+
+            _path = @"C:\\Logs\\Bills";
         }
 
         public List<ListBillResponse> GetListBills()
@@ -120,6 +124,7 @@ namespace ManagementSystem.StoragesApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function Create Bills: " + ex.Message, _path);
                 return null;
             }
 
