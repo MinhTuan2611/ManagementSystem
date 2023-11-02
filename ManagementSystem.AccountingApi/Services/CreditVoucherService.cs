@@ -68,7 +68,7 @@ namespace ManagementSystem.AccountingApi.Services
                     BillId = request.BillId,
                     Amount = request.TotalMoney,
                     UserId = request.UserId,
-                    StorageId = GetStorageByBradchId(request.BrandId.Value),
+                    StorageId = GetStorageInfor(request.BrandId.Value, request.UserId, request.ProductId.Value),
                 });
 
                 return creditVoucher;
@@ -259,23 +259,44 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        private int? GetStorageByBradchId(int branchId)
+        private int? GetStorageInfor(int branchId, int userId, int productId)
         {
-            string query = string.Format(@"
+            string query = string.Empty;
+
+            if (branchId != null && branchId > 0)
+            {
+                query = string.Format(@"
                     SELECT StorageId AS Value
                     FROM StoragesDb.dbo.Storages 
                     WHERE BranchId = {0}
-            ", branchId);
-
+                ", branchId);
+            }
+            else
+            {
+                query = string.Format(@"SELECT TOP 1 s.StorageId AS Value
+                                        FROM AccountsDb.dbo.UserBranchs ub
+                                        JOIN StoragesDb.dbo.Storages s ON s.BranchId = ub.BranchId
+                                        WHERE ub.UserId = {0}", userId);
+            }
+             
             try
             {
-                var result = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
+                var result = _context.CalculateScalarFunction<ScalarResult<int?>>(query).Value;
 
-                return result;
+                if (result == null)
+                {
+                    query = string.Format(@"
+                                    SELECT TOP 1 ps.StorageId AS Value
+                                    FROM StoragesDb.dbo.ProductStorages ps
+                                    WHERE ps.ProductId = {0}", productId);
+
+                    result = _context.CalculateScalarFunction<ScalarResult<int?>>(query).Value;
+                }
+                return result != null? result : 1;
             }
             catch (Exception ex)
             {
-                throw ex;
+                return 1;
             }
         }
 

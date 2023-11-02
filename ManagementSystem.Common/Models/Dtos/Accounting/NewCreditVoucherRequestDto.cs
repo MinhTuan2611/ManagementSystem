@@ -10,6 +10,7 @@
         public string? PaymentMethodCode { get; set; }
         public int? GroupId { get; set; }
         public int? BrandId { get; set; }
+        public int? ProductId { get; set; }
 
     }
 }
