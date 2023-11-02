@@ -47,7 +47,7 @@ namespace ManagementSystem.Common
                // typeof(ShiftHandoverResponseDto),
                // typeof(ShiftReportResponseDto),
                // typeof(AccountsDto),
-                typeof(ScalarResult<int>),
+                typeof(ScalarResult<int?>),
                 typeof(ScalarResult<string>),
                 typeof(PaymentMethodDto),
                 typeof(AccountsDto),
