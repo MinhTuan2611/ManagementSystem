@@ -18,10 +18,11 @@ namespace ManagementSystem.StoragesApi.Services
             _storageContext = context;
         }
 
-        public List<ProductListResponse> GetListProduct(string? searchValue, int? categoryId, int pageSize, int pageNumber)
+        public async Task<(List<ProductListResponse>,int)> GetListProduct(string? searchValue, int? categoryId, int pageSize, int pageNumber)
         {
             string[] includes = { "Category"};
             IQueryable<Product> products = _unitOfWork.ProductRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes);
+            var totalRecord = 0;
             if(searchValue != null && searchValue != String.Empty)
             {
                 products = products.Where(x => x.ProductCode.Contains(searchValue) || x.ProductName.Contains(searchValue));
@@ -31,6 +32,7 @@ namespace ManagementSystem.StoragesApi.Services
                 products = products.Where(x => x.CategoryId == categoryId);
             }
             var productToList = new List<Product>();
+            totalRecord = await products.CountAsync();
             if (pageSize != 0 && pageNumber != 0)
             {
                 productToList = products.Skip((pageNumber - 1) * pageSize)
@@ -55,7 +57,7 @@ namespace ManagementSystem.StoragesApi.Services
                 };
                 listProduct.Add(product);
             }
-            return listProduct;
+            return (listProduct,totalRecord);
         }
 
         public IEnumerable<ProductInfo> AutoCompleteProduct(string? valueSearch)

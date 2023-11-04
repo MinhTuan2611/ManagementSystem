@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -18,10 +19,10 @@ namespace ManagementSystem.MainApp.Controllers
             MultipleSearchResult response = new MultipleSearchResult();
             List<CustomerResponseDto> customers = new List<CustomerResponseDto>();
             customers = await HttpRequestsHelper.GetList<CustomerResponseDto>(Environment.StorageApiUrl + "customers/search-term?searchTerm=" + searchValue);
-            List<ProductListResponse> products = new List<ProductListResponse>();
-            products = await HttpRequestsHelper.Get<List<ProductListResponse>>(Environment.StorageApiUrl + "products/" + "get?searchValue=" + searchValue + "&pageNumber=1&pageSize=9");
+            TPagination<ProductListResponse> products = new TPagination<ProductListResponse>();
+            products = await HttpRequestsHelper.Get<TPagination<ProductListResponse>>(Environment.StorageApiUrl + "products/" + "get?searchValue=" + searchValue + "&pageNumber=1&pageSize=9");
             response.CustomerResponses = customers;
-            response.ProductResponses = products;
+            response.ProductResponses = products.Items;
             return Ok(response);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
@@ -14,11 +15,11 @@ namespace ManagementSystem.MainApp.Controllers
     {
         private string APIUrl = Environment.StorageApiUrl + "products/";
         [HttpGet("get")]
-        public async Task<IActionResult> Get(string? searchValue, int? categoryId)
+        public async Task<IActionResult> Get(string? searchValue, int? categoryId, int pageSize = 0, int pageNumber = 0)
         {
 
-            ResponseModel<ProductListResponse> response = new ResponseModel<ProductListResponse>();
-            List<ProductListResponse> products = await HttpRequestsHelper.Get<List<ProductListResponse>>(APIUrl + "get?searchValue="+searchValue+ "&categoryId="+categoryId);
+            ResponsePagingModel<TPagination<ProductListResponse>> response = new ResponsePagingModel<TPagination<ProductListResponse>>();
+            TPagination<ProductListResponse> products = await HttpRequestsHelper.Get<TPagination<ProductListResponse>>(APIUrl + "get?searchValue="+searchValue+ "&categoryId="+categoryId + "&pageSize=" + pageSize + "&pageNumber=" + pageNumber);
             if (products != null)
             {
 
