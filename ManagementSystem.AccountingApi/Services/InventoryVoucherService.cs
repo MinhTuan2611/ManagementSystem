@@ -52,13 +52,13 @@ namespace ManagementSystem.AccountingApi.Services
                     var item = new InventoryVoucherDetail();
                     item.DocummentNumber = inventory.DocummentNumber;
                     item.ProductId = detail.ProductId;
-                    item.CreditAccount = product.CreditAccountId;
-                    item.DebitAccount = product.DebitAccountId;
+                    item.CreditAccount = product?.CreditAccountId;
+                    item.DebitAccount = product?.DebitAccountId;
                     //item.PaymentDiscountAccount = detail.PaymentDiscountAccount;
                     //item.TaxAccount = detail.TaxAccount;
                     item.Quantity = detail.Quantity;
-                    item.Price = product.PriceBeforeTax;
-                    item.TotalMoneyBeforeTax = product.PriceBeforeTax * detail.Quantity;
+                    item.Price = product?.PriceBeforeTax;
+                    item.TotalMoneyBeforeTax = product != null? product.PriceBeforeTax * detail.Quantity : 0;
                     item.DebitAccountMoney = detail.TotalMoneyAfterTax;
                     item.CreditAccountMoney = detail.TotalMoneyAfterTax;
                     //item.PaymentDiscountMoney = detail.PaymentDiscountMoney;
@@ -172,30 +172,30 @@ namespace ManagementSystem.AccountingApi.Services
         public async Task<List<InventoryVoucherDetailResponseDto>> GetInventoryVoucherDetail(int documentNumber)
         {
             string query = string.Format(@"
- SELECT p.ProductId
-         ,p.ProductName
-         ,p.ProductCode
-		,p.DefaultPurchasePrice
-		,p.BarCode
-		,p.Tax
-         ,u.UnitName
-         ,p.Price
-         ,details.Quantity
-         ,details.debitaccount
-         ,details.creditaccount
-         ,details.PaymentDiscountAccount
-         ,details.TaxAccount
-         ,details.TotalMoneyBeforeTax
-         ,details.DebitAccountMoney
-         ,details.CreditAccountMoney
-         ,details.PaymentDiscountMoney
-         ,details.TotalMoneyAfterTax
-         ,details.Note
-         ,details.TaxMoney
- FROM InventoryVoucherDetails details
- JOIN StoragesDb.dbo.Products p ON p.ProductId = details.ProductId
- JOIN StoragesDb.dbo.ProductUnit pu ON p.ProductId = pu.ProductId
- JOIN StoragesDb.dbo.Unit u ON pu.UnitId = u.UnitId
+                 SELECT p.ProductId
+                         ,p.ProductName
+                         ,p.ProductCode
+		                ,p.DefaultPurchasePrice
+		                ,p.BarCode
+		                ,p.Tax
+                         ,u.UnitName
+                         ,p.Price
+                         ,details.Quantity
+                         ,details.debitaccount
+                         ,details.creditaccount
+                         ,details.PaymentDiscountAccount
+                         ,details.TaxAccount
+                         ,details.TotalMoneyBeforeTax
+                         ,details.DebitAccountMoney
+                         ,details.CreditAccountMoney
+                         ,details.PaymentDiscountMoney
+                         ,details.TotalMoneyAfterTax
+                         ,details.Note
+                         ,details.TaxMoney
+                 FROM InventoryVoucherDetails details
+                 JOIN StoragesDb.dbo.Products p ON p.ProductId = details.ProductId
+                 LEFT JOIN StoragesDb.dbo.ProductUnit pu ON p.ProductId = pu.ProductId
+                 LEFT JOIN StoragesDb.dbo.Unit u ON pu.UnitId = u.UnitId
                 WHERE details.DocummentNumber = {0}
             ", documentNumber);
 

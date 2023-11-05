@@ -1,12 +1,9 @@
 ﻿using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
+using ManagementSystem.MainApp.Utility;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 
@@ -60,7 +57,7 @@ namespace ManagementSystem.MainApp.Services
 
         private async Task<User> GetUserLogin(Login user)
         {
-            User userInfo = await HttpRequestsHelper.Post<User>(Environment.AccountApiUrl + "users/get-login", user);
+            User userInfo = await HttpRequestsHelper.Post<User>(SD.AccountApiUrl + "users/get-login", user);
             return userInfo;
         }
     }
