@@ -3,7 +3,7 @@ using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
-using Microsoft.AspNetCore.Components.Web;
+using ManagementSystem.MainApp.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementSystem.MainApp.Controllers
@@ -12,7 +12,7 @@ namespace ManagementSystem.MainApp.Controllers
     [ApiController]
     public class EmployeeShiftReportController : ControllerBase
     {
-        private string APIUrl = Environment.AccountingApiUrl + "EmployeeShiftReport/";
+        private string APIUrl = SD.AccountingApiUrl + "EmployeeShiftReport/";
 
         [HttpPost("create")]
         public async Task<IActionResult> Create(NewEmployeeShiftEndRequestDto request)
@@ -20,8 +20,8 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             request.UserId = int.Parse(userId);
 
-            var result = await HttpRequestsHelper.Post<EmployeeShift>(APIUrl + "create", request);
-            if (result != null)
+            var result = await HttpRequestsHelper.Post<bool>(APIUrl + "create", request);
+            if (result)
             {
                 return Ok(result);
             }

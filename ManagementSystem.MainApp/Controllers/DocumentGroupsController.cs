@@ -2,8 +2,8 @@
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.Common.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ManagementSystem.MainApp.Utility;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -11,7 +11,7 @@ namespace ManagementSystem.MainApp.Controllers
     [ApiController]
     public class DocumentGroupsController : ControllerBase
     {
-        private string APIUrl = Environment.AccountingApiUrl + "DocumentGroups/";
+        private string APIUrl = SD.AccountingApiUrl + "DocumentGroups/";
 
 
         [HttpPost("search_results")]

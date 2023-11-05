@@ -5,6 +5,7 @@ using ManagementSystem.Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.MainApp.Utility;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -12,7 +13,7 @@ namespace ManagementSystem.MainApp.Controllers
     [ApiController]
     public class CreditVouchersController : ControllerBase
     {
-        private string APIUrl = Environment.AccountingApiUrl + "CreditVouchers/";
+        private string APIUrl = SD.AccountingApiUrl + "CreditVouchers/";
 
         [HttpPost("search_results")]
         public async Task<IActionResult> SearchInventory([FromBody] SearchCriteria searchModel)
