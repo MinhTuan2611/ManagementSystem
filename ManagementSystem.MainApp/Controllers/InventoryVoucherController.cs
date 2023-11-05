@@ -3,6 +3,7 @@ using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
+using ManagementSystem.MainApp.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementSystem.MainApp.Controllers
@@ -56,10 +57,10 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             request.UserId = int.Parse(userId);
 
-            bool isCreated = await HttpRequestsHelper.Post<bool>(APIUrl + "create", request);
-            if (isCreated)
+            var result = await HttpRequestsHelper.Post<InventoryVoucher>(APIUrl + "create", request);
+            if (result != null)
             {
-                return Ok(isCreated);
+                return Ok(result);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }

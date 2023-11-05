@@ -4,11 +4,10 @@ using ManagementSystem.Common.Models;
 using ManagementSystem.MainApp.Services;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Constants;
+using ManagementSystem.MainApp.Utility;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -29,7 +28,7 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get()
         {
-            List<ListBillResponse> bills = await HttpRequestsHelper.Get<List<ListBillResponse>>(Environment.StorageApiUrl + "bills/get");
+            List<ListBillResponse> bills = await HttpRequestsHelper.Get<List<ListBillResponse>>(SD.StorageApiUrl + "bills/get");
             if (bills != null || bills.Count > 0)
             {
                 return Ok(bills);
@@ -43,7 +42,7 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
             bill.UserId = userId;
 
-            var resultBill = await HttpRequestsHelper.Post<BillInfo>(Environment.StorageApiUrl + "bills/create", bill);
+            var resultBill = await HttpRequestsHelper.Post<BillInfo>(SD.StorageApiUrl + "bills/create", bill);
             if (resultBill != null)
             {
 
@@ -52,7 +51,7 @@ namespace ManagementSystem.MainApp.Controllers
                 inventoryVoucherDto.UserId = userId;
                 inventoryVoucherDto.BillId = resultBill.BillId;
 
-                var inventoryResult = await HttpRequestsHelper.Post<InventoryVoucher>(Environment.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
+                var inventoryResult = await HttpRequestsHelper.Post<InventoryVoucher>(SD.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
 
                 if (inventoryResult == null)
                     return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created but faild when create Inventory Voucher");
@@ -66,7 +65,7 @@ namespace ManagementSystem.MainApp.Controllers
                         Amount = bill.Details.Sum(c => c.Amount)
                     };
 
-                    var customerUpdateFlag = await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + "customers/update_point", customerUpdate);
+                    var customerUpdateFlag = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "customers/update_point", customerUpdate);
                     if (!customerUpdateFlag)
                         return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created, inventory created but faild when Update customer point");
 
@@ -87,7 +86,7 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpPost("complete-bill")]
         public async Task<IActionResult> CompleteBill(BillInfo bill)
         {
-            var response = await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + "bills/complete-bill", bill);
+            var response = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "bills/complete-bill", bill);
             if (response)
             {
                 return Ok(response);
@@ -97,7 +96,7 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpPost("momo-ipn")]
         public async Task<IActionResult> MomoIPN([FromBody] MomoRequestIPN request)
         {
-            //var response = await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + "bills/check-momo-payment", request);
+            //var response = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "bills/check-momo-payment", request);
             if (request.ResultCode == 0)
             {
                 await _serverSentEventsServices.SendMessageAsync("MOMO_TRACKING", request.OrderId, "Completed");
@@ -127,7 +126,7 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> SearchBills([FromBody] SearchCriteria searchModel)
         {
 
-            var result = await HttpRequestsHelper.Post<TPagination<BillSearchingResponseDto>>(Environment.StorageApiUrl + "bills/search_results", searchModel);
+            var result = await HttpRequestsHelper.Post<TPagination<BillSearchingResponseDto>>(SD.StorageApiUrl + "bills/search_results", searchModel);
 
             if (result != null)
                 return Ok(result);
@@ -140,7 +139,7 @@ namespace ManagementSystem.MainApp.Controllers
         {
 
             ResponseModel<BillResponseDto> response = new ResponseModel<BillResponseDto>();
-            var result = await HttpRequestsHelper.Get<BillResponseDto>(Environment.StorageApiUrl + "bills/get-detail?billId=" + billId);
+            var result = await HttpRequestsHelper.Get<BillResponseDto>(SD.StorageApiUrl + "bills/get-detail?billId=" + billId);
 
             var resultResponse = new List<BillResponseDto>();
             resultResponse.Add(result);
@@ -167,7 +166,7 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             model.UserId = int.Parse(userId);
 
-            var resultBill = await HttpRequestsHelper.Post<BillInfo>(Environment.StorageApiUrl + "bills/update-bill", model);
+            var resultBill = await HttpRequestsHelper.Post<BillInfo>(SD.StorageApiUrl + "bills/update-bill", model);
             if (resultBill != null)
                 return Ok(resultBill);
 
@@ -222,7 +221,7 @@ namespace ManagementSystem.MainApp.Controllers
                        GroupId = AccountingConstant.AutoGenerateDocumentGroup
                 };
 
-                var result = await HttpRequestsHelper.Post<CreditVoucher>(Environment.AccountingApiUrl + "CreditVouchers/create", creditVoucher);
+                var result = await HttpRequestsHelper.Post<CreditVoucher>(SD.AccountingApiUrl + "CreditVouchers/create", creditVoucher);
 
                 if (result != null)
                 {
