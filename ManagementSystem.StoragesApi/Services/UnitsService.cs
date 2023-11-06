@@ -33,20 +33,18 @@ namespace ManagementSystem.StoragesApi.Services
             }
             
         }
-        public bool UpdateUnit(Unit unit, int userId)
+        public Unit UpdateUnit(Unit unit)
         {
-            unit.ModifyDate = DateTime.Now;
-            unit.ModifyBy = userId;
             try
             {
                 _unitOfWork.UnitRepository.Update(unit);
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
-                return true;
+                return unit;
             }
             catch
             {
-                return false;
+                return null;
             }
         }
         public bool DeleteUnit(int unitId)

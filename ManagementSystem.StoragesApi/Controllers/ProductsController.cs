@@ -1,5 +1,7 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +19,13 @@ namespace ManagementSystem.StoragesApi.Controllers
             _ProductService = new ProductsService(context);
         }
         [HttpGet("get")]
-        public List<ProductListResponse> Get(string? searchValue,int? categoryId )
+        public async Task<TPagination<ProductListResponse>> Get(string? searchValue,int? categoryId, int pageSize = 0, int pageNumber = 0)
         {
-            var products = _ProductService.GetListProduct(searchValue, categoryId);
-            return products;
+            var (products,total) = await _ProductService.GetListProduct(searchValue, categoryId, pageSize, pageNumber);
+            var result = new TPagination<ProductListResponse>();
+            result.TotalItems = total;
+            result.Items = products;
+            return result;
         }
         [HttpGet("get-detail")]
         public ProductCreateUpdate GetDetailProduct(int productId)
@@ -88,6 +93,15 @@ namespace ManagementSystem.StoragesApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, generateCode);
 
             return Ok(generateCode);
+        }
+
+        [HttpGet()]
+        [Route("random-selected-products")]
+        public IActionResult GenerateProductCode([FromQuery] int items, [FromQuery] int? brandId)
+        {
+            var result = _ProductService.AutoRandomProducts(items, brandId);
+
+            return Ok(result);
         }
     }
 }

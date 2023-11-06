@@ -26,8 +26,9 @@ namespace ManagementSystem.Common.Entities
 
         public int? CreditAccountId { get; set; }
         public int? DebitAccountId { get; set; }
+        public int? RevenueGroupId { get; set; }
         public Category? Category { get; set; }
-
+        public RevenueGroup RevenueGroup { get; set; }
         public List<RequestSampleItem> RequestSampleItems { get; set; }
     }
 }

@@ -1,14 +1,15 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
+using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.Common.Models.Dtos.Accounting;
 
 namespace ManagementSystem.AccountingApi.Services
 {
     public interface IInventoryVoucherService
     {
-        Task<bool> CreateInventoryDeliveryVoucher(NewInventoryVoucherDto request);
-        Task<bool> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request);
-        Task<List<InventoryVoucherResponseDto>> GetInventoryVouchers(int page, int pageSize);
+        Task<InventoryVoucher> CreateInventoryVoucher(NewInventoryVoucherDto request);
+        Task<InventoryVoucher> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request);
+        Task<TPagination<InventoryVoucherResponseDto>> SearchInventoryVouchers(SearchCriteria criteria);
         Task<List<InventoryVoucherDetailResponseDto>> GetInventoryVoucherDetail(int documentNumber);
     }
 }

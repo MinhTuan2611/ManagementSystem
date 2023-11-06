@@ -1,10 +1,7 @@
 ﻿using ManagementSystem.AccountingApi.Services;
 using ManagementSystem.Common.Constants;
-using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.Common.Models.Dtos.Accounting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementSystem.AccountingApi.Controllers
@@ -22,10 +19,10 @@ namespace ManagementSystem.AccountingApi.Controllers
 
         }
 
-        [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll([FromQuery] int? page = 1, [FromQuery] int? pageSize = 10)
+        [HttpPost("search_results")]
+        public async Task<IActionResult> SearchInventory([FromBody]SearchCriteria searchModel)
         {
-            var result = await _service.GetInventoryVouchers(page.Value, pageSize.Value);
+            var result = await _service.SearchInventoryVouchers(searchModel);
             return Ok(result);
         }
 
@@ -39,15 +36,18 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(NewInventoryVoucherDto request)
         {
-            var isCreated = await _service.CreateInventoryDeliveryVoucher(request);
-            if (isCreated != 0)
+            var inventory = await _service.CreateInventoryVoucher(request);
+            if (inventory != null)
             {
                 var newReceiptDto = new NewReceiptRequestDto()
                 {
                     CustomerId = request.CustomerId,
-                    ForReason = string.Format(AccountingConstant.ReceiptReason, isCreated),
+                    ForReason = string.Format(AccountingConstant.ReceiptReason, inventory.DocummentNumber),
                     UserId = request.UserId,
-                    TotalMoney = request.Details.Sum(x => x.TotalMoneyAfterTax)
+                    TotalMoney = request.CashPaymentAmount,
+                    BillId = request.BillId,
+                    StorageId = inventory.StorageId,
+                    InventoryDocumentNumber = inventory.DocummentNumber
                 };
                 
                 var receptResult = await  _receiptService.CreateReceipt(newReceiptDto);
@@ -62,7 +62,7 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> Update(UpdateInventoryVoucherDto request)
         {
-            bool updated = await _service.UpdateInventoryDeliveryVoucher(request);
+            var updated = await _service.UpdateInventoryDeliveryVoucher(request);
             return Ok(updated);
         }
     }

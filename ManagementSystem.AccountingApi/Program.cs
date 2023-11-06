@@ -1,4 +1,5 @@
 using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.SeedingData;
 using ManagementSystem.AccountingApi.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,15 +22,49 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IReceiptService, ReceiptService>();
 builder.Services.AddScoped<IInventoryVoucherService, InventoryVoucherService>();
 builder.Services.AddScoped<ILegerService, LegerService>();
+builder.Services.AddScoped<IPaymentVoucherService, PaymentVoucherService>();
+builder.Services.AddScoped<IOtherAccountEntryService, OtherAccountEntryService>();
+builder.Services.AddScoped<IEmployeeShiftReportService, EmployeeShiftReportService>();
+builder.Services.AddScoped<ICreditVoucherService, CreditVoucherService>();
+builder.Services.AddScoped<IDebitVoucherService, DebitVoucherService>();
+builder.Services.AddScoped<IDocumentGroupService, DocumentGroupService>();
+
+//// Excluded migration tables
+//var migrationConfigs = new MigrationsConfiguration();
+
+////var excludedTables = AccountingTableName.GenerateExcludedTableName();
+////var count = excludedTables.Count;
+////for (int i = 0; i < count; i++)
+////{
+////    var name = excludedTables[i];
+
+////    // Modify the collection if needed
+////    migrationConfigs.ExcludedTableNames.Add(name);
+////}
+
+////migrationConfigs.ExcludedTableTypes.Add(typeof(ScalarResult<int>));
+
+//builder.Services.AddSingleton(migrationConfigs);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Seeding Data
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var services = scope.ServiceProvider;
+    var context = services.GetService<AccountingDbContext>();
+    DataSeeder.SeedData(context);
 }
+
+//// Configure the HTTP request pipeline.
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

@@ -1,42 +1,30 @@
 ﻿using ManagementSystem.AccountingApi.Data;
 using ManagementSystem.AccountingApi.Repositories.UnitOfWork;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Loggers;
 using ManagementSystem.Common.Models;
 using Newtonsoft.Json.Linq;
+using System.Runtime.CompilerServices;
 
 namespace ManagementSystem.AccountingApi.Services
 {
     public class RecordingtransactionsService : IRecordingtransactionsService
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly AccountingDbContext _context;
+        private readonly string _path = string.Empty;
 
         public RecordingtransactionsService(AccountingDbContext context)
         {
             _unitOfWork = new UnitOfWork(context);
+            _context = context;
+            _path = @"C:\\Logs\\Accounting\\Recordingtransaction";
         }
 
-        public IEnumerable<RecTransInfo> GetAll()
+        public IEnumerable<RecTransInfoResponseDto> GetAll()
         {
-            List<Recordingtransaction> recordTransDb = _unitOfWork.RecordingtransactionRepository.GetAll().ToList();
-            if (recordTransDb.Any())
-            {
-                var recordTrans = recordTransDb.Select(r => new RecTransInfo
-                {
-                    Id = r.Id,
-                    DocumentType = r.DocumentType,
-                    ReasonGroup = r.ReasonGroup,
-                    ReasonCode = r.ReasonCode,
-                    ReasonName = r.ReasonName,
-                    CreditAccountId = r.CreditAccountId,
-                    DebitAccountId = r.DebitAccountId,
-                    ExpenseItem = r.ExpenseItem,
-                    Note = r.Note,
-                    Status = r.Status,
-                    
-                });
-                return recordTrans;
-            }
-            return null;
+            var result  = GetAllTransactionInfo();
+            return result;
         }
         public bool EditRecordTrans(int recordId, RecTransInfo record, int userId)
         {
@@ -116,5 +104,38 @@ namespace ManagementSystem.AccountingApi.Services
                 return false;
             }
         }
+
+        #region Private handle function
+        private List<RecTransInfoResponseDto> GetAllTransactionInfo()
+        {
+            string query = @"
+                SELECT rt.Id
+		                ,rt.DocumentType
+		                ,rt.ReasonGroup
+		                ,rt.ReasonCode
+		                ,rt.ReasonName
+		                ,td.AccountCode AS DebitAccountId
+		                ,tc.AccountCode  AS CreditAccountId
+		                ,rt.Status
+		                ,rt.ExpenseItem
+		                ,rt.Note
+                FROM dbo.Recordingtransactions rt
+                JOIN dbo.TypesOfAccounts tc ON tc.AccountId = rt.CreditAccountId
+                JOIN dbo.TypesOfAccounts td ON td.AccountId = rt.DebitAccountId
+            ";
+
+            try
+            {
+                var result = _context.ExecuteSqlForEntity<RecTransInfoResponseDto>(query).ToList();
+
+                return result;
+            }
+            catch(Exception ex)
+            {
+                var logger = new LogWriter("Function GetAllTransactionInfo: " + ex.Message, _path);
+                return null;
+            }
+        }
+        #endregion
     }
 }

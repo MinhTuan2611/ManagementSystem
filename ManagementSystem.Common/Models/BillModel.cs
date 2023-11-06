@@ -21,7 +21,9 @@ namespace ManagementSystem.Common.Models
         public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.UnPaid;
         public bool IsAutoCompelte { get; set; } = false;
         public int? EmployeeShiftId { get; set; }
-        public int? BrandId { get; set; }
+        public int? BranchId { get; set; }
+        public int? ShiftId { get; set; }
+        public int? UserId { get; set; }
         public List<BillDetailInfo> Details { get; set; }
         public List<PaymentDetail> Payments { get; set; }
 
@@ -37,7 +39,7 @@ namespace ManagementSystem.Common.Models
         public int DiscountAmount { get; set; } = 0;
         public int DiscountPercentage { get; set; } = 0;
         public bool DiscountByPercentage { get; set; } = false;
-        public int Quantity { get; set; } = 0;
+        public float Quantity { get; set; } = 0;
         public int Amount { get; set; } = 0;
     }
     public class PaymentDetail
@@ -67,5 +69,35 @@ namespace ManagementSystem.Common.Models
         public string ExtraData { get; set; }
         public string Signature { get; set; }
 
+    }
+    public class MomoCreateTransactionRequest
+    {
+        public int OrderId { get; set; }
+        public int Amount { get; set; }
+    }
+    public class QuickPayResquest
+    {
+        public string partnerCode { get; set; }
+        public string requestId { get; set; }
+        public long amount { get; set; }
+        public string orderId { get; set; }
+        public string orderInfo { get; set; }
+        public string redirectUrl { get; set; }
+        public string ipnUrl { get; set; }
+        public string requestType { get; set; }
+        public string extraData { get; set; }
+        public string lang { get; set; }
+        public string signature { get; set; }
+        //public string partnerName { get; set; }
+        //public string storeId { get; set; }
+        //public string paymentCode { get; set; }
+        //public string orderGroupId { get; set; }
+        //public bool autoCapture { get; set; }
+    }
+    public class QuickPayResponse
+    {
+        public int resultCode { get; set; }
+        public string qrCodeUrl { get; set; }
+        public string message { get; set; }
     }
 }

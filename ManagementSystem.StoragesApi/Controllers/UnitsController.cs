@@ -33,15 +33,15 @@ namespace ManagementSystem.StoragesApi.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
         [HttpPost("update")]
-        public IActionResult Update(Unit unit, int userId)
+        public IActionResult Update(Unit unit)
         {
-            bool updated = _UnitsService.UpdateUnit(unit, userId);
+            Unit updated = _UnitsService.UpdateUnit(unit);
             return Ok(updated);
         }
-        [HttpPost("delete")]
-        public IActionResult Delete(int unitId)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
         {
-            bool updated = _UnitsService.DeleteUnit(unitId);
+            bool updated = _UnitsService.DeleteUnit(id);
             return Ok(updated);
         }
     }

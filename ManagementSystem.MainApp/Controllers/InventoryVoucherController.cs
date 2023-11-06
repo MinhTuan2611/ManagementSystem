@@ -1,8 +1,9 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.Common.Models.Dtos.Accounting;
+using ManagementSystem.MainApp.Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementSystem.MainApp.Controllers
@@ -13,38 +14,32 @@ namespace ManagementSystem.MainApp.Controllers
     {
         private string APIUrl = Environment.AccountingApiUrl + "InventoryVoucher/";
 
-        [HttpGet("get")]
-        public async Task<IActionResult> Get([FromQuery] int? page = 1, [FromQuery] int? pageSize = 10)
+
+        [HttpPost("search_results")]
+        public async Task<IActionResult> SearchInventory([FromBody] SearchCriteria searchModel)
         {
 
-            ResponseModel<InventoryVoucherResponseDto> response = new ResponseModel<InventoryVoucherResponseDto>();
-            List<InventoryVoucherResponseDto> vouchers = await HttpRequestsHelper.Get<List<InventoryVoucherResponseDto>>(APIUrl + "get-all?page=" + page + "&pageSize=" + pageSize);
+            var result = await HttpRequestsHelper.Post<TPagination<InventoryVoucherResponseDto>>(APIUrl + "search_results", searchModel);
 
-            if (vouchers != null)
-            {
+            if (result != null)
+                return Ok(result);
 
-                response.Status = "success";
-                response.Data = vouchers;
-                return Ok(response);
-            }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
         }
+
         [HttpGet("get-detail")]
         public async Task<IActionResult> GetDetail([FromQuery]int documentNumber)
         {
 
-            ResponseModel<List<InventoryVoucherResponseDto>> response = new ResponseModel<List<InventoryVoucherResponseDto>>();
-            List<InventoryVoucherResponseDto> detail = await HttpRequestsHelper.Get<List<InventoryVoucherResponseDto>>(APIUrl + "get-by-document-number?documentNumber=" + documentNumber);
-            List<List<InventoryVoucherResponseDto>> responseData = new List<List<InventoryVoucherResponseDto>>();
-            responseData.Add(detail);
+            ResponseModel<InventoryVoucherDetailResponseDto> response = new ResponseModel<InventoryVoucherDetailResponseDto>();
+            var detail = await HttpRequestsHelper.Get<List<InventoryVoucherDetailResponseDto>>(APIUrl + "get-by-document-number?documentNumber=" + documentNumber);
+
 
             if (detail != null)
             {
 
                 response.Status = "success";
-                response.Data = responseData;
+                response.Data = detail;
                 return Ok(response);
             }
             response.Status = "success";
@@ -62,10 +57,10 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             request.UserId = int.Parse(userId);
 
-            bool isCreated = await HttpRequestsHelper.Post<bool>(APIUrl + "create", request);
-            if (isCreated)
+            var result = await HttpRequestsHelper.Post<InventoryVoucher>(APIUrl + "create", request);
+            if (result != null)
             {
-                return Ok(isCreated);
+                return Ok(result);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }

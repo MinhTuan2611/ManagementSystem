@@ -1,7 +1,7 @@
 ﻿using ManagementSystem.Common.Entities;
-using ManagementSystem.StoragesApi.Controllers.SeedingData;
+using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace ManagementSystem.StoragesApi.Data
 {
@@ -15,6 +15,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<Storage> Storages { get; set; }
         public DbSet<Unit> Unit { get; set; }
         public DbSet<Category> Category { get; set; }
+        public DbSet<RevenueGroup> RevenueGroups { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductStorage> ProductStorages { get; set; }
         public DbSet<ProductUnit> ProductUnit { get; set; }
@@ -31,15 +32,28 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<ActivityLog> ActivityLog { get; set; }
         public DbSet<ProductSupplier> ProductSuppliers { get; set; }
 
+        // Response Value
+        public DbSet<CustomerResponseDto> customerResponseDtos { get; set; }
+        public DbSet<BillSearchingResponseDto> billSearchingResponseDtos { get; set; }
+        public DbSet<BillDetailResponseDto> BillDetailResponseDtos { get; set; }
+        public DbSet<BillPaymentDetailResponseDto> BillPaymentDetailResponseDtos { get; set; }
+        public DbSet<PaymentMethodDto> PaymentMethodDtos { get; set; }
+        public DbSet<ProductAutoGenerationResponseDto> ProductAutoGenerationResponseDtos { get; set; }
+        public DbSet<EmployeeShiftInformationDto> EmployeeShiftInformationDtos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Category>().HasData(CategoriesSeeding.GetCategoies());
-            modelBuilder.Entity<AnimalPartRefCode>().HasData(AnimalPartRefCodesSeeding.GenerateAnimalPartRefCodes());
-
             modelBuilder.Entity<RequestSampleItem>().HasKey(x => new {x.ProductId, x.RequestSampleId, x.UnitId});
             modelBuilder.Entity<ProductSupplier>().HasKey(x => new { x.SupplierId, x.ProductId });
+            modelBuilder.Entity<CustomerResponseDto>().ToTable(nameof(CustomerResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<BillSearchingResponseDto>().ToTable(nameof(BillSearchingResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<BillDetailResponseDto>().ToTable(nameof(BillDetailResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<BillPaymentDetailResponseDto>().ToTable(nameof(BillPaymentDetailResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<PaymentMethodDto>().ToTable(nameof(PaymentMethodDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ProductAutoGenerationResponseDto>().ToTable(nameof(ProductAutoGenerationResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<EmployeeShiftInformationDto>().ToTable(nameof(EmployeeShiftInformationDto), t => t.ExcludeFromMigrations());
         }
     }
 }

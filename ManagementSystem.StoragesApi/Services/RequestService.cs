@@ -149,6 +149,11 @@ namespace ManagementSystem.StoragesApi.Services
                 ReceiverPhone = request.ReceiverPhone,
                 ReceivingDay = request.ReceivingDay,
                 PaymentMethod = request.PaymentMethod,
+                CreditAccount = request.CreditAccount,
+                CreditAmount = request.CreditAmount,
+                DebitAccount = request.DebitAccount,
+                DebitAmount = request.DebitAmount,
+                CreateDate = DateTime.Now
                 TotalAmount = request.TotalAmount,
                 Signature = request.Signature,
                 Note = request.Note,
@@ -227,6 +232,15 @@ namespace ManagementSystem.StoragesApi.Services
                 }
                 existingRequest.RequestItemId = updatedRequestItems;
 
+            // Update the properties of the existing request with the new values
+            //existingRequest.RequestName = updatedRequest.RequestName;
+            existingRequest.BranchId = updatedRequest.BranchId;
+            existingRequest.StorageId = updatedRequest.StorageId;
+            existingRequest.Note = updatedRequest.Note;
+            existingRequest.CreditAccount = updatedRequest.CreditAccount;
+            existingRequest.CreditAmount = updatedRequest.CreditAmount;
+            existingRequest.DebitAccount = updatedRequest.DebitAccount;
+            existingRequest.DebitAmount = updatedRequest.DebitAmount;
                 switch (updatedRequest.UpdateType)
                 {
                     case -1:

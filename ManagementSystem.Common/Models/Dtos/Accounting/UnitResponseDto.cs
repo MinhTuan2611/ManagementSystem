@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ManagementSystem.Common.Models.Dtos.Accounting
+namespace ManagementSystem.Common.Models.Dtos
 {
     [Keyless]
     public class UnitResponseDto
     {
-        public string UnitName { get; set; }
+        public string? UnitName { get; set; }
     }
 }

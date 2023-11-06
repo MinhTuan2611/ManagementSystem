@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.Common.Models.Dtos
 {
+    [Keyless]
     public class LegerResponseDto
     {
-        public string TransactionDate { get; set; }
-        public int DebitAccount { get; set; }
-        public int CreitAccount { get; set; }
-        public int DoccumentNumer { get; set; }
-        public string DocumentType { get; set; }
-        public int UserId { get; set; }
-        public string Username { get; set; }
-        public int TotalMoney { get; set; }
+        public DateTime TransactionDate { get; set; }
+        public string? DepositAccount { get; set; }
+        public string? CreditAccount { get; set; }
+        public int? DoccumentNumber { get; set; }
+        public string? DoccumentType { get; set; }
+        public int? BillId { get; set; }
+        public int? Amount { get; set; }
+        public string LegerDescription { get; set; }
     }
 }

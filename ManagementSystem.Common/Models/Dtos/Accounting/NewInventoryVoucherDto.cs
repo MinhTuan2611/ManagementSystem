@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ManagementSystem.Common.Models.Dtos
+﻿namespace ManagementSystem.Common.Models.Dtos
 {
     public class NewInventoryVoucherDto
     {
@@ -12,11 +6,11 @@ namespace ManagementSystem.Common.Models.Dtos
         public int UserId { get; set; }
         public int? CustomerId { get; set; }
         public int? EmployeeShiftId { get; set; }
-        public int? BrandId { get; set; }
-        public string PurchasingRepresentive { get; set; }
+        public int? BrandId { get; set; } = 1;
+        public int? BillId { get; set; }
+        public string? PurchasingRepresentive { get; set; }
         public string Note { get; set; } = "";
-        public List<string> PaymentMethodCodes { get; set; }
-
+        public int CashPaymentAmount { get; set; }
         public List<InventoryVoucherDetailDto> Details { get; set; }
     }
 }

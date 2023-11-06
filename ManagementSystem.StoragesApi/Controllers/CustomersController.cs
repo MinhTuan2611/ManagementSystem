@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -55,6 +56,14 @@ namespace ManagementSystem.StoragesApi.Controllers
             bool updated = _CustomersService.UpdateCustomer(customer, userId);
             return Ok(updated);
         }
+
+        [HttpPost("update_point")]
+        public IActionResult UpdateCustomerPoint([FromBody] UpdateCustomerPointDto model)
+        {
+            bool updated = _CustomersService.UpdateCustomerPoint(model.Amount.Value, model.CustomerId.Value);
+            return Ok(updated);
+        }
+
         [HttpPost("delete")]
         public IActionResult Delete(int customerId)
         {
@@ -65,25 +74,8 @@ namespace ManagementSystem.StoragesApi.Controllers
         [HttpGet("search-term")]
         public IActionResult SearchCustomer([FromQuery] string searchTerm)
         {
-            // Check search term input is empty or not
-            string pattern = @"^[a-zA-Z0-9-]+$";
-            Regex rg = new Regex(pattern);
-
-            var customers = new List<Customer>();
-
-            if (!rg.IsMatch(searchTerm)) // Search term is empty, we will get all customer
-            {
-                customers = _CustomersService.GetListCustomers();
-            }
-            else
-            {
-                customers = _CustomersService.GetCustomerBySearchTerm(searchTerm);
-            }
-            // Map Customer to CustomerDto to reponse
-            var customerDto = _mapper.Map<List<CustomerResponseDto>>(customers);
-
-            return Ok(customerDto);
-
+            var customers = _CustomersService.GetCustomerBySearchTerm(searchTerm);
+            return Ok(customers);
         }
     }
 }

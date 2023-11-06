@@ -1,5 +1,6 @@
 using Lib.AspNetCore.ServerSentEvents;
 using ManagementSystem.MainApp.Services;
+using ManagementSystem.MainApp.Utility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -15,6 +16,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication();
 builder.Services.AddServerSentEvents<INotificationsServices, NotificationsServices>();
+builder.Services.AddScoped<IPaymentServices, PaymentServices>();
+
+SD.AccountingApiUrl = builder.Configuration["ServicesUrls:AccountingApi"];
+SD.AccountApiUrl = builder.Configuration["ServicesUrls:AccountApi"];
+SD.StorageApiUrl = builder.Configuration["ServicesUrls:StorageApi"];
+
+
 builder.Services.AddAuthentication(option =>
 {
     option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -76,11 +84,14 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

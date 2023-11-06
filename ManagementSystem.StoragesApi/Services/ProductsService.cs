@@ -1,8 +1,10 @@
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -16,10 +18,11 @@ namespace ManagementSystem.StoragesApi.Services
             _storageContext = context;
         }
 
-        public List<ProductListResponse> GetListProduct(string? searchValue, int? categoryId)
+        public async Task<(List<ProductListResponse>,int)> GetListProduct(string? searchValue, int? categoryId, int pageSize, int pageNumber)
         {
             string[] includes = { "Category"};
             IQueryable<Product> products = _unitOfWork.ProductRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes);
+            var totalRecord = 0;
             if(searchValue != null && searchValue != String.Empty)
             {
                 products = products.Where(x => x.ProductCode.Contains(searchValue) || x.ProductName.Contains(searchValue));
@@ -28,7 +31,16 @@ namespace ManagementSystem.StoragesApi.Services
             {
                 products = products.Where(x => x.CategoryId == categoryId);
             }
-            var productToList = products.ToList();
+            var productToList = new List<Product>();
+            totalRecord = await products.CountAsync();
+            if (pageSize != 0 && pageNumber != 0)
+            {
+                productToList = products.Skip((pageNumber - 1) * pageSize)
+                   .Take(pageSize).ToList();
+            } else
+            {
+                productToList = products.ToList();
+            }
             var listProduct = new List<ProductListResponse>();
             for (int i = 0; i < productToList.Count; i++)
             {
@@ -39,13 +51,13 @@ namespace ManagementSystem.StoragesApi.Services
                     ProductCode = productToList[i].ProductCode,
                     BarCode = productToList[i].BarCode,
                     CategoryId = productToList[i].CategoryId,
-                    CategoryName = productToList[i].Category.CategoryName,
+                    CategoryName = productToList[i].Category?.CategoryName,
                     Price = productToList[i].Price,
                     DefaultPurchasePrice = productToList[i].DefaultPurchasePrice,
                 };
                 listProduct.Add(product);
             }
-            return listProduct;
+            return (listProduct,totalRecord);
         }
 
         public IEnumerable<ProductInfo> AutoCompleteProduct(string? valueSearch)
@@ -136,6 +148,7 @@ namespace ManagementSystem.StoragesApi.Services
                 product.BarCode = request.Units[0].Barcode;
                 product.CreditAccountId = request.CreditAccountId;
                 product.DebitAccountId = request.DebitAccountId;
+                product.RevenueGroupId = request.RevenueGroupId;
 
                 _unitOfWork.ProductRepository.Insert(product);
                 _unitOfWork.Save();
@@ -206,6 +219,7 @@ namespace ManagementSystem.StoragesApi.Services
                 product.BarCode = request.Units[0].Barcode;
                 product.CreditAccountId = request.CreditAccountId;
                 product.DebitAccountId = request.DebitAccountId;
+                product.RevenueGroupId = request.RevenueGroupId;
                 product.ModifyBy = request.ModifyBy;
 
                 _unitOfWork.ProductRepository.Update(product);
@@ -431,6 +445,36 @@ namespace ManagementSystem.StoragesApi.Services
             return string.Format("{0}{1}", categoryRefCode, animalPartRefCode);
         }
 
+        public List<ProductAutoGenerationResponseDto> AutoRandomProducts(int items, int? brandId)
+        {
+
+            string query = string.Format(@"
+                SELECT TOP {0} P.ProductId
+	                  ,p.ProductCode
+	                  ,p.ProductName
+	                  ,u.UnitId
+	                  ,u.UnitName
+	                  ,ps.Quantity AS TotalSystemAmount
+                FROM dbo.Products p
+                JOIN dbo.ProductUnit pu  ON pu.ProductId = p.ProductId
+                JOIN dbo.Unit u ON u.UnitId = pu.UnitId
+                LEFT JOIN dbo.ProductStorages ps ON ps.ProductId = p.ProductId
+                LEFT JOIN dbo.Storages s ON s.StorageId = ps.StorageId
+                LEFT JOIN dbo.Branches b ON b.BranchId = s.BranchId
+                ORDER BY NEWID()
+                ",items);
+
+            try
+            {
+                var result = _storageContext.ProductAutoGenerationResponseDtos.FromSqlRaw(query).ToList();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         // private function check part name is in product name
         private bool CheckAnimalPartInProductName(string productName, List<string> AniamlPartSplit)
         {

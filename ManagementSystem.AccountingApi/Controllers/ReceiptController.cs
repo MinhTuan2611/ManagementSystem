@@ -1,5 +1,6 @@
 ﻿using ManagementSystem.AccountingApi.Services;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,10 @@ namespace ManagementSystem.AccountingApi.Controllers
             _service = service;
         }
 
-        [HttpGet("get-all")]
-        public async Task<IActionResult> GetAll([FromQuery] int? page = 1, [FromQuery] int? pageSize = 10)
+        [HttpPost("search_results")]
+        public async Task<IActionResult> GetAll(SearchCriteria searchModel)
         {
-            var result = await _service.GetAllReceipts(page.Value, pageSize.Value);
+            var result = await _service.SearchReceipts(searchModel);
             return Ok(result);
         }
 
@@ -34,10 +35,10 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> Create(NewReceiptRequestDto request)
         {
-            var isCreated = await _service.CreateReceipt(request);
-            if (isCreated == true)
+            var result = await _service.CreateReceipt(request);
+            if (result != null)
             {
-                return Ok(isCreated);
+                return Ok(result);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
@@ -45,7 +46,7 @@ namespace ManagementSystem.AccountingApi.Controllers
         [HttpPost("update")]
         public async Task<IActionResult> Update(UpdateReceiptRequestDto request)
         {
-            bool updated = await _service.UpdateReceipt(request);
+            var updated = await _service.UpdateReceipt(request);
             return Ok(updated);
         }
     }

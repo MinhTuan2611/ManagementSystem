@@ -12,5 +12,8 @@ namespace ManagementSystem.Common.Models.Dtos
         public string ForReason { get; set; }
         public int TotalMoney { get; set; }
         public int UserId { get; set; }
+        public int? BillId { get; set; }
+        public int InventoryDocumentNumber { get; set; }
+        public int? StorageId { get; set; }
     }
 }
