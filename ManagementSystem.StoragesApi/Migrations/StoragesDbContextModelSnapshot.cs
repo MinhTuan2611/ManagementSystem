@@ -486,8 +486,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
 
                     b.Property<int>("StorageId")
                         .HasColumnType("int");
