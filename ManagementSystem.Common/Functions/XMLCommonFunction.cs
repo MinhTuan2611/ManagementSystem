@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace ManagementSystem.Common
 {
@@ -33,6 +34,32 @@ namespace ManagementSystem.Common
             }
 
             return xmlStringBuilder.ToString();
+        }
+
+        public static string GenerateXml<T>(IEnumerable<T> data, string rootElementName, string itemElementName)
+        {
+            XDocument doc = new XDocument(
+                new XElement(rootElementName,
+                    from item in data
+                    select CreateXmlElement(item, itemElementName)
+                )
+            );
+
+            return doc.ToString();
+        }
+
+        private static XElement CreateXmlElement<T>(T item, string elementName)
+        {
+            var properties = typeof(T).GetProperties();
+            var element = new XElement(elementName);
+
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(item);
+                element.Add(new XElement(prop.Name, value));
+            }
+
+            return element;
         }
     }
 }

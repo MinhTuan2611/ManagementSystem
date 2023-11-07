@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "D:\\OtherPj\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {}
+    "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {}
   },
   "projects": {
-    "D:\\OtherPj\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {
+    "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
+        "projectUniqueName": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
         "projectName": "ManagementSystem.AccountingApi",
-        "projectPath": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
-        "packagesPath": "C:\\Users\\ngduc\\.nuget\\packages\\",
-        "outputPath": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.AccountingApi\\obj\\",
+        "projectPath": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
+        "packagesPath": "C:\\Users\\kimto\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.AccountingApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ngduc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kimto\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -28,8 +28,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
-                "projectPath": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj"
+              "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
+                "projectPath": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj"
               }
             }
           }
@@ -44,6 +44,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "EPPlus": {
+              "target": "Package",
+              "version": "[7.0.1, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[6.0.20, )"
@@ -86,21 +90,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
+    "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
+        "projectUniqueName": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
         "projectName": "ManagementSystem.Common",
-        "projectPath": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
-        "packagesPath": "C:\\Users\\ngduc\\.nuget\\packages\\",
-        "outputPath": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\obj\\",
+        "projectPath": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
+        "packagesPath": "C:\\Users\\kimto\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\ngduc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kimto\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -159,7 +163,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
