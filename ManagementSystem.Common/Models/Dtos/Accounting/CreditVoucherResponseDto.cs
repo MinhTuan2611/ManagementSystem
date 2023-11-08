@@ -21,5 +21,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public string Cashier { get; set; }
         public string PaymentMethodName { get; set; }
         public string PaymentMethodCode { get; set; }
+        public string? CreditAccount { get; set; }
+        public string? DebitAccount { get; set; }
     }
 }

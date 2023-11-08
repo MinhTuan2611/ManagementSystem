@@ -22,5 +22,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? TotalMoneyVND { get; set; }
         public int? ExchangeRate { get; set; }
         public int? NTMoney { get; set; }
+        public string? CreditAccount { get; set; }
+        public string? DebitAccount { get; set; }
     }
 }
