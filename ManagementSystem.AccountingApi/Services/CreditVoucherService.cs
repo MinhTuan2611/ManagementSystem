@@ -152,11 +152,14 @@ namespace ManagementSystem.AccountingApi.Services
 		                ,u.UserName AS Cashier
 		                ,pm.PaymentMethodCode
 		                ,pm.PaymentMethodName
+                        ,lg.DepositAccount AS DebitAccount
+						,lg.CreditAccount AS CreditAccount
                 FROM dbo.CreditVouchers r
                 LEFT JOIN StoragesDB.dbo.Customers c ON r.CustomerId = c.CustomerId
                 LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = r.UserId
                 JOIN StoragesDb.dbo.PaymentMethods pm ON pm.PaymentMethodId = r.PaymentMethodId
                 JOIN dbo.Recordingtransactions rt ON rt.ReasonCode = r.ForReason
+                LEFT JOIN dbo.Legers lg ON lg.DoccumentType = N'BAOCO' and lg.DoccumentNumber = r.DocumentNumber
                 WHERE r.DocumentNumber = {0}
             ", documentNumber);
 
@@ -166,7 +169,7 @@ namespace ManagementSystem.AccountingApi.Services
 
                 return result;
             }
-             catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -278,7 +281,7 @@ namespace ManagementSystem.AccountingApi.Services
                                         JOIN StoragesDb.dbo.Storages s ON s.BranchId = ub.BranchId
                                         WHERE ub.UserId = {0}", userId);
             }
-             
+
             try
             {
                 var result = _context.CalculateScalarFunction<ScalarResult<int?>>(query).Value;
@@ -292,7 +295,7 @@ namespace ManagementSystem.AccountingApi.Services
 
                     result = _context.CalculateScalarFunction<ScalarResult<int?>>(query).Value;
                 }
-                return result != null? result : 1;
+                return result != null ? result : 1;
             }
             catch (Exception ex)
             {

@@ -133,6 +133,8 @@ namespace ManagementSystem.AccountingApi.Services
 		                    ,pv.NTMoney
                             ,pv.DocumentNumber
                             ,pv.TransactionDate
+                            ,pv.DebitAccount
+							,pv.CreditAccount
                     FROM PaymentVouchers pv
                     LEFT JOIN StoragesDb.dbo.Branches b ON pv.BranchId = b.BranchId 
                     LEFT JOIN AccountsDb.dbo.Users u ON pv.UserId = u.UserId
