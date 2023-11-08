@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace ManagementSystem.Common.Models.Dtos.ElectronicBills
 {
-    internal class InvoiceRequestDto
+    public class InvoiceRequestDto
     {
+        public string XmlData { get; set; }
+        public string Pattern { get; set; }
     }
 }

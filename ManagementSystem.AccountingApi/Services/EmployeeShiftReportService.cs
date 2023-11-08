@@ -368,11 +368,12 @@ namespace ManagementSystem.AccountingApi.Services
             try
             {
                 string query = string.Format(@"
-                        SELECT COUNT(1) AS Value
-                        FROM dbo.ShiftEndReports s
-                        JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = s.ShiftEndId
-                        WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
-                        AND COALESCE(sh.ReceiverUserId, '') = ''
+                         SELECT COUNT(1) AS Value
+                         FROM dbo.ShiftEndReports s
+                         JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = s.ShiftEndId
+                         WHERE s.ShiftId = {0}
+	                        AND COALESCE(sh.ReceiverUserId, '') = ''
+	                        AND FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
                         ", shiftId);
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
