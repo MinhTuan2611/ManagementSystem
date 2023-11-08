@@ -10,6 +10,6 @@ namespace ManagementSystem.Common.Models.Dtos
         public string? ProductCode { get; set; }
         public int UnitId { get; set; }
         public string UnitName { get; set; }
-        public int? TotalSystemAmount { get; set; } = 0;
+        public float? TotalSystemAmount { get; set; } = 0;
     }
 }
