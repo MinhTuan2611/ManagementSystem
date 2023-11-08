@@ -13,6 +13,8 @@ namespace ManagementSystem.Common.Models.Dtos
         public string TaxAuthorityCode { get; set; }
         public string Ikey { get; set; }
         public string Buyer { get; set; }
+        public string CusCode { get; set; }
+        public string CusName { get; set; }
         public string Email { get; set; }
         public string EmailCC { get; set; }
         public string CusAddress { get; set; }

@@ -92,6 +92,30 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
+        public List<CustomerResponseDto> GetCustomerById(int id)
+        {
+            string query = string.Format(@"
+                SELECT [CustomerCode]
+    	                ,[CustomerName]
+    	                ,[CustomerPoint]
+    	                ,[Address]
+    	                ,[BirthDay]
+    	                ,[Gender]
+    	                ,[PhoneNumber]
+                FROM dbo.Customers
+                WHERE CustomerId = {0}
+                            ", id);
+
+            try
+            {
+                var customers = _storageContext.customerResponseDtos.FromSqlRaw(query).ToList();
+                return customers;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         public bool UpdateCustomerPoint(int amount, int customerId)
         {
             try

@@ -77,5 +77,12 @@ namespace ManagementSystem.StoragesApi.Controllers
             var customers = _CustomersService.GetCustomerBySearchTerm(searchTerm);
             return Ok(customers);
         }
+
+        [HttpGet("get-detail")]
+        public IActionResult GetCustomerById([FromQuery] int id)
+        {
+            var customers = _CustomersService.GetCustomerById(id);
+            return Ok(customers);
+        }
     }
 }
