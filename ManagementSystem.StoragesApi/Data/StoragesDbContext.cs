@@ -1,4 +1,4 @@
-﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +40,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<PaymentMethodDto> PaymentMethodDtos { get; set; }
         public DbSet<ProductAutoGenerationResponseDto> ProductAutoGenerationResponseDtos { get; set; }
         public DbSet<EmployeeShiftInformationDto> EmployeeShiftInformationDtos { get; set; }
+        public DbSet<ProductDetailResponseDto> ProductResponseDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -69,6 +70,7 @@ namespace ManagementSystem.StoragesApi.Data
                     .IsClustered(false)
                     .HasDatabaseName("idx_productUnitBarcode");
             });
+            modelBuilder.Entity<ProductDetailResponseDto>().ToTable(nameof(ProductDetailResponseDto), t => t.ExcludeFromMigrations());
         }
     }
 }

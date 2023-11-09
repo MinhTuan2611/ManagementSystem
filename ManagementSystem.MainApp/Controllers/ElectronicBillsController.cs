@@ -1,7 +1,9 @@
-﻿using ManagementSystem.Common.Constants;
+﻿using ManagementSystem.Common;
+using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
+using ManagementSystem.Common.Models.Dtos.ElectronicBills;
 using ManagementSystem.MainApp.Utility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +29,15 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> Create(BillInfo billInfo)
         {
 
-            
+            var model = await GenerateInvoiceInformation(billInfo);
+
+            var xml = XMLCommonFunction.GenerateXml<InvoiceDto>(model, "Invoices", "Ivn");
+
+            var request = new InvoiceRequestDto()
+            {
+                XmlData = xml,
+                Pattern = MainConstants.ElectronicPartern
+            };
             return Ok(billInfo);
         }
 
@@ -48,11 +58,12 @@ namespace ManagementSystem.MainApp.Controllers
             }
         }
 
-        private async Task<InvoiceDto> GenerateInvoiceInformation(BillInfo billInfo)
+        private async Task<IEnumerable<InvoiceDto>> GenerateInvoiceInformation(BillInfo billInfo)
         {
-            var invoice = new InvoiceDto();
+            var invoices = new List<InvoiceDto>();
 
             var customer = new CustomerResponseDto();
+            var invoice = new InvoiceDto();
 
             if (billInfo.CustomerId != null || billInfo.CustomerId.Value > 0)
             {
@@ -70,14 +81,42 @@ namespace ManagementSystem.MainApp.Controllers
             }
             invoice.TaxAuthorityCode = MainConstants.TaxAuthorityCode;
             
-            return invoice ;
+            var products = new List<ProductInvoiceDto>();
+
+            foreach (var item in billInfo.Details)
+            {
+                var product = await GetProductDetail(item.ProductId, item.UnitId);
+                ProductInvoiceDto detail = new ProductInvoiceDto();
+
+                detail.Code = product.ProductCode;
+                detail.No = product.ProductId;
+                detail.ProdName = product.ProductName;
+                detail.ProdUnit = product.UnitName;
+                detail.ProdQuantity = item.Quantity;
+                detail.Discount = item.DiscountPercentage;
+                detail.DiscountAmount = item.DiscountAmount;
+                detail.Total = item.Amount;
+                detail.VATRate = product.Tax;
+
+                products.Add(detail);
+            }
+
+            invoices.Add(invoice);
+
+            return invoices;
         }
 
         private async Task<CustomerResponseDto> GetCustomerInformation(int customerId) {
-            ResponseModel<CustomerResponseDto> response = new ResponseModel<CustomerResponseDto>();
             var result = await HttpRequestsHelper.Get<CustomerResponseDto>(SD.StorageApiUrl + "customers/get-detail?id=" + customerId);
 
            return result;
+        }
+
+        private async Task<ProductDetailResponseDto> GetProductDetail(int productId, int unitId)
+        {
+            var result = await HttpRequestsHelper.Get<ProductDetailResponseDto>(SD.StorageApiUrl + "products/get-detail-by-id-unitid?productId=" + productId + "&unitId=" + unitId);
+
+            return result;
         }
         #endregion
     }
