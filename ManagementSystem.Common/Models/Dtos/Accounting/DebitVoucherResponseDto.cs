@@ -19,5 +19,8 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? NTMoney { get; set; }
         public string PaymentMethodName { get; set; }
         public string PaymentMethodCode { get; set; }
+
+        public string? CreditAccount { get; set; }
+        public string? DebitAccount { get; set; }
     }
 }

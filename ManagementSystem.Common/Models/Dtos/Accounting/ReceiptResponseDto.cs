@@ -19,5 +19,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? TotalMoney { get; set; }
         public int UserId { get; set; }
         public string Cashier { get; set; }
+        public string? CreditAccount { get; set; }
+        public string? DebitAccount { get; set; }
     }
 }
