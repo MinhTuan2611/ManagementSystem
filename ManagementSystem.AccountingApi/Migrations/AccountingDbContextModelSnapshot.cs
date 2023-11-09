@@ -174,11 +174,11 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int>("UnitId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ActualAmount")
-                        .HasColumnType("int");
+                    b.Property<float>("ActualAmount")
+                        .HasColumnType("real");
 
-                    b.Property<int>("SystemAmount")
-                        .HasColumnType("int");
+                    b.Property<float>("SystemAmount")
+                        .HasColumnType("real");
 
                     b.HasKey("ShiftEndId", "ProductId", "UnitId");
 
@@ -1179,8 +1179,8 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<float?>("Quantity")
+                        .HasColumnType("real");
 
                     b.Property<int?>("StorageId")
                         .HasColumnType("int");
@@ -1221,12 +1221,12 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("ReceiptResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
-            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ScalarResult<int>", b =>
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ScalarResult<int?>", b =>
                 {
-                    b.Property<int>("Value")
+                    b.Property<int?>("Value")
                         .HasColumnType("int");
 
-                    b.ToTable("ScalarResult<int>");
+                    b.ToTable("ScalarResult<int?>");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ScalarResult<string>", b =>
