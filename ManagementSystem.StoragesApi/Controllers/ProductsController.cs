@@ -1,7 +1,5 @@
-﻿using ManagementSystem.Common.Entities;
-using ManagementSystem.Common.GenericModels;
+﻿using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
-using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -100,6 +98,15 @@ namespace ManagementSystem.StoragesApi.Controllers
         public IActionResult GenerateProductCode([FromQuery] int items, [FromQuery] int? brandId)
         {
             var result = _ProductService.AutoRandomProducts(items, brandId);
+
+            return Ok(result);
+        }
+
+        [HttpGet()]
+        [Route("get-detail-by-id-unitid")]
+        public IActionResult GenerateProductCode([FromQuery] int productId, [FromQuery] int unitId)
+        {
+            var result = _ProductService.ProductDetailByIdAndUnit(productId, unitId);
 
             return Ok(result);
         }

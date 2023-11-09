@@ -40,6 +40,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<PaymentMethodDto> PaymentMethodDtos { get; set; }
         public DbSet<ProductAutoGenerationResponseDto> ProductAutoGenerationResponseDtos { get; set; }
         public DbSet<EmployeeShiftInformationDto> EmployeeShiftInformationDtos { get; set; }
+        public DbSet<ProductDetailResponseDto> ProductResponseDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +55,7 @@ namespace ManagementSystem.StoragesApi.Data
             modelBuilder.Entity<PaymentMethodDto>().ToTable(nameof(PaymentMethodDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<ProductAutoGenerationResponseDto>().ToTable(nameof(ProductAutoGenerationResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<EmployeeShiftInformationDto>().ToTable(nameof(EmployeeShiftInformationDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ProductDetailResponseDto>().ToTable(nameof(ProductDetailResponseDto), t => t.ExcludeFromMigrations());
         }
     }
 }
