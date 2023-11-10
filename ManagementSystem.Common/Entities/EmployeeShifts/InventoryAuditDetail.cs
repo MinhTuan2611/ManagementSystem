@@ -8,8 +8,8 @@ namespace ManagementSystem.Common.Entities
         public int ShiftEndId { get; set; }
         public int ProductId { get; set; }
         public int UnitId { get; set; }
-        public int ActualAmount { get; set; }
-        public int SystemAmount { get; set; }
+        public float ActualAmount { get; set; }
+        public float SystemAmount { get; set; }
 
         public ShiftEndReport ShiftEndReport { get; set; }
     }

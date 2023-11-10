@@ -112,9 +112,12 @@ namespace ManagementSystem.AccountingApi.Services
 		                ,r.TotalMoney
 		                ,u.UserId
 		                ,u.UserName AS Cashier
+                        ,lg.DepositAccount AS DebitAccount
+						,lg.CreditAccount AS CreditAccount
                 FROM ReceiptVouchers r
                 LEFT JOIN StoragesDB.dbo.Customers c ON r.CustomerId = c.CustomerId
                 LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = r.UserId
+                LEFT JOIN dbo.Legers lg ON lg.DoccumentType = N'THU' and lg.DoccumentNumber = r.DocumentNumber
                 WHERE r.DocumentNumber = {0}
             ", documentNumbers);
 

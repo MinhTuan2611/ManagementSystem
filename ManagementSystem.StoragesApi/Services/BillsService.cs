@@ -114,6 +114,14 @@ namespace ManagementSystem.StoragesApi.Services
                         Product = product,
                         Unit = unit
                     };
+                    string[] includes = { "Storage" };
+                    var quantityInStorage = _unitOfWork.ProductStorageRepository.GetWithInclude(x => x.ProductId == detail.ProductId, includes).Where(x => x.Storage.BranchId == (bill.BranchId ?? 1)).First();
+                    if(quantityInStorage != null)
+                    {
+                        quantityInStorage.Quantity -= detail.Quantity;
+                        _unitOfWork.ProductStorageRepository.Update(quantityInStorage);
+                        _unitOfWork.Save();
+                    }
                     _unitOfWork.BillDetailRepository.Insert(newDetail);
                     _unitOfWork.Save();
                     detail.Id = newDetail.Id;

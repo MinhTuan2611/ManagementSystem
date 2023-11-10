@@ -527,6 +527,7 @@
         "dependencies": {
           "Microsoft.AspNetCore.Cryptography.KeyDerivation": "7.0.9",
           "Microsoft.EntityFrameworkCore.Abstractions": "6.0.20",
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.20",
           "Newtonsoft.Json": "13.0.3"
         },
         "runtime": {

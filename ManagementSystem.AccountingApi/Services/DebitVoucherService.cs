@@ -132,7 +132,7 @@ namespace ManagementSystem.AccountingApi.Services
                 var logger = new LogWriter("Function UpdateDebitVoucher: " + ex.Message, _path);
                 return null;
             }
-            
+
         }
 
         public async Task<DebitVoucherResponseDto> GetDebitVouchereByDocumentNumber(int documentNumber)
@@ -153,6 +153,8 @@ namespace ManagementSystem.AccountingApi.Services
                             ,pv.TransactionDate
 		                    ,pm.PaymentMethodName
 		                    ,pm.PaymentMethodCode
+                            ,pv.DebitAccount
+							,pv.CreditAccount
                     FROM dbo.DebitVouchers pv
                     LEFT JOIN AccountsDb.dbo.Users u ON pv.UserId = u.UserId
                     LEFT JOIN AccountsDb.dbo.UserBranchs ub ON ub.UserId = u.UserId
