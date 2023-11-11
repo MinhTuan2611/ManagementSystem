@@ -68,6 +68,8 @@ namespace ManagementSystem.AccountsApi.Services
         public UserInfo GetUserByUsername(string username)
         {
             var user = _unitOfWork.UserRepository.Get(u => u.UserName == username);
+            string[] includes = { "role" };
+            List<string> roleCodes = _unitOfWork.UserRoleRepository.GetWithInclude(x => x.UserId == user.UserId, includes).Select(x => x.role.RoleCode).ToList();
             UserInfo userInfo = new UserInfo
             {
                 UserId = user.UserId,
@@ -76,7 +78,8 @@ namespace ManagementSystem.AccountsApi.Services
                 LastName = user.LastName,
                 FullName = user.FirstName + " " + user.LastName,
                 Email = user.Email,
-                PhoneNumber = user.PhoneNumber
+                PhoneNumber = user.PhoneNumber,
+                RoleIds = string.Join(",", roleCodes)
             };
             return userInfo;
         }
