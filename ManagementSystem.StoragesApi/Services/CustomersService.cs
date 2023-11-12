@@ -92,7 +92,7 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
-        public List<CustomerResponseDto> GetCustomerById(int id)
+        public CustomerResponseDto GetCustomerById(int id)
         {
             string query = string.Format(@"
                 SELECT [CustomerCode]
@@ -108,7 +108,7 @@ namespace ManagementSystem.StoragesApi.Services
 
             try
             {
-                var customers = _storageContext.customerResponseDtos.FromSqlRaw(query).ToList();
+                var customers = _storageContext.customerResponseDtos.FromSqlRaw(query).FirstOrDefault();
                 return customers;
             }
             catch (Exception ex)
