@@ -1,12 +1,12 @@
-﻿using ManagementSystem.Common;
+using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.Common.Models.Dtos.ElectronicBills;
 using ManagementSystem.MainApp.Utility;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -17,7 +17,7 @@ namespace ManagementSystem.MainApp.Controllers
     public class ElectronicBillsController : ControllerBase
     {
         private ResponseDto _response;
-        string path = "http://0317983888.softdreams.vn/";
+        string url = "http://0317983888.softdreams.vn/";
 
         public ElectronicBillsController()
         {
@@ -25,24 +25,95 @@ namespace ManagementSystem.MainApp.Controllers
         }
 
 
-        [HttpPost("create")]
+        [HttpPost("publish/importAndPublishInvoice")]
         public async Task<IActionResult> Create(BillInfo billInfo)
         {
 
             var model = await GenerateInvoiceInformation(billInfo);
 
-            var xml = XMLCommonFunction.GenerateXml<InvoiceDto>(model, "Invoices", "Ivn");
+            string invoicesXml = XMLCommonFunction.GenerateXml(model.ToList());
+
+            var request = new InvoiceRequestDto()
+            {
+                XmlData = invoicesXml,
+                Pattern = SD.EPatern
+            };
+
+            string authen = GenerateToken("POST");
+
+            var result = await HttpRequestsHelper.PostAuthorize<object>(url + "api/publish/importInvoice", request, authen);
+            return Ok(billInfo);
+        }
+
+        [HttpPost("business/adjustInvoice")]
+        public async Task<IActionResult> AdjustInvoice([FromBody] InvoiceModifyRequestDto requestDto)
+        {
+            string xml = XMLCommonFunction.GenerateInvoiceModificationXml(requestDto);
 
             var request = new InvoiceRequestDto()
             {
                 XmlData = xml,
-                Pattern = MainConstants.ElectronicPartern
+                Pattern = SD.EPatern,
+                IKey = requestDto.Ikey
             };
-            return Ok(billInfo);
+
+            string authen = GenerateToken("POST");
+            var result = await HttpRequestsHelper.PostAuthorize<object>(url + "api/business/adjustInvoice", request, authen);
+            return Ok();
+        }
+
+        [HttpPost("business/replaceInvoice")]
+        public async Task<IActionResult> ReplaceInvoice([FromBody] InvoiceModifyRequestDto requestDto)
+        {
+            string xml = XMLCommonFunction.GenerateInvoiceModificationXml(requestDto);
+
+            var request = new InvoiceRequestDto()
+            {
+                XmlData = xml,
+                Pattern = SD.EPatern,
+                IKey = requestDto.Ikey
+            };
+
+            string authen = GenerateToken("POST");
+            var result = await HttpRequestsHelper.PostAuthorize<object>(url + "api/business/replaceInvoice", request, authen);
+            return Ok();
+        }
+        [HttpGet("declaration/get_detail")]
+
+        public async Task<IActionResult> GetDeclarationDetail([FromQuery] string key)
+        {
+            string authen = GenerateToken("POST");
+            var result = await HttpRequestsHelper.PostAuthorize<DeclNormalInvDto>(url + "api/declaration/get_detail", new DeclarationRequestDto { Key = key}, authen);
+            return Ok(result);
+        }
+
+        [HttpGet("declaration/search")]
+
+        public async Task<IActionResult> SearchDeclaration([FromQuery] string key, [FromQuery] int option)
+        {
+            string authen = GenerateToken("POST");
+            var result = await HttpRequestsHelper.PostAuthorize<DeclNormalInvDto>(url + "api/declaration/search", new DeclarationRequestDto { Key = key, Option = option }, authen);
+            return Ok(result);
+        }
+
+        [HttpPost("declaration/registerAndPublish")]
+        public async Task<IActionResult> RegisterDeclaration([FromBody] RegistrationRequestDto requestDto)
+        {
+            string authen = GenerateToken("POST");
+            var result = await HttpRequestsHelper.PostAuthorize<string>(url + "api/declaration/registerAndPublish", requestDto, authen);
+            return Ok(result);
+        }
+
+        [HttpPost ("publish/checkInvoiceState")]
+        public async Task<IActionResult> CheckInvoiceStatus([FromBody] List<string> keys)
+        {
+            string authen = GenerateToken("POST");
+            var result = await HttpRequestsHelper.PostAuthorize<InvoiceStateResponseDto>(url + "api/publish/checkInvoiceState", keys, authen);
+            return Ok(result);
         }
 
         #region Private handle methods
-        private string GenerateToken(string httpMethod, string username, string password)
+        private string GenerateToken(string httpMethod)
         {
             DateTime epochStart = new DateTime(1970, 01, 01, 0, 0, 0, 0, DateTimeKind.Utc);
             TimeSpan timeSpan = DateTime.UtcNow - epochStart;
@@ -54,7 +125,7 @@ namespace ManagementSystem.MainApp.Controllers
             {
                 var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(signatureRawData));
                 var signature = Convert.ToBase64String(hash);
-                return $"{signature}:{nonce}:{timestamp}:{username}:{password}";
+                return $"{signature}:{nonce}:{timestamp}:{SD.EUserName}:{SD.EPassword}";
             }
         }
 
@@ -79,8 +150,11 @@ namespace ManagementSystem.MainApp.Controllers
                 invoice.CusAddress = customer.Address;
                 invoice.CusPhone = customer.PhoneNumber;
             }
-            invoice.TaxAuthorityCode = MainConstants.TaxAuthorityCode;
-            
+            invoice.TaxAuthorityCode = SD.ETaxCode;
+            invoice.Ikey = SD.EIKey;
+            invoice.ArisingDate = DateTime.Now.ToString("dd/MM/yyyy");
+            invoice.CurrencyUnit = "VND";
+
             var products = new List<ProductInvoiceDto>();
 
             foreach (var item in billInfo.Details)
@@ -97,25 +171,47 @@ namespace ManagementSystem.MainApp.Controllers
                 detail.DiscountAmount = item.DiscountAmount;
                 detail.Total = item.Amount;
                 detail.VATRate = product.Tax;
+                detail.Feature = GetProductFeature(false, item.Amount).ToString();
 
                 products.Add(detail);
             }
 
+            invoice.Products = products;
             invoices.Add(invoice);
 
             return invoices;
         }
 
-        private async Task<CustomerResponseDto> GetCustomerInformation(int customerId) {
+        private async Task<CustomerResponseDto> GetCustomerInformation(int customerId)
+        {
             var result = await HttpRequestsHelper.Get<CustomerResponseDto>(SD.StorageApiUrl + "customers/get-detail?id=" + customerId);
 
-           return result;
+            return result;
         }
 
         private async Task<ProductDetailResponseDto> GetProductDetail(int productId, int unitId)
         {
             var result = await HttpRequestsHelper.Get<ProductDetailResponseDto>(SD.StorageApiUrl + "products/get-detail-by-id-unitid?productId=" + productId + "&unitId=" + unitId);
 
+            return result;
+        }
+
+        private int GetProductFeature(bool isSum, int amount)
+        {
+            int result = 1;
+
+            if (isSum)
+            {
+                result = 2;
+            }
+            else if (amount < 0)
+            {
+                result = 3;
+            }
+            else if (amount == 0)
+            {
+                result = 4;
+            }
             return result;
         }
         #endregion

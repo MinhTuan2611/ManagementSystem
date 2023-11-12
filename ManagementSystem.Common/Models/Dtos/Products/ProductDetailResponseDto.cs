@@ -13,8 +13,8 @@ namespace ManagementSystem.Common.Models.Dtos
         public int ProductId { get; set; }
         public string ProductCode { get; set; }
         public string ProductName { get; set; }
-        public double Price { get; set; }
-        public double DefaultPurchasePrice { get; set; }
+        public decimal Price { get; set; }
+        public decimal DefaultPurchasePrice { get; set; }
         public string BarCode { get; set; }
         public int Tax { get; set; }
         public string CategoryName { get; set; }
