@@ -14,6 +14,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public string ProdName { get; set; }
         public string ProdUnit { get; set; }
         public float ProdQuantity { get; set; }
+        public float ProdPrice { get; set; }
         public float Discount { get; set; }
         public float DiscountAmount { get; set; }
         public double Total { get; set; }

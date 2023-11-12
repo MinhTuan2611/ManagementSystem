@@ -35,6 +35,11 @@ SD.AccountingApiUrl = builder.Configuration["ServicesUrls:AccountingApi"];
 SD.AccountApiUrl = builder.Configuration["ServicesUrls:AccountApi"];
 SD.StorageApiUrl = builder.Configuration["ServicesUrls:StorageApi"];
 
+SD.ETaxCode = builder.Configuration["ElectronicBill:TaxCode"];
+SD.EPatern = builder.Configuration["ElectronicBill:Patern"];
+SD.EIKey = builder.Configuration["ElectronicBill:IKey"];
+SD.EUserName = builder.Configuration["ElectronicBill:UserName"];
+SD.EPassword = builder.Configuration["ElectronicBill:Password"];
 
 builder.Services.AddAuthentication(option =>
 {

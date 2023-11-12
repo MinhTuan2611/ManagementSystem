@@ -95,7 +95,7 @@ namespace ManagementSystem.StoragesApi.Controllers
         }
 
         [HttpGet("get-detail")]
-        public IActionResult GetCustomerById([FromQuery] int id)
+        public async Task<IActionResult> GetCustomerById([FromQuery] int id)
         {
             var customers = _CustomersService.GetCustomerById(id);
             return Ok(customers);

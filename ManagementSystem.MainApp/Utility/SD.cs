@@ -1,4 +1,4 @@
-﻿namespace ManagementSystem.MainApp.Utility
+namespace ManagementSystem.MainApp.Utility
 {
     public class SD
     {
@@ -13,5 +13,11 @@
             PUT,
             DELETE
         }
+
+        public static string EIKey { get; set; }
+        public static string EPatern { get; set; }
+        public static string ETaxCode { get; set; }
+        public static string EUserName { get; set; }
+        public static string EPassword { get; set; }
     }
 }

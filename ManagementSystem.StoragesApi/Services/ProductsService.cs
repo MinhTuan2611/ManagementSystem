@@ -492,14 +492,15 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
-        public List<ProductDetailResponseDto> ProductDetailByIdAndUnit(int productId, int unitId)
+        public ProductDetailResponseDto ProductDetailByIdAndUnit(int productId, int unitId)
         {
 
             string query = string.Format(@"
                     SELECT p.ProductId
 		                    ,p.ProductCode
-		                    ,p.Price
-		                    ,p.DefaultPurchasePrice
+                            ,p.ProductName
+                            ,CONVERT(DECIMAL(18, 2), p.Price) AS Price
+		                    ,CONVERT(DECIMAL(18, 2), p.DefaultPurchasePrice) AS DefaultPurchasePrice
 		                    ,p.BarCode
 		                    ,p.Tax
 		                    ,c.CategoryName
@@ -513,7 +514,7 @@ namespace ManagementSystem.StoragesApi.Services
 
             try
             {
-                var result = _storageContext.ProductResponseDtos.FromSqlRaw(query).ToList();
+                var result = _storageContext.ProductResponseDtos.FromSqlRaw(query).SingleOrDefault();
 
                 return result;
             }
