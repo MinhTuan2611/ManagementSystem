@@ -33,7 +33,7 @@ namespace ManagementSystem.MainApp.Controllers
 
             string invoicesXml = XMLCommonFunction.GenerateXml(model.ToList());
 
-            var request = new InvoiceRequestDto()
+            var request = new InvoiceRequestWithoutKeyDto()
             {
                 XmlData = invoicesXml,
                 Pattern = SD.EPatern
@@ -154,7 +154,7 @@ namespace ManagementSystem.MainApp.Controllers
             invoice.Ikey = SD.EIKey;
             invoice.ArisingDate = DateTime.Now.ToString("dd/MM/yyyy");
             invoice.CurrencyUnit = "VND";
-
+            invoice.PaymentMethod = GetPaymentMethodByCode(billInfo.Payments[0].PaymentMethodCode).GetAwaiter().GetResult().PaymentMethodName;
             var products = new List<ProductInvoiceDto>();
 
             foreach (var item in billInfo.Details)
@@ -192,6 +192,13 @@ namespace ManagementSystem.MainApp.Controllers
         private async Task<ProductDetailResponseDto> GetProductDetail(int productId, int unitId)
         {
             var result = await HttpRequestsHelper.Get<ProductDetailResponseDto>(SD.StorageApiUrl + "products/get-detail-by-id-unitid?productId=" + productId + "&unitId=" + unitId);
+
+            return result;
+        }
+
+        private async Task<PaymentMethodDto> GetPaymentMethodByCode(string code)
+        {
+            var result = await HttpRequestsHelper.Get<PaymentMethodDto>(SD.StorageApiUrl + "PaymentMethods/GetByCode?code=" + code);
 
             return result;
         }

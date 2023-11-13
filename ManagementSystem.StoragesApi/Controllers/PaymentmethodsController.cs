@@ -32,5 +32,12 @@ namespace ManagementSystem.StoragesApi.Controllers
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
+
+        [HttpGet("GetByCode")]
+        public IActionResult GetByCode(string code)
+        {
+            var result = _PaymentMethodsService.GetPaymentByCode(code);
+            return Ok(result);
+        }
     }
 }
