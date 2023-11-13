@@ -248,7 +248,12 @@ namespace ManagementSystem.StoragesApi.Services
             billResponse.TotalBillAmount = billPayments.Sum(x => x.Amount.Value);
             billResponse.Details = billDetails;
             billResponse.Payments = billPayments;
-
+            billResponse.ShiftId = billInformation?.ShiftId;
+            billResponse.ShiftName = billInformation?.ShiftName;
+            billResponse.BranchId = billInformation?.BranchId;
+            billResponse.BranchName = billInformation?.BranchName;
+            billResponse.CreateDate = billInformation?.CreateDate;
+            billResponse.TotalProductDetail = billDetails.Count;
             return billResponse;
         }
 
@@ -412,25 +417,29 @@ namespace ManagementSystem.StoragesApi.Services
         private BillSearchingResponseDto GetBillById(int billId)
         {
             string query = string.Format(@"
-							SELECT b.BillId
-									,b.totalAmount
-									,b.totalPaid
-									,b.totalChange
-									,b.CustomerId
-									,NULL AS UserId
-									,NULL AS UserName
-									,NULL AS ShiftId
-									,NULL AS ShiftName
-									,NULL AS BranchId
-									,NULL AS BranchName
-									,NULL AS CreateDate
-									, CASE
-										WHEN COALESCE(c.CustomerName, '') = '' THEN N'Khách Lẻ'
-										ELSE c.CustomerName
-									END AS CustomerName
-							FROM dbo.Bills b
-							LEFT JOIN dbo.Customers c ON b.CustomerId = c.CustomerId
-							WHERE b.BillId = {0}
+                            SELECT b.BillId
+		                            ,b.totalAmount
+		                            ,b.totalPaid
+		                            ,b.totalChange
+		                            ,b.CustomerId
+		                            ,b.CreateBy AS UserId
+		                            ,u.UserName AS UserName
+		                            ,es.ShiftId AS ShiftId
+		                            ,es.ShiftName AS ShiftName
+		                            ,br.BranchId AS BranchId
+		                            ,br.BranchName AS BranchName
+		                            ,b.CreateDate AS CreateDate
+		                            , CASE
+			                            WHEN COALESCE(c.CustomerName, '') = '' THEN N'Khách Lẻ'
+			                            ELSE c.CustomerName
+		                            END AS CustomerName
+                            FROM dbo.Bills b
+                            LEFT JOIN dbo.Customers c ON b.CustomerId = c.CustomerId
+                            LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = b.ShiftId
+                            LEFT JOIN AccountsDb.dbo.UserBranchs ub ON b.CreateBy = ub.UserId
+                            LEFT JOIN dbo.Branches br ON br.BranchId = ub.BranchId
+                            LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = b.CreateBy
+                            WHERE b.BillId = {0}
             ", billId);
 
             try

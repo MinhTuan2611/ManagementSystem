@@ -15,6 +15,12 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? CustomerId { get; set; }
         public string? CustomerName { get; set; }
         public int? TotalBillAmount { get; set; }
+        public int? ShiftId { get; set; }
+        public string? ShiftName { get; set; }
+        public int? BranchId { get; set; }
+        public string? BranchName { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public int TotalProductDetail { get; set; }
         public List<BillDetailResponseDto> Details { get; set; }
         public List<BillPaymentDetailResponseDto> Payments { get; set; }
     }
