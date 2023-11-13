@@ -14,7 +14,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? DiscountAmount { get; set; }
         public Boolean? DiscountByPercentage { get; set; }
         public int? DiscountPercentage { get; set; }
-        public int? Quantity { get; set; }
+        public float? Quantity { get; set; }
         public int? Amount { get; set; }
         public int? ProductId { get; set; }
         public string? ProductName { get; set; }

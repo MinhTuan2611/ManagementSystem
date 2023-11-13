@@ -238,7 +238,7 @@ namespace ManagementSystem.StoragesApi.Services
             var billPayments = await GetBillPaymentMethods(billId);
             var billInformation = GetBillById(billId);
             var billResponse = new BillResponseDto();
-            ;
+            
             billResponse.BillId = billId;
             billResponse.totalChange = billInformation.totalChange;
             billResponse.totalPaid = billResponse.totalPaid;
