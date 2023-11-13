@@ -62,8 +62,11 @@ namespace ManagementSystem.Common.Helpers
         {
             using var httpClient = new HttpClient();
             string payRequestJson = JsonConvert.SerializeObject(parameter);
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Authentication", token);
+
             var requestProd = new HttpRequestMessage(HttpMethod.Post, url);
+            requestProd.Headers.Add("Authentication", token);
+
             requestProd.Content = new StringContent(payRequestJson, Encoding.UTF8, "application/json");
             var resprod = await httpClient.SendAsync(requestProd);
             if (resprod.IsSuccessStatusCode)
