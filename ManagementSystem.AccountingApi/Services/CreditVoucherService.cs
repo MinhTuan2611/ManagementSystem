@@ -30,6 +30,7 @@ namespace ManagementSystem.AccountingApi.Services
         {
             try
             {
+                var accounts = GetAccountInfor(request.PaymentMethodCode);
                 var paymentMethod = GetPaymentMethodInformation(request.PaymentMethodCode);
                 string reason = GetReasonByMethodCode(request.PaymentMethodCode);
 
@@ -41,11 +42,13 @@ namespace ManagementSystem.AccountingApi.Services
                 creditVoucher.TransactionDate = DateTime.Now;
                 creditVoucher.GroupId = request.GroupId; // Auto Generate Group
                 creditVoucher.PaymentMethodId = paymentMethod?.PaymentMethodId;
-                _context.CreditVouchers.Add(creditVoucher);
+                creditVoucher.CreditAccount = accounts?.CreditAccount;
+                creditVoucher.DebitAccount = accounts?.DebitAccount;
 
+                _context.CreditVouchers.Add(creditVoucher);
                 _context.SaveChanges();
 
-                var accounts = GetAccountInfor(request.PaymentMethodCode);
+                
 
                 // Add activity logs
                 _context.ActivityLog.Add(new ActivityLog()
@@ -88,12 +91,16 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 var paymentMethod = GetPaymentMethodInformation(request.PaymentMethodCode);
                 string reason = GetReasonByMethodCode(request.PaymentMethodCode);
+                var accounts = GetAccountInfor(request.PaymentMethodCode);
+
                 existingCredit.UserId = request.UserId;
                 existingCredit.UpdatedDate = DateTime.Now;
                 existingCredit.CustomerId = request.CustomerId;
                 existingCredit.ForReason = reason;
                 existingCredit.TotalMoney = request.TotalMoney;
                 existingCredit.PaymentMethodId = paymentMethod?.PaymentMethodId;
+                existingCredit.CreditAccount = accounts?.CreditAccount;
+                existingCredit.DebitAccount = accounts?.DebitAccount;
 
                 _context.SaveChanges();
                 return existingCredit;
@@ -152,14 +159,13 @@ namespace ManagementSystem.AccountingApi.Services
 		                ,u.UserName AS Cashier
 		                ,pm.PaymentMethodCode
 		                ,pm.PaymentMethodName
-                        ,lg.DepositAccount AS DebitAccount
-						,lg.CreditAccount AS CreditAccount
+                        ,r.DebitAccount AS DebitAccount
+						,r.CreditAccount AS CreditAccount
                 FROM dbo.CreditVouchers r
                 LEFT JOIN StoragesDB.dbo.Customers c ON r.CustomerId = c.CustomerId
                 LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = r.UserId
                 JOIN StoragesDb.dbo.PaymentMethods pm ON pm.PaymentMethodId = r.PaymentMethodId
                 JOIN dbo.Recordingtransactions rt ON rt.ReasonCode = r.ForReason
-                LEFT JOIN dbo.Legers lg ON lg.DoccumentType = N'BAOCO' and lg.DoccumentNumber = r.DocumentNumber
                 WHERE r.DocumentNumber = {0}
             ", documentNumber);
 

@@ -26,10 +26,17 @@ namespace ManagementSystem.AccountingApi.Controllers
             return Ok(result);
         }
 
+        [HttpGet("get-detail-by-document-number")]
+        public async Task<IActionResult> GetDetailByDocumentNumber([FromQuery] int DocumentNumber)
+        {
+            var result = await _service.GetInventoryVoucherDetail(DocumentNumber);
+            return Ok(result);
+        }
+
         [HttpGet("get-by-document-number")]
         public async Task<IActionResult> GetByDocumentNumber([FromQuery] int DocumentNumber)
         {
-            var result = await _service.GetInventoryVoucherDetail(DocumentNumber);
+            var result = await _service.GetInventoryVoucherById(DocumentNumber);
             return Ok(result);
         }
 

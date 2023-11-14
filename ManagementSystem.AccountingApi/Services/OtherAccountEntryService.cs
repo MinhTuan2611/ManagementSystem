@@ -28,6 +28,7 @@ namespace ManagementSystem.AccountingApi.Services
         {
             try
             {
+                var accounts = GetAccountInfor(newOtherAccountEntry.Reason);
                 var otherAccountEntry = new OtherAccountEntry();
                 otherAccountEntry.BrandId = newOtherAccountEntry.BrandId;
                 otherAccountEntry.AccountId = newOtherAccountEntry.AccountId;
@@ -37,11 +38,13 @@ namespace ManagementSystem.AccountingApi.Services
                 otherAccountEntry.Note = newOtherAccountEntry.Note;
                 otherAccountEntry.PaymentDescription = newOtherAccountEntry.PaymentDescription;
                 otherAccountEntry.Reason = newOtherAccountEntry.Reason;
+                otherAccountEntry.CreditAccount = accounts?.CreditAccount;
+                otherAccountEntry.DebitAccount = accounts?.DebitAccount;
 
                 _context.OtherAccountEntries.Add(otherAccountEntry);
                 _context.SaveChanges();
 
-                var accounts = GetAccountInfor(newOtherAccountEntry.Reason);
+                
                 await _legerService.CreateLegers(new Leger()
                 {
                     CustomerId = newOtherAccountEntry.CustomerId,
@@ -138,6 +141,8 @@ namespace ManagementSystem.AccountingApi.Services
                             ,oe.AccountId
                             ,oe.DocumentNumber
                             ,oe.Note
+                            ,oe.CreditAccount
+		                    ,oe.DebitAccount
                     FROM OtherAccountEntries oe
                     LEFT JOIN StoragesDb.dbo.Branches b ON oe.BrandId = b.BranchId
                     LEFT JOIN StoragesDb.dbo.Customers c ON c.CustomerId = oe.CustomerId
@@ -246,6 +251,7 @@ namespace ManagementSystem.AccountingApi.Services
                 return null;
             }
         }
+
         #endregion
     }
 }

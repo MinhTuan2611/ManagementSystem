@@ -20,6 +20,8 @@ namespace ManagementSystem.Common.Entities
         public int? UserId { get; set; }
         public int? AccountId { get; set; }
         public string? Note { get; set; }
+        public string? CreditAccount { get; set; }
+        public string? DebitAccount { get; set; }
         public DateTime TransactionDate { get; set; } = DateTime.Now;
 
         [ForeignKey("DocumentGroup")]

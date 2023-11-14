@@ -57,8 +57,14 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentNumber"), 1L, 1);
 
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("DebitAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ForReason")
                         .IsRequired()
@@ -196,8 +202,14 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("BillId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("DebitAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
@@ -352,8 +364,14 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("BrandId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("DebitAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
@@ -781,10 +799,16 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DebitAccount")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DocumentNumber")
@@ -822,6 +846,12 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BranchName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DebitAccount")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -980,11 +1010,11 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("InventoryCreditAccout")
-                        .HasColumnType("int");
+                    b.Property<string>("InventoryCreditAccout")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("InventoryDebitAccount")
-                        .HasColumnType("int");
+                    b.Property<string>("InventoryDebitAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -1064,7 +1094,13 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("BranchName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DebitAccount")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DocumentNumber")
@@ -1119,6 +1155,12 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BranchName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DebitAccount")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
@@ -1194,10 +1236,16 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DebitAccount")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DocumentNumber")
@@ -1227,6 +1275,14 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("int");
 
                     b.ToTable("ScalarResult<int?>");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ScalarResult<int>", b =>
+                {
+                    b.Property<int>("Value")
+                        .HasColumnType("int");
+
+                    b.ToTable("ScalarResult<int>");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ScalarResult<string>", b =>
