@@ -136,11 +136,18 @@ namespace ManagementSystem.MainApp.Controllers
         }
 
         [HttpGet("check-completed-shift-end")]
-        public async Task<IActionResult> CheckCompletedShiftEnd([FromQuery] int shiftId)
+        public async Task<IActionResult> CheckCompletedShiftEnd([FromQuery] int branchId)
         {
-            var result = await HttpRequestsHelper.Get<bool>(APIUrl + "check-completed-shift-end?shiftId=" + shiftId);
+            var result = await HttpRequestsHelper.Get<bool>(APIUrl + "check-completed-shift-end?branchId=" + branchId);
 
            return Ok(result);
+        }
+        [HttpGet("get-current-shift")]
+        public async Task<IActionResult> GetCurrentShift([FromQuery] int branchId)
+        {
+            var result = await HttpRequestsHelper.Get<int>(APIUrl + "get-current-shift?branchId=" + branchId);
+
+            return Ok(result);
         }
     }
 }

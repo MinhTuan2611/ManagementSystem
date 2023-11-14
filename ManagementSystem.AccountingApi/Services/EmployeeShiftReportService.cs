@@ -82,10 +82,11 @@ namespace ManagementSystem.AccountingApi.Services
                     _context.SaveChanges();
 
                     return shiftEnd;
-                } else
+                }
+                else
                 {
                     var shiftHandover = _context.ShiftHandovers.Where(x => x.ShiftEndId == existingShift).FirstOrDefault();
-                    if(shiftHandover != null)
+                    if (shiftHandover != null)
                     {
                         shiftHandover.ReceiverUserId = model.UserId;
                         _context.ShiftHandovers.Update(shiftHandover);
@@ -363,7 +364,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<bool> IsCompletedShiftEnd(int shiftId)
+        public async Task<bool> IsCompletedShiftEnd(int branchId)
         {
             try
             {
@@ -372,8 +373,8 @@ namespace ManagementSystem.AccountingApi.Services
                         FROM dbo.ShiftEndReports s
                         JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = s.ShiftEndId
                         WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
-                        AND COALESCE(sh.ReceiverUserId, '') = ''
-                        ", shiftId);
+                        AND COALESCE(sh.ReceiverUserId, '') = '' AND sh.StorageId = {0}
+                        ", branchId);
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
 
@@ -382,6 +383,26 @@ namespace ManagementSystem.AccountingApi.Services
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+        public async Task<int> GetCurrentShift(int branchId)
+        {
+            try
+            {
+                string query = string.Format(@"
+                        SELECT COUNT(1) AS Value
+                        FROM dbo.ShiftHandovers sh
+                        WHERE FORMAT(HandoverTime, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
+                        AND sh.StorageId = {0}
+                        ", branchId);
+
+                int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
+
+                return ++count;
+            }
+            catch (Exception ex)
+            {
+                return 1;
             }
         }
 

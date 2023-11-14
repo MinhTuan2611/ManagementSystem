@@ -15,5 +15,6 @@ namespace ManagementSystem.AccountingApi.Services
         Task<ShiftEndResponseDto> GetLastestShiftEnd();
         Task<ShiftEndResponseDto> GetShiftEndById(int shiftEndId);
         Task<bool> IsCompletedShiftEnd(int shiftId);
+        Task<int> GetCurrentShift(int branchId);
     }
 }
