@@ -114,5 +114,11 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
+        public bool checkExistCustomer(Customer customer)
+        {
+            var isExist = _unitOfWork.CustomerRepository.Get(x => x.CustomerCode == customer.CustomerCode);
+            return isExist != null ;
+        }
+
     }
 }

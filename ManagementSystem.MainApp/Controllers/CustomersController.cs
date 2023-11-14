@@ -37,6 +37,11 @@ namespace ManagementSystem.MainApp.Controllers
             customerDto.UserId = userId;
 
             // Call Api creating
+            var checkExistsCustomer = await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + "customers/check-exists", customerDto);
+            if (checkExistsCustomer)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Customer already exists!");
+            }
             var customer = await HttpRequestsHelper.Post<Customer>(Environment.StorageApiUrl + "customers/create", customerDto);
             if (customer != null)
             {

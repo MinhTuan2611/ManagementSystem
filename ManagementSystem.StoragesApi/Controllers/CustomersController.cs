@@ -42,13 +42,29 @@ namespace ManagementSystem.StoragesApi.Controllers
             // Add customer Metadata
             newCustomer.CreateBy = customerDto.UserId;
             newCustomer.ModifyBy = customerDto.UserId;
-
+            if (_CustomersService.checkExistCustomer(newCustomer))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Customer already exists!");
+            }
             var result = _CustomersService.CreateCustomer(newCustomer);
             if (result != null)
             {
                 return Ok(result);
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+        }
+
+        [HttpPost("check-exists")]
+        public IActionResult Exists([FromBody] NewCustomerRequestDto customerDto)
+        {
+            // Map customerDto to customer
+            var newCustomer = _mapper.Map<Customer>(customerDto);
+            if (_CustomersService.checkExistCustomer(newCustomer))
+            {
+                return Ok(true);
+            }
+
+            return Ok(false);
         }
         [HttpPost("update")]
         public IActionResult Update(Customer customer, int userId)
