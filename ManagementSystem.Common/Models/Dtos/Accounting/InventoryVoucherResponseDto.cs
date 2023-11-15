@@ -19,9 +19,10 @@ namespace ManagementSystem.Common.Models.Dtos
         public string ReasonFor { get; set; }
         public DateTime TransactionDate { get; set; }
         public string? StorageName { get; set; }
-        public string? InventoryCreditAccout { get; set; }
-        public string? InventoryDebitAccount { get; set; }
-
+        public int? InventoryCreditAccout { get; set; }
+        public int? InventoryDebitAccount { get; set; }
+        public string? CreditAccount { get; set; }
+        public string? DebitAccount { get; set; }
         public int? BillId { get; set; }
 
         public List<BillPaymentDetailResponseDto> PaymentMethods { get; set; }
