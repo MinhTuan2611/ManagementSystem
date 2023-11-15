@@ -17,6 +17,8 @@ namespace ManagementSystem.Common.Entities
         public DateTime TransactionDate { get; set; } = DateTime.Now;
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
+        public string? CreditAccount { get; set; }
+        public string? DebitAccount { get; set; }
 
         [ForeignKey("DocumentGroup")]
         public int? GroupId { get; set; }

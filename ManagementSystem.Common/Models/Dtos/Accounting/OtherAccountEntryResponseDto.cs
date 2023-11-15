@@ -23,5 +23,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public string? Note { get; set; }
         public int? EmployeeId { get; set; }
         public string? EmployeeName { get; set; }
+        public string? CreditAccount { get; set; }
+        public string? DebitAccount { get; set; }
     }
 }

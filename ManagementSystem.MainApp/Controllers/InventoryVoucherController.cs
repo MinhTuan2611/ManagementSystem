@@ -27,12 +27,12 @@ namespace ManagementSystem.MainApp.Controllers
             return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
         }
 
-        [HttpGet("get-detail")]
+        [HttpGet("get-inventory-detail")]
         public async Task<IActionResult> GetDetail([FromQuery]int documentNumber)
         {
 
             ResponseModel<InventoryVoucherDetailResponseDto> response = new ResponseModel<InventoryVoucherDetailResponseDto>();
-            var detail = await HttpRequestsHelper.Get<List<InventoryVoucherDetailResponseDto>>(APIUrl + "get-by-document-number?documentNumber=" + documentNumber);
+            var detail = await HttpRequestsHelper.Get<List<InventoryVoucherDetailResponseDto>>(APIUrl + "get-detail-by-document-number?documentNumber=" + documentNumber);
 
 
             if (detail != null)
@@ -47,6 +47,27 @@ namespace ManagementSystem.MainApp.Controllers
             return Ok(response);
         }
 
+        [HttpGet("get-inventory-by-id")]
+        public async Task<IActionResult> GetById([FromQuery] int documentNumber)
+        {
+
+            ResponseModel<InventoryVoucherResponseDto> response = new ResponseModel<InventoryVoucherResponseDto>();
+            var detail = await HttpRequestsHelper.Get<InventoryVoucherResponseDto>(APIUrl + "get-by-document-number?documentNumber=" + documentNumber);
+
+            List<InventoryVoucherResponseDto> result = new List<InventoryVoucherResponseDto>();
+            result.Add(detail);
+
+            if (detail != null)
+            {
+
+                response.Status = "success";
+                response.Data = result;
+                return Ok(response);
+            }
+            response.Status = "success";
+            response.ErrorMessage = "Not found any information!";
+            return Ok(response);
+        }
 
         [HttpPost("create")]
         public async Task<IActionResult> Create(NewInventoryVoucherDto request)

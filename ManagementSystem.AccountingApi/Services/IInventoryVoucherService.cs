@@ -11,5 +11,6 @@ namespace ManagementSystem.AccountingApi.Services
         Task<InventoryVoucher> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request);
         Task<TPagination<InventoryVoucherResponseDto>> SearchInventoryVouchers(SearchCriteria criteria);
         Task<List<InventoryVoucherDetailResponseDto>> GetInventoryVoucherDetail(int documentNumber);
+        Task<InventoryVoucherResponseDto> GetInventoryVoucherById(int documentNumber);
     }
 }
