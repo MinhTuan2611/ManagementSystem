@@ -21,8 +21,8 @@ namespace ManagementSystem.Common.Models.Dtos
         public string? StorageName { get; set; }
         public int? InventoryCreditAccount { get; set; }
         public int? InventoryDebitAccount { get; set; }
-        public string? CreditAccount { get; set; }
-        public string? DebitAccount { get; set; }
+        //public string? CreditAccount { get; set; }
+        //public string? DebitAccount { get; set; }
         public int? BillId { get; set; }
 
         public List<BillPaymentDetailResponseDto> PaymentMethods { get; set; }
