@@ -4,9 +4,11 @@ using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using ManagementSystem.MainApp.Utility;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ManagementSystem.MainApp.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DocumentGroupsController : ControllerBase

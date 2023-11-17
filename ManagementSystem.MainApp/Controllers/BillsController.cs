@@ -72,11 +72,15 @@ namespace ManagementSystem.MainApp.Controllers
 
                 }
 
-                bill.BillId = resultBill.BillId;
-                var creditVouchers = await GenerateVoucherWithAnotherPaymentMethods(bill, userId);
+                var paymentMethods = bill.Payments.Where(x => x.PaymentMethodCode != StorageContant.CashPaymentMethodCode).ToList();
+                if (paymentMethods.Count > 0)
+                {
+                    bill.BillId = resultBill.BillId;
+                    var creditVouchers = await GenerateVoucherWithAnotherPaymentMethods(bill, userId);
 
-                if (creditVouchers.Count == 0)
-                    return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created, inventory created, customer update point but faild when create Credit Voucher");
+                    if (creditVouchers.Count == 0)
+                        return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created, inventory created, customer update point but faild when create Credit Voucher");
+                }
 
                 return Ok(resultBill);
             }
