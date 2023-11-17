@@ -40,6 +40,7 @@ SD.EPatern = builder.Configuration["ElectronicBill:Patern"];
 SD.EIKey = builder.Configuration["ElectronicBill:IKey"];
 SD.EUserName = builder.Configuration["ElectronicBill:UserName"];
 SD.EPassword = builder.Configuration["ElectronicBill:Password"];
+SD.EUrl = builder.Configuration["ElectronicBill:URL"];
 
 builder.Services.AddAuthentication(option =>
 {

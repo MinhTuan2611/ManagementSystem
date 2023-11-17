@@ -56,21 +56,65 @@ namespace ManagementSystem.Common
                 // Add Invoice properties
                 AddXmlElement(xmlDoc, invoiceElement, "TaxAuthorityCode", invoice.TaxAuthorityCode);
                 AddXmlElement(xmlDoc, invoiceElement, "Ikey", invoice.Ikey);
-                AddXmlElement(xmlDoc, invoiceElement, "CusCode", invoice.CusCode);
-                AddXmlElement(xmlDoc, invoiceElement, "Buyer", invoice.Buyer);
-                AddXmlElement(xmlDoc, invoiceElement, "CusName", invoice.CusName);
-                AddXmlElement(xmlDoc, invoiceElement, "Email", invoice.Email);
-                AddXmlElement(xmlDoc, invoiceElement, "EmailCC", invoice.EmailCC);
-                AddXmlElement(xmlDoc, invoiceElement, "CusAddress", invoice.CusAddress);
-                AddXmlElement(xmlDoc, invoiceElement, "CusBankName", invoice.CusBankName);
-                AddXmlElement(xmlDoc, invoiceElement, "CusBankNo", invoice.CusBankNo);
-                AddXmlElement(xmlDoc, invoiceElement, "CusPhone", invoice.CusPhone);
-                AddXmlElement(xmlDoc, invoiceElement, "CusTaxCode", invoice.CusTaxCode);
+
+                if (string.IsNullOrEmpty(invoice.CusCode) != true)
+                {
+                    AddXmlElement(xmlDoc, invoiceElement, "CusCode", invoice.CusCode);
+                }
+
+                if (string.IsNullOrEmpty(invoice.Buyer) != true)
+                {
+                    AddXmlElement(xmlDoc, invoiceElement, "Buyer", invoice.Buyer);
+                }
+
+                if (string.IsNullOrEmpty(invoice.CusName) != true)
+                {
+                    AddXmlElement(xmlDoc, invoiceElement, "CusName", invoice.CusName);
+                }
+
+                if (string.IsNullOrEmpty(invoice.Email) != true)
+                {
+                    AddXmlElement(xmlDoc, invoiceElement, "Email", invoice.Email);
+                }
+
+                if (string.IsNullOrEmpty(invoice.EmailCC) != true)
+                {
+                    AddXmlElement(xmlDoc, invoiceElement, "EmailCC", invoice.EmailCC);
+                }
+
+                if (string.IsNullOrEmpty(invoice.CusAddress) != true)
+                {
+                    AddXmlElement(xmlDoc, invoiceElement, "CusAddress", invoice.CusAddress);
+                }
+
+                if (string.IsNullOrEmpty(invoice.CusBankName) != true)
+                {
+                    AddXmlElement(xmlDoc, invoiceElement, "CusBankName", invoice.CusBankName);
+                }
+
+                if (string.IsNullOrEmpty(invoice.CusBankNo) != true)
+                {
+                    AddXmlElement(xmlDoc, invoiceElement, "CusBankNo", invoice.CusBankNo);
+                }
+
+                if (string.IsNullOrEmpty(invoice.CusPhone) != true)
+                {
+                    AddXmlElement(xmlDoc, invoiceElement, "CusPhone", invoice.CusPhone);
+                }
+
+                if (string.IsNullOrEmpty(invoice.CusPhone) != true)
+                {
+                    AddXmlElement(xmlDoc, invoiceElement, "CusTaxCode", invoice.CusTaxCode);
+                }
+
                 AddXmlElement(xmlDoc, invoiceElement, "PaymentMethod", invoice.PaymentMethod);
                 AddXmlElement(xmlDoc, invoiceElement, "ArisingDate", DateTime.Now.ToString("dd/MM/yyyy"));
                 AddXmlElement(xmlDoc, invoiceElement, "ExchangeRate", invoice.ExchangeRate);
                 AddXmlElement(xmlDoc, invoiceElement, "CurrencyUnit", invoice.CurrencyUnit);
-                AddXmlElement(xmlDoc, invoiceElement, "Extra", invoice.Extra);
+                if (string.IsNullOrEmpty(invoice.Extra) != true)
+                {
+                    AddXmlElement(xmlDoc, invoiceElement, "Extra", invoice.Extra);
+                }
 
                 // Add Products
                 XmlElement productsElement = xmlDoc.CreateElement("Products");
@@ -96,7 +140,11 @@ namespace ManagementSystem.Common
                     AddXmlElement(xmlDoc, productElement, "VATRateOther", product.VATRateOther.ToString());
                     AddXmlElement(xmlDoc, productElement, "VATAmount", product.VATAmount.ToString());
                     AddXmlElement(xmlDoc, productElement, "Amount", product.Amount.ToString());
-                    AddXmlElement(xmlDoc, productElement, "Extra", product.Extra);
+
+                    if (string.IsNullOrEmpty(product.Extra) != true)
+                    {
+                        AddXmlElement(xmlDoc, productElement, "Extra", product.Extra);
+                    }
                 }
             }
 
