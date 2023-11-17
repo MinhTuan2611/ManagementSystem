@@ -587,6 +587,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<int?>("AmountReceive")
+                        .HasColumnType("int");
+
                     b.HasKey("ShiftEndId", "Denomination");
 
                     b.ToTable("ShiftHandoverCashDetails");
@@ -995,10 +998,16 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("BillId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DebitAccount")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DocummentNumber")
@@ -1010,11 +1019,11 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("InventoryCreditAccout")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("InventoryCreditAccout")
+                        .HasColumnType("int");
 
-                    b.Property<string>("InventoryDebitAccount")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("InventoryDebitAccount")
+                        .HasColumnType("int");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -1296,8 +1305,8 @@ namespace ManagementSystem.AccountingApi.Migrations
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftEndReportView", b =>
                 {
-                    b.Property<int?>("ActualAmount")
-                        .HasColumnType("int");
+                    b.Property<float?>("ActualAmount")
+                        .HasColumnType("real");
 
                     b.Property<int?>("Amount")
                         .HasColumnType("int");
@@ -1332,8 +1341,8 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("ShiftName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("SystemAmount")
-                        .HasColumnType("int");
+                    b.Property<float?>("SystemAmount")
+                        .HasColumnType("real");
 
                     b.Property<int?>("UnitId")
                         .HasColumnType("int");

@@ -67,6 +67,7 @@ namespace ManagementSystem.StoragesApi.Services
 
                 var newBill = new Bill
                 {
+                    BranchId = bill.BranchId,
                     totalAmount = bill.totalAmount,
                     totalPaid = bill.totalPaid,
                     totalChange = bill.totalChange,

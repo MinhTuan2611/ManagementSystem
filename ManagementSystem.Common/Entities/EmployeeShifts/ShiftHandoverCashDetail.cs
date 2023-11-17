@@ -8,6 +8,7 @@ namespace ManagementSystem.Common.Entities
         public int ShiftEndId { get; set; }
         public int Denomination { get; set; }
         public int Amount { get; set; }
+        public int? AmountReceive { get; set; }
 
         public ShiftEndReport ShiftEndReport { get; set; }
 
