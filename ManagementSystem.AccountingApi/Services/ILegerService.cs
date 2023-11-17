@@ -9,5 +9,7 @@ namespace ManagementSystem.AccountingApi.Services
     {
         public Task<TPagination<LegerResponseDto>> GetAllLegerInformation(SearchCriteria model);
         public Task<Leger> CreateLegers(Leger leger);
+
+        public Task<ResponseDto> ExportExcelFile(SearchCriteria model);
     }
 }
