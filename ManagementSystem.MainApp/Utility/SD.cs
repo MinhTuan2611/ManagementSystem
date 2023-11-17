@@ -11,5 +11,6 @@
         public static string ETaxCode { get; set; }
         public static string EUserName { get; set; }
         public static string EPassword { get; set; }
+        public static string EUrl { get; set; }
     }
 }

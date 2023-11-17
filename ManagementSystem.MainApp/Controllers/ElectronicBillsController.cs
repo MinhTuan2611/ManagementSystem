@@ -1,5 +1,6 @@
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
+using ManagementSystem.Common.Functions;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
@@ -135,7 +136,7 @@ namespace ManagementSystem.MainApp.Controllers
 
             var customer = new CustomerResponseDto();
             var invoice = new InvoiceDto();
-
+            var billAmount = billInfo.Payments.Sum(x => x.Amount);
             if (billInfo.CustomerId != null || billInfo.CustomerId.Value > 0)
             {
                 customer = await GetCustomerInformation(billInfo.CustomerId.Value);
@@ -154,6 +155,8 @@ namespace ManagementSystem.MainApp.Controllers
             invoice.Ikey = SD.EIKey;
             invoice.ArisingDate = DateTime.Now.ToString("dd/MM/yyyy");
             invoice.CurrencyUnit = "VND";
+            invoice.AmountInWords = Utils.NumberToText(billAmount);
+            invoice.Amount = billAmount;
             invoice.PaymentMethod = GetPaymentMethodByCode(billInfo.Payments[0].PaymentMethodCode).GetAwaiter().GetResult().PaymentMethodName;
             var products = new List<ProductInvoiceDto>();
 
