@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.MainApp.Utility;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ManagementSystem.MainApp.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CreditVouchersController : ControllerBase

@@ -23,12 +23,12 @@ builder.Services.AddAuthentication();
 var app = builder.Build();
 
 // Seeding Data
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetService<AccountsDbContext>();
-    //DataSeeder.SeedData(context);
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    var context = services.GetService<AccountsDbContext>();
+//    //DataSeeder.SeedData(context);
+//}
 
 // Configure the HTTP request pipeline.
 app.UseRouting();
