@@ -90,8 +90,17 @@ namespace ManagementSystem.AccountingApi.Services
                     {
                         shiftHandover.ReceiverUserId = model.UserId;
                         _context.ShiftHandovers.Update(shiftHandover);
-                        _context.SaveChanges();
                     }
+                    foreach (var item in model.ShiftHandoverCashDetails)
+                    {
+                        var cashDetail = _context.ShiftHandoverCashDetails.Where(x => x.ShiftEndId == existingShift && x.Denomination == item.Denomination).FirstOrDefault();
+                        if(cashDetail != null)
+                        {
+                            cashDetail.AmountReceive = item.Amount;
+                            _context.ShiftHandoverCashDetails.Update(cashDetail);
+                        }
+                    }
+                    _context.SaveChanges();
                 }
 
                 shiftEnd.ShiftId = existingShift;
