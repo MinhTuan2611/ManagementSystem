@@ -80,10 +80,24 @@ namespace ManagementSystem.AccountingApi.Controllers
 
             return Ok(result);
         }
+        [HttpGet("check-can-start-shift-end")]
+        public async Task<IActionResult> CheckCanStartShiftEnd([FromQuery] int branchId)
+        {
+            var result = await _service.IsCanStartShiftEnd(branchId);
+
+            return Ok(result);
+        }
         [HttpGet("get-current-shift")]
         public async Task<IActionResult> GetCurrentShift([FromQuery] int branchId)
         {
             var result = await _service.GetCurrentShift(branchId);
+
+            return Ok(result);
+        }
+        [HttpPost("start-shift-end")]
+        public async Task<IActionResult> StartShiftEnd([FromBody] StartShiftEndRequestDto request)
+        {
+            var result = await _service.StartShiftEnd(request);
 
             return Ok(result);
         }

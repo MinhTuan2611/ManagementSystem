@@ -559,6 +559,9 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShiftEndId"), 1L, 1);
 
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CompanyMoneyTransferred")
                         .HasColumnType("int");
 
