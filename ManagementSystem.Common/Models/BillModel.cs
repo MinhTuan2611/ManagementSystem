@@ -47,6 +47,7 @@ namespace ManagementSystem.Common.Models
         public int? Id { get; set; }
         public int? BillId { get; set; } = 0;
         public int? PaymentMethodId { get; set; }
+        public int? Point { get; set; }
 
         public string PaymentMethodCode { get; set; }
         public string? PaymentMethodName { get; set; }

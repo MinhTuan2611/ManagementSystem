@@ -10,5 +10,6 @@ namespace ManagementSystem.Common.Models.Dtos
     {
         public int? CustomerId { get; set; }
         public int? Amount { get; set; }
+        public int? UsedPoint { get; set; }
     }
 }

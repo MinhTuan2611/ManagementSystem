@@ -76,7 +76,7 @@ namespace ManagementSystem.StoragesApi.Controllers
         [HttpPost("update_point")]
         public IActionResult UpdateCustomerPoint([FromBody] UpdateCustomerPointDto model)
         {
-            bool updated = _CustomersService.UpdateCustomerPoint(model.Amount.Value, model.CustomerId.Value);
+            bool updated = _CustomersService.UpdateCustomerPoint(model.Amount.Value, model.CustomerId.Value, model.UsedPoint ?? 0);
             return Ok(updated);
         }
 

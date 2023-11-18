@@ -62,7 +62,8 @@ namespace ManagementSystem.MainApp.Controllers
                     var customerUpdate = new UpdateCustomerPointDto()
                     {
                         CustomerId = bill.CustomerId,
-                        Amount = bill.Details.Sum(c => c.Amount)
+                        Amount = bill.Details.Sum(c => c.Amount),
+                        UsedPoint = bill.Payments.FirstOrDefault(x => x.PaymentMethodCode == "POINT")?.Point
                     };
 
                     var customerUpdateFlag = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "customers/update_point", customerUpdate);
