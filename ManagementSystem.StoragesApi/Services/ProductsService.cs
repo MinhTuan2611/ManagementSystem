@@ -95,7 +95,15 @@ namespace ManagementSystem.StoragesApi.Services
             try
             {
                 var product = _unitOfWork.ProductRepository.GetByID(productId);
+                var productSupliersRes = _unitOfWork.ProductSupplierRepository.GetMany(x => x.ProductId == productId);
                 var units = _unitOfWork.ProductUnitRepository.GetMany(x => x.ProductId == product.ProductId && x.Status == ActiveStatus.Active).OrderBy(x => x.Id).ToList();
+
+                List<ProductSupplierDto> productSupliers = new List<ProductSupplierDto>();
+
+                foreach(var productSuplier in productSupliersRes)
+                {
+                    productSupliers.Add(new ProductSupplierDto { SupplierId = productSuplier.SupplierId });
+                }
 
                 ProductCreateUpdate response = new ProductCreateUpdate();
                 response.ProductId = product.ProductId;
@@ -107,6 +115,7 @@ namespace ManagementSystem.StoragesApi.Services
                 response.Price = product.Price;
                 response.Status = product.Status;
                 response.Units = new List<ProductUnitDetail>();
+                response.ProductSuppliers = productSupliers;
 
                 for (int i = 0; i < units.Count; i++)
                 {
