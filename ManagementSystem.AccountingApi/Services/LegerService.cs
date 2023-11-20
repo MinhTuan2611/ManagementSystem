@@ -92,7 +92,7 @@ namespace ManagementSystem.AccountingApi.Services
             int pageSize = criteria.PageSize <= 0 ? 10 : criteria.PageSize;
 
             var executeResult = await GenericSearchRepository<LegerResponseDto>.ExecutePagedStoredProcedureCommonAsync<LegerResponseDto>
-                                                                                (dbContext, "sp_SearchLegers", pageNumber, pageSize, parameters);
+                                                                                (dbContext, "sp_ExportLegersData", pageNumber, pageSize, parameters);
 
             // Process the results
             List<LegerResponseDto> pagedData = executeResult.Item1;
@@ -100,20 +100,22 @@ namespace ManagementSystem.AccountingApi.Services
             var exportViews = pagedData.Select(item => new LegerExcelView
             {
                 TransactionDate = item.TransactionDate,
-                DoccumentNumber = item.DoccumentNumber,
-                CreditAccount = item.CreditAccount,
                 DepositAccount = item.DepositAccount,
-                Amount = item.Amount,
+                CreditAccount = item.CreditAccount,
                 DoccumentType = item.DoccumentType,
-                LegerDescription = item.LegerDescription,
+                DoccumentNumber = item.DoccumentNumber,             
+                CustomerId = string.IsNullOrEmpty(item.CustomerId.ToString()) ? "KL" : item.CustomerId.ToString(),
+                CustomerName = string.IsNullOrEmpty(item.CustomerName) ? "Khách Lẻ": item.CustomerName,
+                Amount = item.Amount,
             }).ToList();
 
 
             // Headers
-            var headers = new[] { "TransactionDate", "DoccumentNumber", "CreditAccount", "DepositAccount", "Amount", "DoccumentType", "LegerDescription" };
+            var headers = new[] { "Ngày", "Nợ", "Có", "Loại Phiếu", "Số CT", "Mã Đối Tượng", "Tên Đối Tượng", "Giá Trị" };
 
             // Handle file path
-            string filePath = string.Format(AccountingConstant.filePathFomat, DateTime.Now.ToString("yyyyMMdd"), string.Format("{0}.xlsx", DateTime.Now.Ticks));
+            string dateFormat = DateTime.Now.ToString("yyyyMMdd");
+            string filePath = string.Format(AccountingConstant.filePathFomat, dateFormat, string.Format("SoCai_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
 
             // Get the directory path
             string directoryPath = Path.GetDirectoryName(filePath);
