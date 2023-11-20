@@ -23,5 +23,13 @@ namespace ManagementSystem.AccountingApi.Controllers
             var result = await _legerService.GetAllLegerInformation(searchModel);
             return Ok(result);
         }
+
+        [HttpPost]
+        [Route("export_excel")]
+        public async Task<IActionResult> ExportExcell([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _legerService.ExportExcelFile(searchModel);
+            return Ok(result);
+        }
     }
 }
