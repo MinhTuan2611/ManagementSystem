@@ -29,17 +29,16 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 int storageId = 0;
                 int shiftEndId = 0;
-                var shiftEnd = new ShiftEndReport();
-                var existingShift = IsExistsShiftEndReports(model.ShiftId.Value, DateTime.Now.ToString("yyyy-MM-dd"));
+                var shiftEnd = _context.ShiftEndReports
+                    .Where(x=> x.ShiftId == model.ShiftId && x.ShiftEndDate.Date == DateTime.Now.Date && x.BranchId == model.BrandId).FirstOrDefault();
 
-                if (existingShift <= 0)
+                if (shiftEnd != null && shiftEnd.CompanyMoneyTransferred == null)
                 {
 
                     shiftEnd.CompanyMoneyTransferred = model.CompanyMoneyTransferred;
                     shiftEnd.UserId = model.UserId;
-                    shiftEnd.ShiftId = model.ShiftId;
 
-                    _context.ShiftEndReports.Add(shiftEnd);
+                    _context.ShiftEndReports.Update(shiftEnd);
                     _context.SaveChanges();
 
                     shiftEndId = shiftEnd.ShiftEndId;
@@ -85,16 +84,23 @@ namespace ManagementSystem.AccountingApi.Services
                 }
                 else
                 {
-                    var shiftHandover = _context.ShiftHandovers.Where(x => x.ShiftEndId == existingShift).FirstOrDefault();
+                    var shiftHandover = _context.ShiftHandovers.Where(x => x.ShiftEndId == shiftEnd.ShiftEndId).FirstOrDefault();
                     if (shiftHandover != null)
                     {
                         shiftHandover.ReceiverUserId = model.UserId;
                         _context.ShiftHandovers.Update(shiftHandover);
-                        _context.SaveChanges();
                     }
+                    foreach (var item in model.ShiftHandoverCashDetails)
+                    {
+                        var cashDetail = _context.ShiftHandoverCashDetails.Where(x => x.ShiftEndId == shiftEnd.ShiftEndId && x.Denomination == item.Denomination).FirstOrDefault();
+                        if(cashDetail != null)
+                        {
+                            cashDetail.AmountReceive = item.Amount;
+                            _context.ShiftHandoverCashDetails.Update(cashDetail);
+                        }
+                    }
+                    _context.SaveChanges();
                 }
-
-                shiftEnd.ShiftId = existingShift;
 
                 return shiftEnd;
             }
@@ -371,9 +377,29 @@ namespace ManagementSystem.AccountingApi.Services
                 string query = string.Format(@"
                         SELECT COUNT(1) AS Value
                         FROM dbo.ShiftEndReports s
-                        JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = s.ShiftEndId
+                        LEFT JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = s.ShiftEndId
                         WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
-                        AND COALESCE(sh.ReceiverUserId, '') = '' AND sh.StorageId = {0}
+                        AND COALESCE(sh.ReceiverUserId, '') = '' AND s.BranchId = {0}
+                        ", branchId);
+
+                int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
+
+                return count == 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public async Task<bool> IsCanStartShiftEnd(int branchId)
+        {
+            try
+            {
+                string query = string.Format(@"
+                        SELECT COUNT(1) AS Value
+                        FROM dbo.ShiftEndReports s
+                        WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
+                        AND s.BranchId = {0} AND s.CompanyMoneyTransferred is NULL
                         ", branchId);
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
@@ -391,9 +417,9 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 string query = string.Format(@"
                         SELECT COUNT(1) AS Value
-                        FROM dbo.ShiftHandovers sh
-                        WHERE FORMAT(HandoverTime, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
-                        AND sh.StorageId = {0}
+                        FROM dbo.ShiftEndReports
+                        WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
+                        AND BranchId = {0}
                         ", branchId);
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
@@ -404,6 +430,28 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 return 1;
             }
+        }
+        public async Task<ResponsePagingModel<ShiftEndReport>> StartShiftEnd(StartShiftEndRequestDto request)
+        {
+            var result = new ResponsePagingModel<ShiftEndReport>();
+            try
+            {
+                var shiftEnd = new ShiftEndReport();
+                shiftEnd.BranchId = request.BranchId;
+                shiftEnd.UserId = request.UserId;
+                shiftEnd.ShiftId = request.ShiftId;
+
+                _context.ShiftEndReports.Add(shiftEnd);
+                _context.SaveChanges();
+                result.Status = "success";
+                result.Data = shiftEnd;
+            }
+            catch (Exception ex)
+            {
+                result.Status = "Fail";
+                result.ErrorMessage = ex.Message;
+            }
+            return result;
         }
 
         #region Private function handle

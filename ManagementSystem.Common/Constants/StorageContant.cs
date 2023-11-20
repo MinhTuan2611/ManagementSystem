@@ -2,7 +2,7 @@
 {
     public class StorageContant
     {
-        public const int ConventPoint = 1000;
+        public const int ConventPoint = 10000;
         public const string CashPaymentMethodCode = "CASH";
     }
 }

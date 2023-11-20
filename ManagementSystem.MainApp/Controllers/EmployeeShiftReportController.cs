@@ -4,10 +4,12 @@ using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.MainApp.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementSystem.MainApp.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeeShiftReportController : ControllerBase
@@ -142,11 +144,26 @@ namespace ManagementSystem.MainApp.Controllers
 
            return Ok(result);
         }
+        [HttpGet("check-can-start-shift-end")]
+        public async Task<IActionResult> CheckCanStartShiftEnd([FromQuery] int branchId)
+        {
+            var result = await HttpRequestsHelper.Get<bool>(APIUrl + "check-can-start-shift-end?branchId=" + branchId);
+
+            return Ok(result);
+        }
         [HttpGet("get-current-shift")]
         public async Task<IActionResult> GetCurrentShift([FromQuery] int branchId)
         {
             var result = await HttpRequestsHelper.Get<int>(APIUrl + "get-current-shift?branchId=" + branchId);
 
+            return Ok(result);
+        }
+        [HttpPost("start-shift-end")]
+        public async Task<IActionResult> StartShiftEnd([FromBody] StartShiftEndRequestDto request)
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+            request.UserId = int.Parse(userId);
+            var result = await HttpRequestsHelper.Post<ResponsePagingModel<ShiftEndReport>>(APIUrl + "start-shift-end", request);
             return Ok(result);
         }
     }

@@ -67,6 +67,7 @@ namespace ManagementSystem.StoragesApi.Services
 
                 var newBill = new Bill
                 {
+                    BranchId = bill.BranchId,
                     totalAmount = bill.totalAmount,
                     totalPaid = bill.totalPaid,
                     totalChange = bill.totalChange,
@@ -114,8 +115,8 @@ namespace ManagementSystem.StoragesApi.Services
                         Product = product,
                         Unit = unit
                     };
-                    string[] includes = { "Storage" };
-                    var quantityInStorage = _unitOfWork.ProductStorageRepository.GetWithInclude(x => x.ProductId == detail.ProductId, includes).Where(x => x.Storage.BranchId == (bill.BranchId ?? 1)).First();
+                    var storage = _unitOfWork.StorageRepository.GetFirst(x => x.BranchId == (bill.BranchId ?? 1));
+                    var quantityInStorage = _unitOfWork.ProductStorageRepository.Get(x => x.ProductId == detail.ProductId && x.StorageId == storage.StorageId);
                     if(quantityInStorage != null)
                     {
                         quantityInStorage.Quantity -= detail.Quantity;

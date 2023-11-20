@@ -34,6 +34,10 @@ namespace ManagementSystem.Common.Models
         public List<TypesOfAccountsInfo>? Data { get; set; }
     }
 
+    public class LsPaymentMethodsRes : ResponseModel
+    {
+        public List<PaymentMethod>? PaymentMethods { get; set; }
+    }
     public class ResponseModel<T>
     {
         public string Status { get; set; }

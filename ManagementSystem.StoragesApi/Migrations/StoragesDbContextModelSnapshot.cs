@@ -79,6 +79,9 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BillId"), 1L, 1);
 
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CreateBy")
                         .HasColumnType("int");
 
@@ -113,6 +116,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("BillId");
+
+                    b.HasIndex("BranchId");
 
                     b.HasIndex("CustomerId");
 
@@ -1006,8 +1011,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
+                    b.Property<float?>("Quantity")
+                        .HasColumnType("real");
 
                     b.Property<int?>("UnitId")
                         .HasColumnType("int");
@@ -1131,8 +1136,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TotalSystemAmount")
-                        .HasColumnType("int");
+                    b.Property<float?>("TotalSystemAmount")
+                        .HasColumnType("real");
 
                     b.Property<int>("UnitId")
                         .HasColumnType("int");
@@ -1146,9 +1151,15 @@ namespace ManagementSystem.StoragesApi.Migrations
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Bill", b =>
                 {
+                    b.HasOne("ManagementSystem.Common.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
                     b.HasOne("ManagementSystem.Common.Entities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId");
+
+                    b.Navigation("Branch");
 
                     b.Navigation("Customer");
                 });

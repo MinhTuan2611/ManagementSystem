@@ -42,3 +42,13 @@ ManagementSystem.AccountingApi/obj/Debug/net6.0/
 ManagementSystem.AccountingApi/bin/Debug/net6.0/
 
 ManagementSystem.AccountingApi/obj/
+
+ManagementSystem.AccountingApi/bin/
+
+ManagementSystem.AccountsApi/bin/
+
+ManagementSystem.Common/bin/
+
+ManagementSystem.MainApp/bin/
+
+ManagementSystem.StoragesApi/bin/

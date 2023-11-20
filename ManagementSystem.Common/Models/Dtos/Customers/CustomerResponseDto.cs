@@ -6,6 +6,7 @@ namespace ManagementSystem.Common.Models
     [Keyless]
     public class CustomerResponseDto
     {
+        public int CustomerId { get; set; }
         public string CustomerCode { get; set; }
         public string CustomerName { get; set; }
         public int CustomerPoint { get; set; }

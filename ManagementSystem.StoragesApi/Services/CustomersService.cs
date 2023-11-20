@@ -92,15 +92,15 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
-        public bool UpdateCustomerPoint(int amount, int customerId)
+        public bool UpdateCustomerPoint(int amount, int customerId, int usedPoint)
         {
             try
             {
-                int customerPoint = amount / StorageContant.ConventPoint;
+                int customerPoint = (amount / StorageContant.ConventPoint) - usedPoint;
 
                 string query = string.Format(@"
                         UPDATE dbo.Customers
-                        SET CustomerPoint = {0}
+                        SET CustomerPoint = CustomerPoint + ({0})
                         WHERE CustomerId = {1}
                     ", customerPoint, customerId);
 
