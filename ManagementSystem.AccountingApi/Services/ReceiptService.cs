@@ -15,16 +15,18 @@ namespace ManagementSystem.AccountingApi.Services
         private readonly AccountingDbContext _context;
         private readonly ILegerService _legerService;
         private IConfiguration _configuration;
+        private ResponseDto _response;
 
         public ReceiptService(AccountingDbContext context, ILegerService legerService, IConfiguration configuration)
         {
             _context = context;
             _legerService = legerService;
             _configuration = configuration;
+            _response = new ResponseDto();
 
         }
 
-        public async Task<ReceiptVoucher> CreateReceipt(NewReceiptRequestDto request)
+        public async Task<ResponseDto> CreateReceipt(NewReceiptRequestDto request)
         {
             try
             {
@@ -56,15 +58,18 @@ namespace ManagementSystem.AccountingApi.Services
 
                 _context.SaveChanges();
 
-                return receipt;
+                _response.Result = receipt;
+                return _response;
             }
             catch (Exception ex)
             {
-                return null;
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+                return _response;
             }
         }
 
-        public async Task<TPagination<ReceiptResponseDto>> SearchReceipts(SearchCriteria criteria)
+        public async Task<ResponseDto> SearchReceipts(SearchCriteria criteria)
         {
             try
             {
@@ -92,15 +97,19 @@ namespace ManagementSystem.AccountingApi.Services
                 var result = new TPagination<ReceiptResponseDto>();
                 result.Items = pagedData;
                 result.TotalItems = totalRecords;
-                return result;
+
+                _response.Result = result;
+                return _response;
             }
             catch (Exception ex)
             {
-                return null;
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+                return _response;
             }
         }
 
-        public async Task<ReceiptResponseDto> GetReceptByDocumentNumber(int documentNumbers)
+        public async Task<ResponseDto> GetReceptByDocumentNumber(int documentNumbers)
         {
             string query = string.Format(@"
                 SELECT r.DocumentNumber
@@ -121,12 +130,23 @@ namespace ManagementSystem.AccountingApi.Services
                 WHERE r.DocumentNumber = {0}
             ", documentNumbers);
 
-            var receipts = _context.ReceiptResponseDtos.FromSqlRaw(query).FirstOrDefault();
+            try
+            {
+                var receipts = _context.ReceiptResponseDtos.FromSqlRaw(query).FirstOrDefault();
 
-            return receipts;
+                _response.Result = receipts;
+
+                return _response;
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+                return _response;
+            }
         }
 
-        public async Task<ReceiptVoucher> UpdateReceipt(UpdateReceiptRequestDto request)
+        public async Task<ResponseDto> UpdateReceipt(UpdateReceiptRequestDto request)
         {
             try
             {
@@ -142,11 +162,14 @@ namespace ManagementSystem.AccountingApi.Services
 
                 await _context.SaveChangesAsync();
 
-                return receipt;
+                _response.Result = receipt;
+                return _response;
             }
             catch (Exception ex)
             {
-                return null;
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+                return _response;
             }
         }
 

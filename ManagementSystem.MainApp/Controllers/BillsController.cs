@@ -51,10 +51,10 @@ namespace ManagementSystem.MainApp.Controllers
                 inventoryVoucherDto.UserId = userId;
                 inventoryVoucherDto.BillId = resultBill.BillId;
 
-                var inventoryResult = await HttpRequestsHelper.Post<InventoryVoucher>(SD.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
+                var inventoryResult = await HttpRequestsHelper.Post<ResponseDto>(SD.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
 
-                if (inventoryResult == null)
-                    return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created but faild when create Inventory Voucher");
+                if (inventoryResult.Result == null)
+                    return StatusCode(StatusCodes.Status500InternalServerError, inventoryResult.Message);
 
                 // Update Customer Point
                 if (bill.CustomerId != null)

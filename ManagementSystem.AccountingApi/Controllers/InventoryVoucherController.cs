@@ -1,5 +1,6 @@
 ﻿using ManagementSystem.AccountingApi.Services;
 using ManagementSystem.Common.Constants;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -44,17 +45,18 @@ namespace ManagementSystem.AccountingApi.Controllers
         public async Task<IActionResult> Create(NewInventoryVoucherDto request)
         {
             var inventory = await _service.CreateInventoryVoucher(request);
-            if (inventory != null)
+            if (inventory.Result != null)
             {
+                var iResponse = (InventoryVoucher)inventory.Result;
                 var newReceiptDto = new NewReceiptRequestDto()
                 {
                     CustomerId = request.CustomerId,
-                    ForReason = string.Format(AccountingConstant.ReceiptReason, inventory.DocummentNumber),
+                    ForReason = string.Format(AccountingConstant.ReceiptReason, iResponse.DocummentNumber),
                     UserId = request.UserId,
                     TotalMoney = request.CashPaymentAmount,
                     BillId = request.BillId,
-                    StorageId = inventory.StorageId,
-                    InventoryDocumentNumber = inventory.DocummentNumber
+                    StorageId = iResponse.StorageId,
+                    InventoryDocumentNumber = iResponse.DocummentNumber
                 };
                 
                 var receptResult = await  _receiptService.CreateReceipt(newReceiptDto);
@@ -63,7 +65,7 @@ namespace ManagementSystem.AccountingApi.Controllers
                 return Ok(receptResult);
             }
 
-            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong When create Inventory Voucher or the product is not enough in the storage!");
+            return Ok(inventory);
         }
 
         [HttpPost("update")]

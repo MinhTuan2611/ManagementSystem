@@ -1,9 +1,7 @@
 ﻿using ManagementSystem.Common.Entities;
-using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.MainApp.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,54 +19,41 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> SearchInventory([FromBody] SearchCriteria searchModel)
         {
 
-            var result = await HttpRequestsHelper.Post<TPagination<InventoryVoucherResponseDto>>(APIUrl + "search_results", searchModel);
+            var result = await HttpRequestsHelper.Post<ResponseDto>(APIUrl + "search_results", searchModel);
 
-            if (result != null)
-                return Ok(result);
+            if (result.Result != null)
+            {
+                return Ok(result.Result);
+            }
 
-            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
+            return StatusCode(StatusCodes.Status404NotFound, result.Message);
         }
 
         [HttpGet("get-inventory-detail")]
         public async Task<IActionResult> GetDetail([FromQuery]int documentNumber)
         {
 
-            ResponseModel<InventoryVoucherDetailResponseDto> response = new ResponseModel<InventoryVoucherDetailResponseDto>();
-            var detail = await HttpRequestsHelper.Get<List<InventoryVoucherDetailResponseDto>>(APIUrl + "get-detail-by-document-number?documentNumber=" + documentNumber);
+            var detail = await HttpRequestsHelper.Get<ResponseDto>(APIUrl + "get-detail-by-document-number?documentNumber=" + documentNumber);
 
 
-            if (detail != null)
+            if (detail.Result != null)
             {
-
-                response.Status = "success";
-                response.Data = detail;
-                return Ok(response);
+                return Ok(detail);
             }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+            return NotFound(detail);
         }
 
         [HttpGet("get-inventory-by-id")]
         public async Task<IActionResult> GetById([FromQuery] int documentNumber)
         {
-
-            ResponseModel<InventoryVoucherResponseDto> response = new ResponseModel<InventoryVoucherResponseDto>();
-            var detail = await HttpRequestsHelper.Get<InventoryVoucherResponseDto>(APIUrl + "get-by-document-number?documentNumber=" + documentNumber);
-
-            List<InventoryVoucherResponseDto> result = new List<InventoryVoucherResponseDto>();
-            result.Add(detail);
+            var detail = await HttpRequestsHelper.Get<ResponseDto>(APIUrl + "get-by-document-number?documentNumber=" + documentNumber);
 
             if (detail != null)
             {
-
-                response.Status = "success";
-                response.Data = result;
-                return Ok(response);
+                return Ok(detail);
             }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+
+            return NotFound(detail);
         }
 
         [HttpPost("create")]
@@ -80,12 +65,13 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             request.UserId = int.Parse(userId);
 
-            var result = await HttpRequestsHelper.Post<InventoryVoucher>(APIUrl + "create", request);
+            var result = await HttpRequestsHelper.Post<ResponseDto>(APIUrl + "create", request);
             if (result != null)
             {
                 return Ok(result);
             }
-            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
 
         [HttpPost("update")]
@@ -97,12 +83,12 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             request.UserId = Convert.ToInt32(userId);
 
-            bool successfully = await HttpRequestsHelper.Post<bool>(APIUrl + "update", request);
+            var result = await HttpRequestsHelper.Post<ResponseDto>(APIUrl + "update", request);
 
-            if (successfully)
-                return Ok(successfully);
+            if (result.Result != null)
+                return Ok(result);
 
-            return StatusCode(StatusCodes.Status500InternalServerError, "System can not find the inventory or faild when update");
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
     }
 }

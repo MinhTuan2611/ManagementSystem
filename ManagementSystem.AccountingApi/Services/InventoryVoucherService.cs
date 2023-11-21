@@ -16,15 +16,16 @@ namespace ManagementSystem.AccountingApi.Services
     {
         private readonly AccountingDbContext _context;
         private readonly IConfiguration _configuration;
-
+        private ResponseDto _reponse;
         public InventoryVoucherService(AccountingDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
+            _reponse = new ResponseDto();
         }
 
 
-        public async Task<InventoryVoucher> CreateInventoryVoucher(NewInventoryVoucherDto request)
+        public async Task<ResponseDto> CreateInventoryVoucher(NewInventoryVoucherDto request)
         {
             try
             {
@@ -90,15 +91,18 @@ namespace ManagementSystem.AccountingApi.Services
                 });
                 await _context.SaveChangesAsync();
 
-                return inventory;
+                _reponse.Result = inventory;
+                return _reponse;
             }
             catch (Exception ex)
             {
-                return null;
+                _reponse.IsSuccess = false;
+                _reponse.Message = ex.Message;
+                return _reponse;
             }
         }
 
-        public async Task<InventoryVoucher> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request)
+        public async Task<ResponseDto> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request)
         {
             try
             {
@@ -167,15 +171,18 @@ namespace ManagementSystem.AccountingApi.Services
                 });
                 await _context.SaveChangesAsync();
 
-                return inventory;
+                _reponse.Result = inventory;
+                return _reponse;
             }
             catch (Exception ex)
             {
-                return null;
+                _reponse.IsSuccess = false;
+                _reponse.Message = ex.Message;
+                return _reponse;
             }
         }
 
-        public async Task<InventoryVoucherResponseDto> GetInventoryVoucherById(int documentNummer)
+        public async Task<ResponseDto> GetInventoryVoucherById(int documentNummer)
         {
             string query = string.Format(@"
                                         SELECT DISTINCT iv.DocummentNumber
@@ -211,15 +218,18 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 var result = _context.InventoryVoucherResponseDto.FromSqlRaw(query).SingleOrDefault();
 
-                return result;
+                _reponse.Result = result;
+                return _reponse;
             }
             catch (Exception ex)
             {
-                return null;
+                _reponse.IsSuccess = false;
+                _reponse.Message = ex.Message;
+                return _reponse;
             }
         }
 
-        public async Task<List<InventoryVoucherDetailResponseDto>> GetInventoryVoucherDetail(int documentNumber)
+        public async Task<ResponseDto> GetInventoryVoucherDetail(int documentNumber)
         {
             string query = string.Format(@"
                  SELECT p.ProductId
@@ -253,15 +263,18 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 var results = _context.InventoryVoucherDetailResponses.FromSqlRaw(query).ToList();
 
-                return results;
+                _reponse.Result = results;
+                return _reponse;
             }
             catch (Exception ex)
             {
-                return null;
+                _reponse.IsSuccess = false;
+                _reponse.Message = ex.Message;
+                return _reponse;
             }
         }
 
-        public async Task<TPagination<InventoryVoucherResponseDto>> SearchInventoryVouchers(SearchCriteria criteria)
+        public async Task<ResponseDto> SearchInventoryVouchers(SearchCriteria criteria)
         {
             try
             {
@@ -304,11 +317,14 @@ namespace ManagementSystem.AccountingApi.Services
                 result.Items = response;
                 result.TotalItems = totalRecords;
 
-                return result;
+                _reponse.Result = result;
+                return _reponse;
             }
             catch (Exception ex)
             {
-                return null;
+                _reponse.IsSuccess = false;
+                _reponse.Message = ex.Message;
+                return _reponse;
             }
         }
 
