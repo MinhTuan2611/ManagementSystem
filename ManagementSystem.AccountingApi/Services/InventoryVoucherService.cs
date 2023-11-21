@@ -62,7 +62,7 @@ namespace ManagementSystem.AccountingApi.Services
                     //item.TaxAccount = detail.TaxAccount;
                     item.Quantity = detail.Quantity;
                     item.Price = product?.PriceBeforeTax;
-                    item.TotalMoneyBeforeTax = product != null? product.PriceBeforeTax * detail.Quantity : 0;
+                    item.TotalMoneyBeforeTax = product != null ? product.PriceBeforeTax * detail.Quantity : 0;
                     item.DebitAccountMoney = detail.TotalMoneyAfterTax;
                     item.CreditAccountMoney = detail.TotalMoneyAfterTax;
                     //item.PaymentDiscountMoney = detail.PaymentDiscountMoney;
@@ -202,7 +202,7 @@ namespace ManagementSystem.AccountingApi.Services
 												--,bp.Amount AS PaymentAmount
 												,iv.TransactionDate
 												,s.StorageName
-												,iv.CreditAccount AS InventoryCreditAccout
+												,iv.CreditAccount AS InventoryCreditAccount
 												,iv.DebitAccount AS InventoryDebitAccount
 												,iv.BillId
 										FROM InventoryVouchers iv
@@ -366,9 +366,16 @@ namespace ManagementSystem.AccountingApi.Services
                 AND ps.ProductId = {1}
             ", brandId, productId);
 
-            var productStorage = _context.ProductStorageInformationDtos.FromSqlRaw(query).FirstOrDefault();
+            try
+            {
+                var productStorage = _context.ProductStorageInformationDtos.FromSqlRaw(query).FirstOrDefault();
 
-            return productStorage;
+                return productStorage;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public bool UpdateProductStorage(ProductStorageInformationDto dto, float productQuantity)

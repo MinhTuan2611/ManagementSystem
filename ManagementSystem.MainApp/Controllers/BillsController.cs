@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.MainApp.Utility;
+using ManagementSystem.MainApp.Services.IServices;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -18,11 +19,13 @@ namespace ManagementSystem.MainApp.Controllers
     {
         private readonly INotificationsServices _serverSentEventsServices;
         private readonly IPaymentServices _paymentServices;
+        private readonly IInventoryVoucherService _inventoryService;
 
-        public BillsController(INotificationsServices serverSentEventsServices, IPaymentServices paymentService)
+        public BillsController(INotificationsServices serverSentEventsServices, IPaymentServices paymentService, IInventoryVoucherService inventoryVoucherService)
         {
             _serverSentEventsServices = serverSentEventsServices;
             _paymentServices = paymentService;
+            _inventoryService = inventoryVoucherService;
         }
 
         [HttpGet("Get")]
@@ -51,9 +54,9 @@ namespace ManagementSystem.MainApp.Controllers
                 inventoryVoucherDto.UserId = userId;
                 inventoryVoucherDto.BillId = resultBill.BillId;
 
-                var inventoryResult = await HttpRequestsHelper.Post<ResponseDto>(SD.AccountingApiUrl + "InventoryVoucher/create", inventoryVoucherDto);
+                var inventoryResult = await _inventoryService.CreateInventory(inventoryVoucherDto);
 
-                if (inventoryResult.Result == null)
+                if (inventoryResult.IsSuccess == false)
                     return StatusCode(StatusCodes.Status500InternalServerError, inventoryResult.Message);
 
                 // Update Customer Point
@@ -67,8 +70,8 @@ namespace ManagementSystem.MainApp.Controllers
                     };
 
                     var customerUpdateFlag = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "customers/update_point", customerUpdate);
-                    if (!customerUpdateFlag)
-                        return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created, inventory created but faild when Update customer point");
+                    //if (!customerUpdateFlag)
+                    //    return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created, inventory created but faild when Update customer point");
 
 
                 }

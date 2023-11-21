@@ -4,6 +4,8 @@ using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace ManagementSystem.AccountingApi.Controllers
 {
@@ -21,28 +23,29 @@ namespace ManagementSystem.AccountingApi.Controllers
         }
 
         [HttpPost("search_results")]
-        public async Task<IActionResult> SearchInventory([FromBody]SearchCriteria searchModel)
+        public async Task<ResponseDto> SearchInventory([FromBody]SearchCriteria searchModel)
         {
+
             var result = await _service.SearchInventoryVouchers(searchModel);
-            return Ok(result);
+            return result;
         }
 
         [HttpGet("get-detail-by-document-number")]
-        public async Task<IActionResult> GetDetailByDocumentNumber([FromQuery] int DocumentNumber)
+        public async Task<ResponseDto> GetDetailByDocumentNumber([FromQuery] int DocumentNumber)
         {
             var result = await _service.GetInventoryVoucherDetail(DocumentNumber);
-            return Ok(result);
+            return result;
         }
 
         [HttpGet("get-by-document-number")]
-        public async Task<IActionResult> GetByDocumentNumber([FromQuery] int DocumentNumber)
+        public async Task<ResponseDto> GetByDocumentNumber([FromQuery] int DocumentNumber)
         {
             var result = await _service.GetInventoryVoucherById(DocumentNumber);
-            return Ok(result);
+            return result;
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(NewInventoryVoucherDto request)
+        public async Task<ResponseDto> Create(NewInventoryVoucherDto request)
         {
             var inventory = await _service.CreateInventoryVoucher(request);
             if (inventory.Result != null)
@@ -61,18 +64,17 @@ namespace ManagementSystem.AccountingApi.Controllers
                 
                 var receptResult = await  _receiptService.CreateReceipt(newReceiptDto);
 
-
-                return Ok(receptResult);
             }
 
-            return Ok(inventory);
+            inventory.Result = null;
+            return inventory;
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> Update(UpdateInventoryVoucherDto request)
+        public async Task<ResponseDto> Update(UpdateInventoryVoucherDto request)
         {
             var updated = await _service.UpdateInventoryDeliveryVoucher(request);
-            return Ok(updated);
+            return updated;
         }
     }
 }
