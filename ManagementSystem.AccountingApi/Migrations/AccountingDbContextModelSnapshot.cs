@@ -1001,16 +1001,10 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("BillId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreditAccount")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<string>("CustomerName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DebitAccount")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DocummentNumber")
@@ -1022,11 +1016,11 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("InventoryCreditAccout")
-                        .HasColumnType("int");
+                    b.Property<string>("InventoryCreditAccount")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("InventoryDebitAccount")
-                        .HasColumnType("int");
+                    b.Property<string>("InventoryDebitAccount")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -1068,6 +1062,13 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DepositAccount")
