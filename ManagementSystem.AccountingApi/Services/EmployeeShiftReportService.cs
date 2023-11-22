@@ -173,7 +173,7 @@ namespace ManagementSystem.AccountingApi.Services
                     FROM dbo.ShiftEndReports se
                     JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = se.ShiftEndId
                     JOIN dbo.ShiftReports sr ON sr.HandoverId = sh.HandoverId
-                    JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
+                    LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
                     JOIN AccountsDb.dbo.Users u ON u.UserId = se.UserId
                     WHERE se.ShiftEndId = {0}
                 ", shiftEndId);
@@ -245,7 +245,7 @@ namespace ManagementSystem.AccountingApi.Services
                   FROM cte t
                   JOIN dbo.ShiftEndReports sr ON sr.ShiftEndId = t.ShiftEndId
                   JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
-                  JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
+                  LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
                   JOIN dbo.ShiftReports s ON s.HandoverId = sh.HandoverId
                   LEFT JOIN preData pre ON pre.KeyJoin = sh.HandoverId
                   JOIN cte_users sender1 ON sh.SenderUserId1 = sender1.UserId
