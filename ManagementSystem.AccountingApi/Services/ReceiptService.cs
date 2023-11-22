@@ -3,6 +3,7 @@ using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.GenericModels;
+using ManagementSystem.Common.Loggers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.Data.SqlClient;
@@ -16,6 +17,7 @@ namespace ManagementSystem.AccountingApi.Services
         private readonly ILegerService _legerService;
         private IConfiguration _configuration;
         private ResponseDto _response;
+        private readonly string _path = string.Empty;
 
         public ReceiptService(AccountingDbContext context, ILegerService legerService, IConfiguration configuration)
         {
@@ -23,7 +25,7 @@ namespace ManagementSystem.AccountingApi.Services
             _legerService = legerService;
             _configuration = configuration;
             _response = new ResponseDto();
-
+            _path = @"C:\\Logs\\Accounting\\Receipt";
         }
 
         public async Task<ResponseDto> CreateReceipt(NewReceiptRequestDto request)
@@ -63,6 +65,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function CreateReceipt: " + ex.Message, _path);
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
                 return _response;
@@ -103,6 +106,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function SearchReceipts: " + ex.Message, _path);
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
                 return _response;
@@ -140,6 +144,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function GetReceptByDocumentNumber: " + ex.Message, _path);
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
                 return _response;
@@ -167,6 +172,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function UpdateReceipt: " + ex.Message, _path);
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
                 return _response;
@@ -193,7 +199,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
         #endregion

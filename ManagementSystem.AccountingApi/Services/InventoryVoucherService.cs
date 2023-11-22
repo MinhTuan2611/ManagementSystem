@@ -4,6 +4,7 @@ using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.GenericModels;
+using ManagementSystem.Common.Loggers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.Data.SqlClient;
@@ -17,13 +18,15 @@ namespace ManagementSystem.AccountingApi.Services
         private readonly AccountingDbContext _context;
         private readonly IConfiguration _configuration;
         private ResponseDto _reponse;
+        private readonly string _path = string.Empty;
+
         public InventoryVoucherService(AccountingDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
             _reponse = new ResponseDto();
+            _path = @"C:\\Logs\\Accounting\\InventoryVoucher";
         }
-
 
         public async Task<ResponseDto> CreateInventoryVoucher(NewInventoryVoucherDto request)
         {
@@ -96,6 +99,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function CreateInventoryVoucher: " + ex.Message, _path);
                 _reponse.IsSuccess = false;
                 _reponse.Message = ex.Message;
                 return _reponse;
@@ -176,6 +180,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function UpdateInventoryVoucher: " + ex.Message, _path);
                 _reponse.IsSuccess = false;
                 _reponse.Message = ex.Message;
                 return _reponse;
@@ -223,6 +228,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function GetInventoryVoucherById: " + ex.Message, _path);
                 _reponse.IsSuccess = false;
                 _reponse.Message = ex.Message;
                 return _reponse;
@@ -268,6 +274,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function GetInventoryVoucherDetail: " + ex.Message, _path);
                 _reponse.IsSuccess = false;
                 _reponse.Message = ex.Message;
                 return _reponse;
@@ -322,6 +329,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function SearchInventoryVouchers: " + ex.Message, _path);
                 _reponse.IsSuccess = false;
                 _reponse.Message = ex.Message;
                 return _reponse;
@@ -417,7 +425,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -456,7 +464,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
         #endregion
