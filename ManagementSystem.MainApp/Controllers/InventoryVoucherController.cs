@@ -106,10 +106,9 @@ namespace ManagementSystem.MainApp.Controllers
 
             var result = await _service.UpdateInventory(request);
 
-            if (result.Result != null)
+            if (result.IsSuccess != false)
             {
-                var response = JsonConvert.DeserializeObject<InventoryVoucher>(Convert.ToString(result.Result));
-                return Ok(response);
+                return Ok();
             }
 
             return StatusCode(StatusCodes.Status500InternalServerError, result.Message);

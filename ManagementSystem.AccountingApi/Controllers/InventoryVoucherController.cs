@@ -74,6 +74,7 @@ namespace ManagementSystem.AccountingApi.Controllers
         public async Task<ResponseDto> Update(UpdateInventoryVoucherDto request)
         {
             var updated = await _service.UpdateInventoryDeliveryVoucher(request);
+            updated.Result = null;
             return updated;
         }
     }
