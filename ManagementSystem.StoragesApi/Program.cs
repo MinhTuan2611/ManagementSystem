@@ -1,6 +1,7 @@
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Mappings;
 using ManagementSystem.StoragesApi.SeedingData;
+using ManagementSystem.StoragesApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<StoragesDbContext>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<IEventLoggingService, EventLoggingService>();
 builder.Services.AddSwaggerGen();
 
 // Register Auto Mapping

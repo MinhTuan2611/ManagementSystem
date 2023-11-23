@@ -14,6 +14,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int totalChange { get; set; } = 0;
         public int? CustomerId { get; set; }
         public string? CustomerName { get; set; }
+        public string? CustomerCode { get; set; }
         public int? TotalBillAmount { get; set; }
         public int? ShiftId { get; set; }
         public string? ShiftName { get; set; }

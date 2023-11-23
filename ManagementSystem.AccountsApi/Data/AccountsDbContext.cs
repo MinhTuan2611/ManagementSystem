@@ -16,6 +16,7 @@ namespace ManagementSystem.EmployeesApi.Data
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<EmployeeShift> EmployeeShifts { get; set; }
         public DbSet<UserBranch> UserBranchs { get; set; }
+        public DbSet<ActivityLog> ActivityLog { get; set; }
         
         // Response query result
         public DbSet<UserBrandDto> UserBrandDtos { get; set; }

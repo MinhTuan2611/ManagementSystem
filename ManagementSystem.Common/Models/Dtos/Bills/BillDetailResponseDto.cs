@@ -18,6 +18,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? Amount { get; set; }
         public int? ProductId { get; set; }
         public string? ProductName { get; set; }
+        public string? ProductCode { get; set; }
         public int? UnitId { get; set; }
         public string? UnitName { get; set; }
         public int? BillId { get; set; }

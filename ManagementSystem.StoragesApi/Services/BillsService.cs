@@ -221,8 +221,15 @@ namespace ManagementSystem.StoragesApi.Services
                 List<BillSearchingResponseDto> pagedData = executeResult.Item1;
                 int totalRecords = executeResult.Item2;
 
+
+                var modifiedList = pagedData.Select(bill =>
+                {
+                    bill.CustomerName = bill.CustomerName == null ? "Khách Lẻ" : bill.CustomerName;
+                    return bill;
+                }).ToList();
+
                 var result = new TPagination<BillSearchingResponseDto>();
-                result.Items = pagedData;
+                result.Items = modifiedList;
                 result.TotalItems = totalRecords;
 
                 return result;
@@ -246,6 +253,7 @@ namespace ManagementSystem.StoragesApi.Services
             billResponse.totalAmount = billInformation.totalAmount;
             billResponse.CustomerId = billInformation?.CustomerId;
             billResponse.CustomerName = billInformation?.CustomerName;
+            billResponse.CustomerCode = billInformation?.CustomerCode;
             billResponse.TotalBillAmount = billPayments.Sum(x => x.Amount.Value);
             billResponse.Details = billDetails;
             billResponse.Payments = billPayments;
@@ -283,6 +291,7 @@ namespace ManagementSystem.StoragesApi.Services
                     if (billDetail != null)
                     {
                         billDetail.ProductId = item.ProductId;
+
                         billDetail.UnitId = item.UnitId;
                         billDetail.DiscountAmount = item.DiscountAmount;
                         billDetail.DiscountByPercentage = item.DiscountByPercentage;
@@ -332,6 +341,7 @@ namespace ManagementSystem.StoragesApi.Services
 		                ,b.Amount
 		                ,p.ProductId
 		                ,p.ProductName
+                        ,p.ProductCode
 		                ,u.UnitId
 		                ,u.UnitName
 		                ,b.BillId
@@ -434,6 +444,7 @@ namespace ManagementSystem.StoragesApi.Services
 			                            WHEN COALESCE(c.CustomerName, '') = '' THEN N'Khách Lẻ'
 			                            ELSE c.CustomerName
 		                            END AS CustomerName
+                                    , c.CustomerCode
                             FROM dbo.Bills b
                             LEFT JOIN dbo.Customers c ON b.CustomerId = c.CustomerId
                             LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = b.ShiftId
