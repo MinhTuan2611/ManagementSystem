@@ -3,9 +3,12 @@ using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.MainApp.Utility;
+using ManagementSystem.MainApp.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Text.Json;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -14,61 +17,64 @@ namespace ManagementSystem.MainApp.Controllers
     [ApiController]
     public class InventoryVoucherController : ControllerBase
     {
-        private string APIUrl = Environment.AccountingApiUrl + "InventoryVoucher/";
+        private readonly IInventoryVoucherService _service;
 
+        public InventoryVoucherController(IInventoryVoucherService service)
+        {
+            _service = service;
+        }
 
         [HttpPost("search_results")]
         public async Task<IActionResult> SearchInventory([FromBody] SearchCriteria searchModel)
         {
 
-            var result = await HttpRequestsHelper.Post<TPagination<InventoryVoucherResponseDto>>(APIUrl + "search_results", searchModel);
+            // Convert ValueKind.Object to the actual values
+            foreach (var key in searchModel.Criterias.Keys.ToList())
+            {
+                if (searchModel.Criterias[key] is JsonElement jsonElement)
+                {
+                    searchModel.Criterias[key] = jsonElement.ToString();
+                }
+            }
 
-            if (result != null)
-                return Ok(result);
+            var response = await _service.SearchInventory(searchModel);
 
-            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
+            if (response.Result != null)
+            {
+                var list = JsonConvert.DeserializeObject<TPagination<InventoryVoucherResponseDto>>(Convert.ToString(response.Result));
+                return Ok(list);
+            }
+
+            return StatusCode(StatusCodes.Status404NotFound, response.Message);
         }
 
         [HttpGet("get-inventory-detail")]
         public async Task<IActionResult> GetDetail([FromQuery]int documentNumber)
         {
 
-            ResponseModel<InventoryVoucherDetailResponseDto> response = new ResponseModel<InventoryVoucherDetailResponseDto>();
-            var detail = await HttpRequestsHelper.Get<List<InventoryVoucherDetailResponseDto>>(APIUrl + "get-detail-by-document-number?documentNumber=" + documentNumber);
+            var detail = await _service.GetInventoryDetailByDocumentNumber(documentNumber);
 
 
-            if (detail != null)
+            if (detail.Result != null)
             {
-
-                response.Status = "success";
-                response.Data = detail;
+                var response = JsonConvert.DeserializeObject<List<InventoryVoucherDetailResponseDto>>(Convert.ToString(detail.Result));
                 return Ok(response);
             }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+            return NotFound(detail);
         }
 
         [HttpGet("get-inventory-by-id")]
         public async Task<IActionResult> GetById([FromQuery] int documentNumber)
         {
+            var detail = await _service.GetInventoryByDocumentNumber(documentNumber);
 
-            ResponseModel<InventoryVoucherResponseDto> response = new ResponseModel<InventoryVoucherResponseDto>();
-            var detail = await HttpRequestsHelper.Get<InventoryVoucherResponseDto>(APIUrl + "get-by-document-number?documentNumber=" + documentNumber);
-
-            List<InventoryVoucherResponseDto> result = new List<InventoryVoucherResponseDto>();
-            result.Add(detail);
-
-            if (detail != null)
+            if (detail.Result != null)
             {
-
-                response.Status = "success";
-                response.Data = result;
+                var response = JsonConvert.DeserializeObject<InventoryVoucherResponseDto>(Convert.ToString(detail.Result));
                 return Ok(response);
             }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+
+            return NotFound(detail);
         }
 
         [HttpPost("create")]
@@ -80,12 +86,13 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             request.UserId = int.Parse(userId);
 
-            var result = await HttpRequestsHelper.Post<InventoryVoucher>(APIUrl + "create", request);
-            if (result != null)
-            {
-                return Ok(result);
+            var result = await _service.CreateInventory(request);
+            if (result.IsSuccess != null)
+            { 
+                return Ok();
             }
-            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
 
         [HttpPost("update")]
@@ -97,12 +104,14 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             request.UserId = Convert.ToInt32(userId);
 
-            bool successfully = await HttpRequestsHelper.Post<bool>(APIUrl + "update", request);
+            var result = await _service.UpdateInventory(request);
 
-            if (successfully)
-                return Ok(successfully);
+            if (result.IsSuccess != false)
+            {
+                return Ok();
+            }
 
-            return StatusCode(StatusCodes.Status500InternalServerError, "System can not find the inventory or faild when update");
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
     }
 }

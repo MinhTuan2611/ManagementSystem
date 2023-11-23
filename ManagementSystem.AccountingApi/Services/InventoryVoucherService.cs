@@ -4,6 +4,7 @@ using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.GenericModels;
+using ManagementSystem.Common.Loggers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.Data.SqlClient;
@@ -16,15 +17,18 @@ namespace ManagementSystem.AccountingApi.Services
     {
         private readonly AccountingDbContext _context;
         private readonly IConfiguration _configuration;
+        private ResponseDto _reponse;
+        private readonly string _path = string.Empty;
 
         public InventoryVoucherService(AccountingDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
+            _reponse = new ResponseDto();
+            _path = @"C:\\Logs\\Accounting\\InventoryVoucher";
         }
 
-
-        public async Task<InventoryVoucher> CreateInventoryVoucher(NewInventoryVoucherDto request)
+        public async Task<ResponseDto> CreateInventoryVoucher(NewInventoryVoucherDto request)
         {
             try
             {
@@ -61,7 +65,7 @@ namespace ManagementSystem.AccountingApi.Services
                     //item.TaxAccount = detail.TaxAccount;
                     item.Quantity = detail.Quantity;
                     item.Price = product?.PriceBeforeTax;
-                    item.TotalMoneyBeforeTax = product != null? product.PriceBeforeTax * detail.Quantity : 0;
+                    item.TotalMoneyBeforeTax = product != null ? product.PriceBeforeTax * detail.Quantity : 0;
                     item.DebitAccountMoney = detail.TotalMoneyAfterTax;
                     item.CreditAccountMoney = detail.TotalMoneyAfterTax;
                     //item.PaymentDiscountMoney = detail.PaymentDiscountMoney;
@@ -90,15 +94,19 @@ namespace ManagementSystem.AccountingApi.Services
                 });
                 await _context.SaveChangesAsync();
 
-                return inventory;
+                _reponse.Result = inventory;
+                return _reponse;
             }
             catch (Exception ex)
             {
-                return null;
+                var logger = new LogWriter("Function CreateInventoryVoucher: " + ex.Message, _path);
+                _reponse.IsSuccess = false;
+                _reponse.Message = ex.Message;
+                return _reponse;
             }
         }
 
-        public async Task<InventoryVoucher> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request)
+        public async Task<ResponseDto> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request)
         {
             try
             {
@@ -167,15 +175,19 @@ namespace ManagementSystem.AccountingApi.Services
                 });
                 await _context.SaveChangesAsync();
 
-                return inventory;
+                _reponse.Result = inventory;
+                return _reponse;
             }
             catch (Exception ex)
             {
-                return null;
+                var logger = new LogWriter("Function UpdateInventoryVoucher: " + ex.Message, _path);
+                _reponse.IsSuccess = false;
+                _reponse.Message = ex.Message;
+                return _reponse;
             }
         }
 
-        public async Task<InventoryVoucherResponseDto> GetInventoryVoucherById(int documentNummer)
+        public async Task<ResponseDto> GetInventoryVoucherById(int documentNummer)
         {
             string query = string.Format(@"
                                         SELECT DISTINCT iv.DocummentNumber
@@ -195,7 +207,7 @@ namespace ManagementSystem.AccountingApi.Services
 												--,bp.Amount AS PaymentAmount
 												,iv.TransactionDate
 												,s.StorageName
-												,iv.CreditAccount AS InventoryCreditAccout
+												,iv.CreditAccount AS InventoryCreditAccount
 												,iv.DebitAccount AS InventoryDebitAccount
 												,iv.BillId
 										FROM InventoryVouchers iv
@@ -211,15 +223,19 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 var result = _context.InventoryVoucherResponseDto.FromSqlRaw(query).SingleOrDefault();
 
-                return result;
+                _reponse.Result = result;
+                return _reponse;
             }
             catch (Exception ex)
             {
-                return null;
+                var logger = new LogWriter("Function GetInventoryVoucherById: " + ex.Message, _path);
+                _reponse.IsSuccess = false;
+                _reponse.Message = ex.Message;
+                return _reponse;
             }
         }
 
-        public async Task<List<InventoryVoucherDetailResponseDto>> GetInventoryVoucherDetail(int documentNumber)
+        public async Task<ResponseDto> GetInventoryVoucherDetail(int documentNumber)
         {
             string query = string.Format(@"
                  SELECT p.ProductId
@@ -253,15 +269,19 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 var results = _context.InventoryVoucherDetailResponses.FromSqlRaw(query).ToList();
 
-                return results;
+                _reponse.Result = results;
+                return _reponse;
             }
             catch (Exception ex)
             {
-                return null;
+                var logger = new LogWriter("Function GetInventoryVoucherDetail: " + ex.Message, _path);
+                _reponse.IsSuccess = false;
+                _reponse.Message = ex.Message;
+                return _reponse;
             }
         }
 
-        public async Task<TPagination<InventoryVoucherResponseDto>> SearchInventoryVouchers(SearchCriteria criteria)
+        public async Task<ResponseDto> SearchInventoryVouchers(SearchCriteria criteria)
         {
             try
             {
@@ -304,11 +324,15 @@ namespace ManagementSystem.AccountingApi.Services
                 result.Items = response;
                 result.TotalItems = totalRecords;
 
-                return result;
+                _reponse.Result = result;
+                return _reponse;
             }
             catch (Exception ex)
             {
-                return null;
+                var logger = new LogWriter("Function SearchInventoryVouchers: " + ex.Message, _path);
+                _reponse.IsSuccess = false;
+                _reponse.Message = ex.Message;
+                return _reponse;
             }
         }
 
@@ -350,9 +374,16 @@ namespace ManagementSystem.AccountingApi.Services
                 AND ps.ProductId = {1}
             ", brandId, productId);
 
-            var productStorage = _context.ProductStorageInformationDtos.FromSqlRaw(query).FirstOrDefault();
+            try
+            {
+                var productStorage = _context.ProductStorageInformationDtos.FromSqlRaw(query).FirstOrDefault();
 
-            return productStorage;
+                return productStorage;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public bool UpdateProductStorage(ProductStorageInformationDto dto, float productQuantity)
@@ -394,7 +425,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -433,7 +464,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
         #endregion

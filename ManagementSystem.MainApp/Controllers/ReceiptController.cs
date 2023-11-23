@@ -3,8 +3,11 @@ using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
+using ManagementSystem.MainApp.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -13,39 +16,51 @@ namespace ManagementSystem.MainApp.Controllers
     [ApiController]
     public class ReceiptController : ControllerBase
     {
-        private string APIUrl = Environment.AccountingApiUrl + "Receipt/";
+        private readonly IReceiptService _service;
+
+        public ReceiptController(IReceiptService service)
+        {
+            _service = service;
+        }
+
 
         [HttpPost("search_results")]
         public async Task<IActionResult> SearchInventory([FromBody] SearchCriteria searchModel)
         {
 
-            var result = await HttpRequestsHelper.Post<TPagination<ReceiptResponseDto>>(APIUrl + "search_results", searchModel);
+            // Convert ValueKind.Object to the actual values
+            foreach (var key in searchModel.Criterias.Keys.ToList())
+            {
+                if (searchModel.Criterias[key] is JsonElement jsonElement)
+                {
+                    searchModel.Criterias[key] = jsonElement.ToString();
+                }
+            }
 
-            if (result != null)
-                return Ok(result);
+            var response = await _service.SearchReceipts(searchModel);
 
-            return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
+            if (response.Result != null)
+            {
+                var list = JsonConvert.DeserializeObject<TPagination<ReceiptResponseDto>>(Convert.ToString(response.Result));
+                return Ok(list);
+            }
+
+            return StatusCode(StatusCodes.Status404NotFound, response.Message);
         }
 
         [HttpGet("get-detail")]
         public async Task<IActionResult> GetDetail([FromQuery] int documentNumber)
         {
 
-            ResponseModel<ReceiptResponseDto> response = new ResponseModel<ReceiptResponseDto>();
-            ReceiptResponseDto detail = await HttpRequestsHelper.Get<ReceiptResponseDto>(APIUrl + "get-by-document-number?documentNumber=" + documentNumber);
-            List<ReceiptResponseDto> responseData = new List<ReceiptResponseDto>();
-            responseData.Add(detail);
+            var detail = await _service.GetReceiptByDocumentNumber(documentNumber);
 
-            if (detail != null)
+            if (detail.Result != null)
             {
-
-                response.Status = "success";
-                response.Data = responseData;
+                var response = JsonConvert.DeserializeObject<ReceiptResponseDto>(Convert.ToString(detail.Result));
                 return Ok(response);
             }
-            response.Status = "success";
-            response.ErrorMessage = "Not found any information!";
-            return Ok(response);
+
+            return NotFound(detail);
         }
 
 
@@ -56,14 +71,17 @@ namespace ManagementSystem.MainApp.Controllers
                 return BadRequest("Invalid request Data");
 
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
-            request.UserId = int.Parse(userId);
+            request.UserId = Convert.ToInt32(userId);
 
-            bool isCreated = await HttpRequestsHelper.Post<bool>(APIUrl + "create", request);
-            if (isCreated)
+            var result = await _service.CreateReceipt(request);
+
+            if (result.Result != null)
             {
-                return Ok(isCreated);
+                var response = JsonConvert.DeserializeObject<ReceiptVoucher>(Convert.ToString(result.Result));
+                return Ok(response);
             }
-            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
 
         [HttpPost("update")]
@@ -75,12 +93,15 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             request.UserId = Convert.ToInt32(userId);
 
-            bool successfully = await HttpRequestsHelper.Post<bool>(APIUrl + "update", request);
+            var result = await _service.UpdateReceipt(request);
 
-            if (successfully)
-                return Ok(successfully);
+            if (result.Result != null)
+            {
+                var response = JsonConvert.DeserializeObject<ReceiptVoucher>(Convert.ToString(result.Result));
+                return Ok(response);
+            }
 
-            return StatusCode(StatusCodes.Status500InternalServerError, "System can not find the inventory or faild when update");
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
     }
 }

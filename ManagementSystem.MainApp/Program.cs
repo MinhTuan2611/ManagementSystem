@@ -1,5 +1,6 @@
 using Lib.AspNetCore.ServerSentEvents;
 using ManagementSystem.MainApp.Services;
+using ManagementSystem.MainApp.Services.IServices;
 using ManagementSystem.MainApp.Utility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -11,12 +12,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<IInventoryVoucherService, InventoryVoucherService>();
+builder.Services.AddHttpClient<IReceiptService, ReceiptService>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication();
 builder.Services.AddServerSentEvents<INotificationsServices, NotificationsServices>();
 builder.Services.AddScoped<IPaymentServices, PaymentServices>();
+builder.Services.AddScoped<IBaseService, BaseService>();
+builder.Services.AddScoped<IInventoryVoucherService, InventoryVoucherService>();
+builder.Services.AddScoped<IReceiptService, ReceiptService>();
 
 SD.AccountingApiUrl = builder.Configuration["ServicesUrls:AccountingApi"];
 SD.AccountApiUrl = builder.Configuration["ServicesUrls:AccountApi"];
