@@ -1,4 +1,5 @@
 using ManagementSystem.AccountsApi.SeedingData;
+using ManagementSystem.AccountsApi.Services;
 using ManagementSystem.EmployeesApi.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ var connectionString = builder.Configuration.GetConnectionString("AccountsDbConn
 builder.Services.AddDbContext<AccountsDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddScoped<IEventLoggingService, EventLoggingService>();
 // Add services to the container.
 
 builder.Services.AddControllers();

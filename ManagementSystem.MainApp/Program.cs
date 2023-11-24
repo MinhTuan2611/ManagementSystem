@@ -16,6 +16,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IInventoryVoucherService, InventoryVoucherService>();
 builder.Services.AddHttpClient<IReceiptService, ReceiptService>();
+builder.Services.AddHttpClient<IEventloggingService, EventLoggingService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -26,6 +27,7 @@ builder.Services.AddScoped<IPaymentServices, PaymentServices>();
 builder.Services.AddScoped<IBaseService, BaseService>();
 builder.Services.AddScoped<IInventoryVoucherService, InventoryVoucherService>();
 builder.Services.AddScoped<IReceiptService, ReceiptService>();
+builder.Services.AddScoped<IEventloggingService, EventLoggingService>();
 
 SD.AccountingApiUrl = builder.Configuration["ServicesUrls:AccountingApi"];
 SD.AccountApiUrl = builder.Configuration["ServicesUrls:AccountApi"];

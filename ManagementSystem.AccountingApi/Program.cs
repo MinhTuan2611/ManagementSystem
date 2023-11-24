@@ -28,7 +28,7 @@ builder.Services.AddScoped<IEmployeeShiftReportService, EmployeeShiftReportServi
 builder.Services.AddScoped<ICreditVoucherService, CreditVoucherService>();
 builder.Services.AddScoped<IDebitVoucherService, DebitVoucherService>();
 builder.Services.AddScoped<IDocumentGroupService, DocumentGroupService>();
-
+builder.Services.AddScoped<IEventLoggingService, EventLoggingService>();
 //// Excluded migration tables
 //var migrationConfigs = new MigrationsConfiguration();
 
