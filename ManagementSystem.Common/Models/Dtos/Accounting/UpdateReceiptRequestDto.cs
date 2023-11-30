@@ -10,6 +10,7 @@ namespace ManagementSystem.Common.Models.Dtos
     {
         public int DocumentNumber { get; set; }
         public int CustomerId { get; set; }
+        public string? CustomerName { get; set; }
         public string ForReason { get; set; }
         public int TotalMoney { get; set; }
         public int UserId { get; set; }

@@ -35,6 +35,7 @@ namespace ManagementSystem.AccountingApi.Services
                 otherAccountEntry.UserId = newOtherAccountEntry.UserId;
                 otherAccountEntry.Amount = newOtherAccountEntry.Amount;
                 otherAccountEntry.CustomerId = newOtherAccountEntry.CustomerId;
+                otherAccountEntry.CustomerName = newOtherAccountEntry.CustomerId == null && newOtherAccountEntry.CustomerName != null ? newOtherAccountEntry.CustomerName : string.Empty;
                 otherAccountEntry.Note = newOtherAccountEntry.Note;
                 otherAccountEntry.PaymentDescription = newOtherAccountEntry.PaymentDescription;
                 otherAccountEntry.Reason = newOtherAccountEntry.Reason;
@@ -48,6 +49,7 @@ namespace ManagementSystem.AccountingApi.Services
                 await _legerService.CreateLegers(new Leger()
                 {
                     CustomerId = newOtherAccountEntry.CustomerId,
+                    CustomerName = newOtherAccountEntry.CustomerId == null && newOtherAccountEntry.CustomerName != null ? newOtherAccountEntry.CustomerName : string.Empty,
                     TransactionDate = otherAccountEntry.TransactionDate,
                     DoccumentNumber = otherAccountEntry.DocumentNumber,
                     CreditAccount = accounts?.CreditAccount,
@@ -205,6 +207,7 @@ namespace ManagementSystem.AccountingApi.Services
                 otherAccountEntry.UserId = updateOtherAccountEntry.UserId;
                 otherAccountEntry.Amount = updateOtherAccountEntry.Amount;
                 otherAccountEntry.CustomerId = updateOtherAccountEntry.CustomerId;
+                otherAccountEntry.CustomerName = updateOtherAccountEntry.CustomerId == null && updateOtherAccountEntry.CustomerName != null ? updateOtherAccountEntry.CustomerName : string.Empty;
                 otherAccountEntry.Note = updateOtherAccountEntry.Note;
                 otherAccountEntry.PaymentDescription = updateOtherAccountEntry.PaymentDescription;
                 otherAccountEntry.Reason = updateOtherAccountEntry.Reason;

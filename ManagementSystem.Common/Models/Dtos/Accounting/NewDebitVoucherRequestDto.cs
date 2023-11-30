@@ -18,6 +18,7 @@ namespace ManagementSystem.Common.Models.Dtos.Accounting
         public int ShiftId { get; set; }
         public string? PaymentMethodCode { get; set; }
         public int? CustomerId { get; set; }
+        public string? CustomerName { get; set; }
         public int? BillId { get; set; }
         public int? StorageId { get; set; }
         public int? GroupId { get; set; }

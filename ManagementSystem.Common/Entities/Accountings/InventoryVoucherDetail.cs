@@ -6,6 +6,7 @@ namespace ManagementSystem.Common.Entities
     {
         [ForeignKey("InventoryVoucher")]
         public int DocummentNumber { get; set; }
+        public int UnitId { get; set; }
         public int ProductId { get; set; }
         public float? Quantity { get; set; }
         public int? Price { get; set; }

@@ -55,7 +55,7 @@ namespace ManagementSystem.AccountingApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<InventoryVoucherDetail>().HasKey(x => new { x.DocummentNumber, x.ProductId });
+            modelBuilder.Entity<InventoryVoucherDetail>().HasKey(x => new { x.DocummentNumber, x.ProductId, x.UnitId });
             modelBuilder.Entity<ShiftHandoverCashDetail>().HasKey(x => new { x.ShiftEndId, x.Denomination });
             modelBuilder.Entity<InventoryAuditDetail>().HasKey(x => new { x.ShiftEndId, x.ProductId, x.UnitId });
 
