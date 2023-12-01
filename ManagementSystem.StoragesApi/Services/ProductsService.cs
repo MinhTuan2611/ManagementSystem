@@ -360,6 +360,7 @@ namespace ManagementSystem.StoragesApi.Services
                 productUnit.OldPrice = unit.OldPrice;
                 productUnit.Barcode = unit.Barcode;
                 productUnit.IsPrimary = unit.IsPrimary;
+                productUnit.GrossProfit = unit.GrossProfit;
                 listUnitOfProduct.Add(productUnit);
             }
             var currentUnit = new ProductUnitDetail();
