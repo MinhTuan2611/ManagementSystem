@@ -11,6 +11,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int DocumentNumber { get; set; }
         public int? BrandId { get; set; }
         public int? CustomerId { get; set; }
+        public string? CustomerName { get; set; }
         public int? Amount { get; set; }
         public string? Reason { get; set; }
         public string? PaymentDescription { get; set; }

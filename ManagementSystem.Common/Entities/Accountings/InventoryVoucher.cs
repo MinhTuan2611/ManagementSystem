@@ -12,6 +12,7 @@ namespace ManagementSystem.Common.Entities
         public int UserId { get; set; }
         public int? BillId { get; set; }
         public int? CustomerId { get; set; }
+        public string? CustomerName { get; set; }
         public int? ShiftId { get; set; }
         public int? StorageId { get; set; }
         public string? PurchasingRepresentive { get; set; }

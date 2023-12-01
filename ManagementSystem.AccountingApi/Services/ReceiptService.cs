@@ -34,6 +34,7 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 var receipt = new ReceiptVoucher();
                 receipt.CustomerId = request.CustomerId;
+                receipt.CustomerName = request.CustomerId == null && request.CustomerName != null ? request.CustomerName : string.Empty;
                 receipt.ForReason = request.ForReason;
                 receipt.TotalMoney = request.TotalMoney;
                 receipt.UserId = request.UserId;
@@ -47,6 +48,7 @@ namespace ManagementSystem.AccountingApi.Services
                 await _legerService.CreateLegers(new Leger()
                 {
                     CustomerId = receipt.CustomerId,
+                    CustomerName  = request.CustomerId == null && request.CustomerName != null ? request.CustomerName : string.Empty,
                     TransactionDate = receipt.TransactionDate,
                     DoccumentNumber = receipt.DocumentNumber,
                     CreditAccount = accounts?.CreditAccount,
@@ -161,6 +163,7 @@ namespace ManagementSystem.AccountingApi.Services
                     return null;
 
                 receipt.CustomerId = request.CustomerId;
+                receipt.CustomerName = request.CustomerId == null && request.CustomerName != null ? request.CustomerName : string.Empty;
                 receipt.ForReason = request.ForReason;
                 receipt.TotalMoney = request.TotalMoney;
                 receipt.UserId = request.UserId;

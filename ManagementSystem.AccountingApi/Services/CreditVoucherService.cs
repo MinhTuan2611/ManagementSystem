@@ -36,6 +36,7 @@ namespace ManagementSystem.AccountingApi.Services
 
                 var creditVoucher = new CreditVoucher();
                 creditVoucher.CustomerId = request.CustomerId;
+                creditVoucher.CustomerName = request.CustomerId == null && request.CustomerName != null ? request.CustomerName : string.Empty;
                 creditVoucher.ForReason = reason;
                 creditVoucher.TotalMoney = request.TotalMoney;
                 creditVoucher.UserId = request.UserId;
@@ -64,6 +65,7 @@ namespace ManagementSystem.AccountingApi.Services
                 {
                     CustomerId = creditVoucher.CustomerId,
                     TransactionDate = creditVoucher.TransactionDate,
+                    CustomerName = request.CustomerId == null && request.CustomerName != null ? request.CustomerName : string.Empty,
                     DoccumentNumber = creditVoucher.DocumentNumber,
                     CreditAccount = accounts?.CreditAccount,
                     DepositAccount = accounts?.DebitAccount,
@@ -96,6 +98,7 @@ namespace ManagementSystem.AccountingApi.Services
                 existingCredit.UserId = request.UserId;
                 existingCredit.UpdatedDate = DateTime.Now;
                 existingCredit.CustomerId = request.CustomerId;
+                existingCredit.CustomerName = request.CustomerId == null && request.CustomerName != null ? request.CustomerName : string.Empty;
                 existingCredit.ForReason = reason;
                 existingCredit.TotalMoney = request.TotalMoney;
                 existingCredit.PaymentMethodId = paymentMethod?.PaymentMethodId;

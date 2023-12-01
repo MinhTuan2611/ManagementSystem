@@ -12,6 +12,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int DocummentNumber { get; set; }
         public int UserId { get; set; }
         public int CustomerId { get; set; }
+        public string? CustomerName { get; set; }
         public int ShiftId { get; set; }
         public int? BrandId { get; set; }
         public string? PurchasingRepresentive { get; set; }

@@ -9,6 +9,7 @@ namespace ManagementSystem.Common.Entities
         [Key]
         public int DocumentNumber { get; set; }
         public int? CustomerId { get; set; }
+        public string? CustomerName { get; set; }
         //public string? ExtenalCustomer { get; set; }
         public string ForReason { get; set; }
         public int TotalMoney { get; set; }
