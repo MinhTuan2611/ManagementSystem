@@ -63,6 +63,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DebitAccount")
                         .HasColumnType("nvarchar(max)");
 
@@ -208,6 +211,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DebitAccount")
                         .HasColumnType("nvarchar(max)");
 
@@ -259,6 +265,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("CreditAccount")
                         .HasColumnType("int");
 
@@ -298,7 +307,7 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<float?>("TotalMoneyBeforeTax")
                         .HasColumnType("real");
 
-                    b.HasKey("DocummentNumber", "ProductId");
+                    b.HasKey("DocummentNumber", "ProductId", "UnitId");
 
                     b.ToTable("InventoryVoucherDetails");
                 });
@@ -322,6 +331,9 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DepositAccount")
                         .HasColumnType("nvarchar(max)");
@@ -369,6 +381,9 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DebitAccount")
                         .HasColumnType("nvarchar(max)");
@@ -465,6 +480,9 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ForReason")
                         .IsRequired()
