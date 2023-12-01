@@ -353,7 +353,6 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
@@ -896,8 +895,14 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("DisplayAddress")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DisplayName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MSThue")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ModifyBy")
@@ -905,6 +910,9 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<DateTime>("ModifyDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("PTTT")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");

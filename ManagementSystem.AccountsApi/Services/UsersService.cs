@@ -1,7 +1,9 @@
 ﻿using ManagementSystem.AccountsApi.Repositories.UnitOfWork;
+using ManagementSystem.AccountsApi.Utility;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
+using ManagementSystem.Common.Models.Dtos.Users;
 using ManagementSystem.EmployeesApi.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,11 +13,13 @@ namespace ManagementSystem.AccountsApi.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly AccountsDbContext _context;
+        private ResponseDto _response;
 
         public UsersService(AccountsDbContext context)
         {
             _unitOfWork = new UnitOfWork(context);
             _context = context;
+            _response = new ResponseDto();
         }
 
         public IEnumerable<UserInfo> GetAllUsers(string? searchValue)
@@ -56,7 +60,6 @@ namespace ManagementSystem.AccountsApi.Services
                     });
                 };
             return usersRes;
-            return null;
         }
 
         public User GetUserLogin(Login userLogin)
@@ -200,6 +203,47 @@ namespace ManagementSystem.AccountsApi.Services
             return roles;
         }
 
+        public async Task<ResponseDto> ChangePassword(UserChangePasswordRequestDto requestDto)
+        {
+            try
+            {
+                var flag = true;
+
+                var user = await _context.Users.SingleOrDefaultAsync(u => u.UserId == requestDto.UserId);
+                if (user != null)
+                {
+                    if (requestDto.OldPassword != null && !string.IsNullOrEmpty(requestDto.OldPassword))
+                    {
+                        flag = BCrypt.Net.BCrypt.Verify(requestDto.OldPassword, user.Password);
+                        if (flag == false)
+                        {
+                            _response.Message = "Old password is not match";
+                            _response.IsSuccess = false;
+
+                            return _response;
+                        }
+                    }
+
+                    requestDto.NewPassword = requestDto.NewPassword != null && !string.IsNullOrEmpty(requestDto.OldPassword) ? requestDto.NewPassword : SD.DefaultPassword;
+                    var newPassword = BCrypt.Net.BCrypt.HashPassword(requestDto.NewPassword);
+
+                    user.Password = newPassword;
+                    _context.SaveChanges();
+
+                }
+                return _response;
+            }
+            catch (Exception ex)
+            {
+
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+
+                return _response;
+            }
+
+        }
+
         #region Private handle methods
         private UserBrandDto GetUserBranch(int userId)
         {
@@ -241,6 +285,7 @@ namespace ManagementSystem.AccountsApi.Services
                 return false;
             }
         }
+
         #endregion
     }
 }
