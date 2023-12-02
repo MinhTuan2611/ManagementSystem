@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.StoragesApi.Services;
 using ManagementSystem.Common.Models;
+using ManagementSystem.StoragesApi.Data;
 
 namespace ManagementSystem.StoragesApi.Controllers
 {
@@ -10,22 +11,22 @@ namespace ManagementSystem.StoragesApi.Controllers
     [Route("api/[controller]")]
     public class RequestController : ControllerBase
     {
-        private readonly IRequestService _requestService;
+        private readonly RequestService _requestService;
 
-        public RequestController(IRequestService requestService)
+        public RequestController(StoragesDbContext context)
         {
-            _requestService = requestService;
+            _requestService = new RequestService(context);
         }
 
-        [HttpGet]
+        [HttpGet()]
         public ActionResult<IEnumerable<Request>> GetListRequests()
         {
             var requests = _requestService.GetListRequests();
             return Ok(requests);
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<Request> GetRequestById(int id)
+        [HttpGet("get_by_id")]
+        public ActionResult<Request> GetRequestById([FromQuery]int id)
         {
             var request = _requestService.GetRequestById(id);
             if (request == null)
@@ -37,15 +38,16 @@ namespace ManagementSystem.StoragesApi.Controllers
         }
 
         [HttpPost("create")]
-        public ActionResult<Request> CreateRequest(RequestApiModel<RequestModel> request)
+        public ActionResult<Request> CreateRequest([FromBody] RequestApiModel<RequestModel> request)
         {
             var createdRequest = _requestService.CreateRequest(request.Item);
             return CreatedAtAction(nameof(GetRequestById), new { id = createdRequest.RequestId }, createdRequest);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateRequest(int id, Request updatedRequest)
+        [HttpPost("update")]
+        public IActionResult UpdateRequest([FromBody] Request updatedRequest)
         {
+            int id = updatedRequest.RequestId;
             var result = _requestService.UpdateRequest(id, updatedRequest);
             if (result)
             {
@@ -55,16 +57,11 @@ namespace ManagementSystem.StoragesApi.Controllers
             return NotFound();
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteRequest(int id)
+        [HttpDelete("delete")]
+        public IActionResult DeleteRequest([FromQuery]int id)
         {
             var result = _requestService.DeleteRequest(id);
-            if (result)
-            {
-                return NoContent();
-            }
-
-            return NotFound();
+            return Ok(result);
         }
     }
 }
