@@ -1,6 +1,8 @@
 ﻿using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos.Users;
+using ManagementSystem.MainApp.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +14,13 @@ namespace ManagementSystem.MainApp.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly IUserService _service;
+
+        public UsersController(IUserService service)
+        {
+            _service = service;
+        }
+
         [HttpGet("get")]
         public async Task<IActionResult> Get(string? searchValue)
         {
@@ -54,6 +63,18 @@ namespace ManagementSystem.MainApp.Controllers
         {
             bool userId = await HttpRequestsHelper.Post<bool>(Environment.AccountApiUrl + "users/update", user);
             return Ok(userId);
+        }
+
+        [HttpPost("change_password")]
+        public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordRequestDto requestDto)
+        {
+
+            var result = await _service.ChangePassword(requestDto);
+
+            if (result.IsSuccess)
+                return Ok();
+
+            return StatusCode(StatusCodes.Status500InternalServerError, result.Message);
         }
     }
 }

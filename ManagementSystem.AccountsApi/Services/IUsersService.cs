@@ -1,6 +1,8 @@
 ﻿using ManagementSystem.AccountsApi.Models;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
+using ManagementSystem.Common.Models.Dtos.Users;
 
 namespace ManagementSystem.AccountsApi.Services
 {
@@ -14,5 +16,7 @@ namespace ManagementSystem.AccountsApi.Services
         bool UpdateUser(int UserId, UserInformation UserEntity);
         //bool DeleteUser(int UserId);
         string GetUserRoles(int UserId);
+
+        Task<ResponseDto> ChangePassword(UserChangePasswordRequestDto requestDto);
     }
 }

@@ -1,5 +1,6 @@
 using ManagementSystem.AccountsApi.SeedingData;
 using ManagementSystem.AccountsApi.Services;
+using ManagementSystem.AccountsApi.Utility;
 using ManagementSystem.EmployeesApi.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,8 @@ builder.Services.AddDbContext<AccountsDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped<IEventLoggingService, EventLoggingService>();
 // Add services to the container.
+
+SD.DefaultPassword = builder.Configuration["DefaultPassword"];
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

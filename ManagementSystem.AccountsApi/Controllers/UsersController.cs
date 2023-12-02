@@ -8,6 +8,8 @@ using ManagementSystem.Common.Helpers;
 using ManagementSystem.AccountsApi.Models;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Models.Dtos;
+using ManagementSystem.Common.Models.Dtos.Users;
 
 namespace ManagementSystem.AccountsApi.Controllers
 {
@@ -85,6 +87,12 @@ namespace ManagementSystem.AccountsApi.Controllers
         {
             string roleIds = _UsersService.GetUserRoles(userId);
             return Ok(roleIds);
+        }
+
+        [HttpPost("change_password")]
+        public async Task<ResponseDto> ChangePassword([FromBody]UserChangePasswordRequestDto requestDto)
+        {
+            return await _UsersService.ChangePassword(requestDto);
         }
     }
 }

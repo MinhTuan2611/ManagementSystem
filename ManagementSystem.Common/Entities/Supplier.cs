@@ -17,6 +17,9 @@ namespace ManagementSystem.Common.Entities
         public string DisplayName { get; set; }
         public string? Address { get; set; }
         public string? Phone { get; set; }
+        public string? PTTT { get; set; }
+        public string? MSThue { get; set; }
+        public string? DisplayAddress { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
     }
 }
