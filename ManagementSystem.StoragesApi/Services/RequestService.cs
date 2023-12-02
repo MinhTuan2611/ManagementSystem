@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
+using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 
 namespace ManagementSystem.StoragesApi.Services
 {
-    public class RequestService : IRequestService
+    public class RequestService
     {
         private readonly UnitOfWork _unitOfWork;
 
-        public RequestService(UnitOfWork unitOfWork)
+        public RequestService(StoragesDbContext context)
         {
-            _unitOfWork = unitOfWork;
+            _unitOfWork = new UnitOfWork(context);
         }
 
         public IEnumerable<Request> GetListRequests()
