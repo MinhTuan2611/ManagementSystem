@@ -449,6 +449,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<int>("ProductType")
                         .HasColumnType("int");
 
+                    b.Property<string>("ProductUnSignSearching")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int?>("RevenueGroupId")
                         .HasColumnType("int");
 
@@ -461,6 +464,11 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("ProductUnSignSearching")
+                        .HasDatabaseName("idx_productUnSignSearch");
+
+                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("ProductUnSignSearching"), false);
 
                     b.HasIndex("RevenueGroupId");
 
@@ -541,7 +549,7 @@ namespace ManagementSystem.StoragesApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Barcode")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("CreateBy")
                         .HasColumnType("int");
@@ -580,6 +588,11 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Barcode")
+                        .HasDatabaseName("idx_productUnitBarcode");
+
+                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("Barcode"), false);
 
                     b.HasIndex("ProductId");
 

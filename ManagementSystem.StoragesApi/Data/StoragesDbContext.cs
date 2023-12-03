@@ -54,6 +54,21 @@ namespace ManagementSystem.StoragesApi.Data
             modelBuilder.Entity<PaymentMethodDto>().ToTable(nameof(PaymentMethodDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<ProductAutoGenerationResponseDto>().ToTable(nameof(ProductAutoGenerationResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<EmployeeShiftInformationDto>().ToTable(nameof(EmployeeShiftInformationDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.HasIndex(x => x.ProductUnSignSearching)
+                    .IsUnique(false)
+                    .IsClustered(false)
+                    .HasDatabaseName("idx_productUnSignSearch");
+            });
+
+            modelBuilder.Entity<ProductUnit>(entity =>
+            {
+                entity.HasIndex(x => x.Barcode)
+                    .IsUnique(false)
+                    .IsClustered(false)
+                    .HasDatabaseName("idx_productUnitBarcode");
+            });
         }
     }
 }

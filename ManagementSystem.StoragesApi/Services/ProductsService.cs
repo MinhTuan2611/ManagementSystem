@@ -5,6 +5,8 @@ using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -387,8 +389,9 @@ namespace ManagementSystem.StoragesApi.Services
         public List<ProductDetailInSale>? AutoCompleteGetProductDetailForSale(string barcode)
         {
             List<ProductDetailInSale> productDetailInSales = new List<ProductDetailInSale>();
+            barcode = convertToUnSign(barcode);
             string[] includes = { "Product", "Unit" };
-            List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => (x.Barcode.Contains(barcode) || x.Product.ProductName.Contains(barcode)) && x.Status == ActiveStatus.Active, includes).OrderBy(x => x.Id).ToList();
+            List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => (x.Barcode.Contains(barcode) || x.Product.ProductUnSignSearching.Contains(barcode)) && x.Status == ActiveStatus.Active, includes).AsNoTracking().OrderBy(x => x.Id).ToList();
             if (productDetails == null)
             {
                 return null;
@@ -397,7 +400,9 @@ namespace ManagementSystem.StoragesApi.Services
             foreach(ProductUnit productDetail in productDetails)
             {
                 ProductDetailInSale productDetailInSale = new ProductDetailInSale();
-                var units = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.ProductId == productDetail.ProductId && x.Status == ActiveStatus.Active, unitIncludes).OrderBy(x => x.Id).ToList();
+                var units = _unitOfWork.ProductUnitRepository
+                        .GetWithInclude(x => x.ProductId == productDetail.ProductId && x.Status == ActiveStatus.Active, unitIncludes)
+                        .OrderBy(x => x.Id).ToList();
                 var listUnitOfProduct = new List<ProductUnitDetail>();
                 foreach (var unit in units)
                 {
@@ -490,6 +495,13 @@ namespace ManagementSystem.StoragesApi.Services
                 return true;
             return false;
                 
+        }
+
+        private static string convertToUnSign(string s)
+        {
+            Regex regex = new Regex("\\p{IsCombiningDiacriticalMarks}+");
+            string temp = s.Normalize(NormalizationForm.FormD);
+            return regex.Replace(temp, String.Empty).Replace('\u0111', 'd').Replace('\u0110', 'D');
         }
     }
 }
