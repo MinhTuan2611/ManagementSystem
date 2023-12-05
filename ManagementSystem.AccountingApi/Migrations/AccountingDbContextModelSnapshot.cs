@@ -259,14 +259,11 @@ namespace ManagementSystem.AccountingApi.Migrations
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryVoucherDetail", b =>
                 {
-                    b.Property<int>("DocummentNumber")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnitId")
-                        .HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int?>("CreditAccount")
                         .HasColumnType("int");
@@ -280,6 +277,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("DebitAccountMoney")
                         .HasColumnType("int");
 
+                    b.Property<int>("DocummentNumber")
+                        .HasColumnType("int");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -290,6 +290,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("Price")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<float?>("Quantity")
@@ -307,7 +310,12 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<float?>("TotalMoneyBeforeTax")
                         .HasColumnType("real");
 
-                    b.HasKey("DocummentNumber", "ProductId", "UnitId");
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocummentNumber");
 
                     b.ToTable("InventoryVoucherDetails");
                 });

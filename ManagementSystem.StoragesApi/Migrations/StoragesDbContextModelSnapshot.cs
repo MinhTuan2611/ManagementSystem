@@ -342,6 +342,9 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Property<int>("CustomerPoint")
                         .HasColumnType("int");
 
+                    b.Property<string>("CustomerUnsign")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

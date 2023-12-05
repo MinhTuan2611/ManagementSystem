@@ -21,6 +21,7 @@ namespace ManagementSystem.Common.Entities
         public string Gender { get; set; }
         public string Address { get; set; }
         public DateTime? BirthDay { get; set; }
+        public string? CustomerUnsign { get; set; }
 
         [MaxLength(15)]
         public string? PhoneNumber  { get; set; }
