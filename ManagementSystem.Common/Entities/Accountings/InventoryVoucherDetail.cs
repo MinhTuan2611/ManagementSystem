@@ -1,9 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ManagementSystem.Common.Entities
 {
     public class InventoryVoucherDetail
     {
+        [Key]
+        public int Id { get; set; }
         [ForeignKey("InventoryVoucher")]
         public int DocummentNumber { get; set; }
         public int UnitId { get; set; }
