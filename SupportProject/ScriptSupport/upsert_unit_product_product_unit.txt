@@ -1,0 +1,161 @@
+DROP TABLE IF EXISTS #san_pham
+CREATE TABLE #san_pham (
+    [Mã hàng hóa] NVARCHAR(MAX),
+    [Tên hàng hóa 1] NVARCHAR(MAX),
+    [Tên hàng hóa 2] NVARCHAR(MAX),
+    [Loại hàng] NVARCHAR(MAX),
+    [ĐVT] NVARCHAR(MAX),
+    [Giá (nhập)] NVARCHAR(MAX),
+    [Giá C1(Bán lẻ)] NVARCHAR(MAX)
+)
+
+BULK INSERT #san_pham
+FROM 'C:\Users\kimto\Documents\Zalo Received Files\danh_sach_san_pham.csv'
+WITH (
+  FIELDTERMINATOR = ';',
+  ROWTERMINATOR = '\n',
+  CODEPAGE = '65001', 
+  FIRSTROW = 2
+);
+
+merge UNIT  dest
+USING 
+(
+	SELECT DISTINCT a.ĐVT AS UnitName
+	FROM #san_pham a
+	LEFT JOIN Unit b ON a.ĐVT = b.UnitName
+	WHERE b.UnitName IS NULL
+) src
+ON dest.UnitName = src.UnitName
+WHEN NOT MATCHED THEN
+INSERT
+([UnitName]
+,[CreateDate]
+,[CreateBy]
+,[ModifyDate]
+,[ModifyBy])
+VALUES
+(
+	src.UnitName
+	,GETDATE()
+	,1
+	,GETDATE()
+	,1
+);
+
+DROP TABLE IF EXISTS #tmp_join_result
+SELECT Distinct a.*
+		,b.UnitId
+		,C.CategoryId
+INTO #tmp_join_result
+FROM #san_pham a
+JOIN Unit b ON a.ĐVT = b.UnitName
+JOIN Category c ON c.CategoryName = a.[Loại hàng]
+
+UPDATE #tmp_join_result
+set [Mã hàng hóa] = '8938519665903'
+where [Mã hàng hóa] is null
+
+MERGE Products dest
+USING
+(
+	SELECT distinct *
+	FROM #tmp_join_result
+) src ON src.[Mã hàng hóa] = dest.ProductCode
+WHEN NOT MATCHED THEN
+INSERT
+	([ProductCode]
+    ,[ProductName]
+    ,[CategoryId]
+    ,[Price]
+    ,[DefaultPurchasePrice]
+    ,[Status]
+    ,[CreateDate]
+    ,[CreateBy]
+    ,[ModifyDate]
+    ,[ModifyBy]
+    ,[BarCode]
+    ,[Decription]
+    ,[Tax]
+    ,[ProductType]
+    ,[CreditAccountId]
+    ,[DebitAccountId]
+    ,[RevenueGroupId]
+    ,[ProductUnSignSearching])
+VALUES
+(
+	src.[Mã hàng hóa]
+	,src.[Tên hàng hóa 1]
+	,src.CategoryId
+	,CONVERT(INT, CONVERT(FLOAT, src.[Giá (nhập)])) 
+	,CONVERT(INT, CONVERT(FLOAT, src.[Giá C1(Bán lẻ)])) 
+	,0
+	,GETDATE()
+	,1
+	,GETDATE()
+	,1
+	,src.[Mã hàng hóa]
+	,''
+	,0
+	,1
+	, NULL
+	, NULL
+	, 1
+	, ''
+)
+WHEN MATCHED THEN
+UPDATE 
+SET dest.ProductName = src.[Tên hàng hóa 1]
+	,dest.Price =  CONVERT(INT, CONVERT(FLOAT, src.[Giá (nhập)])) 
+	,dest.DefaultPurchasePrice = CONVERT(INT, CONVERT(FLOAT, src.[Giá C1(Bán lẻ)])) ;
+
+drop table if exists #product_unit
+select DISTINCT a.*
+		, b.ProductId
+INTO #product_unit
+from #tmp_join_result a
+join Products b on a.[Mã hàng hóa] = b.ProductCode
+
+MERGE [dbo].[ProductUnit] dest
+USING
+(
+	SELECT *
+	FROM #product_unit
+) src ON src.ProductId = dest.ProductId
+		AND src.UnitId = dest.UnitId
+WHEN NOT MATCHED THEN
+INSERT
+    ([ProductId]
+    ,[UnitId]
+    ,[UnitExchange]
+    ,[Price]
+    ,[OldPrice]
+    ,[IsPrimary]
+    ,[Barcode]
+    ,[Status]
+    ,[CreateDate]
+    ,[CreateBy]
+    ,[ModifyDate]
+    ,[ModifyBy]
+    ,[GrossProfit])
+VALUES
+(
+	src.ProductId
+	,src.UnitId
+	,0
+	,CONVERT(INT, CONVERT(FLOAT, src.[Giá C1(Bán lẻ)]))
+	,CONVERT(INT, CONVERT(FLOAT, src.[Giá (nhập)]))
+	,1
+	,src.[Mã hàng hóa]
+	, 0
+	,GETDATE()
+	,1
+	,GETDATE()
+	,1
+	,0
+)
+WHEN MATCHED THEN
+UPDATE
+SET Price = CONVERT(INT, CONVERT(FLOAT, src.[Giá C1(Bán lẻ)]))
+	,OldPrice = CONVERT(INT, CONVERT(FLOAT, src.[Giá (nhập)]))
+	,ModifyDate = GETDATE();

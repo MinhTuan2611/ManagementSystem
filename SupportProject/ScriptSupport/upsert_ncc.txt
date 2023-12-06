@@ -1,0 +1,66 @@
+drop table if exists #tmp_ncc
+CREATE TABLE #tmp_ncc (
+    [Mã cũ] NVARCHAR(MAX),
+    [Mã mới] NVARCHAR(MAX),
+    [Tên nhà cung cấp] NVARCHAR(MAX),
+    [Địa chỉ liên hệ] NVARCHAR(MAX),
+    [Điện thoại liên hệ] NVARCHAR(MAX),
+    [Tên rút gọn] NVARCHAR(MAX),
+    [MST] NVARCHAR(MAX),
+    [Tên Trên Hóa Đơn] NVARCHAR(MAX),
+    [Địa chỉ trên hóa đơn] NVARCHAR(MAX)
+)
+
+BULK INSERT #tmp_ncc
+FROM 'C:\Users\kimto\Documents\Zalo Received Files\danh_sach_ncc.csv'
+WITH (
+  FIELDTERMINATOR = ';',
+  ROWTERMINATOR = '\n',
+  CODEPAGE = '65001', 
+  FIRSTROW = 2
+);
+
+select *
+from #tmp_ncc
+
+--DROP TABLE IF EXISTS #tmp_ncc
+--CREATE TABLE #tmp_ncc (
+--    [Nhóm NCC] NVARCHAR(MAX),
+--    [Mã cũ] NVARCHAR(MAX),
+--    [Mã mới] NVARCHAR(MAX),
+--    [Tên nhà cung cấp] NVARCHAR(MAX),
+--    [Column 4] NVARCHAR(MAX),
+--    [Địa chỉ liên hệ] NVARCHAR(MAX),
+--    [Điện thoại liên hệ] NVARCHAR(MAX),
+--    [Tên rút gọn] NVARCHAR(MAX),
+--    [MST] NVARCHAR(MAX),
+--    [Tên Trên Hóa Đơn] NVARCHAR(MAX),
+--    [Địa chỉ trên hóa đơn] NVARCHAR(MAX)
+--)
+
+--BULK INSERT #tmp_ncc
+--FROM 'C:\Users\kimto\Documents\Zalo Received Files\danh_sach_ncc.csv'
+--WITH (
+--  FIELDTERMINATOR = ';',
+--  ROWTERMINATOR = '\n',
+--  CODEPAGE = '65001', 
+--  FIRSTROW = 2
+--);
+
+
+select * from CHECKDB.[dbo].[OLE DB Destination]
+
+select *
+from  CHECKDB.[dbo].[OLE DB Destination] b
+left join Suppliers a  on a.SupplierCode = convert(varchar(max), b.[Mã cũ])
+where a.SupplierCode is null
+
+select *
+from Suppliers a
+left join CHECKDB.[dbo].[OLE DB Destination] b on a.SupplierCode = convert(varchar(max), b.[Mã mới])
+where b.[Mã mới] is null
+
+select a.SupplierCode
+		,B.[Mã mới]
+from  CHECKDB.[dbo].[OLE DB Destination] b
+join Suppliers a  on a.SupplierCode = convert(varchar(max), b.[Mã cũ])

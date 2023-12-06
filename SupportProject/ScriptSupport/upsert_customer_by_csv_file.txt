@@ -1,0 +1,61 @@
+DROP TABLE IF EXISTS #tmp_khach_hang
+CREATE TABLE #tmp_khach_hang (
+    [Mã KH] NVARCHAR(MAX),
+    [Tên KH] NVARCHAR(MAX),
+    [Điện thoại] NVARCHAR(MAX)
+)
+
+BULK INSERT #tmp_khach_hang
+FROM 'C:\Users\kimto\Documents\Zalo Received Files\danh_sach_khach_hang.csv'
+WITH (
+  FIELDTERMINATOR = ';',
+  ROWTERMINATOR = '\n',
+  CODEPAGE = '65001', 
+  FIRSTROW = 2
+);
+
+
+merge Customers dest
+using (
+	SELECT distinct a.[Mã KH] AS CustomerCode
+			, A.[Tên KH] AS CustomerName
+			, A.[Điện thoại] AS CustomerPhone
+	from #tmp_khach_hang a
+) src ON src.CustomerCode = dest.CustomerCode
+WHEN NOT MATCHED THEN
+INSERT
+([CustomerCode]
+,[CustomerName]
+,[CustomerPoint]
+,[CreateDate]
+,[CreateBy]
+,[ModifyDate]
+,[ModifyBy]
+,[Address]
+,[BirthDay]
+,[Gender]
+,[PhoneNumber]
+,[CustomerUnsign])
+VALUES
+(
+	src.CustomerCode
+	,src.CustomerName
+	,0 
+	,GETDATE()
+	,1
+	,GETDATE()
+	,1
+	,''
+	,NULL
+	, ''
+	, RTRIM(SUBSTRING(src.CustomerPhone, 0, CHARINDEX('-', src.CustomerPhone))) 
+	,''
+)
+WHEN MATCHED THEN
+UPDATE
+SET dest.CustomerName = src.CustomerName
+	,dest.PhoneNumber = RTRIM(SUBSTRING(src.CustomerPhone, 0, CHARINDEX('-', src.CustomerPhone)))
+	, dest.ModifyDate = getdate();
+
+delete Customers
+where CustomerCode = 'UnknownCode'

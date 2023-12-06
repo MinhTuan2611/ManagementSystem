@@ -1,0 +1,77 @@
+CREATE TABLE #tmp_Unit
+(
+	UnitName NVARCHAR(128)
+)
+INSERT INTO #tmp_Unit
+values
+('Bịch'),
+('Bình'),
+('Bó'),
+('Bộ'),
+('Cái'),
+('Can'),
+('Cặp'),
+('Cây'),
+('Chai'),
+('Chén'),
+('Chiếc'),
+('Chục'),
+('Combo'),
+('Con'),
+('Cục'),
+('Cuốn'),
+('Cuộn'),
+('Cúp'),
+('Dây'),
+('Đôi'),
+('Đòn'),
+('Giỏ'),
+('Gói'),
+('Hộp'),
+('Hũ'),
+('Kg'),
+('Khay'),
+('Lần'),
+('Lọ'),
+('Lốc'),
+('Lon'),
+('Ly'),
+('Mét'),
+('Miếng'),
+('Ổ'),
+('Ống'),
+('Phần'),
+('Quả'),
+('Rổ'),
+('Tập'),
+('Thanh'),
+('Thùng'),
+('Tô'),
+('Trái'),
+('Tuýp'),
+('Vỉ'),
+('Viên')
+
+
+merge UNIT  dest
+USING 
+(
+	select *
+	from #tmp_Unit
+) src
+ON dest.UnitName = src.UnitName
+WHEN NOT MATCHED THEN
+INSERT
+([UnitName]
+,[CreateDate]
+,[CreateBy]
+,[ModifyDate]
+,[ModifyBy])
+VALUES
+(
+	src.UnitName
+	,GETDATE()
+	,1
+	,GETDATE()
+	,1
+);

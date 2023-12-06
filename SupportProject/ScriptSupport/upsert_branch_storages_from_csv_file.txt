@@ -1,0 +1,108 @@
+drop table if  exists #tong_kho
+CREATE TABLE #tong_kho (
+    [Mã số kho] NVARCHAR(MAX),
+    [Mã số kho MỚI] NVARCHAR(MAX),
+    [Tên kho] NVARCHAR(MAX),
+    [Tên kho mới] NVARCHAR(MAX),
+    [Địa chỉ] NVARCHAR(MAX),
+    [Thủ kho] NVARCHAR(MAX),
+    [Chi nhánh] NVARCHAR(MAX)
+)
+
+BULK INSERT #tong_kho
+FROM 'C:\Users\kimto\Documents\Zalo Received Files\danh_sach_kho.csv'
+WITH (
+  FIELDTERMINATOR = ';',
+  ROWTERMINATOR = '\n',
+  CODEPAGE = '65001', 
+  FIRSTROW = 2
+);
+
+drop table if exists #brands
+select SUBSTRING([Chi nhánh], 0, CHARINDEX('-', [Chi nhánh])) AS BrachCode
+		,[Chi nhánh] AS BranchName
+		,[Địa chỉ] AS BranchAddress
+INTO #brands
+from #tong_kho
+
+MERGE [dbo].[Branches] dest
+USING
+(
+	SELECT DISTINCT *
+	FROM #brands
+) src ON src.BrachCode = dest.BranchCode
+WHEN NOT MATCHED THEN
+INSERT 
+([BranchCode]
+,[BranchName]
+,[Address]
+,[PhoneNumber]
+,[ManagerID]
+,[Status]
+,[CreateDate]
+,[CreateBy]
+,[ModifyDate]
+,[ModifyBy])
+VALUES
+(
+	src.BrachCode
+	,src.BranchName
+	,src.BranchAddress
+	, ''
+	, 0
+	,0
+	,GETDATE()
+	,1
+	,GETDATE()
+	,1
+)
+WHEN MATCHED THEN
+UPDATE
+SET BranchName = src.BranchName
+	,Address = src.BranchAddress
+	,ModifyDate = GETDATE();
+
+	DROP TABLE IF EXISTS #tmp_kho
+	SELECT A.*
+			,B.BranchId
+	INTO #tmp_kho
+	FROM #tong_kho A
+	JOIN Branches B ON A.[Chi nhánh] = B.BranchName
+
+MERGE [dbo].[Storages] dest
+USING
+(
+	SELECT *
+	FROM #tmp_kho
+) src ON src.[Mã số kho] = dest.StorageCode
+WHEN NOT MATCHED THEN
+INSERT
+	([StorageCode]
+	,[StorageName]
+	,[Address]
+	,[Phone]
+	,[BranchId]
+	,[CreateDate]
+	,[CreateBy]
+	,[ModifyDate]
+	,[ModifyBy]
+	,[Status])
+VALUES
+(
+	src.[Mã số kho MỚI]
+	,src.[Tên kho mới]
+	,src.[Địa chỉ]
+	,''
+	,src.BranchId
+	,GETDATE()
+	,1
+	,GETDATE()
+	,1
+	,0
+)
+WHEN MATCHED THEN
+UPDATE
+	SET dest.StorageCode = src.[Mã số kho MỚI]
+		,dest.StorageName = src.[Tên kho mới]
+		,dest.Address = src.[Địa chỉ]
+		,dest.ModifyDate = GETDATE();
