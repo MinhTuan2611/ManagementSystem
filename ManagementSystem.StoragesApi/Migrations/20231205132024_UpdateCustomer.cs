@@ -37,43 +37,51 @@ namespace ManagementSystem.StoragesApi.Migrations
             ");
 
              migrationBuilder.Sql(@"
-                    CREATE OR ALTER  PROC [dbo].[sp_search_customer_by_term]
-                    (
-                        @searchTerm NVARCHAR(MAX)
-                    )
-                    AS
-                    BEGIN
+             CREATE OR ALTER  PROC [dbo].[sp_search_customer_by_term]
+              (
+                  @searchTerm NVARCHAR(MAX)
+              )
+              AS
+              BEGIN
 
-	                    DECLARE @SearchName NVARCHAR(255) = ''
-                        DECLARE @SearchPhoneNumber NVARCHAR(10) = ''
-	                    DECLARE @SearchNameUnsign NVARCHAR(255) = ''
+                  DECLARE @SearchName NVARCHAR(255) = ''
+                  DECLARE @SearchPhoneNumber NVARCHAR(10) = ''
+                  DECLARE @SearchNameUnsign NVARCHAR(255) = ''
 
-	                    SET @searchTerm = LTRIM(RTRIM(@searchTerm))
+                  SET @searchTerm = LTRIM(RTRIM(@searchTerm))
 
-	                    IF LEN(@searchTerm) > 0
-	                    BEGIN
+                  IF LEN(@searchTerm) > 0
+                  BEGIN
 
-                        -- Tách chuỗi thành tên và số điện thoại
-                        SET @SearchName = LEFT(@searchTerm, ISNULL(NULLIF(CHARINDEX(' ', @searchTerm + ' '), 0) - 1, LEN(@searchTerm)))
-                        SET @SearchPhoneNumber = RIGHT(@searchTerm, ISNULL(NULLIF(CHARINDEX(' ', REVERSE(@searchTerm) + ' '), 0) - 1, LEN(@searchTerm)))
-	                    END
+                  -- Tách chuỗi thành tên và số điện thoại
+                  SET @SearchName = LEFT(@searchTerm, ISNULL(NULLIF(CHARINDEX(' ', @searchTerm + ' '), 0) - 1, LEN(@searchTerm)))
+                  SET @SearchPhoneNumber = RIGHT(@searchTerm, ISNULL(NULLIF(CHARINDEX(' ', REVERSE(@searchTerm) + ' '), 0) - 1, LEN(@searchTerm)))
+                  END
 
-	                    SET @SearchPhoneNumber = IIF(ISNUMERIC(@SearchName) = 1 AND LEN(@SearchPhoneNumber) <= 0
-						                    , @SearchName , IIF(ISNUMERIC(@SearchPhoneNumber) = 1, @SearchPhoneNumber, '' ))
-	                    SET @SearchNameUnsign = IIF(@SearchPhoneNumber = @SearchPhoneNumber, '' ,[dbo].[non_unicode_convert](@SearchName))
+                  SET @SearchPhoneNumber = IIF(ISNUMERIC(@SearchName) = 1 AND LEN(@SearchPhoneNumber) <= 0
+			                    , @SearchName , IIF(ISNUMERIC(@SearchPhoneNumber) = 1, @SearchPhoneNumber, '' ))
+                  SET @SearchNameUnsign = IIF(@SearchName = @SearchPhoneNumber, '' ,[dbo].[non_unicode_convert](@SearchName))
 
-	                    SELECT [CustomerId]
-    		                    ,[CustomerCode]
-    		                    ,[CustomerName]
-    		                    ,[CustomerPoint]
-    		                    ,[Address]
-    		                    ,[BirthDay]
-    		                    ,[Gender]
-    		                    ,[PhoneNumber]
-	                    FROM customers
-	                    WHERE (@SearchNameUnsign = '' OR CustomerUnsign LIKE '%' + @SearchNameUnsign + '%')
-	                    AND (@SearchPhoneNumber = '' OR PhoneNumber LIKE '%' + @SearchPhoneNumber)
-                    END
+                  SELECT [CustomerId]
+ 		                    ,[CustomerCode]
+ 		                    ,[CustomerName]
+ 		                    ,[CustomerPoint]
+ 		                    ,[Address]
+ 		                    ,[BirthDay]
+ 		                    ,[Gender]
+ 		                    ,[PhoneNumber]
+                  FROM customers
+                  WHERE (
+						@SearchNameUnsign = ''
+						OR CHARINDEX(' ' + LOWER(@SearchNameUnsign) + ' ', ' ' + LOWER(CustomerUnsign) + ' ') > 0
+						OR PATINDEX('% ' + LOWER(@SearchNameUnsign) + ' %', ' ' + LOWER(CustomerUnsign) + ' ') > 0
+					  )
+					  AND
+					  (
+						@SearchPhoneNumber = ''
+						OR LTRIM(RTRIM(Phonenumber)) LIKE '%' + CONVERT(nvarchar(20), @SearchPhoneNumber)
+					  )
+              END
             ");
         }
 
