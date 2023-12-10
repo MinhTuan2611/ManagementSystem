@@ -429,8 +429,14 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentNumber"), 1L, 1);
 
+                    b.Property<string>("BranchCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("BranchId")
                         .HasColumnType("int");
+
+                    b.Property<string>("BranchName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreditAccount")
                         .HasColumnType("nvarchar(max)");

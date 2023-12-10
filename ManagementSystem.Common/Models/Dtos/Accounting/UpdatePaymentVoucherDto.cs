@@ -12,6 +12,8 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? UserId { get; set; }
         public string? ReceiverName { get; set; }
         public int? BranchId { get; set; }
+        public string? BranchCode { get; set; }
+        public string? BranchName { get; set; }
         public string? DebitAccount { get; set; }
         public string? CreditAccount { get; set; }
         public string? Reason { get; set; }
