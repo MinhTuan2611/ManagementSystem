@@ -17,6 +17,6 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? DoccumentNumber { get; set; }
         public string? CustomerId { get; set; }
         public string? CustomerName { get; set; }
-        public int? Amount { get; set; }
+        public long? Amount { get; set; }
     }
 }

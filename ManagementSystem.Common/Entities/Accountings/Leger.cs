@@ -19,7 +19,7 @@ namespace ManagementSystem.Common.Entities
         public int? BillId { get; set; }
         public int? CustomerId { get; set; }
         public string? CustomerName { get; set; }
-        public int Amount { get; set; }
+        public long Amount { get; set; }
         public int? UserId { get; set; }
         public int? StorageId { get; set; }
     }

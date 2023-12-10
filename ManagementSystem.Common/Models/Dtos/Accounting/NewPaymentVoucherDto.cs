@@ -15,9 +15,9 @@ namespace ManagementSystem.Common.Models.Dtos
         public string? CreditAccount { get; set; }
         public string? Reason { get; set; }
         public string? Description { get; set; }
-        public int? TotalMoneyVND { get; set; }
+        public long? TotalMoneyVND { get; set; }
         public int? ExchangeRate { get; set; }
-        public int? NTMoney { get; set; }
+        public long? NTMoney { get; set; }
         public int ShiftId { get; set; }
     }
 }
