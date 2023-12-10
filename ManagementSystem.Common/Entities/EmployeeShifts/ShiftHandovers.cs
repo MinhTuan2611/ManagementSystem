@@ -9,12 +9,12 @@ namespace ManagementSystem.Common.Entities
         [Key]
         public int HandoverId { get; set; }
         public int? StorageId { get; set; }
-        public int? CashHandover { get; set; } = 0;
+        public long? CashHandover { get; set; } = 0;
         public int? SenderUserId1 { get; set; }
         public int? SenderUserI2 { get; set; }
         public int? ReceiverUserId { get; set; }
-        public int? TotalShiftMoney { get; set; }
-        public int? CompanyMoneyTransferred { get; set; }
+        public long? TotalShiftMoney { get; set; }
+        public long? CompanyMoneyTransferred { get; set; }
         public string? Note { get; set; }
         public string? Status { get; set; }
 

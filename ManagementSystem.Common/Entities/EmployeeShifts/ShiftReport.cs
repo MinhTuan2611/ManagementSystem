@@ -18,19 +18,19 @@ namespace ManagementSystem.Common.Entities
         [ForeignKey("ShiftHandovers")]
         public int? HandoverId { get; set; }
         public int TotalBill { get; set; } = 0;
-        public int TotalShiftInMoney { get; set; } = 0;
-        public int TotalRevenue { get; set; } = 0;
-        public int TotalCashAmount { get; set; } = 0;
-        public int TotalCardAmount { get; set; } = 0;
-        public int TotalVoucherAmount { get; set; } = 0;
-        public int TotalInternalConsumption { get; set; } = 0;
-        public int TotalMOMOAmount { get; set; } = 0;
-        public int TotalExpenses { get; set; } = 0;
-        public int OtherExpense { get; set; } = 0;
-        public int ActualMoneyForNextShift { get; set; } = 0;
-        public int RemindMoneyForNextShift { get; set; } = 0;
-        public int ExcessMoney { get; set; } = 0;
-        public int LackOfMoney { get; set; } = 0;
+        public long TotalShiftInMoney { get; set; } = 0;
+        public long TotalRevenue { get; set; } = 0;
+        public long TotalCashAmount { get; set; } = 0;
+        public long TotalCardAmount { get; set; } = 0;
+        public long TotalVoucherAmount { get; set; } = 0;
+        public long TotalInternalConsumption { get; set; } = 0;
+        public long TotalMOMOAmount { get; set; } = 0;
+        public long TotalExpenses { get; set; } = 0;
+        public long OtherExpense { get; set; } = 0;
+        public long ActualMoneyForNextShift { get; set; } = 0;
+        public long RemindMoneyForNextShift { get; set; } = 0;
+        public long ExcessMoney { get; set; } = 0;
+        public long LackOfMoney { get; set; } = 0;
         public DateTime ReportDate { get; set; } = DateTime.Now;
 
         public ShiftHandovers ShiftHandovers { get; set; }

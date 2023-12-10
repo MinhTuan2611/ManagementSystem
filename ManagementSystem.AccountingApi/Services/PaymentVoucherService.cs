@@ -30,6 +30,8 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 var paymentVoucher = new PaymentVoucher();
                 paymentVoucher.BranchId = newPaymentVoucher.BranchId;
+                paymentVoucher.BranchCode = newPaymentVoucher.BranchCode;
+                paymentVoucher.BranchName = newPaymentVoucher.BranchName;
                 paymentVoucher.ShiftId = newPaymentVoucher.ShiftId;
                 paymentVoucher.UserId = newPaymentVoucher.UserId;
                 paymentVoucher.CreditAccount = newPaymentVoucher.CreditAccount;
@@ -120,8 +122,9 @@ namespace ManagementSystem.AccountingApi.Services
             try
             {
                 string query = string.Format(@"
-                    SELECT b.BranchCode
-		                    ,b.BranchName
+                       SELECT IIF(COALESCE(pv.BranchCode, '') <> '', pv.BranchCode, b.BranchCode) AS BranchCode
+							,IIF(COALESCE(pv.BranchName, '') <> '', pv.BranchName, b.BranchName) AS BranchName
+                            ,b.BranchId
 		                    ,b.[Address]
 		                    ,CONCAT(u.FirstName, ' ', u.LastName) AS EmployeeName
 		                    ,u.UserId AS EmployeeId
@@ -155,8 +158,9 @@ namespace ManagementSystem.AccountingApi.Services
             try
             {
                 string query = string.Format(@"
-                    SELECT b.BranchCode
-		                    ,b.BranchName
+                   SELECT IIF(COALESCE(pv.BranchCode, '') <> '', pv.BranchCode, b.BranchCode) AS BranchCode
+							,IIF(COALESCE(pv.BranchName, '') <> '', pv.BranchName, b.BranchName) AS BranchCode
+                            ,b.BranchId
 		                    ,b.[Address]
 		                    ,CONCAT(u.FirstName, ' ', u.LastName) AS EmployeeName
 		                    ,u.UserId AS EmployeeId
@@ -168,6 +172,8 @@ namespace ManagementSystem.AccountingApi.Services
 		                    ,pv.NTMoney
                             ,pv.DocumentNumber
                             ,pv.TransactionDate
+                            ,pv.DebitAccount
+							,pv.CreditAccount
                     FROM PaymentVouchers pv
                     LEFT JOIN StoragesDb.dbo.Branches b ON pv.BranchId = b.BranchId 
                     LEFT JOIN AccountsDb.dbo.Users u ON pv.UserId = u.UserId
@@ -198,6 +204,8 @@ namespace ManagementSystem.AccountingApi.Services
                 var paymentVoucher = _context.PaymentVouchers.SingleOrDefault(x => x.DocumentNumber == updatePaymentVoucher.DocumentNumber);
                 paymentVoucher.BranchId = updatePaymentVoucher.BranchId;
                 paymentVoucher.ShiftId = updatePaymentVoucher.ShiftId;
+                paymentVoucher.BranchCode = updatePaymentVoucher.BranchCode;
+                paymentVoucher.BranchName = updatePaymentVoucher.BranchName;
                 paymentVoucher.UserId = updatePaymentVoucher.UserId;
                 paymentVoucher.CreditAccount = updatePaymentVoucher.CreditAccount;
                 paymentVoucher.DebitAccount = updatePaymentVoucher.DebitAccount;

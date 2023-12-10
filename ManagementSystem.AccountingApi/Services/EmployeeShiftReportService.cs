@@ -32,7 +32,7 @@ namespace ManagementSystem.AccountingApi.Services
                 var shiftEnd = _context.ShiftEndReports
                     .Where(x=> x.ShiftId == model.ShiftId && x.ShiftEndDate.Date == DateTime.Now.Date && x.BranchId == model.BrandId).FirstOrDefault();
 
-                if (shiftEnd != null && shiftEnd.CompanyMoneyTransferred == null)
+                if (shiftEnd != null && (shiftEnd.CompanyMoneyTransferred == null || shiftEnd.CompanyMoneyTransferred == 0) )
                 {
 
                     shiftEnd.CompanyMoneyTransferred = model.CompanyMoneyTransferred;
