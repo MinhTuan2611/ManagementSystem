@@ -16,8 +16,8 @@ namespace ManagementSystem.Common.Models.Dtos
         public string? ShiftName { get; set; }
         public DateTime? HandoverDate { get; set; }
         public int? TotalAmount { get; set; }
-        public int? PreShiftAmount { get; set; }
-        public int? CurShiftAmount { get; set; }
+        public long? PreShiftAmount { get; set; }
+        public long? CurShiftAmount { get; set; }
         public int? SenderId1 { get; set; }
         public string? SenderName1 { get; set; }
         public int? SenderId2 { get; set; }

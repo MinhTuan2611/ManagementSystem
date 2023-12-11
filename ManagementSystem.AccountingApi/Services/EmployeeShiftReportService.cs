@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Utility;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.GenericModels;
@@ -32,7 +33,7 @@ namespace ManagementSystem.AccountingApi.Services
                 var shiftEnd = _context.ShiftEndReports
                     .Where(x=> x.ShiftId == model.ShiftId && x.ShiftEndDate.Date == DateTime.Now.Date && x.BranchId == model.BrandId).FirstOrDefault();
 
-                if (shiftEnd != null && (shiftEnd.CompanyMoneyTransferred == null || shiftEnd.CompanyMoneyTransferred == 0) )
+                if (shiftEnd != null)
                 {
 
                     shiftEnd.CompanyMoneyTransferred = model.CompanyMoneyTransferred;
@@ -61,11 +62,22 @@ namespace ManagementSystem.AccountingApi.Services
                     foreach (var item in model.ShiftHandoverCashDetails)
                     {
                         var cahsDetail = new ShiftHandoverCashDetail();
-                        cahsDetail.ShiftEndId = shiftEndId;
-                        cahsDetail.Denomination = item.Denomination;
-                        cahsDetail.Amount = item.Amount;
 
-                        _context.ShiftHandoverCashDetails.Add(cahsDetail);
+                        var detail = _context.ShiftHandoverCashDetails.SingleOrDefault(x => x.Denomination == item.Denomination 
+                                                                                        && x.ShiftEndId == shiftEndId);
+                        if (detail == null)
+                        {
+                            cahsDetail.ShiftEndId = shiftEndId;
+                            cahsDetail.Denomination = item.Denomination;
+                            cahsDetail.Amount = item.Amount;
+
+                            _context.ShiftHandoverCashDetails.Add(cahsDetail);
+                        }
+                        else
+                        {
+                            detail.AmountReceive = item.Amount;
+                            _context.SaveChanges();
+                        }
                     }
 
                     var shiftResult = ExportShiftHandover(shiftEndId, storageId, model.BrandId.Value);
@@ -173,10 +185,10 @@ namespace ManagementSystem.AccountingApi.Services
                     FROM dbo.ShiftEndReports se
                     JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = se.ShiftEndId
                     JOIN dbo.ShiftReports sr ON sr.HandoverId = sh.HandoverId
-                    LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
-                    JOIN AccountsDb.dbo.Users u ON u.UserId = se.UserId
-                    WHERE se.ShiftEndId = {0}
-                ", shiftEndId);
+                    LEFT JOIN {0}.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
+                    JOIN {0}.dbo.Users u ON u.UserId = se.UserId
+                    WHERE se.ShiftEndId = {1}
+                ",SD.AccountDbName, shiftEndId);
 
             try
             {
@@ -208,7 +220,8 @@ namespace ManagementSystem.AccountingApi.Services
                   preData
                   AS
                   (
-	                SELECT *, 6 AS KeyJoin
+	                SELECT *, (SELECT MAX(HandoverId)
+			                            FROM dbo.ShiftHandovers) AS KeyJoin
 	                FROM dbo.ShiftReports 
 	                WHERE  HandoverId = 
 		                (
@@ -221,7 +234,7 @@ namespace ManagementSystem.AccountingApi.Services
                   AS
                   (
 		                SELECT *
-		                FROM AccountsDb.dbo.Users
+		                FROM {1}.dbo.Users
                   )
 
                   SELECT sh.HandoverId
@@ -245,14 +258,14 @@ namespace ManagementSystem.AccountingApi.Services
                   FROM cte t
                   JOIN dbo.ShiftEndReports sr ON sr.ShiftEndId = t.ShiftEndId
                   JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
-                  LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
+                  LEFT JOIN {1}.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
                   JOIN dbo.ShiftReports s ON s.HandoverId = sh.HandoverId
                   LEFT JOIN preData pre ON pre.KeyJoin = sh.HandoverId
                   JOIN cte_users sender1 ON sh.SenderUserId1 = sender1.UserId
                   LEFT JOIN cte_users sender2 ON sh.SenderUserI2 = sender2.UserId
                   LEFT JOIN cte_users receiver ON sh.ReceiverUserId = receiver.UserId
-                  LEFT JOIN StoragesDb.DBO.Storages sto ON SH.StorageId = sto.StorageId
-            ", handoverId);
+                  LEFT JOIN {2}.DBO.Storages sto ON SH.StorageId = sto.StorageId
+            ", handoverId, SD.AccountDbName, SD.StorageDbName);
 
             try
             {
@@ -347,14 +360,14 @@ namespace ManagementSystem.AccountingApi.Services
 						   FROM dbo.ShiftEndReports s
 						   LEFT JOIN dbo.InventoryAuditDetails sa ON sa.ShiftEndId = s.ShiftEndId
 						   LEFT JOIN dbo.ShiftHandoverCashDetails sh ON sh.ShiftEndId = s.ShiftEndId
-						   LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = s.UserId
-						   LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
-						   LEFT JOIN StoragesDb.dbo.Products p ON p.ProductId = sa.ProductId
-						   LEFT JOIN StoragesDb.dbo.Unit ui ON sa.UnitId = ui.UnitId
-						   LEFT JOIN AccountsDb.dbo.UserBranchs ub ON ub.UserId = u.UserId
-						   LEFT JOIN StoragesDb.dbo.Branches b ON b.BranchId = ub.BranchId
-                WHERE s.ShiftEndId = {0}
-                ", shiftEndId);
+						   LEFT JOIN {0}.dbo.Users u ON u.UserId = s.UserId
+						   LEFT JOIN {0}.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
+						   LEFT JOIN {1}.dbo.Products p ON p.ProductId = sa.ProductId
+						   LEFT JOIN {1}.dbo.Unit ui ON sa.UnitId = ui.UnitId
+						   LEFT JOIN {0}.dbo.UserBranchs ub ON ub.UserId = u.UserId
+						   LEFT JOIN {1}.dbo.Branches b ON b.BranchId = ub.BranchId
+                WHERE s.ShiftEndId = {2}
+                ",SD.AccountDbName, SD.StorageDbName, shiftEndId);
 
             try
             {
@@ -461,10 +474,10 @@ namespace ManagementSystem.AccountingApi.Services
                 SELECT s.StorageId
 		                ,ps.ProductId
 		                ,COALESCE(ps.Quantity, 0) AS Quantity
-                FROM StoragesDb.dbo.Storages s
-                LEFT JOIN StoragesDb.dbo.ProductStorages ps ON s.StorageId = ps.StorageId
-                WHERE ps.ProductId = {0}
-            ", productId);
+                FROM {0}.dbo.Storages s
+                LEFT JOIN {0}.dbo.ProductStorages ps ON s.StorageId = ps.StorageId
+                WHERE ps.ProductId = {1}
+            ",SD.AccountDbName, productId);
 
             var productStorage = _context.ProductStorageInformationDtos.FromSqlRaw(query).FirstOrDefault();
 
