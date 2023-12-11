@@ -390,8 +390,10 @@ namespace ManagementSystem.StoragesApi.Services
         {
             List<ProductDetailInSale> productDetailInSales = new List<ProductDetailInSale>();
             barcode = convertToUnSign(barcode);
+            var valueSearch = barcode.Split(' ');
             string[] includes = { "Product", "Unit" };
-            List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => (x.Barcode.Contains(barcode) || x.Product.ProductUnSignSearching.Contains(barcode)) && x.Status == ActiveStatus.Active, includes).AsNoTracking().OrderBy(x => x.Id).ToList();
+            List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes).AsNoTracking().OrderBy(x => x.Id).ToList();
+            productDetails = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => x.Product.ProductUnSignSearching.ToLower().Contains(keyWord.ToLower()))).ToList();
             if (productDetails == null)
             {
                 return null;
