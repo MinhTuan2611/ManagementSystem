@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Utility;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
@@ -41,7 +42,7 @@ namespace ManagementSystem.AccountingApi.Services
                 creditVoucher.TotalMoney = request.TotalMoney;
                 creditVoucher.UserId = request.UserId;
                 creditVoucher.TransactionDate = DateTime.Now;
-                creditVoucher.GroupId = request.GroupId; // Auto Generate Group
+                creditVoucher.GroupId = request.GroupId == null || request.GroupId == 0 ? 1 : request.GroupId; // Auto Generate Group
                 creditVoucher.PaymentMethodId = paymentMethod?.PaymentMethodId;
                 creditVoucher.CreditAccount = accounts?.CreditAccount;
                 creditVoucher.DebitAccount = accounts?.DebitAccount;
@@ -165,12 +166,12 @@ namespace ManagementSystem.AccountingApi.Services
                         ,r.DebitAccount AS DebitAccount
 						,r.CreditAccount AS CreditAccount
                 FROM dbo.CreditVouchers r
-                LEFT JOIN StoragesDB.dbo.Customers c ON r.CustomerId = c.CustomerId
-                LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = r.UserId
-                JOIN StoragesDb.dbo.PaymentMethods pm ON pm.PaymentMethodId = r.PaymentMethodId
+                LEFT JOIN {0}.dbo.Customers c ON r.CustomerId = c.CustomerId
+                LEFT JOIN {1}.dbo.Users u ON u.UserId = r.UserId
+                JOIN {0}.dbo.PaymentMethods pm ON pm.PaymentMethodId = r.PaymentMethodId
                 JOIN dbo.Recordingtransactions rt ON rt.ReasonCode = r.ForReason
-                WHERE r.DocumentNumber = {0}
-            ", documentNumber);
+                WHERE r.DocumentNumber = {2}
+            ",SD.StorageDbName, SD.AccountDbName, documentNumber);
 
             try
             {
@@ -191,9 +192,9 @@ namespace ManagementSystem.AccountingApi.Services
                 SELECT PaymentMethodId
 		                ,PaymentMethodName
 		                ,PaymentMethodCode
-                FROM StoragesDb.dbo.PaymentMethods
+                FROM {0}.dbo.PaymentMethods
                 WHERE PaymentMethodCode = '{0}'
-            ", methodCode);
+            ",SD.StorageDbName, methodCode);
 
             try
             {
@@ -278,17 +279,17 @@ namespace ManagementSystem.AccountingApi.Services
             if (branchId != null && branchId > 0)
             {
                 query = string.Format(@"
-                    SELECT StorageId AS Value
-                    FROM StoragesDb.dbo.Storages 
-                    WHERE BranchId = {0}
-                ", branchId);
+                    SELECT TOP 1 StorageId AS Value
+                    FROM {0}.dbo.Storages 
+                    WHERE BranchId = {1}
+                ",SD.StorageDbName, branchId);
             }
             else
             {
                 query = string.Format(@"SELECT TOP 1 s.StorageId AS Value
                                         FROM AccountsDb.dbo.UserBranchs ub
-                                        JOIN StoragesDb.dbo.Storages s ON s.BranchId = ub.BranchId
-                                        WHERE ub.UserId = {0}", userId);
+                                        JOIN {0}.dbo.Storages s ON s.BranchId = ub.BranchId
+                                        WHERE ub.UserId = {1}",SD.StorageDbName, userId);
             }
 
             try
@@ -299,8 +300,8 @@ namespace ManagementSystem.AccountingApi.Services
                 {
                     query = string.Format(@"
                                     SELECT TOP 1 ps.StorageId AS Value
-                                    FROM StoragesDb.dbo.ProductStorages ps
-                                    WHERE ps.ProductId = {0}", productId);
+                                    FROM {0}.dbo.ProductStorages ps
+                                    WHERE ps.ProductId = {1}",SD.StorageDbName, productId);
 
                     result = _context.CalculateScalarFunction<ScalarResult<int?>>(query).Value;
                 }

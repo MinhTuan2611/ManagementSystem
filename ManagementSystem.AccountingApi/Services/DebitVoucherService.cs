@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Utility;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
@@ -48,7 +49,7 @@ namespace ManagementSystem.AccountingApi.Services
                 requestDto.ReceiverName = requestDto.ReceiverName;
                 debitVoucher.TotalMoneyVND = requestDto.TotalMoneyVND;
                 debitVoucher.NTMoney = requestDto.NTMoney;
-                debitVoucher.GroupId = requestDto.GroupId;
+                debitVoucher.GroupId = requestDto.GroupId == null || requestDto.GroupId == 0 ? 1 : requestDto.GroupId;
                 debitVoucher.PaymentMethodId = paymentMethod.PaymentMethodId;
                 _context.DebitVouchers.Add(debitVoucher);
                 _context.SaveChanges();
@@ -156,13 +157,13 @@ namespace ManagementSystem.AccountingApi.Services
                             ,pv.DebitAccount
 							,pv.CreditAccount
                     FROM dbo.DebitVouchers pv
-                    LEFT JOIN AccountsDb.dbo.Users u ON pv.UserId = u.UserId
-                    LEFT JOIN AccountsDb.dbo.UserBranchs ub ON ub.UserId = u.UserId
-                    LEFT JOIN StoragesDb.dbo.Branches b ON ub.BranchId = b.BranchId
+                    LEFT JOIN {0}.dbo.Users u ON pv.UserId = u.UserId
+                    LEFT JOIN {0}.dbo.UserBranchs ub ON ub.UserId = u.UserId
+                    LEFT JOIN {1}.dbo.Branches b ON ub.BranchId = b.BranchId
                     LEFT JOIN dbo.Recordingtransactions rt ON rt.ReasonCode = pv.Reason
                     JOIN StoragesDb.dbo.PaymentMethods pm ON pm.PaymentMethodId = pv.PaymentMethodId
-                    WHERE pv.DocumentNumber = {0}
-            ", documentNumber);
+                    WHERE pv.DocumentNumber = {2}
+            ",SD.AccountDbName, SD.StorageDbName, documentNumber);
 
             try
             {
@@ -219,9 +220,9 @@ namespace ManagementSystem.AccountingApi.Services
                 SELECT PaymentMethodId
 		                ,PaymentMethodName
 		                ,PaymentMethodCode
-                FROM StoragesDb.dbo.PaymentMethods
-                WHERE PaymentMethodCode = '{0}'
-            ", methodCode);
+                FROM {0}.dbo.PaymentMethods
+                WHERE PaymentMethodCode = '{1}'
+            ",SD.StorageDbName, methodCode);
 
             try
             {

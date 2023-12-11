@@ -1,6 +1,7 @@
 using ManagementSystem.AccountingApi.Data;
 using ManagementSystem.AccountingApi.SeedingData;
 using ManagementSystem.AccountingApi.Services;
+using ManagementSystem.AccountingApi.Utility;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,9 @@ builder.Services.AddScoped<ICreditVoucherService, CreditVoucherService>();
 builder.Services.AddScoped<IDebitVoucherService, DebitVoucherService>();
 builder.Services.AddScoped<IDocumentGroupService, DocumentGroupService>();
 builder.Services.AddScoped<IEventLoggingService, EventLoggingService>();
+
+SD.AccountDbName = builder.Configuration["DatabaseNames:AccountsDb"];
+SD.StorageDbName = builder.Configuration["DatabaseNames:StoragesDb"];
 //// Excluded migration tables
 //var migrationConfigs = new MigrationsConfiguration();
 
