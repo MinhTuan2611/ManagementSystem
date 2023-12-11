@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Utility;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
@@ -139,10 +140,10 @@ namespace ManagementSystem.AccountingApi.Services
                             ,pv.DebitAccount
 							,pv.CreditAccount
                     FROM PaymentVouchers pv
-                    LEFT JOIN StoragesDb.dbo.Branches b ON pv.BranchId = b.BranchId 
-                    LEFT JOIN AccountsDb.dbo.Users u ON pv.UserId = u.UserId
-                    WHERE DocumentNumber = {0}
-                ", DocumentId);
+                    LEFT JOIN {0}.dbo.Branches b ON pv.BranchId = b.BranchId 
+                    LEFT JOIN {1}.dbo.Users u ON pv.UserId = u.UserId
+                    WHERE DocumentNumber = {2}
+                ",SD.StorageDbName, SD.AccountDbName, DocumentId);
 
                 var result = await _context.PaymentVoucherResponseDtos.FromSqlRaw(query).SingleOrDefaultAsync();
                 return result;
@@ -159,7 +160,7 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 string query = string.Format(@"
                    SELECT IIF(COALESCE(pv.BranchCode, '') <> '', pv.BranchCode, b.BranchCode) AS BranchCode
-							,IIF(COALESCE(pv.BranchName, '') <> '', pv.BranchName, b.BranchName) AS BranchCode
+							,IIF(COALESCE(pv.BranchName, '') <> '', pv.BranchName, b.BranchName) AS BranchName
                             ,b.BranchId
 		                    ,b.[Address]
 		                    ,CONCAT(u.FirstName, ' ', u.LastName) AS EmployeeName
@@ -175,12 +176,12 @@ namespace ManagementSystem.AccountingApi.Services
                             ,pv.DebitAccount
 							,pv.CreditAccount
                     FROM PaymentVouchers pv
-                    LEFT JOIN StoragesDb.dbo.Branches b ON pv.BranchId = b.BranchId 
-                    LEFT JOIN AccountsDb.dbo.Users u ON pv.UserId = u.UserId
+                    LEFT JOIN {0}.dbo.Branches b ON pv.BranchId = b.BranchId 
+                    LEFT JOIN {1}.dbo.Users u ON pv.UserId = u.UserId
                     ORDER BY pv.TransactionDate DESC
-                    OFFSET ({0}-1)*{1} ROWS
-                    FETCH NEXT {1} ROWS ONLY
-                ", page, pageSize);
+                    OFFSET ({2}-1)*{3} ROWS
+                    FETCH NEXT {3} ROWS ONLY
+                ", SD.StorageDbName, SD.AccountDbName, page, pageSize);
 
                 var data = await _context.PaymentVoucherResponseDtos.FromSqlRaw(query).ToListAsync();
                 int totalRecords = _context.PaymentVouchers.Count();

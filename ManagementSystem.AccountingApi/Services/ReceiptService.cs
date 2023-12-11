@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Utility;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
@@ -130,11 +131,11 @@ namespace ManagementSystem.AccountingApi.Services
                         ,lg.DepositAccount AS DebitAccount
 						,lg.CreditAccount AS CreditAccount
                 FROM ReceiptVouchers r
-                LEFT JOIN StoragesDB.dbo.Customers c ON r.CustomerId = c.CustomerId
-                LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = r.UserId
+                LEFT JOIN {0}.dbo.Customers c ON r.CustomerId = c.CustomerId
+                LEFT JOIN {1}.dbo.Users u ON u.UserId = r.UserId
                 LEFT JOIN dbo.Legers lg ON lg.DoccumentType = N'THU' and lg.DoccumentNumber = r.DocumentNumber
-                WHERE r.DocumentNumber = {0}
-            ", documentNumbers);
+                WHERE r.DocumentNumber = {2}
+            ",SD.StorageDbName, SD.AccountDbName, documentNumbers);
 
             try
             {

@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Utility;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
@@ -88,26 +89,28 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 string query = string.Format(@"
                     SELECT b.BranchCode
-		                    ,b.BranchName
-		                    ,b.[Address]
-		                    ,c.CustomerName AS PayerName
-		                    ,c.CustomerName
-		                    ,oe.PaymentDescription
-		                    ,oe.Reason
-		                    ,CONCAT(u.FirstName, ' ', u.LastName) AS EmployeeName
-		                    ,u.UserId AS EmployeeId
-		                    ,oe.Amount
-                            ,oe.AccountId
-                            ,oe.DocumentNumber
-                            ,oe.Note
+						    ,b.BranchName
+						    ,b.[Address]
+						    ,c.CustomerName AS PayerName
+						    ,c.CustomerName
+						    ,oe.PaymentDescription
+						    ,oe.Reason
+						    ,CONCAT(u.FirstName, ' ', u.LastName) AS EmployeeName
+						    ,u.UserId AS EmployeeId
+						    ,oe.Amount
+						    ,oe.AccountId
+						    ,oe.DocumentNumber
+						    ,oe.Note
+						    ,oe.CreditAccount
+						    ,oe.DebitAccount
                     FROM OtherAccountEntries oe
-                    LEFT JOIN StoragesDb.dbo.Branches b ON oe.BrandId = b.BranchId
-                    LEFT JOIN StoragesDb.dbo.Customers c ON c.CustomerId = oe.CustomerId
-                    LEFT JOIN AccountsDB.dbo.Users u ON oe.UserId = u.UserId
+                    LEFT JOIN {0}.dbo.Branches b ON oe.BrandId = b.BranchId
+                    LEFT JOIN {0}.dbo.Customers c ON c.CustomerId = oe.CustomerId
+                    LEFT JOIN {1}.dbo.Users u ON oe.UserId = u.UserId
                     ORDER BY oe.TransactionDate DESC
-                    OFFSET ({0}-1)*{1} ROWS
-                    FETCH NEXT {1} ROWS ONLY
-                ", page, pageSize);
+                    OFFSET ({2}-1)*{3} ROWS
+                    FETCH NEXT {3} ROWS ONLY
+                ", SD.StorageDbName, SD.AccountDbName, page, pageSize);
 
                 var data = await _context.OtherAccountEntryResponseDtos.FromSqlRaw(query).ToListAsync();
                 int totalRecords = _context.OtherAccountEntries.Count();
@@ -146,11 +149,11 @@ namespace ManagementSystem.AccountingApi.Services
                             ,oe.CreditAccount
 		                    ,oe.DebitAccount
                     FROM OtherAccountEntries oe
-                    LEFT JOIN StoragesDb.dbo.Branches b ON oe.BrandId = b.BranchId
-                    LEFT JOIN StoragesDb.dbo.Customers c ON c.CustomerId = oe.CustomerId
-                    LEFT JOIN AccountsDB.dbo.Users u ON oe.UserId = u.UserId
-                    WHERE oe.DocumentNumber = {0}
-                ", documentId);
+                    LEFT JOIN {0}.dbo.Branches b ON oe.BrandId = b.BranchId
+                    LEFT JOIN {0}.dbo.Customers c ON c.CustomerId = oe.CustomerId
+                    LEFT JOIN {1}.dbo.Users u ON oe.UserId = u.UserId
+                    WHERE oe.DocumentNumber = {2}
+                ",SD.StorageDbName, SD.AccountDbName, documentId);
 
                 var result = await _context.OtherAccountEntryResponseDtos.FromSqlRaw(query).SingleOrDefaultAsync();
 

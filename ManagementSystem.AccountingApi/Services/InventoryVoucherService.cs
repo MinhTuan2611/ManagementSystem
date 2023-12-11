@@ -1,5 +1,6 @@
 ﻿using ManagementSystem.AccountingApi.Data;
 using ManagementSystem.AccountingApi.Repositories;
+using ManagementSystem.AccountingApi.Utility;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
@@ -214,13 +215,13 @@ namespace ManagementSystem.AccountingApi.Services
 												,iv.DebitAccount AS InventoryDebitAccount
 												,iv.BillId
 										FROM InventoryVouchers iv
-										LEFT JOIN StoragesDb.dbo.BillPayments bp ON bp.BillId = iv.BillId
-										-- LEFT JOIN StoragesDb.dbo.PaymentMethods p On bp.PaymentMethodId = p.PaymentMethodId
-										LEFT JOIN StoragesDb.dbo.customers c ON iv.CustomerId = c.CustomerId
-										LEFT JOIN AccountsDb.dbo.Users u ON iv.UserId = u.UserId
-										LEFT JOIN StoragesDb.dbo.Storages s ON s.StorageId = iv.StorageId
-										WHERE iv.DocummentNumber = {0}
-            ", documentNummer);
+										LEFT JOIN {0}.dbo.BillPayments bp ON bp.BillId = iv.BillId
+										-- LEFT JOIN {0}.dbo.PaymentMethods p On bp.PaymentMethodId = p.PaymentMethodId
+										LEFT JOIN {0}.dbo.customers c ON iv.CustomerId = c.CustomerId
+										LEFT JOIN {1}.dbo.Users u ON iv.UserId = u.UserId
+										LEFT JOIN {0}.dbo.Storages s ON s.StorageId = iv.StorageId
+										WHERE iv.DocummentNumber = {2}
+            ",SD.StorageDbName, SD.AccountDbName, documentNummer);
 
             try
             {
@@ -262,11 +263,11 @@ namespace ManagementSystem.AccountingApi.Services
                          ,details.Note
                          ,details.TaxMoney
                  FROM InventoryVoucherDetails details
-                 LEFT JOIN StoragesDb.dbo.Products p ON p.ProductId = details.ProductId
-                 LEFT JOIN StoragesDb.dbo.ProductUnit pu ON p.ProductId = pu.ProductId
-                 LEFT JOIN StoragesDb.dbo.Unit u ON pu.UnitId = u.UnitId
-                WHERE details.DocummentNumber = {0}
-            ", documentNumber);
+                 LEFT JOIN {0}.dbo.Products p ON p.ProductId = details.ProductId
+                 LEFT JOIN {0}.dbo.ProductUnit pu ON p.ProductId = pu.ProductId
+                 LEFT JOIN {0}.dbo.Unit u ON pu.UnitId = u.UnitId
+                WHERE details.DocummentNumber = {1}
+            ",SD.StorageDbName, documentNumber);
 
             try
             {
@@ -343,9 +344,9 @@ namespace ManagementSystem.AccountingApi.Services
         {
             string query = string.Format(@"
                     SELECT PaymentMethodId
-                    FROM StoragesDb.dbo.PaymentMethods p
-                    WHERE p.PaymentMethodCode = '{0}'
-            ", paymentMethodCode);
+                    FROM {0}.dbo.PaymentMethods p
+                    WHERE p.PaymentMethodCode = '{1}'
+            ",SD.StorageDbName, paymentMethodCode);
 
             var paymentMethod = _context.PaymentMethodResponseDtos.FromSqlRaw(query).FirstOrDefault();
 
@@ -356,9 +357,9 @@ namespace ManagementSystem.AccountingApi.Services
         {
             string query = string.Format(@"
                     SELECT UnitName
-                    FROM StoragesDb.dbo.Unit u
-                    WHERE u.UnitId = {0}
-            ", unitId);
+                    FROM {0}.dbo.Unit u
+                    WHERE u.UnitId = {1}
+            ",SD.StorageDbName, unitId);
 
             var unit = _context.UnitResponseDtos.FromSqlRaw(query).FirstOrDefault();
 
@@ -371,11 +372,11 @@ namespace ManagementSystem.AccountingApi.Services
                 SELECT s.StorageId
 		                ,ps.ProductId
 		                ,COALESCE(ps.Quantity, 0) AS Quantity
-                FROM StoragesDb.dbo.Storages s
-                LEFT JOIN StoragesDb.dbo.ProductStorages ps ON s.StorageId = ps.StorageId
-                WHERE s.BranchId = {0}
-                AND ps.ProductId = {1}
-            ", brandId, productId);
+                FROM {0}.dbo.Storages s
+                LEFT JOIN {0}.dbo.ProductStorages ps ON s.StorageId = ps.StorageId
+                WHERE s.BranchId = {1}
+                AND ps.ProductId = {2}
+            ",SD.StorageDbName, brandId, productId);
 
             try
             {
@@ -395,12 +396,12 @@ namespace ManagementSystem.AccountingApi.Services
             //    return false;
 
             string query = string.Format(@"
-                UPDATE StoragesDb.dbo.ProductStorages
-                SET Quantity = {0}
+                UPDATE {0}.dbo.ProductStorages
+                SET Quantity = {1}
                     ,ModifyDate = GETDATE()
-                WHERE ProductId = {1}
-                AND StorageId = {2}
-            ", dto.Quantity - productQuantity, dto.ProductId, dto.StorageId);
+                WHERE ProductId = {2}
+                AND StorageId = {3}
+            ", SD.StorageDbName, dto.Quantity - productQuantity, dto.ProductId, dto.StorageId);
 
             var result = _context.Database.ExecuteSqlRaw(query);
 
@@ -416,10 +417,10 @@ namespace ManagementSystem.AccountingApi.Services
 			                ,b.PaymentTransactionRef
 			                ,p.PaymentMethodCode
 			                ,P.PaymentMethodName
-	                FROM StoragesDb.dbo.BillPayments b
-	                JOIN StoragesDb.dbo.PaymentMethods p ON b.PaymentMethodId = p.PaymentMethodId
-	                WHERE b.BillId = {0}
-            ", billId);
+	                FROM {0}.dbo.BillPayments b
+	                JOIN {0}.dbo.PaymentMethods p ON b.PaymentMethodId = p.PaymentMethodId
+	                WHERE b.BillId = {1}
+            ",SD.StorageDbName, billId);
 
             try
             {
@@ -440,9 +441,9 @@ namespace ManagementSystem.AccountingApi.Services
 		                    ,p.Price * (1 + Tax/100) AS PriceBeforeTax
 		                    ,p.CreditAccountId
 		                    ,p.DebitAccountId
-                    FROM StoragesDb.dbo.Products p
-                    WHERE p.ProductId = {0}
-            ", productId);
+                    FROM {0}.dbo.Products p
+                    WHERE p.ProductId = {1}
+            ",SD.StorageDbName, productId);
 
             var product = _context.ProductResponseDtos.FromSqlRaw(query).FirstOrDefault();
 
