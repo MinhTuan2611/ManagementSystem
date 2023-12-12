@@ -603,6 +603,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("ShiftId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
@@ -1199,6 +1202,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("BranchCode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
                     b.Property<string>("BranchName")
                         .HasColumnType("nvarchar(max)");
 
@@ -1429,8 +1435,8 @@ namespace ManagementSystem.AccountingApi.Migrations
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftHandoverResponseDto", b =>
                 {
-                    b.Property<int?>("CurShiftAmount")
-                        .HasColumnType("int");
+                    b.Property<long?>("CurShiftAmount")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime?>("HandoverDate")
                         .HasColumnType("datetime2");
@@ -1441,8 +1447,8 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PreShiftAmount")
-                        .HasColumnType("int");
+                    b.Property<long?>("PreShiftAmount")
+                        .HasColumnType("bigint");
 
                     b.Property<int?>("ReceiverId")
                         .HasColumnType("int");
@@ -1488,20 +1494,20 @@ namespace ManagementSystem.AccountingApi.Migrations
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftReportResponseDto", b =>
                 {
-                    b.Property<int?>("ActualMoneyForNextShift")
-                        .HasColumnType("int");
+                    b.Property<long>("ActualMoneyForNextShift")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("ExcessMoney")
-                        .HasColumnType("int");
+                    b.Property<long>("ExcessMoney")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("LackOfMoney")
-                        .HasColumnType("int");
+                    b.Property<long>("LackOfMoney")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("OtherExpense")
-                        .HasColumnType("int");
+                    b.Property<long>("OtherExpense")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("RemindMoneyForNextShift")
-                        .HasColumnType("int");
+                    b.Property<long>("RemindMoneyForNextShift")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("ShiftEndDate")
                         .HasColumnType("datetime2");
@@ -1516,29 +1522,29 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int?>("TotalBill")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TotalCardAmount")
-                        .HasColumnType("int");
+                    b.Property<long>("TotalCardAmount")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("TotalCashAmount")
-                        .HasColumnType("int");
+                    b.Property<long>("TotalCashAmount")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("TotalExpenses")
-                        .HasColumnType("int");
+                    b.Property<long>("TotalExpenses")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("TotalInternalConsumption")
-                        .HasColumnType("int");
+                    b.Property<long>("TotalInternalConsumption")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("TotalMOMOAmount")
-                        .HasColumnType("int");
+                    b.Property<long>("TotalMOMOAmount")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("TotalRevenue")
-                        .HasColumnType("int");
+                    b.Property<long>("TotalRevenue")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("TotalShiftInMoney")
-                        .HasColumnType("int");
+                    b.Property<long>("TotalShiftInMoney")
+                        .HasColumnType("bigint");
 
-                    b.Property<int?>("TotalVoucherAmount")
-                        .HasColumnType("int");
+                    b.Property<long>("TotalVoucherAmount")
+                        .HasColumnType("bigint");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");

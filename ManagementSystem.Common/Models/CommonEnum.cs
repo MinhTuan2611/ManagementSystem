@@ -49,4 +49,11 @@ namespace ManagementSystem.Common.Models
         Paid,
         Cancel
     }
+
+    public enum ShiftEndReportStatus
+    {
+        ShiftEndProgress,
+        SubmitShiftEnd,
+        CompleteShiftHavdover
+    }
 }
