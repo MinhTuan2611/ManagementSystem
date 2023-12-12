@@ -390,10 +390,12 @@ namespace ManagementSystem.StoragesApi.Services
         {
             List<ProductDetailInSale> productDetailInSales = new List<ProductDetailInSale>();
             barcode = convertToUnSign(barcode);
-            var valueSearch = barcode.Split(' ');
+            var valueSearch = barcode.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             string[] includes = { "Product", "Unit" };
             List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes).AsNoTracking().OrderBy(x => x.Id).ToList();
-            productDetails = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => x.Product.ProductUnSignSearching.ToLower().Contains(keyWord.ToLower()))).ToList();
+            productDetails = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => convertToUnSign(x.Product.ProductName).Contains(keyWord) 
+                                                                                                        || convertToUnSign(x.Product.ProductCode).Contains(keyWord)
+                                                                                                        || convertToUnSign(x.Unit.UnitName).Contains(keyWord))).ToList();
             if (productDetails == null)
             {
                 return null;
@@ -503,7 +505,7 @@ namespace ManagementSystem.StoragesApi.Services
         {
             Regex regex = new Regex("\\p{IsCombiningDiacriticalMarks}+");
             string temp = s.Normalize(NormalizationForm.FormD);
-            return regex.Replace(temp, String.Empty).Replace('\u0111', 'd').Replace('\u0110', 'D');
+            return regex.Replace(temp, String.Empty).Replace('\u0111', 'd').Replace('\u0110', 'D').ToLower();
         }
     }
 }
