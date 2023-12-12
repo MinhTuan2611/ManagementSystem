@@ -1,4 +1,4 @@
-﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Data;
 using ManagementSystem.AccountingApi.Utility;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Entities;
@@ -35,9 +35,9 @@ namespace ManagementSystem.AccountingApi.Services
 
                 if (shiftEnd != null)
                 {
-
                     shiftEnd.CompanyMoneyTransferred = model.CompanyMoneyTransferred;
                     shiftEnd.UserId = model.UserId;
+                    shiftEnd.Status = model.Status;
 
                     _context.ShiftEndReports.Update(shiftEnd);
                     _context.SaveChanges();
@@ -388,16 +388,15 @@ namespace ManagementSystem.AccountingApi.Services
             try
             {
                 string query = string.Format(@"
-                        SELECT COUNT(1) AS Value
+                        SELECT Status AS Value
                         FROM dbo.ShiftEndReports s
-                        LEFT JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = s.ShiftEndId
                         WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
-                        AND COALESCE(sh.ReceiverUserId, '') = '' AND s.BranchId = {0}
+                        AND s.BranchId = {0}
                         ", branchId);
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
 
-                return count == 0;
+                return count > 0;
             }
             catch (Exception ex)
             {
@@ -477,7 +476,7 @@ namespace ManagementSystem.AccountingApi.Services
                 FROM {0}.dbo.Storages s
                 LEFT JOIN {0}.dbo.ProductStorages ps ON s.StorageId = ps.StorageId
                 WHERE ps.ProductId = {1}
-            ",SD.AccountDbName, productId);
+            ",SD.StorageDbName, productId);
 
             var productStorage = _context.ProductStorageInformationDtos.FromSqlRaw(query).FirstOrDefault();
 

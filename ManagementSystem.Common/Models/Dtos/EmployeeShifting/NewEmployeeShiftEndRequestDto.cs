@@ -7,7 +7,7 @@
         public int? BrandId { get; set; }
         public DateTime ShiftEndDate { get; set; }
         public int? CompanyMoneyTransferred { get; set; }
-
+        public ShiftEndReportStatus Status { get; set; }
         public List<NewInventoryAuditDetailDto> AuditDetails { get; set; }
         public List<NewShiftHandoverCashDetailDto> ShiftHandoverCashDetails { get; set; }
     }

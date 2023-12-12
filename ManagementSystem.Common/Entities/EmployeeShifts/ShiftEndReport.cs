@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ManagementSystem.Common.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ManagementSystem.Common.Entities
@@ -12,6 +13,7 @@ namespace ManagementSystem.Common.Entities
         public DateTime ShiftEndDate { get; set; } = DateTime.Now;
         public int? CompanyMoneyTransferred { get; set; }
         public int? BranchId { get; set; }
+        public ShiftEndReportStatus Status { get; set; } = ShiftEndReportStatus.ShiftEndProgress;
         public List<ShiftHandoverCashDetail> ShiftHandoverCashDetails { get; set; }
         public List<InventoryAuditDetail> InventoryAuditDetails { get; set; }
     }
