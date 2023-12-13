@@ -389,13 +389,13 @@ namespace ManagementSystem.StoragesApi.Services
         public List<ProductDetailInSale>? AutoCompleteGetProductDetailForSale(string barcode)
         {
             List<ProductDetailInSale> productDetailInSales = new List<ProductDetailInSale>();
-            barcode = convertToUnSign(barcode);
-            var valueSearch = barcode.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            //barcode = convertToUnSign(barcode);
+            var valueSearch = barcode.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
             string[] includes = { "Product", "Unit" };
             List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes).AsNoTracking().OrderBy(x => x.Id).ToList();
-            productDetails = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => convertToUnSign(x.Product.ProductName).Contains(keyWord) 
-                                                                                                        || convertToUnSign(x.Product.ProductCode).Contains(keyWord)
-                                                                                                        || convertToUnSign(x.Unit.UnitName).Contains(keyWord))).ToList();
+            productDetails = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => x.Product.ProductName.ToLower().Contains(keyWord) 
+                                                                                                        || x.Product.ProductCode.ToLower().Contains(keyWord)
+                                                                                                        || x.Unit.UnitName.ToLower().Contains(keyWord))).ToList();
             if (productDetails == null)
             {
                 return null;

@@ -257,6 +257,7 @@ namespace ManagementSystem.StoragesApi.Services
             billResponse.TotalBillAmount = billPayments.Sum(x => x.Amount.Value);
             billResponse.Details = billDetails;
             billResponse.Payments = billPayments;
+            billResponse.UserName = billInformation?.UserName;
             billResponse.ShiftId = billInformation?.ShiftId;
             billResponse.ShiftName = billInformation?.ShiftName;
             billResponse.BranchId = billInformation?.BranchId;
@@ -434,7 +435,7 @@ namespace ManagementSystem.StoragesApi.Services
 		                            ,b.totalChange
 		                            ,b.CustomerId
 		                            ,b.CreateBy AS UserId
-		                            ,u.UserName AS UserName
+		                            ,CONCAT(u.FirstName, ' ', u.LastName) AS UserName
 		                            ,es.ShiftId AS ShiftId
 		                            ,es.ShiftName AS ShiftName
 		                            ,br.BranchId AS BranchId

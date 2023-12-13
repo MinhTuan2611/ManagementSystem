@@ -78,7 +78,7 @@ namespace ManagementSystem.StoragesApi.Services
         public List<CustomerResponseDto> GetCustomerBySearchTerm(string searchTerm)
         {
             string query = string.Format(@"
-                EXEC sp_search_customer_by_term '{0}'
+                EXEC sp_search_customer_by_term N'{0}'
             ", searchTerm);
 
             try

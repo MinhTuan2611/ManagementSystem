@@ -20,6 +20,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public string? ShiftName { get; set; }
         public int? BranchId { get; set; }
         public string? BranchName { get; set; }
+        public string? UserName { get; set; }
         public DateTime? CreateDate { get; set; }
         public int TotalProductDetail { get; set; }
         public List<BillDetailResponseDto> Details { get; set; }
