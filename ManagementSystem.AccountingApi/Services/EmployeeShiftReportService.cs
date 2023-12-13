@@ -30,12 +30,13 @@ namespace ManagementSystem.AccountingApi.Services
             {
                 int storageId = 0;
                 int shiftEndId = 0;
+                var maxShiftEndByBranch = _context.ShiftEndReports.AsNoTracking().Where(x => x.BranchId == model.BrandId).Select(x => x.ShiftEndId).Max();
                 var shiftEnd = _context.ShiftEndReports
-                    .Where(x=> x.ShiftId == model.ShiftId && x.ShiftEndDate.Date == DateTime.Now.Date && x.BranchId == model.BrandId).FirstOrDefault();
+                    .Where(x=> x.ShiftEndId == maxShiftEndByBranch).FirstOrDefault();
 
                 if (shiftEnd != null)
                 {
-                    shiftEnd.CompanyMoneyTransferred = model.CompanyMoneyTransferred;
+                    shiftEnd.CompanyMoneyTransferred = shiftEnd.CompanyMoneyTransferred != null || shiftEnd.CompanyMoneyTransferred > 0 ? shiftEnd.CompanyMoneyTransferred : model.CompanyMoneyTransferred;
                     shiftEnd.UserId = model.UserId;
                     shiftEnd.Status = model.Status;
 
@@ -46,17 +47,22 @@ namespace ManagementSystem.AccountingApi.Services
 
                     foreach (var item in model.AuditDetails)
                     {
-                        var auditDetail = new InventoryAuditDetail();
-                        var storage = GetProductStorageDto(item.ProductId);
+                        var detail = _context.InventoryAuditDetails.AsNoTracking().SingleOrDefault(x => x.ShiftEndId == shiftEnd.ShiftEndId && x.ProductId == item.ProductId && x.UnitId == item.UnitId );
 
-                        auditDetail.ShiftEndId = shiftEndId;
-                        auditDetail.ProductId = item.ProductId;
-                        auditDetail.UnitId = item.UnitId;
-                        auditDetail.ActualAmount = item.ActualAmount;
-                        auditDetail.SystemAmount = storage.Quantity.Value;
-                        storageId = storage.StorageId.Value;
+                        if (detail == null)
+                        {
+                            var auditDetail = new InventoryAuditDetail();
+                            var storage = GetProductStorageDto(item.ProductId);
 
-                        _context.InventoryAuditDetails.Add(auditDetail);
+                            auditDetail.ShiftEndId = shiftEndId;
+                            auditDetail.ProductId = item.ProductId;
+                            auditDetail.UnitId = item.UnitId;
+                            auditDetail.ActualAmount = item.ActualAmount;
+                            auditDetail.SystemAmount = storage.Quantity.Value;
+                            storageId = storage.StorageId.Value;
+
+                            _context.InventoryAuditDetails.Add(auditDetail);
+                        }
                     }
 
                     foreach (var item in model.ShiftHandoverCashDetails)
@@ -80,8 +86,6 @@ namespace ManagementSystem.AccountingApi.Services
                         }
                     }
 
-                    var shiftResult = ExportShiftHandover(shiftEndId, storageId, model.BrandId.Value);
-
                     // Add activity logs
                     _context.ActivityLog.Add(new ActivityLog()
                     {
@@ -92,26 +96,9 @@ namespace ManagementSystem.AccountingApi.Services
                     });
                     _context.SaveChanges();
 
+                    var shiftResult = ExportShiftHandover(shiftEndId, storageId, model.BrandId.Value);
+
                     return shiftEnd;
-                }
-                else
-                {
-                    var shiftHandover = _context.ShiftHandovers.Where(x => x.ShiftEndId == shiftEnd.ShiftEndId).FirstOrDefault();
-                    if (shiftHandover != null)
-                    {
-                        shiftHandover.ReceiverUserId = model.UserId;
-                        _context.ShiftHandovers.Update(shiftHandover);
-                    }
-                    foreach (var item in model.ShiftHandoverCashDetails)
-                    {
-                        var cashDetail = _context.ShiftHandoverCashDetails.Where(x => x.ShiftEndId == shiftEnd.ShiftEndId && x.Denomination == item.Denomination).FirstOrDefault();
-                        if(cashDetail != null)
-                        {
-                            cashDetail.AmountReceive = item.Amount;
-                            _context.ShiftHandoverCashDetails.Update(cashDetail);
-                        }
-                    }
-                    _context.SaveChanges();
                 }
 
                 return shiftEnd;
@@ -388,15 +375,23 @@ namespace ManagementSystem.AccountingApi.Services
             try
             {
                 string query = string.Format(@"
+                        ;WITH cte
+                        AS
+                        (
+	                        SELECT MAX(ShiftEndId) AS ShiftEndId
+	                        FROM ShiftEndReports
+	                        WHERE BranchId = {0}
+                        )
+
                         SELECT Status AS Value
-                        FROM dbo.ShiftEndReports s
-                        WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
-                        AND s.BranchId = {0}
+                        FROM cte 
+                        JOIN ShiftEndReports s ON cte.ShiftEndId = s.ShiftEndId
+
                         ", branchId);
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
 
-                return count > 0;
+                return count > 1;
             }
             catch (Exception ex)
             {
@@ -407,12 +402,13 @@ namespace ManagementSystem.AccountingApi.Services
         {
             try
             {
+                int curentShift = await GetCurrentShift(branchId);
                 string query = string.Format(@"
                         SELECT COUNT(1) AS Value
                         FROM dbo.ShiftEndReports s
                         WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
-                        AND s.BranchId = {0} AND s.CompanyMoneyTransferred is NULL
-                        ", branchId);
+                        AND s.BranchId = {0} AND ShiftId = {1}
+                        ", branchId, curentShift);
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
 
