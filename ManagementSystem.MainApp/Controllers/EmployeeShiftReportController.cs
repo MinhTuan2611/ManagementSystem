@@ -140,7 +140,7 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpGet("check-completed-shift-end")]
         public async Task<IActionResult> CheckCompletedShiftEnd([FromQuery] int branchId)
         {
-            var result = await HttpRequestsHelper.Get<bool>(APIUrl + "check-completed-shift-end?branchId=" + branchId);
+            var result = await HttpRequestsHelper.Get<int>(APIUrl + "check-completed-shift-end?branchId=" + branchId);
 
            return Ok(result);
         }
@@ -164,6 +164,14 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             request.UserId = int.Parse(userId);
             var result = await HttpRequestsHelper.Post<ResponsePagingModel<ShiftEndReport>>(APIUrl + "start-shift-end", request);
+            return Ok(result);
+        }
+
+        [HttpGet("can-process-shift-end")]
+        public async Task<IActionResult> CanProcessShiftEnd([FromQuery] int branchId)
+        {
+            var result = await HttpRequestsHelper.Get<bool>(APIUrl + "can-process-shift-end?branchId=" + branchId);
+
             return Ok(result);
         }
     }
