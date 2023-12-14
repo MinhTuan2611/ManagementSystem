@@ -14,8 +14,9 @@ namespace ManagementSystem.AccountingApi.Services
         Task<TPagination<ShiftEndResponseDto>> SearchShiftEndReports(SearchCriteria criteria);
         Task<ShiftEndResponseDto> GetLastestShiftEnd();
         Task<ShiftEndResponseDto> GetShiftEndById(int shiftEndId);
-        Task<bool> IsCompletedShiftEnd(int shiftId);
+        Task<int> IsCompletedShiftEnd(int shiftId);
         Task<bool> IsCanStartShiftEnd(int branchId);
+        Task<bool> CanProcessShiftEnd(int branchId);
         Task<int> GetCurrentShift(int branchId);
         Task<ResponsePagingModel<ShiftEndReport>> StartShiftEnd(StartShiftEndRequestDto request);
     }

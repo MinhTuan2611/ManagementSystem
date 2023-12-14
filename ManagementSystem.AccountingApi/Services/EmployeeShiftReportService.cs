@@ -370,7 +370,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<bool> IsCompletedShiftEnd(int branchId)
+        public async Task<int> IsCompletedShiftEnd(int branchId)
         {
             try
             {
@@ -391,11 +391,13 @@ namespace ManagementSystem.AccountingApi.Services
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
 
-                return count > 1;
+                //var canStart = await CanProcessShiftEnd(branchId);
+
+                return count;
             }
             catch (Exception ex)
             {
-                return false;
+                return -1;
             }
         }
         public async Task<bool> IsCanStartShiftEnd(int branchId)
@@ -413,6 +415,28 @@ namespace ManagementSystem.AccountingApi.Services
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
 
                 return count == 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> CanProcessShiftEnd(int branchId)
+        {
+            try
+            {
+                int curentShift = await GetCurrentShift(branchId);
+                string query = string.Format(@"
+                        SELECT COUNT(1) AS Value
+                        FROM dbo.ShiftEndReports s
+                        WHERE FORMAT(ShiftEndDate, 'yyyy-MM-dd') = FORMAT(GETDATE(), 'yyyy-MM-dd')
+                        AND s.BranchId = {0} AND ShiftId = {1}
+                        ", branchId, curentShift - 1 < 0 ? 1 : curentShift - 1);
+
+                int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
+
+                return count > 0;
             }
             catch (Exception ex)
             {

@@ -101,5 +101,13 @@ namespace ManagementSystem.AccountingApi.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("can-process-shift-end")]
+        public async Task<IActionResult> CanProcessShiftEnd([FromQuery] int branchId)
+        {
+            var result = await _service.CanProcessShiftEnd(branchId);
+
+            return Ok(result);
+        }
     }
 }
