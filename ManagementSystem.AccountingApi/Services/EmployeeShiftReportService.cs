@@ -458,7 +458,8 @@ namespace ManagementSystem.AccountingApi.Services
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
 
-                return ++count;
+                int shiftId = ++ count;
+                return shiftId > 2 ? 2 : shiftId;
             }
             catch (Exception ex)
             {

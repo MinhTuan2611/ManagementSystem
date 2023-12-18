@@ -48,7 +48,6 @@ namespace ManagementSystem.MainApp.Controllers
             var resultBill = await HttpRequestsHelper.Post<BillInfo>(SD.StorageApiUrl + "bills/create", bill);
             if (resultBill != null)
             {
-
                 // Tao Phieu Xuat Kho
                 var inventoryVoucherDto = PrepareInventoryModel(bill);
                 inventoryVoucherDto.UserId = userId;
@@ -57,7 +56,10 @@ namespace ManagementSystem.MainApp.Controllers
                 var inventoryResult = await _inventoryService.CreateInventory(inventoryVoucherDto);
 
                 if (inventoryResult.IsSuccess == false)
+                {
+                    var deleteBillFlags = await HttpRequestsHelper.Delete<bool>(SD.StorageApiUrl + "bills/delete", resultBill.BillId);
                     return StatusCode(StatusCodes.Status500InternalServerError, inventoryResult.Message);
+                }
 
                 // Update Customer Point
                 if (bill.CustomerId != null)
@@ -201,6 +203,7 @@ namespace ManagementSystem.MainApp.Controllers
                 inventoryDetail.Quantity = item.Quantity;
                 inventoryDetail.TotalMoneyAfterTax = item.Amount;
                 inventoryDetail.UnitId = item.UnitId;
+                inventoryDetail.PaymentDiscountMoney = item.DiscountAmount;
 
                 inventoryDetails.Add(inventoryDetail);
             }

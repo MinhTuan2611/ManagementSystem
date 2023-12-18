@@ -1,5 +1,4 @@
 ﻿using ManagementSystem.AccountingApi.Data;
-using ManagementSystem.AccountingApi.Repositories;
 using ManagementSystem.AccountingApi.Utility;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
@@ -71,7 +70,7 @@ namespace ManagementSystem.AccountingApi.Services
                     item.TotalMoneyBeforeTax = product != null ? product.PriceBeforeTax * detail.Quantity : 0;
                     item.DebitAccountMoney = detail.TotalMoneyAfterTax;
                     item.CreditAccountMoney = detail.TotalMoneyAfterTax;
-                    //item.PaymentDiscountMoney = detail.PaymentDiscountMoney;
+                    item.PaymentDiscountMoney = detail.PaymentDiscountMoney;
                     //item.TaxMoney = detail.TaxMoney;
                     item.TotalMoneyAfterTax = detail.TotalMoneyAfterTax;
                     item.Note = detail.Note;

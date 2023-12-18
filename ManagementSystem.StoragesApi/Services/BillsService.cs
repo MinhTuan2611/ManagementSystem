@@ -117,7 +117,7 @@ namespace ManagementSystem.StoragesApi.Services
                     };
                     var storage = _unitOfWork.StorageRepository.GetFirst(x => x.BranchId == (bill.BranchId ?? 1));
                     var quantityInStorage = _unitOfWork.ProductStorageRepository.Get(x => x.ProductId == detail.ProductId && x.StorageId == storage.StorageId);
-                    if(quantityInStorage != null)
+                    if (quantityInStorage != null)
                     {
                         quantityInStorage.Quantity -= detail.Quantity;
                         _unitOfWork.ProductStorageRepository.Update(quantityInStorage);
@@ -246,7 +246,7 @@ namespace ManagementSystem.StoragesApi.Services
             var billPayments = await GetBillPaymentMethods(billId);
             var billInformation = GetBillById(billId);
             var billResponse = new BillResponseDto();
-            
+
             billResponse.BillId = billId;
             billResponse.totalChange = billInformation.totalChange;
             billResponse.totalPaid = billResponse.totalPaid;
@@ -327,6 +327,49 @@ namespace ManagementSystem.StoragesApi.Services
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+
+        public async Task<bool> DeleteBills(int billId)
+        {
+            try
+            {
+                var billPayments = _context.BillPayments
+                .Where(x => x.BillId == billId).ToList();
+
+                if (billPayments.Count > 0)
+                {
+                    _context.BillPayments.RemoveRange(billPayments);
+                }
+
+                var billDetail = _context.BillDetails
+                    .AsNoTracking()
+                    .Where(x => x.BillId == billId).ToList();
+
+                if (billDetail.Count > 0)
+                {
+                    _context.BillDetails.RemoveRange(billDetail);
+                }
+
+                var bill = _context.Bills
+                    .AsNoTracking()
+                    .SingleOrDefault(x => x.BillId == billId);
+
+                if (bill != null)
+                {
+                    _context.Bills.Remove(bill);
+                }
+
+                _context.SaveChanges();
+
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var logger = new LogWriter("Function DeleteBills: " + ex.Message, _path);
+                return false;
             }
         }
 
