@@ -116,7 +116,7 @@ namespace ManagementSystem.StoragesApi.Services
                 return null;
             }
         }
-        public bool UpdateCustomerPoint(int amount, int customerId)
+
         public bool UpdateCustomerPoint(int amount, int customerId, int usedPoint)
         {
             try
