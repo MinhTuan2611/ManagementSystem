@@ -38,14 +38,14 @@ namespace ManagementSystem.AccountingApi.Services
                 {
                     shiftEnd.CompanyMoneyTransferred = shiftEnd.CompanyMoneyTransferred != null || shiftEnd.CompanyMoneyTransferred > 0 ? shiftEnd.CompanyMoneyTransferred : model.CompanyMoneyTransferred;
                     shiftEnd.UserId = model.UserId;
-                    shiftEnd.Status = model.Status;
+                    shiftEnd.Status = model.Status != ShiftEndReportStatus.ShiftEndProgress ? model.Status : ShiftEndReportStatus.SubmitShiftEnd;
 
                     _context.ShiftEndReports.Update(shiftEnd);
                     _context.SaveChanges();
 
                     shiftEndId = shiftEnd.ShiftEndId;
 
-                    foreach (var item in model.AuditDetails)
+                    foreach (var item in model.AuditDetails.Where(p => p.ActualAmount > 0))
                     {
                         var detail = _context.InventoryAuditDetails.AsNoTracking().SingleOrDefault(x => x.ShiftEndId == shiftEnd.ShiftEndId && x.ProductId == item.ProductId && x.UnitId == item.UnitId );
 
@@ -166,6 +166,7 @@ namespace ManagementSystem.AccountingApi.Services
 		                    ,sr.OtherExpense
 		                    ,sr.ActualMoneyForNextShift
 		                    ,sr.RemindMoneyForNextShift
+                            ,sr.TotalPointAmount
 		                    ,sr.ExcessMoney
 		                    ,sr.LackOfMoney
 		                    ,se.ShiftEndDate
@@ -175,7 +176,7 @@ namespace ManagementSystem.AccountingApi.Services
                     LEFT JOIN {0}.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
                     JOIN {0}.dbo.Users u ON u.UserId = se.UserId
                     WHERE se.ShiftEndId = {1}
-                ",SD.AccountDbName, shiftEndId);
+                ", SD.AccountDbName, shiftEndId);
 
             try
             {
@@ -397,6 +398,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function IsCompletedShiftEnd: " + ex.Message, _path);
                 return -1;
             }
         }
@@ -456,7 +458,8 @@ namespace ManagementSystem.AccountingApi.Services
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
 
-                return ++count;
+                int shiftId = ++ count;
+                return shiftId > 2 ? 2 : shiftId;
             }
             catch (Exception ex)
             {

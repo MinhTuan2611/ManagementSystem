@@ -76,5 +76,13 @@ namespace ManagementSystem.StoragesApi.Controllers
 
             return Ok(result);
         }
+
+        [HttpDelete("delete/{billId}")]
+        public async Task<IActionResult> DeleteBill(int billId)
+        {
+            var result = await _BillsService.DeleteBills(billId );
+
+            return Ok(result);
+        }
     }
 }
