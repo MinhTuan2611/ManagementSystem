@@ -731,6 +731,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<long>("TotalMOMOAmount")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("TotalOtherAmount")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("TotalPointAmount")
                         .HasColumnType("bigint");
 
@@ -1538,6 +1541,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<long>("TotalMOMOAmount")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("TotalOtherAmount")
                         .HasColumnType("bigint");
 
                     b.Property<long>("TotalPointAmount")
