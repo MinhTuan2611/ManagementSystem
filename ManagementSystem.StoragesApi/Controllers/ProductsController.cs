@@ -70,16 +70,16 @@ namespace ManagementSystem.StoragesApi.Controllers
             return Ok(deleted);
         }
         [HttpGet("get-product-detail-for-sale")]
-        public IActionResult GetProductDetailForSale(string barcode)
+        public IActionResult GetProductDetailForSale(string barcode, int branchId)
         {
-            ProductDetailInSale? product = _ProductService.GetProductDetailForSale(barcode);
+            ProductDetailInSale? product = _ProductService.GetProductDetailForSale(barcode, branchId);
             return Ok(product);
         }
 
         [HttpGet("autocomplete-get-product-detail-for-sale")]
-        public IActionResult AutocompleteGetProductDetailForSale(string barcode)
+        public IActionResult AutocompleteGetProductDetailForSale(string barcode, int branchId)
         {
-            List<ProductDetailInSale>? product = _ProductService.AutoCompleteGetProductDetailForSale(barcode);
+            List<ProductDetailInSale>? product = _ProductService.AutoCompleteGetProductDetailForSale(barcode, branchId);
             return Ok(product);
         }
 

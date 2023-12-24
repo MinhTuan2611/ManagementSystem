@@ -604,6 +604,45 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.ToTable("ProductUnit");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ProductUnitBranch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ProductUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("Price")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id", "ProductUnitId", "BranchId");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("ProductUnitId")
+                        .IsUnique();
+
+                    b.ToTable("ProductUnitBranches");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.Request", b =>
                 {
                     b.Property<int>("RequestId")
@@ -981,32 +1020,27 @@ namespace ManagementSystem.StoragesApi.Migrations
             modelBuilder.Entity("ManagementSystem.Common.Models.CustomerResponseDto", b =>
                 {
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("BirthDay")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CustomerCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<string>("CustomerName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CustomerPoint")
+                    b.Property<int?>("CustomerPoint")
                         .HasColumnType("int");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("CustomerResponseDto", null, t => t.ExcludeFromMigrations());
@@ -1315,6 +1349,23 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Navigation("Unit");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ProductUnitBranch", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManagementSystem.Common.Entities.ProductUnit", null)
+                        .WithOne("ProductUnitBranch")
+                        .HasForeignKey("ManagementSystem.Common.Entities.ProductUnitBranch", "ProductUnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.Request", b =>
                 {
                     b.HasOne("ManagementSystem.Common.Entities.Branch", "Branch")
@@ -1415,6 +1466,11 @@ namespace ManagementSystem.StoragesApi.Migrations
             modelBuilder.Entity("ManagementSystem.Common.Entities.Product", b =>
                 {
                     b.Navigation("RequestSampleItems");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ProductUnit", b =>
+                {
+                    b.Navigation("ProductUnitBranch");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Request", b =>

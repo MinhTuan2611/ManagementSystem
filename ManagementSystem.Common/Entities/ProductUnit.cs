@@ -25,5 +25,6 @@ namespace ManagementSystem.Common.Entities
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public Product? Product { get; set; }
         public Unit? Unit { get; set; }
+        public ProductUnitBranch? ProductUnitBranch { get; set; }
     }
 }
