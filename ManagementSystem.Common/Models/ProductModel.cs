@@ -51,6 +51,7 @@ namespace ManagementSystem.Common.Models
         public List<ProductUnitDetail> Units { get; set; }
         public List<ProductSupplierDto> ProductSuppliers { get; set; }
         public int? ModifyBy { get; set; }
+        public Dictionary<int, List<ProductUnitDetail>> UnitDictionary { get; set; } = new Dictionary<int, List<ProductUnitDetail>>();
     }
     public class ProductUnitDetail
     {
@@ -64,6 +65,7 @@ namespace ManagementSystem.Common.Models
         public int OldPrice { get; set; } = 0;
         public bool IsPrimary { get; set; }
         public string? Barcode { get; set; }
+        public int BranchId { get; set; } = 0;
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
     }
 

@@ -2,6 +2,7 @@ using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Mappings;
 using ManagementSystem.StoragesApi.SeedingData;
 using ManagementSystem.StoragesApi.Services;
+using ManagementSystem.StoragesApi.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("StoragesDbConnStr");
 builder.Services.AddDbContext<StoragesDbContext>(options =>
     options.UseSqlServer(connectionString));
+SD.AccountDbName = builder.Configuration["DatabaseNames:AccountsDb"];
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
