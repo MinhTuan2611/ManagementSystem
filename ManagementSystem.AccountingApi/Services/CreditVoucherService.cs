@@ -38,7 +38,7 @@ namespace ManagementSystem.AccountingApi.Services
                 var creditVoucher = new CreditVoucher();
                 creditVoucher.CustomerId = request.CustomerId;
                 creditVoucher.CustomerName = request.CustomerId == null && request.CustomerName != null ? request.CustomerName : string.Empty;
-                creditVoucher.ForReason = reason;
+                creditVoucher.ForReason = string.IsNullOrEmpty(request.ForReason) || request.ForReason.Length <= 0 ? reason : request.ForReason;
                 creditVoucher.TotalMoney = request.TotalMoney;
                 creditVoucher.UserId = request.UserId;
                 creditVoucher.TransactionDate = DateTime.Now;
@@ -220,7 +220,7 @@ namespace ManagementSystem.AccountingApi.Services
                 )
 
                 INSERT INTO #map_method_transaction_reason(MethodCode,ReasonCode)
-                VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017')
+                VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017'), ('POINT', 'DOIDIEM')
 
                 SELECT tc.AccountCode AS CreditAccount
 		                ,td.AccountCode AS DebitAccount
@@ -254,7 +254,7 @@ namespace ManagementSystem.AccountingApi.Services
                 )
 
                 INSERT INTO #map_method_transaction_reason(MethodCode,ReasonCode)
-                VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017')
+                VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017'), ('POINT', 'DOIDIEM')
 
                 SELECT ReasonCode AS Value
                 FROM #map_method_transaction_reason t

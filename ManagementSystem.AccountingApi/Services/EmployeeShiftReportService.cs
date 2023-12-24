@@ -170,6 +170,7 @@ namespace ManagementSystem.AccountingApi.Services
 		                    ,sr.ExcessMoney
 		                    ,sr.LackOfMoney
 		                    ,se.ShiftEndDate
+                            ,sr.TotalOtherAmount
                     FROM dbo.ShiftEndReports se
                     JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = se.ShiftEndId
                     JOIN dbo.ShiftReports sr ON sr.HandoverId = sh.HandoverId
