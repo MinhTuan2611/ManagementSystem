@@ -14,15 +14,15 @@ namespace ManagementSystem.MainApp.Controllers
     public class SearchController : ControllerBase
     {
         [HttpGet("Search")]
-        public async Task<IActionResult> Get([FromQuery] string? searchValue)
+        public async Task<IActionResult> Get([FromQuery] string? searchValue, int branchId = 3)
         {
             MultipleSearchResult response = new MultipleSearchResult();
             List<CustomerResponseDto> customers = new List<CustomerResponseDto>();
             customers = await HttpRequestsHelper.GetList<CustomerResponseDto>(Environment.StorageApiUrl + "customers/search-term?searchTerm=" + searchValue);
-            TPagination<ProductListResponse> products = new TPagination<ProductListResponse>();
-            products = await HttpRequestsHelper.Get<TPagination<ProductListResponse>>(Environment.StorageApiUrl + "products/" + "get?searchValue=" + searchValue + "&pageNumber=1&pageSize=9");
+            List<ProductDetailInSale> products = new List<ProductDetailInSale>();
+            products = await HttpRequestsHelper.Get<List<ProductDetailInSale>>(Environment.StorageApiUrl + "products/" + "autocomplete-get-product-detail-for-sale?barcode=" + searchValue + "&branchId=" + branchId);
             response.CustomerResponses = customers;
-            response.ProductResponses = products.Items;
+            response.ProductResponses = products.Take(20).ToList();
             return Ok(response);
         }
     }
