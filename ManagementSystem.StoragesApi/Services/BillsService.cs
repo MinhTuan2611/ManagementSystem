@@ -1,5 +1,7 @@
 ﻿using ManagementSystem.Common;
+using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Functions;
 using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Loggers;
 using ManagementSystem.Common.Models;
@@ -8,10 +10,6 @@ using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.Reflection.Metadata.Ecma335;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -21,12 +19,14 @@ namespace ManagementSystem.StoragesApi.Services
         private readonly StoragesDbContext _context;
         private IConfiguration _configuration;
         private readonly string _path = string.Empty;
+        private ResponseDto _responseDto;
 
         public BillsService(StoragesDbContext context, IConfiguration configuration)
         {
             _unitOfWork = new UnitOfWork(context);
             _configuration = configuration;
             _context = context;
+            _responseDto = new ResponseDto();
 
             _path = @"C:\\Logs\\Bills";
         }
@@ -373,6 +373,93 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
+        public async Task<ResponseDto> ExportBillDetailExcel(SearchCriteria model)
+        {
+            try
+            {
+                string fromDate = model.Criterias["FromDate"].ToString();
+                string toDate = model.Criterias["ToDate"].ToString();
+
+                string query = string.Format(@"
+                    DROP TABLE IF EXISTS #tmp_bills
+                    DROP TABLE IF EXISTS #tmp_detail
+                    SELECT *
+                    INTO #tmp_bills
+                    FROM bills
+                    WHERE CreateDate between CONVERT(datetime, '{0}') AND CONVERT(datetime, '{1}')
+
+                    DROP TABLE IF EXISTS #tmp_detail
+                    select b.BillId
+		                    ,coalesce(d.CustomerCode, N'KL') As CustomerCode
+		                    ,coalesce(d.CustomerName, N'Khách lẻ') As CustomerName
+		                    ,c.ProductName AS ProductName
+		                    ,DiscountAmount + b.Amount AS AmountBeforeDiscount
+		                    ,b.DiscountAmount AS DiscountAmount
+		                    ,b.Amount AS Amount
+		                    ,a.CreateDate
+                    INTO #tmp_detail
+                    FROM #tmp_bills A
+                    JOIN BillDetails b ON a.BillId = b.BillId
+                    JOIN Products c on c.ProductId = b.ProductId
+                    LEFT JOIN Customers d on d.CustomerId = A.CustomerId
+
+                    SELECT CreateDate
+		                    ,BillId
+		                    ,CustomerCode
+		                    ,CustomerName
+		                    ,SUM(AmountBeforeDiscount) AS TotalAmountBeforeDiscount
+		                    ,SUM(DiscountAmount) AS TotalDiscountAmount
+		                    ,SUM(Amount) AS TotalAmount
+
+                    FROM #tmp_detail
+                    GROUP BY BillId
+		                    ,CustomerCode
+		                    ,CustomerName
+		                    ,CreateDate
+                    ORDER BY CreateDate DESC
+
+                ", fromDate, toDate);
+
+                var result = _context.BillExportDetailDtos.FromSqlRaw(query).ToList();
+
+                // Headers
+                var headers = new[] { "Ngày bán", "BillId", "Mã khách hàng", "Tên khách hàng", "Tổng tiền trước khi chiết khấu", "Tổng tiền chiết khấu", "Tổng tiền sau chiết khấu"};
+
+                // Handle file path
+                string dateFormat = DateTime.Now.ToString("yyyyMMdd");
+                string filePath = string.Format(StorageContant.billFilePathFomat, dateFormat, string.Format("BillDetail_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
+
+                // Get the directory path
+                string directoryPath = Path.GetDirectoryName(filePath);
+
+                // Check if the directory exists, and if not, create it
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                if (!File.Exists(filePath))
+                {
+                    File.Create(filePath).Close();
+                }
+
+                // Call the generic function
+                var excelExporter = new ExcelExporter();
+                excelExporter.ExportToExcel(result, headers, filePath);
+
+                _responseDto.Result = filePath;
+
+            }
+            catch (Exception ex)
+            {
+
+                var logger = new LogWriter("Function ExportBillDetailExcel: " + ex.Message, _path);
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = ex.Message;
+            }
+
+            return _responseDto;
+        }
         #region Handle Get Data
         private async Task<List<BillDetailResponseDto>> GetBillDetailHandler(int billId)
         {

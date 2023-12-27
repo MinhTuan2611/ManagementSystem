@@ -50,6 +50,7 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<ShiftHandoverResponseDto> ShiftHandoverResponseDtos { get; set; }
         public DbSet<ShiftReportResponseDto> ShiftReportResponseDtos { get; set; }
         public DbSet<AccountsDto> AccountDtos { get; set; }
+        public DbSet<LegerExportExcelResponseDto> LegerExportExcelResponseDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -79,6 +80,7 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<RecTransInfoResponseDto>().ToTable(nameof(RecTransInfoResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<DebitVoucherResponseDto>().ToTable(nameof(DebitVoucherResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<DocumentGroupResponseDto>().ToTable(nameof(DocumentGroupResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<LegerExportExcelResponseDto>().ToTable(nameof(LegerExportExcelResponseDto), t => t.ExcludeFromMigrations());
             //// Dynamic Response functions
 
             foreach (var entityType in AccountingTableName.GenerateDynamicResponseDbSet())

@@ -84,5 +84,13 @@ namespace ManagementSystem.StoragesApi.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost]
+        [Route("export_bill_detail_excel")]
+        public async Task<IActionResult> ExportExcell([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _BillsService.ExportBillDetailExcel(searchModel);
+            return Ok(result);
+        }
     }
 }

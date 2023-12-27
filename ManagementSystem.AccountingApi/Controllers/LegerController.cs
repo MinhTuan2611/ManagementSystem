@@ -31,5 +31,13 @@ namespace ManagementSystem.AccountingApi.Controllers
             var result = await _legerService.ExportExcelFile(searchModel);
             return Ok(result);
         }
+
+        [HttpPost]
+        [Route("export_leger_without_payment_excel")]
+        public async Task<IActionResult> ExportLeggerWithoutPaymentExcelFile([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _legerService.ExportLeggerWithoutPaymentExcelFile(searchModel);
+            return Ok(result);
+        }
     }
 }
