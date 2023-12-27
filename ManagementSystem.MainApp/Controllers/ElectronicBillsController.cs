@@ -1,5 +1,6 @@
-using ManagementSystem.Common;
+﻿using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Functions;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
@@ -18,7 +19,6 @@ namespace ManagementSystem.MainApp.Controllers
     public class ElectronicBillsController : ControllerBase
     {
         private ResponseDto _response;
-        string url = "http://0317983888.softdreams.vn/";
 
         public ElectronicBillsController()
         {
@@ -42,7 +42,7 @@ namespace ManagementSystem.MainApp.Controllers
 
             string authen = GenerateToken("POST");
 
-            var result = await HttpRequestsHelper.PostAuthorize<object>(url + "api/publish/importInvoice", request, authen);
+            var result = await HttpRequestsHelper.PostAuthorize<object>(SD.EUrl + "api/publish/importInvoice", request, authen);
             return Ok(billInfo);
         }
 
@@ -59,7 +59,7 @@ namespace ManagementSystem.MainApp.Controllers
             };
 
             string authen = GenerateToken("POST");
-            var result = await HttpRequestsHelper.PostAuthorize<object>(url + "api/business/adjustInvoice", request, authen);
+            var result = await HttpRequestsHelper.PostAuthorize<object>(SD.EUrl + "api/business/adjustInvoice", request, authen);
             return Ok();
         }
 
@@ -76,7 +76,7 @@ namespace ManagementSystem.MainApp.Controllers
             };
 
             string authen = GenerateToken("POST");
-            var result = await HttpRequestsHelper.PostAuthorize<object>(url + "api/business/replaceInvoice", request, authen);
+            var result = await HttpRequestsHelper.PostAuthorize<object>(SD.EUrl + "api/business/replaceInvoice", request, authen);
             return Ok();
         }
         [HttpGet("declaration/get_detail")]
@@ -84,7 +84,7 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> GetDeclarationDetail([FromQuery] string key)
         {
             string authen = GenerateToken("POST");
-            var result = await HttpRequestsHelper.PostAuthorize<DeclNormalInvDto>(url + "api/declaration/get_detail", new DeclarationRequestDto { Key = key}, authen);
+            var result = await HttpRequestsHelper.PostAuthorize<DeclNormalInvDto>(SD.EUrl + "api/declaration/get_detail", new DeclarationRequestDto { Key = key }, authen);
             return Ok(result);
         }
 
@@ -93,7 +93,7 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> SearchDeclaration([FromQuery] string key, [FromQuery] int option)
         {
             string authen = GenerateToken("POST");
-            var result = await HttpRequestsHelper.PostAuthorize<DeclNormalInvDto>(url + "api/declaration/search", new DeclarationRequestDto { Key = key, Option = option }, authen);
+            var result = await HttpRequestsHelper.PostAuthorize<DeclNormalInvDto>(SD.EUrl + "api/declaration/search", new DeclarationRequestDto { Key = key, Option = option }, authen);
             return Ok(result);
         }
 
@@ -101,15 +101,15 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> RegisterDeclaration([FromBody] RegistrationRequestDto requestDto)
         {
             string authen = GenerateToken("POST");
-            var result = await HttpRequestsHelper.PostAuthorize<string>(url + "api/declaration/registerAndPublish", requestDto, authen);
+            var result = await HttpRequestsHelper.PostAuthorize<string>(SD.EUrl + "api/declaration/registerAndPublish", requestDto, authen);
             return Ok(result);
         }
 
-        [HttpPost ("publish/checkInvoiceState")]
+        [HttpPost("publish/checkInvoiceState")]
         public async Task<IActionResult> CheckInvoiceStatus([FromBody] List<string> keys)
         {
             string authen = GenerateToken("POST");
-            var result = await HttpRequestsHelper.PostAuthorize<InvoiceStateResponseDto>(url + "api/publish/checkInvoiceState", keys, authen);
+            var result = await HttpRequestsHelper.PostAuthorize<InvoiceStateResponseDto>(SD.EUrl + "api/publish/checkInvoiceState", keys, authen);
             return Ok(result);
         }
 
@@ -137,20 +137,22 @@ namespace ManagementSystem.MainApp.Controllers
             var customer = new CustomerResponseDto();
             var invoice = new InvoiceDto();
             var billAmount = billInfo.Payments.Sum(x => x.Amount);
-            if (billInfo.CustomerId != null || billInfo.CustomerId.Value > 0)
+            if (billInfo.CustomerId != null && billInfo.CustomerId.Value > 0)
             {
                 customer = await GetCustomerInformation(billInfo.CustomerId.Value);
             }
 
-            if (customer != null)
+            if (customer != null && customer.CustomerId > 0)
             {
                 invoice.Ikey = billInfo.BillId.ToString();
-                invoice.Buyer = customer.CustomerName;
+                invoice.Buyer = string.IsNullOrEmpty(customer.CustomerName) == true ? "Khách Lẻ" : customer.CustomerName;
                 invoice.CusCode = customer.CustomerCode;
                 invoice.CusName = customer.CustomerName;
                 invoice.CusAddress = customer.Address;
                 invoice.CusPhone = customer.PhoneNumber;
             }
+
+            invoice.Buyer = string.IsNullOrEmpty(invoice.Buyer) == true ? "Khách Lẻ" : invoice.Buyer;
             invoice.TaxAuthorityCode = SD.ETaxCode;
             invoice.Ikey = SD.EIKey;
             invoice.ArisingDate = DateTime.Now.ToString("dd/MM/yyyy");
@@ -160,6 +162,8 @@ namespace ManagementSystem.MainApp.Controllers
             invoice.PaymentMethod = GetPaymentMethodByCode(billInfo.Payments[0].PaymentMethodCode).GetAwaiter().GetResult().PaymentMethodName;
             var products = new List<ProductInvoiceDto>();
 
+            int totalBeforeTax = 0;
+            int vatRate = 0;
             foreach (var item in billInfo.Details)
             {
                 var product = await GetProductDetail(item.ProductId, item.UnitId);
@@ -167,18 +171,26 @@ namespace ManagementSystem.MainApp.Controllers
 
                 detail.Code = product.ProductCode;
                 detail.No = product.ProductId;
+                detail.Feature = GetProductFeature(false, item.Amount).ToString();
                 detail.ProdName = product.ProductName;
                 detail.ProdUnit = product.UnitName;
+                detail.ProdPrice = (float)product.DefaultPurchasePrice;
                 detail.ProdQuantity = item.Quantity;
                 detail.Discount = item.DiscountPercentage;
                 detail.DiscountAmount = item.DiscountAmount;
-                detail.Total = item.Amount;
+                detail.Total = item.Amount + item.Amount * (product.Tax / 100);
                 detail.VATRate = product.Tax;
-                detail.Feature = GetProductFeature(false, item.Amount).ToString();
+                detail.VATAmount = item.Amount * (product.Tax / 100);
+                detail.Amount = item.Amount;
 
+                totalBeforeTax += item.Amount + item.Amount * (product.Tax / 100);
+                vatRate += product.Tax;
                 products.Add(detail);
             }
 
+            invoice.Total = totalBeforeTax;
+            invoice.VATRate = vatRate;
+            invoice.VATAmount = totalBeforeTax - billAmount;
             invoice.Products = products;
             invoices.Add(invoice);
 

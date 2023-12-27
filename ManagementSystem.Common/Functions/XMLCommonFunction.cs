@@ -111,6 +111,11 @@ namespace ManagementSystem.Common
                 AddXmlElement(xmlDoc, invoiceElement, "ArisingDate", DateTime.Now.ToString("dd/MM/yyyy"));
                 AddXmlElement(xmlDoc, invoiceElement, "ExchangeRate", invoice.ExchangeRate);
                 AddXmlElement(xmlDoc, invoiceElement, "CurrencyUnit", invoice.CurrencyUnit);
+                AddXmlElement(xmlDoc, invoiceElement, "Total", invoice.Total.ToString());
+                AddXmlElement(xmlDoc, invoiceElement, "VATRate", invoice.VATRate.ToString());
+                AddXmlElement(xmlDoc, invoiceElement, "VATAmount", invoice.VATAmount.ToString());
+                AddXmlElement(xmlDoc, invoiceElement, "Amount", invoice.Amount.ToString());
+                AddXmlElement(xmlDoc, invoiceElement, "AmountInWords", invoice.AmountInWords);
                 if (string.IsNullOrEmpty(invoice.Extra) != true)
                 {
                     AddXmlElement(xmlDoc, invoiceElement, "Extra", invoice.Extra);
