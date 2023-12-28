@@ -13,7 +13,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? BranchId { get; set; } = 1;
         public int? ShiftId { get; set; } = 1;
         public string? CustomerName { get; set; } = "Khach le";
-        public int TotalDeductibleAmount { get; set; } = 1;
+        public int totalDeductibleAmount { get; set; } = 0;
         public string? PaymentMethodCode { get; set; } = "CASH";
         public List<ReturnedProductRequestDto>? ReturnedProduct { get; set; }
         public List<ExchangedProductRequestDto>? ExchangedProduct { get; set; }
