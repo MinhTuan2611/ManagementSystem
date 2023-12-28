@@ -1,35 +1,42 @@
 {
   "format": 1,
   "restore": {
-    "D:\\OtherPj\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {}
+    "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {}
   },
   "projects": {
-    "D:\\OtherPj\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {
+    "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
+        "projectUniqueName": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
         "projectName": "ManagementSystem.AccountingApi",
-        "projectPath": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
-        "packagesPath": "C:\\Users\\ngduc\\.nuget\\packages\\",
-        "outputPath": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.AccountingApi\\obj\\",
+        "projectPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
+        "packagesPath": "C:\\Users\\hmtuan\\.nuget\\packages\\",
+        "outputPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.AccountingApi\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\ngduc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\hmtuan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
-                "projectPath": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj"
+              "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
+                "projectPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj"
+              },
+              "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.StoragesApi\\ManagementSystem.StoragesApi.csproj": {
+                "projectPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.StoragesApi\\ManagementSystem.StoragesApi.csproj"
               }
             }
           }
@@ -44,6 +51,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "EPPlus": {
+              "target": "Package",
+              "version": "[7.0.1, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[6.0.20, )"
@@ -86,28 +97,32 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
+    "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
+        "projectUniqueName": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
         "projectName": "ManagementSystem.Common",
-        "projectPath": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
-        "packagesPath": "C:\\Users\\ngduc\\.nuget\\packages\\",
-        "outputPath": "D:\\OtherPj\\ManagementSystem\\ManagementSystem.Common\\obj\\",
+        "projectPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
+        "packagesPath": "C:\\Users\\hmtuan\\.nuget\\packages\\",
+        "outputPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\ngduc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\hmtuan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -126,6 +141,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "EPPlus": {
+              "target": "Package",
+              "version": "[7.0.1, )"
+            },
             "Microsoft.AspNetCore.Cryptography.KeyDerivation": {
               "target": "Package",
               "version": "[7.0.9, )"
@@ -159,7 +178,113 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.StoragesApi\\ManagementSystem.StoragesApi.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.StoragesApi\\ManagementSystem.StoragesApi.csproj",
+        "projectName": "ManagementSystem.StoragesApi",
+        "projectPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.StoragesApi\\ManagementSystem.StoragesApi.csproj",
+        "packagesPath": "C:\\Users\\hmtuan\\.nuget\\packages\\",
+        "outputPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.StoragesApi\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\hmtuan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
+                "projectPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.1.28, )"
+            },
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[5.1.2, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.20, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[6.0.20, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.20, )"
+            },
+            "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+              "target": "Package",
+              "version": "[1.17.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.2.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }
