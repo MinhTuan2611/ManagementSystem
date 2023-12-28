@@ -28,7 +28,7 @@ namespace ManagementSystem.AccountingApi.Services
             _path = @"C:\\Logs\\Accounting\\InventoryVoucher";
         }
 
-        public async Task<ResponseDto> CreateInventoryVoucher(NewInventoryVoucherDto request)
+        public async Task<ResponseDto> CreateInventoryVoucher(NewInventoryVoucherDto request, bool isRefundItem)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace ManagementSystem.AccountingApi.Services
                 inventory.UserId = request.UserId;
                 inventory.PurchasingRepresentive = request.PurchasingRepresentive;
                 inventory.TransactionDate = DateTime.Now;
-                inventory.ReasonFor = AccountingConstant.XBAReason;
+                inventory.ReasonFor = isRefundItem ? AccountingConstant.NHTReason : AccountingConstant.XBAReason;
                 inventory.Note = request.Note;
                 inventory.RepresentivePhone = "";
                 inventory.CustomerId = request.CustomerId;
@@ -108,6 +108,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
+        
         public async Task<ResponseDto> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request)
         {
             try
@@ -470,6 +471,7 @@ namespace ManagementSystem.AccountingApi.Services
                 throw ex;
             }
         }
+
         #endregion
     }
 }
