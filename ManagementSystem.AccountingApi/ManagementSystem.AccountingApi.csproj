@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ManagementSystem.Common\ManagementSystem.Common.csproj" />
-    <ProjectReference Include="..\ManagementSystem.StoragesApi\ManagementSystem.StoragesApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

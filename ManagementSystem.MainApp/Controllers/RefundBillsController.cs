@@ -25,17 +25,12 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             model.UserId = int.Parse(userId);
 
-            try{
+           
                 var contentProcess = await HttpRequestsHelper.Post<object>(APIUrl + "create", model);
+                if(contentProcess != null) {
                 return Ok(contentProcess);
-            }
-            catch(Exception ex){
+                }
                 return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
-            }
-
-
         }
-
-
     }
 }
