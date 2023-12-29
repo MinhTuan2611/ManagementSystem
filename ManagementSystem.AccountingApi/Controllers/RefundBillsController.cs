@@ -75,6 +75,7 @@ namespace ManagementSystem.AccountingApi.Controllers
                     TotalMoneyVND = model.TotalDeductibleAmount,
                     UserId = model.UserId,
                     ShiftId = 1,
+                    NTMoney = model.TotalDeductibleAmount
                 };
                 await _paymentVoucherService.CreatePaymentVoucher(paymentModel);
             }
