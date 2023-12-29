@@ -15,7 +15,7 @@ namespace ManagementSystem.MainApp.Controllers
     [ApiController]
     public class RefundBillsController : ControllerBase
     {
-        private string APIUrl = SD.AccountingApiUrl + "RefundBills/";
+        private string APIUrl = SD.AccountingApiUrl + "Refund/";
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] BillRefundRequestDto model)
         {
@@ -25,11 +25,15 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             model.UserId = int.Parse(userId);
 
-            var resultBill = await HttpRequestsHelper.Post<object>(APIUrl + "create", model);
-            if (resultBill != null)
-                return Ok(resultBill);
+            try{
+                var contentProcess = await HttpRequestsHelper.Post<object>(APIUrl + "create", model);
+                return Ok(contentProcess);
+            }
+            catch(Exception ex){
+                return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
+            }
 
-            return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
+
         }
 
 

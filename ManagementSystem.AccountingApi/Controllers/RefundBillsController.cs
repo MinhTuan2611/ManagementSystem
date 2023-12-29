@@ -2,7 +2,6 @@
 
 using ManagementSystem.AccountingApi.Services;
 using ManagementSystem.Common.Models.Dtos;
-using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementSystem.AccountingApi.Controllers
@@ -26,13 +25,14 @@ namespace ManagementSystem.AccountingApi.Controllers
             _receiptService = receiptService;
             _inventoryVoucherService = inventoryVoucherService;
             _paymentVoucherService = paymentVoucherService;
-             _storageVoucherService = storageVoucherService;
+            _storageVoucherService = storageVoucherService;
         }
 
         [HttpPost("create")]
         public async Task<ActionResult> CreateRefundBill(BillRefundRequestDto model)
         {
-            if(model.ExchangedProduct != null){
+            var contentProcess = new ResponseDto();
+            if (model.ExchangedProduct != null){
                 var listItem = new List<InventoryVoucherDetailDto>();
                 foreach(var item in model.ExchangedProduct) {
                     var product = new InventoryVoucherDetailDto()
@@ -55,35 +55,38 @@ namespace ManagementSystem.AccountingApi.Controllers
                await _inventoryVoucherService.CreateInventoryVoucher(InventoryModel,true);
             }
 
-            if(model.ReturnedProduct != null) {
-                await _storageVoucherService.CreateProductStorage(model.ReturnedProduct);
-            }
-
-            if(model.totalDeductibleAmount > 0){
+            if(model.TotalDeductibleAmount > 0){
                 var receiptModel = new NewReceiptRequestDto()
                 {
                      CustomerId = model.CustomerId,
                      CustomerName = model.CustomerName,
                      InventoryDocumentNumber = 1,
-                     TotalMoney = model.totalDeductibleAmount,
+                     TotalMoney = model.TotalDeductibleAmount,
                      UserId = model.UserId,
                 };
                 await _receiptService.CreateReceipt(receiptModel);  
 
-            }else{
+            }else if(model.TotalDeductibleAmount < 0)
+            {
                 var paymentModel = new NewPaymentVoucherDto()
                 {
                     BranchId = model.BranchId,
                     ReceiverName = model.CustomerName,
-                    TotalMoneyVND = model.totalDeductibleAmount,
+                    TotalMoneyVND = model.TotalDeductibleAmount,
                     UserId = model.UserId,
                     ShiftId = 1,
-                    NTMoney = model.totalDeductibleAmount
+                    NTMoney = model.TotalDeductibleAmount
                 };
                 await _paymentVoucherService.CreatePaymentVoucher(paymentModel);
             }
-               
-            return NoContent();
+
+            if (model.ReturnedProduct != null)
+            {
+                contentProcess = await _storageVoucherService.CreateProductStorage(model);
+            }
+
+            return Ok(contentProcess);
+
         }
     }
 }
