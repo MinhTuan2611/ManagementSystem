@@ -193,7 +193,7 @@ namespace ManagementSystem.AccountingApi.Services
 		                ,PaymentMethodName
 		                ,PaymentMethodCode
                 FROM {0}.dbo.PaymentMethods
-                WHERE PaymentMethodCode = '{0}'
+                WHERE PaymentMethodCode = '{1}'
             ",SD.StorageDbName, methodCode);
 
             try
@@ -221,6 +221,7 @@ namespace ManagementSystem.AccountingApi.Services
 
                 INSERT INTO #map_method_transaction_reason(MethodCode,ReasonCode)
                 VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017'), ('POINT', 'DOIDIEM')
+                        ,('OTHER', 'TIEUDUNG'), ('VNPAY', 'BCDT02'), ('SAMSUNG', 'TIEUDUNG'), ('DISCOUNT', 'TMH')
 
                 SELECT tc.AccountCode AS CreditAccount
 		                ,td.AccountCode AS DebitAccount
@@ -255,6 +256,7 @@ namespace ManagementSystem.AccountingApi.Services
 
                 INSERT INTO #map_method_transaction_reason(MethodCode,ReasonCode)
                 VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017'), ('POINT', 'DOIDIEM')
+                        ,('OTHER', 'TIEUDUNG'), ('VNPAY', 'BCDT02'), ('SAMSUNG', 'TIEUDUNG'), ('DISCOUNT', 'TMH')
 
                 SELECT ReasonCode AS Value
                 FROM #map_method_transaction_reason t
