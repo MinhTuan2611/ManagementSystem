@@ -1,9 +1,6 @@
-﻿using ManagementSystem.Common.Entities;
-using ManagementSystem.Common.GenericModels;
-using ManagementSystem.Common.Helpers;
+﻿using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManagementSystem.MainApp.Controllers
