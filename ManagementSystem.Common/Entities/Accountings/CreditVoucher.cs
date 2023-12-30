@@ -23,7 +23,7 @@ namespace ManagementSystem.Common.Entities
 
         [ForeignKey("DocumentGroup")]
         public int? GroupId { get; set; }
-
+        public int? BranchId { get; set; }
         public DocumentGroup DocumentGroup { get; set; }
 
     }

@@ -20,5 +20,6 @@ namespace ManagementSystem.Common.Models.Dtos.Accounting
         public int? NTMoney { get; set; }
         public int ShiftId { get; set; }
         public string? PaymentMethodCode { get; set; }
+        public int? BranchId { get; set; }
     }
 }

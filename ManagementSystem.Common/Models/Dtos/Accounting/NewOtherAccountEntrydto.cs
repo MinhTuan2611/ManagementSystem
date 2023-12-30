@@ -17,5 +17,6 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? UserId { get; set; }
         public int? AccountId { get; set; }
         public string? Note { get; set; }
+        public int? StorageId { get; set; }
     }
 }

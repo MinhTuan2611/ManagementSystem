@@ -59,7 +59,7 @@ namespace ManagementSystem.AccountingApi.Services
                     BillId = 0,
                     Amount = otherAccountEntry.Amount.Value,
                     UserId = otherAccountEntry.UserId,
-                    StorageId = otherAccountEntry.BrandId,
+                    StorageId = newOtherAccountEntry.StorageId,
                 });
 
                 _context.SaveChanges();

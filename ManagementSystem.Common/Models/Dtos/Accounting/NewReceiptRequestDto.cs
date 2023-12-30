@@ -16,5 +16,6 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? BillId { get; set; }
         public int InventoryDocumentNumber { get; set; }
         public int? StorageId { get; set; }
+        public int? BranchId { get; set; }
     }
 }

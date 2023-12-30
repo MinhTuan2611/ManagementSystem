@@ -14,6 +14,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public string ForReason { get; set; }
         public int TotalMoney { get; set; }
         public int UserId { get; set; }
+        public int? BranchId { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
     }
 }

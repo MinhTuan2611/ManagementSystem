@@ -51,6 +51,8 @@ namespace ManagementSystem.AccountingApi.Services
                 debitVoucher.NTMoney = requestDto.NTMoney;
                 debitVoucher.GroupId = requestDto.GroupId == null || requestDto.GroupId == 0 ? 1 : requestDto.GroupId;
                 debitVoucher.PaymentMethodId = paymentMethod.PaymentMethodId;
+                debitVoucher.BranchId = requestDto.BranchId;
+
                 _context.DebitVouchers.Add(debitVoucher);
                 _context.SaveChanges();
 
@@ -109,6 +111,7 @@ namespace ManagementSystem.AccountingApi.Services
                     debitVoucher.TotalMoneyVND = requestDto.TotalMoneyVND;
                     debitVoucher.NTMoney = requestDto.NTMoney;
                     debitVoucher.PaymentMethodId = paymentMethod.PaymentMethodId;
+                    debitVoucher.BranchId = requestDto.BranchId;
 
                     _context.SaveChanges();
 

@@ -46,6 +46,7 @@ namespace ManagementSystem.AccountingApi.Services
                 creditVoucher.PaymentMethodId = paymentMethod?.PaymentMethodId;
                 creditVoucher.CreditAccount = accounts?.CreditAccount;
                 creditVoucher.DebitAccount = accounts?.DebitAccount;
+                creditVoucher.BranchId = request.BrandId;
 
                 _context.CreditVouchers.Add(creditVoucher);
                 _context.SaveChanges();
@@ -105,6 +106,7 @@ namespace ManagementSystem.AccountingApi.Services
                 existingCredit.PaymentMethodId = paymentMethod?.PaymentMethodId;
                 existingCredit.CreditAccount = accounts?.CreditAccount;
                 existingCredit.DebitAccount = accounts?.DebitAccount;
+                existingCredit.BranchId = request.BranchId;
 
                 _context.SaveChanges();
                 return existingCredit;

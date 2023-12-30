@@ -22,5 +22,6 @@ namespace ManagementSystem.Common.Models.Dtos.Accounting
         public int? BillId { get; set; }
         public int? StorageId { get; set; }
         public int? GroupId { get; set; }
+        public int? BranchId { get; set; }
     }
 }

@@ -15,6 +15,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int TotalMoney { get; set; }
         public int UserId { get; set; }
         public string? PaymentMethodCode { get; set; }
+        public int? BranchId { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
     }
 }
