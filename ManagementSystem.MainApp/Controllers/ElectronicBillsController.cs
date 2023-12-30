@@ -43,7 +43,16 @@ namespace ManagementSystem.MainApp.Controllers
             string authen = GenerateToken("POST");
 
             var result = await HttpRequestsHelper.PostAuthorize<object>(SD.EUrl + "api/publish/importInvoice", request, authen);
-            return Ok(billInfo);
+
+            var electronicModel = new ElectronicBill
+            {
+                Result = result.ToString(),
+                EBType = StorageContant.CreateElectronilcBill,
+                BillId = billInfo.BillId,
+            };
+
+            var resultBill = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "bills/store_electtronic_bill", electronicModel);
+            return Ok(result);
         }
 
         [HttpPost("business/adjustInvoice")]

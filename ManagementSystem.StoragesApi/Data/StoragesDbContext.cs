@@ -31,6 +31,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<RequestSampleItem> RequestSampleItems { get; set; }
         public DbSet<ActivityLog> ActivityLog { get; set; }
         public DbSet<ProductSupplier> ProductSuppliers { get; set; }
+        public DbSet<ElectronicBill> ElectronicBills { get; set; }
 
         // Response Value
         public DbSet<CustomerResponseDto> customerResponseDtos { get; set; }

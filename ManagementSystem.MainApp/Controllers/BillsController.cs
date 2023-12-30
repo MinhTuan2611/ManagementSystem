@@ -84,6 +84,8 @@ namespace ManagementSystem.MainApp.Controllers
 
                     if (creditVouchers.Count == 0)
                         return StatusCode(StatusCodes.Status500InternalServerError, "The bill is created, inventory created, customer update point but faild when create Credit Voucher");
+
+                    var resultElectronicBill = await HttpRequestsHelper.Post<object>(SD.MainApiUrl + "ElectronicBills/publish/importAndPublishInvoice", resultBill);
                 }
 
                 return Ok(resultBill);
