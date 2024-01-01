@@ -11,5 +11,6 @@ namespace ManagementSystem.AccountingApi.Services
         public Task<Leger> CreateLegers(Leger leger);
 
         public Task<ResponseDto> ExportExcelFile(SearchCriteria model);
+        public Task<ResponseDto> ExportLeggerWithoutPaymentExcelFile(SearchCriteria model);
     }
 }
