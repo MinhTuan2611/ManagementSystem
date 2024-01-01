@@ -5,6 +5,7 @@ namespace ManagementSystem.MainApp.Utility
         public static string StorageApiUrl { get; set; }
         public static string AccountApiUrl { get; set; }
         public static string AccountingApiUrl { get; set; }
+        public static string MainApiUrl { get; set; }
 
         public enum ApiType
         {
