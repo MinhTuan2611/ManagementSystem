@@ -60,7 +60,7 @@ namespace ManagementSystem.AccountingApi.Controllers
                 {
                      CustomerId = model.CustomerId,
                      CustomerName = model.CustomerName,
-                     InventoryDocumentNumber = 1,
+                     ForReason = "Thu Tiền Đổi Trả Hàng",
                      TotalMoney = model.TotalDeductibleAmount,
                      UserId = model.UserId,
                 };
@@ -75,7 +75,6 @@ namespace ManagementSystem.AccountingApi.Controllers
                     TotalMoneyVND = model.TotalDeductibleAmount,
                     UserId = model.UserId,
                     ShiftId = 1,
-                    NTMoney = model.TotalDeductibleAmount
                 };
                 await _paymentVoucherService.CreatePaymentVoucher(paymentModel);
             }

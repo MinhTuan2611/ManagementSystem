@@ -32,11 +32,12 @@ namespace ManagementSystem.AccountingApi.Services
 
                     if (item.Reason == "HU")
                     {
+                        var product = GetDamagedGoodsStorage(productStorage.StorageCode);
                         string insertQuery = string.Format(@"
                         INSERT INTO {0}.dbo.ProductStorages (ProductId, StorageId, Quantity, CreateDate,
                         CreateBy, ModifyDate, ModifyBy)
                         VALUES ({1}, {2}, {3}, '{4}', {5}, '{6}',{7})
-                    ", SD.StorageDbName, item.ProductId, productStorage.StorageId, item.Quantity, DateTime.Now, 1, DateTime.Now, 1);
+                    ", SD.StorageDbName, item.ProductId, product.StorageId, item.Quantity, DateTime.Now, request.UserId, DateTime.Now, request.UserId);
 
                         var insertResult = _context.Database.ExecuteSqlRaw(insertQuery);
                     }
@@ -69,16 +70,41 @@ namespace ManagementSystem.AccountingApi.Services
             string query = string.Format(@"
                 SELECT s.StorageId
 		                ,ps.ProductId
-		                ,COALESCE(ps.Quantity, 0) AS Quantity
+		                ,COALESCE(ps.Quantity, 0) AS Quantity,
+                        s.StorageCode,
+                        s.StorageName
                 FROM {0}.dbo.Storages s
                 LEFT JOIN {0}.dbo.ProductStorages ps ON s.StorageId = ps.StorageId
                 WHERE s.BranchId = {1}
                 AND ps.ProductId = {2}
-            ",SD.StorageDbName, brandId, productId);
+            ", SD.StorageDbName, brandId, productId);
 
             try
             {
                 var productStorage = _context.ProductStorageInformationDtos.FromSqlRaw(query).FirstOrDefault();
+
+                return productStorage;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public DamagedGoodsStorageDto GetDamagedGoodsStorage(string StorageCode)
+        {
+            string query = string.Format(@"
+                SELECT s.StorageId,
+                        s.StorageCode,
+                        s.StorageName
+                FROM {0}.dbo.Storages s
+                WHERE s.StorageCode = '{1}'
+                
+            ", SD.StorageDbName, StorageCode + "-02");
+
+            try
+            {
+                var productStorage = _context.DamagedGoodsStorages.FromSqlRaw(query).FirstOrDefault();
 
                 return productStorage;
             }
