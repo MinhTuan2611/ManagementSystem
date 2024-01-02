@@ -49,10 +49,10 @@ namespace ManagementSystem.AccountingApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-lastest-shift-end")]
-        public async Task<IActionResult> GetLastestShiftEnd()
+        [HttpGet("get-lastest-shift-end/{branchId}")]
+        public async Task<IActionResult> GetLastestShiftEnd(int? branchId)
         {
-            var result = await _service.GetLastestShiftEnd();
+            var result = await _service.GetLastestShiftEnd(branchId);
 
             return Ok(result);
         }

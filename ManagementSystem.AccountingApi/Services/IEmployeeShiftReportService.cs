@@ -12,7 +12,7 @@ namespace ManagementSystem.AccountingApi.Services
         Task<ShiftHandoverResponseDto> GetShiftHandover(int handoverId);
         Task<ShiftReportResponseDto> GetShiftReport(int shiftEndId);
         Task<TPagination<ShiftEndResponseDto>> SearchShiftEndReports(SearchCriteria criteria);
-        Task<ShiftEndResponseDto> GetLastestShiftEnd();
+        Task<ShiftEndResponseDto> GetLastestShiftEnd(int? branchId);
         Task<ShiftEndResponseDto> GetShiftEndById(int shiftEndId);
         Task<int> IsCompletedShiftEnd(int shiftId);
         Task<bool> IsCanStartShiftEnd(int branchId);
