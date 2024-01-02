@@ -158,9 +158,10 @@ namespace ManagementSystem.StoragesApi.Services
                         response.Units.Add(productUnit);
                     }
                 }
-                response.Units = response.Units.DistinctBy(x => x.Id).ToList();
                 response.UnitDictionary = response.Units.GroupBy(x => x.BranchId)
                                             .ToDictionary(k => k.Key, k => k.ToList());
+                response.Units = response.Units.DistinctBy(x => x.Id).ToList();
+                
                 return response;
             }
             catch (Exception ex)
@@ -436,7 +437,7 @@ namespace ManagementSystem.StoragesApi.Services
                 listUnitOfProduct.Add(productUnit);
             }
             var currentUnit = new ProductUnitDetail();
-            ProductUnitBranchResponseDto unitBranch = GetProductUnitBranch(productDetail.UnitId, branchId).SingleOrDefault();
+            ProductUnitBranchResponseDto unitBranch = GetProductUnitBranch(productDetail.Id, branchId).SingleOrDefault();
 
             currentUnit.Id = productDetail.Id;
             currentUnit.ProductId = productDetail.ProductId;
@@ -496,7 +497,7 @@ namespace ManagementSystem.StoragesApi.Services
                     listUnitOfProduct.Add(productUnit);
                 }
                 var currentUnit = new ProductUnitDetail();
-                ProductUnitBranchResponseDto unitBranch = GetProductUnitBranch(productDetail.UnitId, branchId).SingleOrDefault();
+                ProductUnitBranchResponseDto unitBranch = GetProductUnitBranch(productDetail.Id, branchId).SingleOrDefault();
 
                 currentUnit.Id = productDetail.Id;
                 currentUnit.ProductId = productDetail.ProductId;
