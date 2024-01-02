@@ -95,12 +95,12 @@ namespace ManagementSystem.MainApp.Controllers
             return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
         }
 
-        [HttpGet("get-lastest-shift-end")]
-        public async Task<IActionResult> GetLastestShiftEnd()
+        [HttpGet("get-lastest-shift-end/{branchId}")]
+        public async Task<IActionResult> GetLastestShiftEnd(int? branchId)
         {
 
             ResponseModel<ShiftEndResponseDto> response = new ResponseModel<ShiftEndResponseDto>();
-            ShiftEndResponseDto detail = await HttpRequestsHelper.Get<ShiftEndResponseDto>(APIUrl + "get-lastest-shift-end");
+            ShiftEndResponseDto detail = await HttpRequestsHelper.Get<ShiftEndResponseDto>(APIUrl + "get-lastest-shift-end/" + branchId);
             List <ShiftEndResponseDto> responseData = new List<ShiftEndResponseDto>();
             responseData.Add(detail);
 

@@ -309,9 +309,44 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<ShiftEndResponseDto> GetLastestShiftEnd()
+        public async Task<ShiftEndResponseDto> GetLastestShiftEnd(int? branchId)
         {
-            string sqlQuery = "SELECT * FROM dbo.ShiftEndReportView_latest";
+            string sqlQuery = string.Format(@"
+                        WITH cte
+                        AS
+                        (
+    	                    SELECT MAX(ShiftEndId) AS ShiftEndId
+    	                    FROM dbo.ShiftEndReports
+						    WHERE BranchId = {0}
+                        )
+                        SELECT s.ShiftEndId
+    		                    ,s.UserId
+    		                    ,u.UserName
+    		                    ,es.ShiftId
+    		                    ,es.ShiftName
+    		                    ,s.ShiftEndDate
+    		                    ,s.CompanyMoneyTransferred
+    		                    ,sh.Denomination
+    		                    ,sh.Amount
+    		                    ,sa.ProductId
+                                ,p.ProductName
+    		                    ,ui.UnitId
+    		                    ,ui.UnitName
+    		                    ,sa.ActualAmount
+    		                    ,sa.SystemAmount
+    						    ,b.BranchId
+    						    ,b.BranchName
+                        FROM cte 
+                        JOIN dbo.ShiftEndReports s ON s.ShiftEndId = cte.ShiftEndId
+                        LEFT JOIN dbo.InventoryAuditDetails sa ON sa.ShiftEndId = s.ShiftEndId
+                        LEFT JOIN dbo.ShiftHandoverCashDetails sh ON sh.ShiftEndId = s.ShiftEndId
+                        LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = s.UserId
+                        LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
+                        LEFT JOIN StoragesDb.dbo.Products p ON p.ProductId = sa.ProductId
+                        LEFT JOIN StoragesDb.dbo.Unit ui ON sa.UnitId = ui.UnitId
+    				    LEFT JOIN AccountsDb.dbo.UserBranchs ub ON ub.UserId = u.UserId
+    				    LEFT JOIN StoragesDb.dbo.Branches b ON b.BranchId = ub.BranchId
+             ", branchId);
 
             try
             {
