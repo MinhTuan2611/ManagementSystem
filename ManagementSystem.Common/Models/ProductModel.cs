@@ -49,6 +49,7 @@ namespace ManagementSystem.Common.Models
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public int DefaultPurchasePrice { get; set; }
         public List<ProductUnitDetail> Units { get; set; }
+        public List<ProductUnitDetail> UnitsBranch { get; set; } = new List<ProductUnitDetail> { };
         public List<ProductSupplierDto> ProductSuppliers { get; set; }
         public int? ModifyBy { get; set; }
         public Dictionary<int, List<ProductUnitDetail>> UnitDictionary { get; set; } = new Dictionary<int, List<ProductUnitDetail>>();
