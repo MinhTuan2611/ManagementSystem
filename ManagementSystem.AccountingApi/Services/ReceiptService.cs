@@ -1,4 +1,4 @@
-﻿using ManagementSystem.AccountingApi.Data;
+using ManagementSystem.AccountingApi.Data;
 using ManagementSystem.AccountingApi.Utility;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
@@ -44,7 +44,8 @@ namespace ManagementSystem.AccountingApi.Services
                 _context.ReceiptVouchers.Add(receipt);
                 await _context.SaveChangesAsync();
 
-                var accounts = GetAccountInfor(request.InventoryDocumentNumber);
+                var accounts = GetAccountInfor(request.InventoryDocumentNumber, request.ForReason);
+
 
                 await _legerService.CreateLegers(new Leger()
                 {
@@ -184,7 +185,7 @@ namespace ManagementSystem.AccountingApi.Services
         }
 
         #region Private Handle function
-        private AccountsDto GetAccountInfor(int documentNumber)
+        private AccountsDto GetAccountInfor(int documentNumber, string reasonCode)
         {
             var query = string.Format(@"
                 SELECT tc.AccountCode AS CreditAccount
@@ -196,6 +197,17 @@ namespace ManagementSystem.AccountingApi.Services
                 WHERE i.DocummentNumber = {0}
             ", documentNumber);
 
+            if (documentNumber <= 0)
+            {
+               query = string.Format(@"
+                    SELECT tc.AccountCode AS CreditAccount
+		                    ,td.AccountCode AS DebitAccount
+                    FROM  dbo.Recordingtransactions rt
+                    JOIN dbo.TypesOfAccounts tc ON tc.AccountId = rt.CreditAccountId
+                    JOIN dbo.TypesOfAccounts td ON td.AccountId = rt.DebitAccountId
+                    WHERE rt.ReasonCode = '{0}'
+            ", reasonCode);
+            }
             try
             {
                 var result = _context.AccountDtos.FromSqlRaw(query).FirstOrDefault();

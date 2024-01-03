@@ -14,7 +14,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int TotalMoney { get; set; }
         public int UserId { get; set; }
         public int? BillId { get; set; }
-        public int InventoryDocumentNumber { get; set; }
+        public int InventoryDocumentNumber { get; set; } = 0;
         public int? StorageId { get; set; }
     }
 }

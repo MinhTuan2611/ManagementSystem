@@ -244,6 +244,7 @@ namespace ManagementSystem.AccountingApi.Services
 		                  ,sto.StorageName
 		                  ,sh.Note
 		                  ,sh.Status
+                          ,sr.BranchId
                   FROM cte t
                   JOIN dbo.ShiftEndReports sr ON sr.ShiftEndId = t.ShiftEndId
                   JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
