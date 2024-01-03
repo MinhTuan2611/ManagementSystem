@@ -128,37 +128,35 @@ namespace ManagementSystem.StoragesApi.Services
                     {
                         foreach (var unitBranch in unitBranchs)
                         {
-                            ProductUnitDetail productUnit = new ProductUnitDetail();
-                            productUnit.Id = units[i].Id;
-                            productUnit.ProductId = units[i].ProductId;
-                            productUnit.UnitId = units[i].UnitId;
-                            productUnit.UnitExchange = units[i].UnitExchange;
-                            productUnit.Price = unitBranch != null ? (int)unitBranch.Price.Value : units[i].Price;
-                            productUnit.GrossProfit = units[i].GrossProfit;
-                            productUnit.OldPrice = units[i].OldPrice;
-                            productUnit.Barcode = units[i].Barcode;
-                            productUnit.IsPrimary = units[i].IsPrimary;
-                            productUnit.BranchId = unitBranch?.BranchId ?? 0;
-                            response.Units.Add(productUnit);
+                            ProductUnitDetail productUnitBranch = new ProductUnitDetail();
+                            productUnitBranch.Id = units[i].Id;
+                            productUnitBranch.ProductId = units[i].ProductId;
+                            productUnitBranch.UnitId = units[i].UnitId;
+                            productUnitBranch.UnitExchange = units[i].UnitExchange;
+                            productUnitBranch.Price = unitBranch != null ? (int)unitBranch.Price.Value : units[i].Price;
+                            productUnitBranch.GrossProfit = units[i].GrossProfit;
+                            productUnitBranch.OldPrice = units[i].OldPrice;
+                            productUnitBranch.Barcode = units[i].Barcode;
+                            productUnitBranch.IsPrimary = units[i].IsPrimary;
+                            productUnitBranch.BranchId = unitBranch?.BranchId ?? 0;
+                            response.UnitsBranch.Add(productUnitBranch);
                         }
                     }
-                    else
-                    {
-                        ProductUnitDetail productUnit = new ProductUnitDetail();
-                        productUnit.Id = units[i].Id;
-                        productUnit.ProductId = units[i].ProductId;
-                        productUnit.UnitId = units[i].UnitId;
-                        productUnit.UnitExchange = units[i].UnitExchange;
-                        productUnit.Price =  units[i].Price;
-                        productUnit.GrossProfit = units[i].GrossProfit;
-                        productUnit.OldPrice = units[i].OldPrice;
-                        productUnit.Barcode = units[i].Barcode;
-                        productUnit.IsPrimary = units[i].IsPrimary;
-                        productUnit.BranchId = 0;
-                        response.Units.Add(productUnit);
-                    }
+
+                    ProductUnitDetail productUnit = new ProductUnitDetail();
+                    productUnit.Id = units[i].Id;
+                    productUnit.ProductId = units[i].ProductId;
+                    productUnit.UnitId = units[i].UnitId;
+                    productUnit.UnitExchange = units[i].UnitExchange;
+                    productUnit.Price = units[i].Price;
+                    productUnit.GrossProfit = units[i].GrossProfit;
+                    productUnit.OldPrice = units[i].OldPrice;
+                    productUnit.Barcode = units[i].Barcode;
+                    productUnit.IsPrimary = units[i].IsPrimary;
+                    productUnit.BranchId = 0;
+                    response.Units.Add(productUnit);
                 }
-                response.UnitDictionary = response.Units.GroupBy(x => x.BranchId)
+                response.UnitDictionary = response.UnitsBranch.GroupBy(x => x.BranchId)
                                             .ToDictionary(k => k.Key, k => k.ToList());
                 response.Units = response.Units.DistinctBy(x => x.Id).ToList();
                 
@@ -568,7 +566,7 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
-        private  List<ProductUnitBranchResponseDto> GetProductUnitBranch(int unitId, int branchId = 3)
+        private  List<ProductUnitBranchResponseDto> GetProductUnitBranch(int unitId, int branchId)
         {
             string query = string.Empty;
                 
