@@ -104,11 +104,14 @@ namespace ManagementSystem.AccountingApi.Migrations
 								,COALESCE(s.TotalShiftInMoney, 0) AS CurShiftAmount
 								,COALESCE(LAG(s.TotalShiftInMoney) OVER (ORDER BY sr.ShiftEndId), 0) AS PreShiftAmount
 								,sr.BranchId
+								,b.BranchCode
+								,b.BranchName
 						FROM #tmp_records t
 						JOIN dbo.ShiftEndReports sr ON sr.ShiftEndId = t.ShiftEndId
 						LEFT JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
 						LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
 						LEFT JOIN dbo.ShiftReports s ON s.HandoverId = sh.HandoverId
+						LEFT JOIN StoragesProdDb..Branches b ON sr.BranchId = b.BranchId
 					', @orderBy, @pagingString)
 
 					EXEC(@sqlQuery)

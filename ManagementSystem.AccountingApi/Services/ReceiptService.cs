@@ -168,7 +168,7 @@ namespace ManagementSystem.AccountingApi.Services
                 receipt.CustomerName = request.CustomerId == null && request.CustomerName != null ? request.CustomerName : string.Empty;
                 receipt.ForReason = request.ForReason;
                 receipt.TotalMoney = request.TotalMoney;
-                receipt.UserId = request.UserId;
+                // receipt.UserId = request.UserId;
 
                 await _context.SaveChangesAsync();
 

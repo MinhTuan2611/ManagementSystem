@@ -207,7 +207,7 @@ namespace ManagementSystem.AccountingApi.Services
                 paymentVoucher.ShiftId = updatePaymentVoucher.ShiftId;
                 paymentVoucher.BranchCode = updatePaymentVoucher.BranchCode;
                 paymentVoucher.BranchName = updatePaymentVoucher.BranchName;
-                paymentVoucher.UserId = updatePaymentVoucher.UserId;
+                // paymentVoucher.UserId = updatePaymentVoucher.UserId;
                 paymentVoucher.CreditAccount = updatePaymentVoucher.CreditAccount;
                 paymentVoucher.DebitAccount = updatePaymentVoucher.DebitAccount;
                 paymentVoucher.Description = updatePaymentVoucher.Description;

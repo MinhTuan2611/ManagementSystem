@@ -99,7 +99,7 @@ namespace ManagementSystem.AccountingApi.Services
                     var accounts = GetAccountInfor(requestDto.PaymentMethodCode);
 
                     debitVoucher.ShiftId = requestDto.ShiftId;
-                    debitVoucher.UserId = requestDto.UserId;
+                    // debitVoucher.UserId = requestDto.UserId;
                     debitVoucher.CreditAccount = accounts.CreditAccount;
                     debitVoucher.DebitAccount = accounts.DebitAccount;
                     debitVoucher.Description = requestDto.Description;
