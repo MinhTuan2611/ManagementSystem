@@ -28,5 +28,8 @@ namespace ManagementSystem.Common.Models.Dtos
         public string? StorageName { get; set; }
         public string? Note { get; set; }
         public string? Status { get; set; }
+        public int? BranchId { get; set;}
+        public string? BranchCode { get; set; }
+        public string? BranchName { get; set; }
     }
 }

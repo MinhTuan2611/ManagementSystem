@@ -96,7 +96,7 @@ namespace ManagementSystem.AccountingApi.Services
                 string reason = GetReasonByMethodCode(request.PaymentMethodCode);
                 var accounts = GetAccountInfor(request.PaymentMethodCode);
 
-                existingCredit.UserId = request.UserId;
+                // existingCredit.UserId = request.UserId;
                 existingCredit.UpdatedDate = DateTime.Now;
                 existingCredit.CustomerId = request.CustomerId;
                 existingCredit.CustomerName = request.CustomerId == null && request.CustomerName != null ? request.CustomerName : string.Empty;

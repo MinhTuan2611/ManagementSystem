@@ -119,7 +119,7 @@ namespace ManagementSystem.AccountingApi.Services
 
                 var accountInfor = GetAccountInfor(request.ReasonFor);
 
-                inventory.UserId = request.UserId;
+                // inventory.UserId = request.UserId;
                 inventory.PurchasingRepresentive = request.PurchasingRepresentive;
                 inventory.RepresentivePhone = request.RepresentivePhone;
                 inventory.ReasonFor = request.ReasonFor;

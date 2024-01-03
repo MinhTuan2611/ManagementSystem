@@ -244,6 +244,9 @@ namespace ManagementSystem.AccountingApi.Services
 		                  ,sto.StorageName
 		                  ,sh.Note
 		                  ,sh.Status
+                          ,sr.BranchId
+                          ,b.BranchCode
+				          ,b.BranchName
                   FROM cte t
                   JOIN dbo.ShiftEndReports sr ON sr.ShiftEndId = t.ShiftEndId
                   JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
@@ -254,6 +257,7 @@ namespace ManagementSystem.AccountingApi.Services
                   LEFT JOIN cte_users sender2 ON sh.SenderUserI2 = sender2.UserId
                   LEFT JOIN cte_users receiver ON sh.ReceiverUserId = receiver.UserId
                   LEFT JOIN {2}.DBO.Storages sto ON SH.StorageId = sto.StorageId
+                  LEFT JOIN {2}..Branches b ON sr.BranchId = b.BranchId
             ", handoverId, SD.AccountDbName, SD.StorageDbName);
 
             try

@@ -160,6 +160,7 @@ namespace ManagementSystem.StoragesApi.Services
                                             .ToDictionary(k => k.Key, k => k.ToList());
                 response.Units = response.Units.DistinctBy(x => x.Id).ToList();
                 
+                response.UnitsBranch = null;
                 return response;
             }
             catch (Exception ex)
