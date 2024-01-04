@@ -11,8 +11,9 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? CustomerId { get; set; }
         public int UserId { get; set; } = 1;
         public int? BranchId { get; set; } = 1;
-        public int? ShiftId { get; set; } = 1;
+        public int ShiftId { get; set; } = 1;
         public string? CustomerName { get; set; } = "Khach le";
+        public string? ForReason { get; set; } = "TRAHANG";
         public int TotalDeductibleAmount { get; set; } = 1;
         public string? PaymentMethodCode { get; set; } = "CASH";
         public List<ReturnedProductRequestDto>? ReturnedProduct { get; set; }

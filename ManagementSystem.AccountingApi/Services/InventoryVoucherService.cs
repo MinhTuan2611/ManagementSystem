@@ -33,7 +33,7 @@ namespace ManagementSystem.AccountingApi.Services
             try
             {
                 var inventory = new InventoryVoucher();
-                var accountInfor = GetAccountInfor(AccountingConstant.XBAReason);
+                var accountInfor = isRefundItem ? GetAccountInfor(AccountingConstant.NHTReason) : GetAccountInfor(AccountingConstant.XBAReason);
                 inventory.UserId = request.UserId;
                 inventory.PurchasingRepresentive = request.PurchasingRepresentive;
                 inventory.TransactionDate = DateTime.Now;
