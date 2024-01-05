@@ -46,6 +46,7 @@ namespace ManagementSystem.AccountingApi.Services
                 creditVoucher.PaymentMethodId = paymentMethod?.PaymentMethodId;
                 creditVoucher.CreditAccount = accounts?.CreditAccount;
                 creditVoucher.DebitAccount = accounts?.DebitAccount;
+                creditVoucher.BillId = request.BillId;
 
                 _context.CreditVouchers.Add(creditVoucher);
                 _context.SaveChanges();

@@ -1,4 +1,5 @@
-﻿using ManagementSystem.Common;
+﻿using Dapper;
+using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Functions;
@@ -8,6 +9,7 @@ using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
+using ManagementSystem.StoragesApi.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -307,9 +309,27 @@ namespace ManagementSystem.StoragesApi.Services
                 // Update Bill Payment Methods
                 foreach (var item in model.PaymentMethods)
                 {
-                    var billPayment = _context.BillPayments.SingleOrDefault(x => x.Id == item.Id);
+                    var billPayment = _context.BillPayments.Include(x => x.PaymentMethod).SingleOrDefault(x => x.Id == item.Id);
                     if (billPayment != null)
                     {
+                        // Get Credit voucher
+                        var creditVoucher = await GetCreditVoucher(model.BillId, billPayment.PaymentMethod.PaymentMethodId);
+                        var receiptVoucher = await GetReceiptVoucherByBillId(model.BillId);
+
+                        // Get Recept voucher
+
+                        // Change payment method
+                        if (billPayment.PaymentMethod.PaymentMethodCode != item.PaymentMethodCode)
+                        {
+                            // Change from Cash to other payment
+
+
+                            // other case
+
+                        }
+
+                        // Same method but update amount
+
                         var paymentMethodId = GetPaymentMethod(item.PaymentMethodCode);
 
                         billPayment.PaymentMethodId = paymentMethodId.Value;
@@ -537,13 +557,13 @@ namespace ManagementSystem.StoragesApi.Services
 
         private List<EmployeeShiftInformationDto> GetEmployeeShifts()
         {
-            string query = @"
+            string query = string.Format(@"
                 SELECT ShiftId
 		                ,ShiftName
 		                ,StartHour AS StartTime
 		                ,EndHour AS EndTime
-                FROM AccountsDb.dbo.EmployeeShifts
-            ";
+                FROM {0}.dbo.EmployeeShifts
+            ", SD.AccountDbName);
 
             try
             {
@@ -578,12 +598,12 @@ namespace ManagementSystem.StoragesApi.Services
                                     , c.CustomerCode
                             FROM dbo.Bills b
                             LEFT JOIN dbo.Customers c ON b.CustomerId = c.CustomerId
-                            LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = b.ShiftId
-                            LEFT JOIN AccountsDb.dbo.UserBranchs ub ON b.CreateBy = ub.UserId
+                            LEFT JOIN {0}.dbo.EmployeeShifts es ON es.ShiftId = b.ShiftId
+                            LEFT JOIN {0}.dbo.UserBranchs ub ON b.CreateBy = ub.UserId
                             LEFT JOIN dbo.Branches br ON br.BranchId = ub.BranchId
-                            LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = b.CreateBy
-                            WHERE b.BillId = {0}
-            ", billId);
+                            LEFT JOIN {0}.dbo.Users u ON u.UserId = b.CreateBy
+                            WHERE b.BillId = {1}
+            ", SD.AccountDbName ,billId);
 
             try
             {
@@ -594,6 +614,66 @@ namespace ManagementSystem.StoragesApi.Services
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+        private async Task<ReceiptVoucher> GetReceiptVoucherByBillId(int billId)
+        {
+            string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
+
+            string query = @"SELECT *
+                            FROM ReceiptVouchers
+                            WHERE BillId = @billId";
+
+            using (var connection = new SqlConnection(accountingConnection))
+            {
+                var receiptVoucher = await connection.QuerySingleOrDefaultAsync<ReceiptVoucher>(query, new { billId });
+
+                return receiptVoucher;
+            }
+        }
+
+        private async Task<CreditVoucher> GetCreditVoucher(int billId, int paymentMethodId)
+        {
+            string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
+            string query = @"SELECT *
+                                FROM CreditVouchers
+                                WHERE PaymentMethodId = @paymentMethodId AND BillId = @billId";
+
+            using (var connection = new SqlConnection(accountingConnection))
+            {
+                var creditVoucher = await connection.QuerySingleOrDefaultAsync<CreditVoucher>(query, new { paymentMethodId, billId });
+
+                return creditVoucher;
+            }
+        }
+        private async Task DeleteVoucher(int documentNumber, string query, string documentType)
+        {
+            string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
+
+            string legerDeleteQuery = @"DELETE Legers WHERE DoccumentNumber = @documentNumber AND DoccumentType = @documentType";
+
+            using (var connection = new SqlConnection(accountingConnection))
+            {
+                await connection.ExecuteAsync(legerDeleteQuery, new { documentNumber, documentType });
+                await connection.ExecuteAsync(query, new { documentNumber});
+
+            }
+        }
+
+        private async Task UpdateVoucherAmount(int documentNumber, int amount, string query, string documentType)
+        {
+            string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
+
+            string updateLegerQuery = @"UPDATE Legers
+                                        SET Amount = @amount
+                                        WHERE DoccumentNumber = @documentNumber
+                                        AND DoccumentType = @documentType";
+
+            using (var connection = new SqlConnection(accountingConnection))
+            {
+                await connection.ExecuteAsync(updateLegerQuery, new { amount ,documentNumber, documentType });
+                await connection.ExecuteAsync(query, new { amount, documentNumber });
+
             }
         }
         #endregion

@@ -13,6 +13,8 @@ var connectionString = builder.Configuration.GetConnectionString("StoragesDbConn
 builder.Services.AddDbContext<StoragesDbContext>(options =>
     options.UseSqlServer(connectionString));
 SD.AccountDbName = builder.Configuration["DatabaseNames:AccountsDb"];
+SD.AccountingDbName = builder.Configuration["DatabaseNames:AccountingDb"];
+
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
