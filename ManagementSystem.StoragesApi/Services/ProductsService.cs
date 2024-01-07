@@ -462,30 +462,97 @@ namespace ManagementSystem.StoragesApi.Services
             return productDetailInSale;
         }
 
+        //public List<ProductDetailInSale>? AutoCompleteGetProductDetailForSale(string barcode, int branchId = 3)
+        //{
+        //    List<ProductDetailInSale> productDetailInSales = new List<ProductDetailInSale>();
+        //    //barcode = convertToUnSign(barcode);
+        //    var valueSearch = barcode.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        //    string[] includes = { "Product", "Unit" };
+        //    List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes).AsNoTracking().OrderBy(x => x.Id).ToList();
+        //    productDetails = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => x.Product.ProductName.ToLower().Contains(keyWord) 
+        //                                                                                                || x.Product.ProductCode.ToLower().Contains(keyWord)
+        //                                                                                                || x.Unit.UnitName.ToLower().Contains(keyWord))).ToList();
+
+        //    var productUnitBranchs = _unitOfWork.ProductUnitBranchRepository.Get().ToList();
+
+        //    if (productDetails == null)
+        //    {
+        //        return null;
+        //    }
+        //    string[] unitIncludes = { "Unit" };
+        //    foreach(ProductUnit productDetail in productDetails)
+        //    {
+        //        ProductDetailInSale productDetailInSale = new ProductDetailInSale();
+
+        //        var units = _unitOfWork.ProductUnitRepository
+        //                .GetWithInclude(x => x.ProductId == productDetail.ProductId && x.Status == ActiveStatus.Active, unitIncludes)
+        //                .OrderBy(x => x.Id).ToList();
+        //        var listUnitOfProduct = new List<ProductUnitDetail>();
+        //        foreach (var unit in units)
+        //        {
+        //            ProductUnitDetail productUnit = new ProductUnitDetail();
+        //            ProductUnitBranch unitBranchdetail = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == unit.Id && x.BranchId == branchId));
+
+        //            productUnit.Id = unit.Id;
+        //            productUnit.ProductId = unit.ProductId;
+        //            productUnit.UnitId = unit.UnitId;
+        //            productUnit.UnitName = unit.Unit?.UnitName;
+        //            productUnit.UnitExchange = unit.UnitExchange;
+        //            productUnit.Price = unitBranchdetail != null ? (int)unitBranchdetail.Price : unit.Price;
+        //            productUnit.OldPrice = unit.OldPrice;
+        //            productUnit.Barcode = unit.Barcode;
+        //            productUnit.IsPrimary = unit.IsPrimary;
+        //            listUnitOfProduct.Add(productUnit);
+        //        }
+        //        var currentUnit = new ProductUnitDetail();
+        //        ProductUnitBranch unitBranch = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == productDetail.Id && x.BranchId == branchId));
+
+        //        currentUnit.Id = productDetail.Id;
+        //        currentUnit.ProductId = productDetail.ProductId;
+        //        currentUnit.UnitId = productDetail.UnitId;
+        //        currentUnit.UnitName = productDetail.Unit?.UnitName;
+        //        currentUnit.UnitExchange = productDetail.UnitExchange;
+        //        currentUnit.Price = unitBranch != null ? (int)unitBranch.Price : productDetail.Price;
+        //        currentUnit.OldPrice = productDetail.OldPrice;
+        //        currentUnit.Barcode = productDetail.Barcode;
+        //        currentUnit.IsPrimary = productDetail.IsPrimary;
+
+        //        productDetailInSale.Id = productDetail.ProductId;
+        //        productDetailInSale.Barcode = productDetail.Barcode ?? string.Empty;
+        //        productDetailInSale.Name = productDetail.Product?.ProductName ?? string.Empty;
+        //        productDetailInSale.Unit = currentUnit;
+        //        productDetailInSale.Price = unitBranch != null ? (int)unitBranch.Price : productDetail.Price;
+        //        productDetailInSale.ProductUnits = listUnitOfProduct;
+
+        //        productDetailInSales.Add(productDetailInSale);
+        //    }
+            
+        //    return productDetailInSales;
+        //}
+
         public List<ProductDetailInSale>? AutoCompleteGetProductDetailForSale(string barcode, int branchId = 3)
         {
             List<ProductDetailInSale> productDetailInSales = new List<ProductDetailInSale>();
             //barcode = convertToUnSign(barcode);
             var valueSearch = barcode.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
             string[] includes = { "Product", "Unit" };
-            List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes).AsNoTracking().OrderBy(x => x.Id).ToList();
-            productDetails = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => x.Product.ProductName.ToLower().Contains(keyWord) 
+            List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes).AsNoTracking().ToList();
+            var productDetailsFilter = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => x.Product.ProductName.ToLower().Contains(keyWord)
                                                                                                         || x.Product.ProductCode.ToLower().Contains(keyWord)
                                                                                                         || x.Unit.UnitName.ToLower().Contains(keyWord))).ToList();
+
             var productUnitBranchs = _unitOfWork.ProductUnitBranchRepository.Get().ToList();
 
-            if (productDetails == null)
+            if (productDetailsFilter == null)
             {
                 return null;
             }
             string[] unitIncludes = { "Unit" };
-            foreach(ProductUnit productDetail in productDetails)
+            foreach (ProductUnit productDetail in productDetailsFilter)
             {
                 ProductDetailInSale productDetailInSale = new ProductDetailInSale();
 
-                var units = _unitOfWork.ProductUnitRepository
-                        .GetWithInclude(x => x.ProductId == productDetail.ProductId && x.Status == ActiveStatus.Active, unitIncludes)
-                        .OrderBy(x => x.Id).ToList();
+                var units = productDetails.Where(x => x.ProductId == productDetail.ProductId).ToList();
                 var listUnitOfProduct = new List<ProductUnitDetail>();
                 foreach (var unit in units)
                 {
@@ -525,7 +592,7 @@ namespace ManagementSystem.StoragesApi.Services
 
                 productDetailInSales.Add(productDetailInSale);
             }
-            
+
             return productDetailInSales;
         }
 
