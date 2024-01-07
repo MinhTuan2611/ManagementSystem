@@ -307,7 +307,7 @@ namespace ManagementSystem.StoragesApi.Services
 
                         if (request.Units[i].BranchId > 0)
                         {
-                            var productUnitBrach = _storageContext.ProductUnitBranches.SingleOrDefault(x => x.ProductUnitId == request.Units[i].Id && x.BranchId == request.Units[i].BranchId);
+                            var productUnitBrach = _storageContext.ProductUnitBranches.FirstOrDefault(x => x.ProductUnitId == request.Units[i].Id && x.BranchId == request.Units[i].BranchId);
 
                             if (productUnitBrach == null)
                             {
@@ -425,7 +425,7 @@ namespace ManagementSystem.StoragesApi.Services
             foreach (var unit in units)
             {
                 ProductUnitDetail productUnit = new ProductUnitDetail();
-                ProductUnitBranch unitBranchdetail = productUnitBranchs.SingleOrDefault(x => (x.ProductUnitId == unit.Id && x.BranchId == branchId));
+                ProductUnitBranch unitBranchdetail = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == unit.Id && x.BranchId == branchId));
 
                 productUnit.Id = unit.Id;
                 productUnit.ProductId = unit.ProductId;
@@ -440,7 +440,7 @@ namespace ManagementSystem.StoragesApi.Services
                 listUnitOfProduct.Add(productUnit);
             }
             var currentUnit = new ProductUnitDetail();
-            ProductUnitBranch unitBranch = productUnitBranchs.SingleOrDefault(x => (x.ProductUnitId == productDetail.Id && x.BranchId == branchId));
+            ProductUnitBranch unitBranch = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == productDetail.Id && x.BranchId == branchId));
 
             currentUnit.Id = productDetail.Id;
             currentUnit.ProductId = productDetail.ProductId;
@@ -490,7 +490,7 @@ namespace ManagementSystem.StoragesApi.Services
                 foreach (var unit in units)
                 {
                     ProductUnitDetail productUnit = new ProductUnitDetail();
-                    ProductUnitBranch unitBranchdetail = productUnitBranchs.SingleOrDefault(x => (x.ProductUnitId == unit.Id && x.BranchId == branchId));
+                    ProductUnitBranch unitBranchdetail = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == unit.Id && x.BranchId == branchId));
 
                     productUnit.Id = unit.Id;
                     productUnit.ProductId = unit.ProductId;
@@ -504,7 +504,7 @@ namespace ManagementSystem.StoragesApi.Services
                     listUnitOfProduct.Add(productUnit);
                 }
                 var currentUnit = new ProductUnitDetail();
-                ProductUnitBranch unitBranch = productUnitBranchs.SingleOrDefault(x => (x.ProductUnitId == productDetail.Id && x.BranchId == branchId));
+                ProductUnitBranch unitBranch = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == productDetail.Id && x.BranchId == branchId));
 
                 currentUnit.Id = productDetail.Id;
                 currentUnit.ProductId = productDetail.ProductId;
