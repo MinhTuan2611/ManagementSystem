@@ -122,7 +122,7 @@ namespace ManagementSystem.StoragesApi.Repositories.GenericRepository
         /// <returns></returns>
         public virtual IEnumerable<TEntity> GetAll()
         {
-            return DbSet.ToList();
+            return DbSet.AsNoTracking().ToList();
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace ManagementSystem.StoragesApi.Repositories.GenericRepository
             bool>> predicate, params string[] include)
         {
             IQueryable<TEntity> query = DbSet;
-            query = include.Aggregate(query, (current, inc) => current.Include(inc));
+            query = include.Aggregate(query, (current, inc) => current.Include(inc)).AsNoTracking();
             return query.Where(predicate);
         }
 

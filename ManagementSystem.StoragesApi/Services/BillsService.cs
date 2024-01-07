@@ -1,15 +1,21 @@
-﻿using ManagementSystem.Common;
+﻿using Azure.Core;
+using Azure;
+using Dapper;
+using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Functions;
 using ManagementSystem.Common.GenericModels;
+using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Loggers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
+using ManagementSystem.StoragesApi.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -278,12 +284,40 @@ namespace ManagementSystem.StoragesApi.Services
                 if (existingBill == null)
                     return null;
 
+                var billCustomer = _unitOfWork.CustomerRepository.Get(x => x.CustomerId == existingBill.CustomerId);
+                var newCustomer = _unitOfWork.CustomerRepository.Get(x => x.CustomerId == model.CustomerId);
+
+                // Update KL to customer
+                if (billCustomer == null && newCustomer != null)
+                {
+                    newCustomer.CustomerPoint += model.totalAmount / StorageContant.ConventPoint;
+
+                }
+                // Update customer from KL
+                else if (billCustomer != null && newCustomer == null)
+                {
+                    billCustomer.CustomerPoint -= model.totalAmount / StorageContant.ConventPoint;
+                }
+                else if (billCustomer != null && newCustomer != null && billCustomer.CustomerId != newCustomer.CustomerId)
+                {
+                    billCustomer.CustomerPoint -= model.totalAmount / StorageContant.ConventPoint;
+                    newCustomer.CustomerPoint += model.totalAmount / StorageContant.ConventPoint;
+                }
+                else if(billCustomer != null && existingBill.totalAmount != model.totalAmount)
+                {
+                    billCustomer.CustomerPoint += (existingBill.totalAmount > model.totalAmount 
+                            ? model.totalAmount - existingBill.totalAmount 
+                            : existingBill.totalAmount - model.totalAmount) / StorageContant.ConventPoint;
+                }
+
+                // Update with another customer
                 existingBill.totalChange = model.totalChange;
                 existingBill.totalPaid = model.totalPaid;
                 existingBill.totalChange = model.totalChange;
                 existingBill.CustomerId = model.CustomerId;
                 existingBill.ModifyBy = model.UserId;
                 existingBill.ModifyDate = DateTime.Now;
+                existingBill.ShiftId = model.ShiftId;
 
                 // Update Bill Details
                 foreach (var item in model.BillDetail)
@@ -307,10 +341,120 @@ namespace ManagementSystem.StoragesApi.Services
                 // Update Bill Payment Methods
                 foreach (var item in model.PaymentMethods)
                 {
-                    var billPayment = _context.BillPayments.SingleOrDefault(x => x.Id == item.Id);
+                    
+                    var billPayment = _context.BillPayments.Include(x => x.PaymentMethod).SingleOrDefault(x => x.Id == item.Id);
                     if (billPayment != null)
                     {
                         var paymentMethodId = GetPaymentMethod(item.PaymentMethodCode);
+
+                        // Get Credit voucher
+                        var creditVoucher = await GetCreditVoucher(model.BillId, billPayment.PaymentMethod.PaymentMethodId);
+                        var receiptVoucher = await GetReceiptVoucherByBillId(model.BillId);
+                        var inventoryVoucher = await GetInventoryVoucher(model.BillId);
+
+                        // Change payment method
+                        if (billPayment.PaymentMethod.PaymentMethodCode != item.PaymentMethodCode)
+                        {
+                            if (item.PaymentMethodCode == StorageContant.CashPaymentMethodCode)
+                            {
+                                // Delete voucher
+                                if (creditVoucher != null)
+                                {
+                                    string deletedCredit = "DELETE CreditVouchers WHERE DocumentNumber = @documentNumber";
+                                    await DeleteVoucher(creditVoucher.DocumentNumber, deletedCredit, "BAOCO");
+                                }
+
+                                // Add receipt
+
+                                var newReceiptDto = new NewReceiptRequestDto()
+                                {
+                                    CustomerId = model.CustomerId,
+                                    ForReason = string.Format(AccountingConstant.ReceiptReason, inventoryVoucher.DocummentNumber),
+                                    UserId = model.UserId.Value,
+                                    TotalMoney = item.Amount,
+                                    BillId = model.BillId,
+                                    StorageId = 0,
+                                    InventoryDocumentNumber = inventoryVoucher.DocummentNumber
+                                };
+
+                                var result = await HttpRequestsHelper.Post<CreditVoucher>(SD.AccountingApiUrl + "Receipt/create", newReceiptDto);
+                            }
+
+                            // other case
+                            else
+                            {
+                                if (creditVoucher == null)
+                                {
+                                    // Change from Cash to other payment
+                                    if (item.PaymentMethodCode != StorageContant.CashPaymentMethodCode)
+                                    {
+                                        // Delete recepit
+                                        if (receiptVoucher != null)
+                                        {
+                                            string deletedReceipt = "DELETE ReceiptVouchers WHERE DocumentNumber = @documentNumber";
+                                            await DeleteVoucher(receiptVoucher.DocumentNumber, deletedReceipt, "THU");
+                                        }
+
+                                        // Add Credit Voucher
+
+                                        var newCreditVoucher = new NewCreditVoucherRequestDto()
+                                        {
+                                            CustomerId = model.CustomerId,
+                                            TotalMoney = item.Amount,
+                                            UserId = model.UserId.Value,
+                                            BillId = model.BillId,
+                                            BrandId = model.BranchId != null ? model.BranchId : 0,
+                                            PaymentMethodCode = item.PaymentMethodCode == "BANKKING" ? "BANKING" : item.PaymentMethodCode,
+                                            ProductId = model.BillDetail[0].ProductId,
+                                            GroupId = AccountingConstant.AutoGenerateDocumentGroup
+                                        };
+
+                                        var result = await HttpRequestsHelper.Post<CreditVoucher>(SD.AccountingApiUrl + "CreditVouchers/create", newCreditVoucher);
+                                    }
+                                }
+
+                                else
+                                {
+                                    string query = string.Format( @"
+                                        UPDATE CreditVouchers
+                                        SET TotalMoney = @amount
+                                            ,PaymentMethodId = {0}
+                                        WHERE DocumentNumber = @documentNUmber", paymentMethodId)
+                                    ;
+
+                                    await UpdateVoucherAmount(creditVoucher.DocumentNumber, item.Amount, query, "BAOCO");
+                                }
+                            }
+
+                        }
+
+                        // Same method but update amount
+                        else
+                        {
+                            string query = string.Empty;
+                            if (item.Amount != receiptVoucher?.TotalMoney || item.Amount !=  creditVoucher?.TotalMoney)
+                            {
+                                if (item.PaymentMethodCode == StorageContant.CashPaymentMethodCode)
+                                {
+                                    query = @"
+                                        UPDATE ReceiptVouchers
+                                        SET TotalMoney = @amount
+                                        WHERE DocumentNumber = @documentNUmber";
+
+                                    await UpdateVoucherAmount(receiptVoucher.DocumentNumber, item.Amount, query, "THU");
+                                }
+                                else
+                                {
+                                    query = @"
+                                        UPDATE CreditVouchers
+                                        SET TotalMoney = @amount
+                                        WHERE DocumentNumber = @documentNUmber";
+
+                                    await UpdateVoucherAmount(creditVoucher.DocumentNumber, item.Amount, query, "BAOCO");
+                                }
+                            }
+                        }
+
 
                         billPayment.PaymentMethodId = paymentMethodId.Value;
                         billPayment.Amount = item.Amount;
@@ -519,6 +663,7 @@ namespace ManagementSystem.StoragesApi.Services
 
         private int? GetPaymentMethod(string paymentMethodCode)
         {
+            paymentMethodCode = paymentMethodCode == "BANKKING" ? "BANKING" : paymentMethodCode;
             string query = string.Format(@"
                 SELECT PaymentMethodId
 		                ,PaymentMethodCode
@@ -537,13 +682,13 @@ namespace ManagementSystem.StoragesApi.Services
 
         private List<EmployeeShiftInformationDto> GetEmployeeShifts()
         {
-            string query = @"
+            string query = string.Format(@"
                 SELECT ShiftId
 		                ,ShiftName
 		                ,StartHour AS StartTime
 		                ,EndHour AS EndTime
-                FROM AccountsDb.dbo.EmployeeShifts
-            ";
+                FROM {0}.dbo.EmployeeShifts
+            ", SD.AccountDbName);
 
             try
             {
@@ -578,12 +723,12 @@ namespace ManagementSystem.StoragesApi.Services
                                     , c.CustomerCode
                             FROM dbo.Bills b
                             LEFT JOIN dbo.Customers c ON b.CustomerId = c.CustomerId
-                            LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = b.ShiftId
-                            LEFT JOIN AccountsDb.dbo.UserBranchs ub ON b.CreateBy = ub.UserId
+                            LEFT JOIN {0}.dbo.EmployeeShifts es ON es.ShiftId = b.ShiftId
+                            LEFT JOIN {0}.dbo.UserBranchs ub ON b.CreateBy = ub.UserId
                             LEFT JOIN dbo.Branches br ON br.BranchId = ub.BranchId
-                            LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = b.CreateBy
-                            WHERE b.BillId = {0}
-            ", billId);
+                            LEFT JOIN {0}.dbo.Users u ON u.UserId = b.CreateBy
+                            WHERE b.BillId = {1}
+            ", SD.AccountDbName ,billId);
 
             try
             {
@@ -594,6 +739,82 @@ namespace ManagementSystem.StoragesApi.Services
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+        private async Task<ReceiptVoucher> GetReceiptVoucherByBillId(int billId)
+        {
+            string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
+
+            string query = @"SELECT *
+                            FROM ReceiptVouchers
+                            WHERE BillId = @billId";
+
+            using (var connection = new SqlConnection(accountingConnection))
+            {
+                var receiptVoucher = await connection.QuerySingleOrDefaultAsync<ReceiptVoucher>(query, new { billId });
+
+                return receiptVoucher;
+            }
+        }
+
+        private async Task<CreditVoucher> GetCreditVoucher(int billId, int paymentMethodId)
+        {
+            string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
+            string query = @"SELECT *
+                                FROM CreditVouchers
+                                WHERE PaymentMethodId = @paymentMethodId AND BillId = @billId";
+
+            using (var connection = new SqlConnection(accountingConnection))
+            {
+                var creditVoucher = await connection.QuerySingleOrDefaultAsync<CreditVoucher>(query, new { paymentMethodId, billId });
+
+                return creditVoucher;
+            }
+        }
+
+        private async Task<InventoryVoucher> GetInventoryVoucher(int billId)
+        {
+            string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
+            string query = @"SELECT *
+                                FROM InventoryVouchers
+                                WHERE BillId = @billId";
+
+            using (var connection = new SqlConnection(accountingConnection))
+            {
+                var inventoryVoucher = await connection.QuerySingleOrDefaultAsync<InventoryVoucher>(query, new { billId });
+
+                return inventoryVoucher;
+            }
+        }
+
+        private async Task DeleteVoucher(int documentNumber, string query, string documentType)
+        {
+            string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
+
+            string legerDeleteQuery = @"DELETE Legers WHERE DoccumentNumber = @documentNumber AND DoccumentType = @documentType";
+
+            using (var connection = new SqlConnection(accountingConnection))
+            {
+                await connection.ExecuteAsync(legerDeleteQuery, new { documentNumber, documentType });
+                await connection.ExecuteAsync(query, new { documentNumber});
+
+            }
+        }
+
+        private async Task UpdateVoucherAmount(int documentNumber, int amount, string query, string documentType)
+        {
+            string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
+
+            string updateLegerQuery = @"UPDATE Legers
+                                        SET Amount = @amount
+                                        WHERE DoccumentNumber = @documentNumber
+                                        AND DoccumentType = @documentType";
+
+            using (var connection = new SqlConnection(accountingConnection))
+            {
+                await connection.ExecuteAsync(updateLegerQuery, new { amount ,documentNumber, documentType });
+                await connection.ExecuteAsync(query, new { amount, documentNumber });
+
             }
         }
         #endregion

@@ -57,6 +57,9 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentNumber"), 1L, 1);
 
+                    b.Property<int?>("BillId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CreditAccount")
                         .HasColumnType("nvarchar(max)");
 
@@ -491,6 +494,9 @@ namespace ManagementSystem.AccountingApi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocumentNumber"), 1L, 1);
+
+                    b.Property<int?>("BillId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
@@ -1094,6 +1100,38 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("InventoryVoucherResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.LegerExportExcelResponseDto", b =>
+                {
+                    b.Property<long?>("Amount")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepositAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DoccumentNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DoccumentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ForReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.ToTable("LegerExportExcelResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.LegerResponseDto", b =>
                 {
                     b.Property<long?>("Amount")
@@ -1441,6 +1479,15 @@ namespace ManagementSystem.AccountingApi.Migrations
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ShiftHandoverResponseDto", b =>
                 {
+                    b.Property<string>("BranchCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BranchName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long?>("CurShiftAmount")
                         .HasColumnType("bigint");
 

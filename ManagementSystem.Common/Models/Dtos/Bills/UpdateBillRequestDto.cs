@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ManagementSystem.Common.Models.Dtos
+﻿namespace ManagementSystem.Common.Models.Dtos
 {
     public class UpdateBillRequestDto
     {
@@ -14,6 +8,8 @@ namespace ManagementSystem.Common.Models.Dtos
         public int totalChange { get; set; } = 0;
         public int? CustomerId { get; set; }
         public int? UserId { get; set; }
+        public int? BranchId { get; set; }
+        public int? ShiftId { get; set; }
         public List<UpdateBillDetailRequestDto> BillDetail { get; set; }
         public List<UpdateBillPaymentMethodRequestDto> PaymentMethods { get; set; }
 

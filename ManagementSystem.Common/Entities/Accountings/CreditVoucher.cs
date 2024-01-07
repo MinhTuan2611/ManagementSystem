@@ -20,6 +20,7 @@ namespace ManagementSystem.Common.Entities
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public string? CreditAccount { get; set; }
         public string? DebitAccount { get; set; }
+        public int? BillId { get; set; }
 
         [ForeignKey("DocumentGroup")]
         public int? GroupId { get; set; }
