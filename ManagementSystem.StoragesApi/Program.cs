@@ -10,11 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("StoragesDbConnStr");
-builder.Services.AddDbContext<StoragesDbContext>(options =>
+builder.Services.AddDbContextPool<DbContext, StoragesDbContext>(options =>
     options.UseSqlServer(connectionString));
 SD.AccountDbName = builder.Configuration["DatabaseNames:AccountsDb"];
 SD.AccountingDbName = builder.Configuration["DatabaseNames:AccountingDb"];
-
+SD.AccountingApiUrl = builder.Configuration["ServicesUrls:AccountingApi"];
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
