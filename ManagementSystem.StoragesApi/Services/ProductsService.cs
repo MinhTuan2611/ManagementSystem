@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text;
+using ManagementSystem.Common.GenericModels;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -530,9 +531,12 @@ namespace ManagementSystem.StoragesApi.Services
         //    return productDetailInSales;
         //}
 
-        public List<ProductDetailInSale>? AutoCompleteGetProductDetailForSale(string barcode, int branchId = 3)
+        public TPagination<ProductDetailInSale>? AutoCompleteGetProductDetailForSale(string barcode, int pageNumber, int pageSize, int branchId = 3)
         {
             List<ProductDetailInSale> productDetailInSales = new List<ProductDetailInSale>();
+
+            var result = new TPagination<ProductDetailInSale>();
+
             //barcode = convertToUnSign(barcode);
             var valueSearch = barcode.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
             string[] includes = { "Product", "Unit" };
@@ -540,6 +544,12 @@ namespace ManagementSystem.StoragesApi.Services
             var productDetailsFilter = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => x.Product.ProductName.ToLower().Contains(keyWord)
                                                                                                         || x.Product.ProductCode.ToLower().Contains(keyWord)
                                                                                                         || x.Unit.UnitName.ToLower().Contains(keyWord))).ToList();
+            result.TotalItems = productDetailsFilter.Count;
+
+            productDetailsFilter = productDetailsFilter.OrderBy(x => x.Id)
+                                                        .Skip((pageNumber - 1) * pageSize)
+                                                        .Take(pageSize)
+                                                        .ToList();
 
             var productUnitBranchs = _unitOfWork.ProductUnitBranchRepository.Get().ToList();
 
@@ -593,7 +603,8 @@ namespace ManagementSystem.StoragesApi.Services
                 productDetailInSales.Add(productDetailInSale);
             }
 
-            return productDetailInSales;
+            result.Items = productDetailInSales;
+            return result;
         }
 
         public string GenerateProductCode(int categoryId, string productName)
