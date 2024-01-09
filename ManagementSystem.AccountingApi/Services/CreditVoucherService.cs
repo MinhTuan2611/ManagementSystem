@@ -222,7 +222,7 @@ namespace ManagementSystem.AccountingApi.Services
 
                 INSERT INTO #map_method_transaction_reason(MethodCode,ReasonCode)
                 VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017'), ('POINT', 'DOIDIEM')
-                        ,('OTHER', 'TIEUDUNG'), ('VNPAY', 'BCDT02'), ('SAMSUNG', 'TIEUDUNG'), ('DISCOUNT', 'TMH')
+                        ,('OTHER', 'TIEUDUNG'), ('VNPAY', 'BCDT02'), ('SAMSUNG', 'TIEUDUNG'), ('DISCOUNT', 'TMH'), ('CONGNO', 'CONGNO')
 
                 SELECT tc.AccountCode AS CreditAccount
 		                ,td.AccountCode AS DebitAccount
@@ -257,7 +257,7 @@ namespace ManagementSystem.AccountingApi.Services
 
                 INSERT INTO #map_method_transaction_reason(MethodCode,ReasonCode)
                 VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017'), ('POINT', 'DOIDIEM')
-                        ,('OTHER', 'TIEUDUNG'), ('VNPAY', 'BCDT02'), ('SAMSUNG', 'TIEUDUNG'), ('DISCOUNT', 'TMH')
+                        ,('OTHER', 'TIEUDUNG'), ('VNPAY', 'BCDT02'), ('SAMSUNG', 'TIEUDUNG'), ('DISCOUNT', 'TMH'), ('CONGNO', 'CONGNO')
 
                 SELECT ReasonCode AS Value
                 FROM #map_method_transaction_reason t
