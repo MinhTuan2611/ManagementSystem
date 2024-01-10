@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text;
+using ManagementSystem.Common.GenericModels;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -99,6 +100,7 @@ namespace ManagementSystem.StoragesApi.Services
                 var product = _unitOfWork.ProductRepository.GetByID(productId);
                 var productSupliersRes = _unitOfWork.ProductSupplierRepository.GetMany(x => x.ProductId == productId);
                 var units = _unitOfWork.ProductUnitRepository.GetMany(x => x.ProductId == product.ProductId && x.Status == ActiveStatus.Active).OrderBy(x => x.Id).ToList();
+                var productUnitBranchs = _unitOfWork.ProductUnitBranchRepository.Get().ToList();
 
                 List<ProductSupplierDto> productSupliers = new List<ProductSupplierDto>();
 
@@ -122,7 +124,8 @@ namespace ManagementSystem.StoragesApi.Services
                 for (int i = 0; i < units.Count; i++)
                 {
                     
-                    List< ProductUnitBranchResponseDto> unitBranchs = GetProductUnitBranch(units[i].Id, 0);
+                    List< ProductUnitBranch> unitBranchs = productUnitBranchs.Where(x => x.ProductUnitId == units[i].Id).ToList();
+                       // GetProductUnitBranch(units[i].Id, 0);
 
                     if (unitBranchs.Count > 0)
                     {
@@ -133,7 +136,7 @@ namespace ManagementSystem.StoragesApi.Services
                             productUnitBranch.ProductId = units[i].ProductId;
                             productUnitBranch.UnitId = units[i].UnitId;
                             productUnitBranch.UnitExchange = units[i].UnitExchange;
-                            productUnitBranch.Price = unitBranch != null ? (int)unitBranch.Price.Value : units[i].Price;
+                            productUnitBranch.Price = unitBranch != null ? (int)unitBranch.Price : units[i].Price;
                             productUnitBranch.GrossProfit = units[i].GrossProfit;
                             productUnitBranch.OldPrice = units[i].OldPrice;
                             productUnitBranch.Barcode = units[i].Barcode;
@@ -305,7 +308,7 @@ namespace ManagementSystem.StoragesApi.Services
 
                         if (request.Units[i].BranchId > 0)
                         {
-                            var productUnitBrach = _storageContext.ProductUnitBranches.SingleOrDefault(x => x.ProductUnitId == request.Units[i].Id && x.BranchId == request.Units[i].BranchId);
+                            var productUnitBrach = _storageContext.ProductUnitBranches.FirstOrDefault(x => x.ProductUnitId == request.Units[i].Id && x.BranchId == request.Units[i].BranchId);
 
                             if (productUnitBrach == null)
                             {
@@ -411,7 +414,9 @@ namespace ManagementSystem.StoragesApi.Services
             ProductDetailInSale productDetailInSale = new ProductDetailInSale();
             string[] includes = { "Product", "Unit" };
             var productDetail = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Barcode == barcode && x.Status == ActiveStatus.Active, includes).OrderBy(x => x.Id).FirstOrDefault();
-            if(productDetail == null)
+            var productUnitBranchs = _unitOfWork.ProductUnitBranchRepository.Get().ToList();
+
+            if (productDetail == null)
             {
                 return null;
             }
@@ -421,14 +426,14 @@ namespace ManagementSystem.StoragesApi.Services
             foreach (var unit in units)
             {
                 ProductUnitDetail productUnit = new ProductUnitDetail();
-                ProductUnitBranchResponseDto unitBranchdetail = GetProductUnitBranch(unit.Id, branchId).SingleOrDefault();
+                ProductUnitBranch unitBranchdetail = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == unit.Id && x.BranchId == branchId));
 
                 productUnit.Id = unit.Id;
                 productUnit.ProductId = unit.ProductId;
                 productUnit.UnitId = unit.UnitId;
                 productUnit.UnitName = unit.Unit?.UnitName;
                 productUnit.UnitExchange = unit.UnitExchange;
-                productUnit.Price = unitBranchdetail != null ? (int)unitBranchdetail.Price.Value : unit.Price;
+                productUnit.Price = unitBranchdetail != null ? (int)unitBranchdetail.Price : unit.Price;
                 productUnit.OldPrice = unit.OldPrice;
                 productUnit.Barcode = unit.Barcode;
                 productUnit.IsPrimary = unit.IsPrimary;
@@ -436,7 +441,7 @@ namespace ManagementSystem.StoragesApi.Services
                 listUnitOfProduct.Add(productUnit);
             }
             var currentUnit = new ProductUnitDetail();
-            ProductUnitBranchResponseDto unitBranch = GetProductUnitBranch(productDetail.Id, branchId).SingleOrDefault();
+            ProductUnitBranch unitBranch = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == productDetail.Id && x.BranchId == branchId));
 
             currentUnit.Id = productDetail.Id;
             currentUnit.ProductId = productDetail.ProductId;
@@ -444,7 +449,7 @@ namespace ManagementSystem.StoragesApi.Services
             currentUnit.UnitName = productDetail.Unit?.UnitName;
             currentUnit.UnitExchange = productDetail.UnitExchange;
             currentUnit.GrossProfit = productDetail.GrossProfit;
-            currentUnit.Price = unitBranch != null ? (int)unitBranch.Price.Value : productDetail.Price;
+            currentUnit.Price = unitBranch != null ? (int)unitBranch.Price : productDetail.Price;
             currentUnit.OldPrice = productDetail.OldPrice;
             currentUnit.Barcode = productDetail.Barcode;
             currentUnit.IsPrimary = productDetail.IsPrimary;
@@ -453,57 +458,137 @@ namespace ManagementSystem.StoragesApi.Services
             productDetailInSale.Barcode = productDetail.Barcode ?? string.Empty;
             productDetailInSale.Name = productDetail.Product?.ProductName ?? string.Empty;
             productDetailInSale.Unit = currentUnit;
-            productDetailInSale.Price = unitBranch != null ? (int)unitBranch.Price.Value : productDetail.Price;
+            productDetailInSale.Price = unitBranch != null ? (int)unitBranch.Price : productDetail.Price;
             productDetailInSale.ProductUnits = listUnitOfProduct;
             return productDetailInSale;
         }
 
-        public List<ProductDetailInSale>? AutoCompleteGetProductDetailForSale(string barcode, int branchId = 3)
+        //public List<ProductDetailInSale>? AutoCompleteGetProductDetailForSale(string barcode, int branchId = 3)
+        //{
+        //    List<ProductDetailInSale> productDetailInSales = new List<ProductDetailInSale>();
+        //    //barcode = convertToUnSign(barcode);
+        //    var valueSearch = barcode.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        //    string[] includes = { "Product", "Unit" };
+        //    List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes).AsNoTracking().OrderBy(x => x.Id).ToList();
+        //    productDetails = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => x.Product.ProductName.ToLower().Contains(keyWord) 
+        //                                                                                                || x.Product.ProductCode.ToLower().Contains(keyWord)
+        //                                                                                                || x.Unit.UnitName.ToLower().Contains(keyWord))).ToList();
+
+        //    var productUnitBranchs = _unitOfWork.ProductUnitBranchRepository.Get().ToList();
+
+        //    if (productDetails == null)
+        //    {
+        //        return null;
+        //    }
+        //    string[] unitIncludes = { "Unit" };
+        //    foreach(ProductUnit productDetail in productDetails)
+        //    {
+        //        ProductDetailInSale productDetailInSale = new ProductDetailInSale();
+
+        //        var units = _unitOfWork.ProductUnitRepository
+        //                .GetWithInclude(x => x.ProductId == productDetail.ProductId && x.Status == ActiveStatus.Active, unitIncludes)
+        //                .OrderBy(x => x.Id).ToList();
+        //        var listUnitOfProduct = new List<ProductUnitDetail>();
+        //        foreach (var unit in units)
+        //        {
+        //            ProductUnitDetail productUnit = new ProductUnitDetail();
+        //            ProductUnitBranch unitBranchdetail = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == unit.Id && x.BranchId == branchId));
+
+        //            productUnit.Id = unit.Id;
+        //            productUnit.ProductId = unit.ProductId;
+        //            productUnit.UnitId = unit.UnitId;
+        //            productUnit.UnitName = unit.Unit?.UnitName;
+        //            productUnit.UnitExchange = unit.UnitExchange;
+        //            productUnit.Price = unitBranchdetail != null ? (int)unitBranchdetail.Price : unit.Price;
+        //            productUnit.OldPrice = unit.OldPrice;
+        //            productUnit.Barcode = unit.Barcode;
+        //            productUnit.IsPrimary = unit.IsPrimary;
+        //            listUnitOfProduct.Add(productUnit);
+        //        }
+        //        var currentUnit = new ProductUnitDetail();
+        //        ProductUnitBranch unitBranch = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == productDetail.Id && x.BranchId == branchId));
+
+        //        currentUnit.Id = productDetail.Id;
+        //        currentUnit.ProductId = productDetail.ProductId;
+        //        currentUnit.UnitId = productDetail.UnitId;
+        //        currentUnit.UnitName = productDetail.Unit?.UnitName;
+        //        currentUnit.UnitExchange = productDetail.UnitExchange;
+        //        currentUnit.Price = unitBranch != null ? (int)unitBranch.Price : productDetail.Price;
+        //        currentUnit.OldPrice = productDetail.OldPrice;
+        //        currentUnit.Barcode = productDetail.Barcode;
+        //        currentUnit.IsPrimary = productDetail.IsPrimary;
+
+        //        productDetailInSale.Id = productDetail.ProductId;
+        //        productDetailInSale.Barcode = productDetail.Barcode ?? string.Empty;
+        //        productDetailInSale.Name = productDetail.Product?.ProductName ?? string.Empty;
+        //        productDetailInSale.Unit = currentUnit;
+        //        productDetailInSale.Price = unitBranch != null ? (int)unitBranch.Price : productDetail.Price;
+        //        productDetailInSale.ProductUnits = listUnitOfProduct;
+
+        //        productDetailInSales.Add(productDetailInSale);
+        //    }
+            
+        //    return productDetailInSales;
+        //}
+
+        public TPagination<ProductDetailInSale>? AutoCompleteGetProductDetailForSale(string barcode, int pageNumber, int pageSize, int branchId = 3)
         {
             List<ProductDetailInSale> productDetailInSales = new List<ProductDetailInSale>();
+
+            var result = new TPagination<ProductDetailInSale>();
+
             //barcode = convertToUnSign(barcode);
             var valueSearch = barcode.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
             string[] includes = { "Product", "Unit" };
-            List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes).AsNoTracking().OrderBy(x => x.Id).ToList();
-            productDetails = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => x.Product.ProductName.ToLower().Contains(keyWord) 
+            List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes).AsNoTracking().ToList();
+            var productDetailsFilter = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => x.Product.ProductName.ToLower().Contains(keyWord)
                                                                                                         || x.Product.ProductCode.ToLower().Contains(keyWord)
                                                                                                         || x.Unit.UnitName.ToLower().Contains(keyWord))).ToList();
-            if (productDetails == null)
+            result.TotalItems = productDetailsFilter.Count;
+
+            productDetailsFilter = productDetailsFilter.OrderBy(x => x.Id)
+                                                        .Skip((pageNumber - 1) * pageSize)
+                                                        .Take(pageSize)
+                                                        .ToList();
+
+            var productUnitBranchs = _unitOfWork.ProductUnitBranchRepository.Get().ToList();
+
+            if (productDetailsFilter == null)
             {
                 return null;
             }
             string[] unitIncludes = { "Unit" };
-            foreach(ProductUnit productDetail in productDetails)
+            foreach (ProductUnit productDetail in productDetailsFilter)
             {
                 ProductDetailInSale productDetailInSale = new ProductDetailInSale();
-                var units = _unitOfWork.ProductUnitRepository
-                        .GetWithInclude(x => x.ProductId == productDetail.ProductId && x.Status == ActiveStatus.Active, unitIncludes)
-                        .OrderBy(x => x.Id).ToList();
+
+                var units = productDetails.Where(x => x.ProductId == productDetail.ProductId).ToList();
                 var listUnitOfProduct = new List<ProductUnitDetail>();
                 foreach (var unit in units)
                 {
                     ProductUnitDetail productUnit = new ProductUnitDetail();
-                    ProductUnitBranchResponseDto unitBranchdetail = GetProductUnitBranch(unit.Id, branchId).SingleOrDefault();
+                    ProductUnitBranch unitBranchdetail = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == unit.Id && x.BranchId == branchId));
+
                     productUnit.Id = unit.Id;
                     productUnit.ProductId = unit.ProductId;
                     productUnit.UnitId = unit.UnitId;
                     productUnit.UnitName = unit.Unit?.UnitName;
                     productUnit.UnitExchange = unit.UnitExchange;
-                    productUnit.Price = unitBranchdetail != null ? (int)unitBranchdetail.Price.Value : unit.Price;
+                    productUnit.Price = unitBranchdetail != null ? (int)unitBranchdetail.Price : unit.Price;
                     productUnit.OldPrice = unit.OldPrice;
                     productUnit.Barcode = unit.Barcode;
                     productUnit.IsPrimary = unit.IsPrimary;
                     listUnitOfProduct.Add(productUnit);
                 }
                 var currentUnit = new ProductUnitDetail();
-                ProductUnitBranchResponseDto unitBranch = GetProductUnitBranch(productDetail.Id, branchId).SingleOrDefault();
+                ProductUnitBranch unitBranch = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == productDetail.Id && x.BranchId == branchId));
 
                 currentUnit.Id = productDetail.Id;
                 currentUnit.ProductId = productDetail.ProductId;
                 currentUnit.UnitId = productDetail.UnitId;
                 currentUnit.UnitName = productDetail.Unit?.UnitName;
                 currentUnit.UnitExchange = productDetail.UnitExchange;
-                currentUnit.Price = unitBranch != null ? (int)unitBranch.Price.Value : productDetail.Price;
+                currentUnit.Price = unitBranch != null ? (int)unitBranch.Price : productDetail.Price;
                 currentUnit.OldPrice = productDetail.OldPrice;
                 currentUnit.Barcode = productDetail.Barcode;
                 currentUnit.IsPrimary = productDetail.IsPrimary;
@@ -512,13 +597,14 @@ namespace ManagementSystem.StoragesApi.Services
                 productDetailInSale.Barcode = productDetail.Barcode ?? string.Empty;
                 productDetailInSale.Name = productDetail.Product?.ProductName ?? string.Empty;
                 productDetailInSale.Unit = currentUnit;
-                productDetailInSale.Price = unitBranch != null ? (int)unitBranch.Price.Value : productDetail.Price;
+                productDetailInSale.Price = unitBranch != null ? (int)unitBranch.Price : productDetail.Price;
                 productDetailInSale.ProductUnits = listUnitOfProduct;
 
                 productDetailInSales.Add(productDetailInSale);
             }
-            
-            return productDetailInSales;
+
+            result.Items = productDetailInSales;
+            return result;
         }
 
         public string GenerateProductCode(int categoryId, string productName)

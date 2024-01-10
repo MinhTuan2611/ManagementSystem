@@ -28,6 +28,7 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
         private GenericRepository<BillPayment> _billPaymentRepository;
         private GenericRepository<AnimalPartRefCode> _animalPartRefCodeRepository;
         private GenericRepository<ProductSupplier> _productSupplierRepository;
+        private GenericRepository<ProductUnitBranch> _productUnitBranchRepository;
         #endregion
 
         public UnitOfWork(StoragesDbContext context)
@@ -198,6 +199,16 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
                 if (_productSupplierRepository == null)
                     _productSupplierRepository = new GenericRepository<ProductSupplier>(_context);
                 return _productSupplierRepository;
+            }
+        }
+
+        public GenericRepository<ProductUnitBranch> ProductUnitBranchRepository
+        {
+            get
+            {
+                if (_productUnitBranchRepository == null)
+                    _productUnitBranchRepository = new GenericRepository<ProductUnitBranch>(_context);
+                return _productUnitBranchRepository;
             }
         }
         #endregion

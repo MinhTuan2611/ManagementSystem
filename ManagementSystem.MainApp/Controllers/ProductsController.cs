@@ -107,9 +107,10 @@ namespace ManagementSystem.MainApp.Controllers
         }
 
         [HttpGet("autocomplete-get-product-detail-for-sale")]
-        public async Task<IActionResult> AutocompleteGetProductDetailForSale(string barcode, int branchId = 3)
+        public async Task<IActionResult> AutocompleteGetProductDetailForSale(string barcode, int branchId = 3, int pageNumber = 1, int pageSize = 20)
         {
-            List<ProductDetailInSale>? product = await HttpRequestsHelper.Get<List<ProductDetailInSale>>(APIUrl + "autocomplete-get-product-detail-for-sale?barcode=" + barcode + "&branchId=" + branchId);
+            TPagination<ProductDetailInSale>? product = await HttpRequestsHelper.Get<TPagination<ProductDetailInSale>>(APIUrl + "autocomplete-get-product-detail-for-sale?barcode=" + barcode + "&branchId=" + branchId
+                                                                                                                + "&pageNumber=" + pageNumber + "&pageSize="+pageSize);
             return Ok(product);
         }
 

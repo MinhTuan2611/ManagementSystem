@@ -77,9 +77,10 @@ namespace ManagementSystem.StoragesApi.Controllers
         }
 
         [HttpGet("autocomplete-get-product-detail-for-sale")]
-        public IActionResult AutocompleteGetProductDetailForSale(string barcode, int branchId)
+        public IActionResult AutocompleteGetProductDetailForSale(string barcode, int branchId, int pageNumber, int pageSize)
         {
-            List<ProductDetailInSale>? product = _ProductService.AutoCompleteGetProductDetailForSale(barcode, branchId);
+            TPagination<ProductDetailInSale>? product = _ProductService.AutoCompleteGetProductDetailForSale(barcode, pageNumber, pageSize, branchId);
+
             return Ok(product);
         }
 
