@@ -221,7 +221,7 @@ namespace ManagementSystem.MainApp.Controllers
             return response;
         }
 
-        [HttpPost("vew_discount_informations")]
+        [HttpPost("view_discount_informations")]
         public async Task<IActionResult> ViewDiscountInformations([FromBody] SearchCriteria searchModel)
         {
             var result = await HttpRequestsHelper.Post<List<DiscountInformationDto>>(SD.StorageApiUrl + "bills/view_discount_informations", searchModel);
