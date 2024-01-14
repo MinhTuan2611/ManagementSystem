@@ -42,7 +42,8 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<ProductAutoGenerationResponseDto> ProductAutoGenerationResponseDtos { get; set; }
         public DbSet<EmployeeShiftInformationDto> EmployeeShiftInformationDtos { get; set; }
         public DbSet<ProductUnitBranchResponseDto> ProductUnitBranchResponseDtos { get; set; }
-        public DbSet<BillExportDetailDto> BillExportDetailDtos { get; set; }
+        public DbSet<DiscountInformationDto> DiscountInformationDtos { get; set; }
+        public DbSet<BillRevenueInformationDto> BillRevenueInformationDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -59,7 +60,8 @@ namespace ManagementSystem.StoragesApi.Data
             modelBuilder.Entity<ProductAutoGenerationResponseDto>().ToTable(nameof(ProductAutoGenerationResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<EmployeeShiftInformationDto>().ToTable(nameof(EmployeeShiftInformationDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<ProductUnitBranchResponseDto>().ToTable(nameof(ProductUnitBranchResponseDto), t => t.ExcludeFromMigrations());
-            modelBuilder.Entity<BillExportDetailDto>().ToTable(nameof(BillExportDetailDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<DiscountInformationDto>().ToTable(nameof(DiscountInformationDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<BillRevenueInformationDto>().ToTable(nameof(BillRevenueInformationDto), t => t.ExcludeFromMigrations());
 
             modelBuilder.Entity<Product>(entity =>
             {

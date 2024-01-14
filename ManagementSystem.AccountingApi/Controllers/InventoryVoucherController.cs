@@ -48,7 +48,7 @@ namespace ManagementSystem.AccountingApi.Controllers
         public async Task<ResponseDto> Create(NewInventoryVoucherDto request)
         {
             var inventory = await _service.CreateInventoryVoucher(request);
-            if (inventory.Result != null)
+            if (inventory.Result != null && request.CashPaymentAmount > 0)
             {
                 var iResponse = (InventoryVoucher)inventory.Result;
                 var newReceiptDto = new NewReceiptRequestDto()

@@ -3,7 +3,7 @@
 namespace ManagementSystem.Common.Models.Dtos
 {
     [Keyless]
-    public class BillExportDetailDto
+    public class DiscountInformationDto
     {
         public DateTime CreateDate { get; set; }
         public int BillId { get; set; }

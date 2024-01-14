@@ -12,5 +12,7 @@ namespace ManagementSystem.AccountingApi.Services
 
         public Task<ResponseDto> ExportExcelFile(SearchCriteria model);
         public Task<ResponseDto> ExportLeggerWithoutPaymentExcelFile(SearchCriteria model);
+        public Task<ResponseDto> ExportPaymentVouchersInformationExcelFile(SearchCriteria model);
+        public Task<List<PaymentMethodInformationDto>> ViewPaymentVoucherInformation(SearchCriteria model);
     }
 }

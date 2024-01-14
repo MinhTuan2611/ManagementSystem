@@ -424,6 +424,21 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("OtherAccountEntries");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.PaymentMenthodReasonRef", b =>
+                {
+                    b.Property<string>("MethodCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ReasonCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("MethodCode", "ReasonCode");
+
+                    b.ToTable("PaymentMenthodReasonRefs");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.PaymentVoucher", b =>
                 {
                     b.Property<int>("DocumentNumber")

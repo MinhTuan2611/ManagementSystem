@@ -213,20 +213,9 @@ namespace ManagementSystem.AccountingApi.Services
         private AccountsDto GetAccountInfor(string methodCode)
         {
             var query = string.Format(@"
-                DROP TABLE IF EXISTS #map_method_transaction_reason
-                CREATE TABLE #map_method_transaction_reason
-                (
-	                MethodCode VARCHAR(30)
-	                ,ReasonCode VARCHAR(30)
-                )
-
-                INSERT INTO #map_method_transaction_reason(MethodCode,ReasonCode)
-                VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017'), ('POINT', 'DOIDIEM')
-                        ,('OTHER', 'TIEUDUNG'), ('VNPAY', 'BCDT02'), ('SAMSUNG', 'TIEUDUNG'), ('DISCOUNT', 'TMH'), ('CONGNO', 'CONGNO')
-
                 SELECT tc.AccountCode AS CreditAccount
 		                ,td.AccountCode AS DebitAccount
-                FROM #map_method_transaction_reason t
+                FROM PaymentMenthodReasonRefs t
                 JOIN dbo.Recordingtransactions rt ON rt.ReasonCode = t.ReasonCode
                 JOIN dbo.TypesOfAccounts tc ON tc.AccountId = rt.CreditAccountId
                 JOIN dbo.TypesOfAccounts td ON td.AccountId = rt.DebitAccountId
@@ -248,19 +237,8 @@ namespace ManagementSystem.AccountingApi.Services
         private string GetReasonByMethodCode(string methodCode)
         {
             string query = string.Format(@"
-                DROP TABLE IF EXISTS #map_method_transaction_reason
-                CREATE TABLE #map_method_transaction_reason
-                (
-	                MethodCode VARCHAR(30)
-	                ,ReasonCode VARCHAR(30)
-                )
-
-                INSERT INTO #map_method_transaction_reason(MethodCode,ReasonCode)
-                VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017'), ('POINT', 'DOIDIEM')
-                        ,('OTHER', 'TIEUDUNG'), ('VNPAY', 'BCDT02'), ('SAMSUNG', 'TIEUDUNG'), ('DISCOUNT', 'TMH'), ('CONGNO', 'CONGNO')
-
                 SELECT ReasonCode AS Value
-                FROM #map_method_transaction_reason t
+                FROM PaymentMenthodReasonRefs t
                 WHERE t.MethodCode = '{0}'
             ", methodCode);
 
