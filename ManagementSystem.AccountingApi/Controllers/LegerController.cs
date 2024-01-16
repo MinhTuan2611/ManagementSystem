@@ -39,5 +39,21 @@ namespace ManagementSystem.AccountingApi.Controllers
             var result = await _legerService.ExportLeggerWithoutPaymentExcelFile(searchModel);
             return Ok(result);
         }
+
+        [HttpPost]
+        [Route("export_payment_vouchers_information_excel")]
+        public async Task<IActionResult> ExportPaymentVouchersInformationExcelFile([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _legerService.ExportPaymentVouchersInformationExcelFile(searchModel);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("view_payment_vouchers_information")]
+        public async Task<IActionResult> ViewPaymentVoucherInformation([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _legerService.ViewPaymentVoucherInformation(searchModel);
+            return Ok(result);
+        }
     }
 }

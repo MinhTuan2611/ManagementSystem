@@ -85,10 +85,34 @@ namespace ManagementSystem.StoragesApi.Controllers
         }
 
         [HttpPost]
-        [Route("export_bill_detail_excel")]
-        public async Task<IActionResult> ExportExcell([FromBody] SearchCriteria searchModel)
+        [Route("export_discount_information_excel")]
+        public async Task<IActionResult> ExportDiscountInformation([FromBody] SearchCriteria searchModel)
         {
-            var result = await _BillsService.ExportBillDetailExcel(searchModel);
+            var result = await _BillsService.ExportDiscountInformationExcel(searchModel);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("view_discount_informations")]
+        public async Task<IActionResult> ViewDiscountInformations([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _BillsService.ViewDiscountInformation(searchModel);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("export_revenue_information_excel")]
+        public async Task<IActionResult> ExportRevenueInformation([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _BillsService.ExportRevenueExcel(searchModel);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("view_revenue_informations")]
+        public async Task<IActionResult> ViewRevenueInformations([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _BillsService.ViewRevenueInformation(searchModel);
             return Ok(result);
         }
     }

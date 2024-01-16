@@ -517,61 +517,32 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
-        public async Task<ResponseDto> ExportBillDetailExcel(SearchCriteria model)
+        public async Task<List<DiscountInformationDto>> ViewDiscountInformation(SearchCriteria model)
         {
             try
             {
-                string fromDate = model.Criterias["FromDate"].ToString();
-                string toDate = model.Criterias["ToDate"].ToString();
+                var result = await GetDiscountInformations(model);
 
-                string query = string.Format(@"
-                    DROP TABLE IF EXISTS #tmp_bills
-                    DROP TABLE IF EXISTS #tmp_detail
-                    SELECT *
-                    INTO #tmp_bills
-                    FROM bills
-                    WHERE CreateDate between CONVERT(datetime, '{0}') AND CONVERT(datetime, '{1}')
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
 
-                    DROP TABLE IF EXISTS #tmp_detail
-                    select b.BillId
-		                    ,coalesce(d.CustomerCode, N'KL') As CustomerCode
-		                    ,coalesce(d.CustomerName, N'Khách lẻ') As CustomerName
-		                    ,c.ProductName AS ProductName
-		                    ,DiscountAmount + b.Amount AS AmountBeforeDiscount
-		                    ,b.DiscountAmount AS DiscountAmount
-		                    ,b.Amount AS Amount
-		                    ,a.CreateDate
-                    INTO #tmp_detail
-                    FROM #tmp_bills A
-                    JOIN BillDetails b ON a.BillId = b.BillId
-                    JOIN Products c on c.ProductId = b.ProductId
-                    LEFT JOIN Customers d on d.CustomerId = A.CustomerId
+        }
 
-                    SELECT CreateDate
-		                    ,BillId
-		                    ,CustomerCode
-		                    ,CustomerName
-		                    ,SUM(AmountBeforeDiscount) AS TotalAmountBeforeDiscount
-		                    ,SUM(DiscountAmount) AS TotalDiscountAmount
-		                    ,SUM(Amount) AS TotalAmount
-
-                    FROM #tmp_detail
-                    GROUP BY BillId
-		                    ,CustomerCode
-		                    ,CustomerName
-		                    ,CreateDate
-                    ORDER BY CreateDate DESC
-
-                ", fromDate, toDate);
-
-                var result = _context.BillExportDetailDtos.FromSqlRaw(query).ToList();
+        public async Task<ResponseDto> ExportDiscountInformationExcel(SearchCriteria model)
+        {
+            try
+            {
 
                 // Headers
                 var headers = new[] { "Ngày bán", "BillId", "Mã khách hàng", "Tên khách hàng", "Tổng tiền trước khi chiết khấu", "Tổng tiền chiết khấu", "Tổng tiền sau chiết khấu"};
 
                 // Handle file path
                 string dateFormat = DateTime.Now.ToString("yyyyMMdd");
-                string filePath = string.Format(StorageContant.billFilePathFomat, dateFormat, string.Format("BillDetail_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
+                string filePath = string.Format(StorageContant.billFilePathFomat, dateFormat, string.Format("DiscountInfomation_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
 
                 // Get the directory path
                 string directoryPath = Path.GetDirectoryName(filePath);
@@ -587,9 +558,10 @@ namespace ManagementSystem.StoragesApi.Services
                     File.Create(filePath).Close();
                 }
 
+                var resul = await GetDiscountInformations(model);
                 // Call the generic function
                 var excelExporter = new ExcelExporter();
-                excelExporter.ExportToExcel(result, headers, filePath);
+                excelExporter.ExportToExcel(resul, headers, filePath);
 
                 _responseDto.Result = filePath;
 
@@ -604,6 +576,67 @@ namespace ManagementSystem.StoragesApi.Services
 
             return _responseDto;
         }
+
+        public async Task<List<BillRevenueInformationDto>> ViewRevenueInformation(SearchCriteria model)
+        {
+            try
+            {
+                var result = await GetRevenueInformations(model);
+
+               return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+
+        public async Task<ResponseDto> ExportRevenueExcel(SearchCriteria model)
+        {
+            try
+            {
+
+                // Headers
+                var headers = new[] { " Mã Chi Nhánh", "Chi Nhánh", "Ngày ghi sổ", "TK Nợ", "TK Có", "Loại Phiếu", "Số CT", "Số hóa đơn", "Mã Đối Tượng", "Tên Đối Tượng", "Giá Trị", "Nội Dung" };
+
+                // Handle file path
+                string dateFormat = DateTime.Now.ToString("yyyyMMdd");
+                string filePath = string.Format(StorageContant.billFilePathFomat, dateFormat, string.Format("RevenueInformation_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
+
+                // Get the directory path
+                string directoryPath = Path.GetDirectoryName(filePath);
+
+                // Check if the directory exists, and if not, create it
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                if (!File.Exists(filePath))
+                {
+                    File.Create(filePath).Close();
+                }
+
+                var resul = await GetRevenueInformations(model);
+                // Call the generic function
+                var excelExporter = new ExcelExporter();
+                excelExporter.ExportToExcel(resul, headers, filePath);
+
+                _responseDto.Result = filePath;
+
+            }
+            catch (Exception ex)
+            {
+
+                var logger = new LogWriter("Function ExportRevenueExcel: " + ex.Message, _path);
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = ex.Message;
+            }
+
+            return _responseDto;
+        }
+
         #region Handle Get Data
         private async Task<List<BillDetailResponseDto>> GetBillDetailHandler(int billId)
         {
@@ -816,6 +849,96 @@ namespace ManagementSystem.StoragesApi.Services
                 await connection.ExecuteAsync(query, new { amount, documentNumber });
 
             }
+        }
+        private async Task<List<DiscountInformationDto>> GetDiscountInformations(SearchCriteria model)
+        {
+            string fromDate = model.Criterias["fromDate"].ToString();
+            string toDate = model.Criterias["toDate"].ToString();
+
+            string query = string.Format(@"
+                    DROP TABLE IF EXISTS #tmp_bills
+                    DROP TABLE IF EXISTS #tmp_detail
+                    SELECT *
+                    INTO #tmp_bills
+                    FROM bills
+                    WHERE FORMAT(CreateDate, 'yyyy-MM-dd') between CONVERT(datetime, '{0}') AND CONVERT(datetime, '{1}')
+
+                    DROP TABLE IF EXISTS #tmp_detail
+                    select b.BillId
+		                    ,coalesce(d.CustomerCode, N'KL') As CustomerCode
+		                    ,coalesce(d.CustomerName, N'Khách lẻ') As CustomerName
+		                    ,c.ProductName AS ProductName
+		                    ,DiscountAmount + b.Amount AS AmountBeforeDiscount
+		                    ,b.DiscountAmount AS DiscountAmount
+		                    ,b.Amount AS Amount
+		                    ,a.CreateDate
+                    INTO #tmp_detail
+                    FROM #tmp_bills A
+                    JOIN BillDetails b ON a.BillId = b.BillId
+                    JOIN Products c on c.ProductId = b.ProductId
+                    LEFT JOIN Customers d on d.CustomerId = A.CustomerId
+
+                    SELECT CreateDate
+		                    ,BillId
+		                    ,CustomerCode
+		                    ,CustomerName
+		                    ,SUM(AmountBeforeDiscount) AS TotalAmountBeforeDiscount
+		                    ,SUM(DiscountAmount) AS TotalDiscountAmount
+		                    ,SUM(Amount) AS TotalAmount
+
+                    FROM #tmp_detail
+                    GROUP BY BillId
+		                    ,CustomerCode
+		                    ,CustomerName
+		                    ,CreateDate
+                    ORDER BY CreateDate DESC
+
+                ", fromDate, toDate);
+
+            var result = _context.DiscountInformationDtos.FromSqlRaw(query).ToList();
+
+            return result;
+        }
+        private async Task<List<BillRevenueInformationDto>> GetRevenueInformations(SearchCriteria model)
+        {
+            string fromDate = model.Criterias["fromDate"].ToString();
+            string toDate = model.Criterias["toDate"].ToString();
+
+            string query = string.Format(@"
+                WITH cte as
+                (
+                SELECT DISTINCT IIF (COALESCE(br.BranchCode, '') <> '', br.BranchCode, h.BranchCode) AS BranchCode
+		                ,IIF (COALESCE(br.BranchName, '') <> '', br.BranchName, h.BranchName) AS BranchName
+		                ,FORMAT(a.TransactionDate, 'yyyy-MM-dd HH:MM:ss') AS TransactionDate
+		                ,a.DepositAccount
+		                ,a.CreditAccount
+		                ,a.DoccumentType
+		                ,a.DoccumentNumber
+		                ,a.BillId
+		                ,COALESCE(d.CustomerCode, 'KL') AS CustomerCode
+		                ,COALESCE(d.CustomerName, N'Khách lẻ') AS CustomerName
+		                ,a.Amount
+		                ,COALESCE(b.ForReason, c.ForReason) ForReason
+                FROM {0}..Legers a
+                LEFT JOIN StoragesProdDb.dbo.Customers d on d.CustomerId = a.CustomerId
+                LEFT JOIN {0}.[dbo].[ReceiptVouchers] b on b.DocumentNumber = a.DoccumentNumber and a.DoccumentType = 'THU'
+                LEFT JOIN {0}.[dbo].[CreditVouchers] c on c.DocumentNumber = a.DoccumentNumber and a.DoccumentType = 'BAOCO'
+                LEFT JOIN StoragesProdDb.dbo.Bills e on e.BillId = a.BillId
+                LEFT JOIN StoragesProdDb.dbo.Branches br on br.BranchId = e.BranchId
+                LEFT JOIN {1}..UserBranchs g on g.UserId = a.UserId
+                LEFT JOIN StoragesProdDb..Branches h ON g.BranchId = h.BranchId
+                where DoccumentType <> 'Chi'
+                AND 
+                (FORMAT(a.TransactionDate, 'yyyy-MM-dd') between CONVERT(datetime, '{2}') AND CONVERT(datetime, '{3}')))
+
+                SELECT *
+                from cte
+                ORDER BY BranchCode, TransactionDate
+            ", SD.AccountingDbName, SD.AccountDbName, fromDate, toDate);
+
+            var result = _context.BillRevenueInformationDtos.FromSqlRaw(query).ToList();
+
+            return result;
         }
         #endregion
     }

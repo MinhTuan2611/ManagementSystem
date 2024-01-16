@@ -14,7 +14,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int DiscountAmount { get; set; } = 0;
         public int DiscountPercentage { get; set; } = 0;
         public bool DiscountByPercentage { get; set; } = false;
-        public int Quantity { get; set; } = 0;
+        public float Quantity { get; set; } = 0;
         public int Amount { get; set; } = 0;
     }
 }
