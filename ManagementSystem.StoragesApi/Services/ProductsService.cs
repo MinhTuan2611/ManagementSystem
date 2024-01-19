@@ -306,31 +306,6 @@ namespace ManagementSystem.StoragesApi.Services
                         productUnit.IsPrimary = i == 0;
                         _unitOfWork.ProductUnitRepository.Update(productUnit);
 
-                        if (request.Units[i].BranchId > 0)
-                        {
-                            var productUnitBrach = _storageContext.ProductUnitBranches.FirstOrDefault(x => x.ProductUnitId == request.Units[i].Id && x.BranchId == request.Units[i].BranchId);
-
-                            if (productUnitBrach == null)
-                            {
-                                productUnitBrach = new ProductUnitBranch()
-                                {
-                                    ProductUnitId = productUnit.Id,
-                                    BranchId = request.Units[i].BranchId,
-                                    Price = request.Units[i].Price,
-                                    CreateBy = request.ModifyBy,
-                                    ModifyBy = request.ModifyBy,
-                                };
-
-                                _storageContext.ProductUnitBranches.Add(productUnitBrach);
-                                _storageContext.SaveChanges();
-                            }
-                            else
-                            {
-                                productUnitBrach.Price = request.Units[i].Price;
-                                productUnitBrach.ModifyDate = DateTime.Now;
-                                productUnitBrach.ModifyBy = request.ModifyBy;
-                            }
-                        }
                     } else
                     {
                         ProductUnit productUnit = new ProductUnit();
@@ -344,6 +319,40 @@ namespace ManagementSystem.StoragesApi.Services
                         productUnit.Barcode = request.Units[i].Barcode;
                         productUnit.IsPrimary = i == 0;
                         _unitOfWork.ProductUnitRepository.Insert(productUnit);
+                    }
+                }
+
+
+                foreach(var entry in request.UnitDictionary)
+                {
+                    int branchId = entry.Key;
+                    List<ProductUnitDetail> productUnitDetails = entry.Value;
+
+                    foreach (var item in productUnitDetails)
+                    {
+                        var productUnitBranch = _storageContext.ProductUnitBranches.FirstOrDefault(x => x.BranchId == branchId && x.ProductUnitId == item.Id);
+
+                        if (productUnitBranch != null && item.Price != productUnitBranch.Price)
+                        {
+                            productUnitBranch.Price = item.Price;
+                            productUnitBranch.ModifyDate = DateTime.Now;
+
+                            _storageContext.SaveChanges();
+                        }
+                        else if (productUnitBranch == null)
+                        {
+                            productUnitBranch = new ProductUnitBranch()
+                            {
+                                ProductUnitId = item.Id.Value,
+                                BranchId = branchId,
+                                Price = item.Price,
+                                CreateBy = request.ModifyBy,
+                                ModifyBy = request.ModifyBy
+                            };
+
+                            _storageContext.ProductUnitBranches.Add(productUnitBranch);
+                            _storageContext.SaveChanges();
+                        }
                     }
                 }
 
