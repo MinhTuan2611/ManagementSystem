@@ -57,7 +57,7 @@ namespace ManagementSystem.MainApp.Controllers
 
                 if (inventoryResult.IsSuccess == false)
                 {
-                    var deleteBillFlags = await HttpRequestsHelper.Delete<bool>(SD.StorageApiUrl + "bills/delete", resultBill.BillId);
+                    var deleteBillFlags = await HttpRequestsHelper.Delete<bool>(SD.StorageApiUrl + $"bills/delete/{resultBill.BillId}/{userId}", resultBill.BillId);
                     return StatusCode(StatusCodes.Status500InternalServerError, inventoryResult.Message);
                 }
 
@@ -285,6 +285,53 @@ namespace ManagementSystem.MainApp.Controllers
             return Ok(result);
         }
 
+        [HttpDelete("{billId}")]
+        public async Task<IActionResult> DeleteBill(int billId)
+        {
+            var userId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+
+            var deleteBillFlags = await HttpRequestsHelper.Delete<bool>(SD.StorageApiUrl + $"bills/delete/{billId}/{userId}", billId);
+
+            return Ok();
+        }
+
+        [HttpPost("export_bill_detail_excel")]
+        public async Task<IActionResult> ExportBillDetailExcel([FromBody] string lístBillId)
+        {
+            var result = await HttpRequestsHelper.Post<ResponseDto>(SD.StorageApiUrl + "bills/export_bill_detail_excel", lístBillId);
+
+            if (result.IsSuccess == false)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+
+            string filePath = result.Result.ToString();
+            // Set the content type based on the file type
+            string contentType = "application/octet-stream";
+
+            // Set the file name displayed in the download dialog
+            string fileName = Path.GetFileName(filePath);
+
+
+            // Create a FileStreamResult with the file stream
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+
+            var response = File(fileStream, contentType, fileName);
+
+            // Register a callback to close the stream after the response is sent
+            Response.OnCompleted(() =>
+            {
+                fileStream.Dispose();
+
+                // Delete the file after it has been downloaded
+                System.IO.File.Delete(filePath);
+
+                return Task.CompletedTask;
+            });
+
+            return response;
+        }
         #region Private handle function
         // Create private function Handler.
         private NewInventoryVoucherDto PrepareInventoryModel(BillInfo bill)

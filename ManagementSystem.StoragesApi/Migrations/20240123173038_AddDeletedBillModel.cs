@@ -64,6 +64,100 @@ namespace ManagementSystem.StoragesApi.Migrations
                 {
                     table.PrimaryKey("PK_BillPaymentDeleted", x => x.Id);
                 });
+
+            migrationBuilder.Sql(@"
+				CREATE OR ALTER PROC usp_delete_bill
+				(
+					@BillId INT,
+					@UserId INT
+				)
+				AS
+				BEGIN
+					BEGIN TRY
+						BEGIN TRAN
+
+						INSERT INTO [dbo].[BillDetailDeleted]
+							   ([Id]
+							   ,[BillId]
+							   ,[ProductId]
+							   ,[UnitId]
+							   ,[DiscountAmount]
+							   ,[DiscountPercentage]
+							   ,[DiscountByPercentage]
+							   ,[Quantity]
+							   ,[Amount]
+							   ,[UserId])
+						SELECT [Id]
+							   ,[BillId]
+							   ,[ProductId]
+							   ,[UnitId]
+							   ,[DiscountAmount]
+							   ,[DiscountPercentage]
+							   ,[DiscountByPercentage]
+							   ,[Quantity]
+							   ,[Amount]
+							   ,@UserId
+						 FROM dbo.BillDetails
+						 WHERE BillId = @BillId
+
+						 INSERT INTO [dbo].[BillPaymentDeleted]
+							   ([Id]
+							   ,[BillId]
+							   ,[PaymentMethodId]
+							   ,[Amount]
+							   ,[PaymentStatus]
+							   ,[PaymentTransactionRef]
+							   ,[UserId])
+						SELECT [Id]
+							   ,[BillId]
+							   ,[PaymentMethodId]
+							   ,[Amount]
+							   ,[PaymentStatus]
+							   ,[PaymentTransactionRef]
+							   ,@UserId
+						FROM BillPayments
+						WHERE BillId = @BillId
+
+						INSERT INTO [dbo].[Bills]
+							   ([totalAmount]
+							   ,[totalPaid]
+							   ,[totalChange]
+							   ,[CustomerId]
+							   ,[CreateDate]
+							   ,[CreateBy]
+							   ,[ModifyDate]
+							   ,[ModifyBy]
+							   ,[IsAutoComplete]
+							   ,[PaymentStatus]
+							   ,[ShiftId]
+							   ,[BranchId])
+						SELECT [totalAmount]
+							   ,[totalPaid]
+							   ,[totalChange]
+							   ,[CustomerId]
+							   ,[CreateDate]
+							   ,[CreateBy]
+							   ,[ModifyDate]
+							   ,[ModifyBy]
+							   ,[IsAutoComplete]
+							   ,[PaymentStatus]
+							   ,[ShiftId]
+							   ,[BranchId]
+						  FROM dbo.Bills
+						  WHERE BillId = @BillId
+
+						  DELETE BillDetails
+						  WHERE BillId = @BillId
+
+						  DELETE BillPayments
+						  WHERE BillId = @BillId
+
+						COMMIT
+					END TRY
+					BEGIN CATCH
+						ROLLBACK
+					END CATCH
+				END");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

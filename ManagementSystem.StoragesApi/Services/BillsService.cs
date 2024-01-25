@@ -16,6 +16,8 @@ using ManagementSystem.StoragesApi.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Xml.Linq;
+using ManagementSystem.Common.Models.Dtos.Bills;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -474,39 +476,13 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
-        public async Task<bool> DeleteBills(int billId)
+        public async Task<bool> DeleteBills(int billId, int ActionUser)
         {
             try
             {
-                var billPayments = _context.BillPayments
-                .Where(x => x.BillId == billId).ToList();
+                _context.Database.ExecuteSqlRaw($"EXEC usp_delete_bill @BillId=${billId}, @UserId={ActionUser}");
 
-                if (billPayments.Count > 0)
-                {
-                    _context.BillPayments.RemoveRange(billPayments);
-                }
-
-                var billDetail = _context.BillDetails
-                    .AsNoTracking()
-                    .Where(x => x.BillId == billId).ToList();
-
-                if (billDetail.Count > 0)
-                {
-                    _context.BillDetails.RemoveRange(billDetail);
-                }
-
-                var bill = _context.Bills
-                    .AsNoTracking()
-                    .SingleOrDefault(x => x.BillId == billId);
-
-                if (bill != null)
-                {
-                    _context.Bills.Remove(bill);
-                }
-
-                _context.SaveChanges();
-
-
+                await DeleteAccountingVouchers(billId, ActionUser);
 
                 return true;
             }
@@ -630,6 +606,51 @@ namespace ManagementSystem.StoragesApi.Services
             {
 
                 var logger = new LogWriter("Function ExportRevenueExcel: " + ex.Message, _path);
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = ex.Message;
+            }
+
+            return _responseDto;
+        }
+
+        public async Task<ResponseDto> ExportBillDetailExcel(string listBillId)
+        {
+            try
+            {
+
+                // Headers
+                var headers = new[] { "Hóa Đơn","Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", "Thành Tiền" };
+
+                // Handle file path
+                string dateFormat = DateTime.Now.ToString("yyyyMMdd");
+                string filePath = string.Format(StorageContant.billFilePathFomat, dateFormat, string.Format("chitiet_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
+
+                // Get the directory path
+                string directoryPath = Path.GetDirectoryName(filePath);
+
+                // Check if the directory exists, and if not, create it
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                if (!File.Exists(filePath))
+                {
+                    File.Create(filePath).Close();
+                }
+
+                var resul = await GetBillExcelView(listBillId);
+                // Call the generic function
+                var excelExporter = new ExcelExporter();
+                excelExporter.ExportToExcel(resul, headers, filePath);
+
+                _responseDto.Result = filePath;
+
+            }
+            catch (Exception ex)
+            {
+
+                var logger = new LogWriter("Function ExportBillDetailExcel: " + ex.Message, _path);
                 _responseDto.IsSuccess = false;
                 _responseDto.Message = ex.Message;
             }
@@ -820,6 +841,27 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
+        private async Task<List<BillDetailExcelView>> GetBillExcelView(string listBills)
+        {
+            string connectionString = _configuration.GetConnectionString("StoragesDbConnStr");
+
+            string query = string.Format(@"SELECT b.ProductCode
+                                            ,a.BillId
+		                                    ,b.ProductName
+		                                    ,a.Quantity
+		                                    ,a.Amount
+                                    FROM BillDetails a
+                                    JOIN Products B ON a.ProductId = b.ProductId
+                                    WHERE a.BillId IN ({0})
+
+                                    ORDER BY a.BillId", listBills);
+            using(var connection = new SqlConnection(connectionString))
+            {
+                var result = connection.Query<BillDetailExcelView>(query).ToList();
+
+                return result;
+            }
+        }
         private async Task DeleteVoucher(int documentNumber, string query, string documentType)
         {
             string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
@@ -863,7 +905,7 @@ namespace ManagementSystem.StoragesApi.Services
                     FROM bills
                     WHERE FORMAT(CreateDate, 'yyyy-MM-dd') between CONVERT(datetime, '{0}') AND CONVERT(datetime, '{1}')
 
-DROP TABLE IF EXISTS #tmp_detail
+                    DROP TABLE IF EXISTS #tmp_detail
                     select b.BillId
 		                    ,coalesce(d.CustomerCode, N'KL') As CustomerCode
 		                    ,coalesce(d.CustomerName, N'Khách lẻ') As CustomerName
@@ -945,6 +987,21 @@ DROP TABLE IF EXISTS #tmp_detail
             var result = _context.BillRevenueInformationDtos.FromSqlRaw(query).ToList();
 
             return result;
+        }
+
+        private async Task DeleteAccountingVouchers(int billId, int actionUser)
+        {
+            string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
+
+            string deleterQuery = @"usp_delete_bill_handling";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@BillId", billId);
+            parameters.Add("@UserId", actionUser);
+            using (var connection = new SqlConnection(accountingConnection))
+            {
+                await connection.ExecuteAsync(deleterQuery, parameters, commandType: System.Data.CommandType.StoredProcedure);
+            }
         }
         #endregion
     }

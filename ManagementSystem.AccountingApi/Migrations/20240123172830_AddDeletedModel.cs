@@ -130,6 +130,231 @@ namespace ManagementSystem.AccountingApi.Migrations
                 {
                     table.PrimaryKey("PK_ReceiptVoucherDeleted", x => x.DocumentNumber);
                 });
+
+            migrationBuilder.Sql(@"
+				CREATE OR ALTER PROC usp_delete_bill_handling
+				(
+					@BillId INT,
+					@UserId INT
+				)
+				AS
+				BEGIN
+					DECLARE @inventoryNummber INT
+							,@creditVoucherNumber INT
+							,@receiptVoucherNumber INT
+
+					SELECT @inventoryNummber = DocummentNumber
+					FROM dbo.InventoryVouchers
+					WHERE BillId = @BillId
+
+					SELECT @creditVoucherNumber = DocumentNumber
+					FROM dbo.CreditVouchers
+					WHERE BillId = @BillId
+
+					SELECT *
+					FROM dbo.ReceiptVouchers
+					WHERE BillId = @BillId
+
+					DROP TABLE IF EXISTS #tmpLegers
+					SELECT *
+					INTO #tmpLegers
+					FROM Legers
+					WHERE DoccumentNumber = @creditVoucherNumber
+					AND DoccumentType = 'BAOCO'
+					UNION
+					SELECT *
+					FROM dbo.Legers
+					WHERE DoccumentNumber = @receiptVoucherNumber
+					AND DoccumentType = 'THU'
+
+					BEGIN TRY
+						BEGIN TRAN
+							INSERT INTO [dbo].[LegerDeleted]
+								   ([LegerId]
+								   ,[TransactionDate]
+								   ,[CreditAccount]
+								   ,[DepositAccount]
+								   ,[DoccumentType]
+								   ,[DoccumentNumber]
+								   ,[BillId]
+								   ,[CustomerId]
+								   ,[CustomerName]
+								   ,[Amount]
+								   ,[UserId]
+								   ,[StorageId])
+							SELECT [LegerId]
+								   ,[TransactionDate]
+								   ,[CreditAccount]
+								   ,[DepositAccount]
+								   ,[DoccumentType]
+								   ,[DoccumentNumber]
+								   ,[BillId]
+								   ,[CustomerId]
+								   ,[CustomerName]
+								   ,[Amount]
+								   ,@UserId
+								   ,[StorageId]
+							FROM #tmpLegers
+
+							INSERT INTO [dbo].[ReceiptVoucherDeleted]
+								   ([DocumentNumber]
+								   ,[CustomerId]
+								   ,[CustomerName]
+								   ,[ForReason]
+								   ,[TotalMoney]
+								   ,[UserId]
+								   ,[BillId]
+								   ,[TransactionDate]
+								   ,[UpdatedDate]
+								   ,[Status]
+								   ,[GroupId])
+						SELECT [DocumentNumber]
+							   ,[CustomerId]
+							   ,[CustomerName]
+							   ,[ForReason]
+							   ,[TotalMoney]
+							   ,@UserId
+							   ,[BillId]
+							   ,[TransactionDate]
+							   ,[UpdatedDate]
+							   ,[Status]
+							   ,[GroupId]
+						FROM dbo.ReceiptVouchers
+						WHERE DocumentNumber = @receiptVoucherNumber
+
+						INSERT INTO [dbo].[CreditVoucherDeleted]
+								   ([DocumentNumber]
+								   ,[CustomerId]
+								   ,[CustomerName]
+								   ,[ForReason]
+								   ,[TotalMoney]
+								   ,[UserId]
+								   ,[PaymentMethodId]
+								   ,[TransactionDate]
+								   ,[UpdatedDate]
+								   ,[Status]
+								   ,[CreditAccount]
+								   ,[DebitAccount]
+								   ,[BillId]
+								   ,[GroupId])
+						SELECT [DocumentNumber]
+							   ,[CustomerId]
+							   ,[CustomerName]
+							   ,[ForReason]
+							   ,[TotalMoney]
+							   ,@UserId
+							   ,[PaymentMethodId]
+							   ,[TransactionDate]
+							   ,[UpdatedDate]
+							   ,[Status]
+							   ,[CreditAccount]
+							   ,[DebitAccount]
+							   ,[BillId]
+							   ,[GroupId]
+						FROM dbo.CreditVouchers
+						WHERE DocumentNumber = @creditVoucherNumber
+
+						INSERT INTO [dbo].[InventoryVoucherDetailDeleted]
+								   ([Id]
+								   ,[DocummentNumber]
+								   ,[UnitId]
+								   ,[ProductId]
+								   ,[Quantity]
+								   ,[Price]
+								   ,[DebitAccount]
+								   ,[CreditAccount]
+								   ,[TotalMoneyBeforeTax]
+								   ,[DebitAccountMoney]
+								   ,[CreditAccountMoney]
+								   ,[PaymentDiscountAccount]
+								   ,[PaymentDiscountMoney]
+								   ,[TaxAccount]
+								   ,[TaxMoney]
+								   ,[TotalMoneyAfterTax]
+								   ,[Note]
+								   ,[UserId])
+						SELECT [Id]
+							   ,[DocummentNumber]
+							   ,[UnitId]
+							   ,[ProductId]
+							   ,[Quantity]
+							   ,[Price]
+							   ,[DebitAccount]
+							   ,[CreditAccount]
+							   ,[TotalMoneyBeforeTax]
+							   ,[DebitAccountMoney]
+							   ,[CreditAccountMoney]
+							   ,[PaymentDiscountAccount]
+							   ,[PaymentDiscountMoney]
+							   ,[TaxAccount]
+							   ,[TaxMoney]
+							   ,[TotalMoneyAfterTax]
+							   ,[Note]
+							   ,@UserId
+						FROM dbo.InventoryVoucherDetails
+						WHERE DocummentNumber = @inventoryNummber
+
+						INSERT INTO [dbo].[InventoryVoucherDeleted]
+						   ([DocummentNumber]
+						   ,[UserId]
+						   ,[BillId]
+						   ,[CustomerId]
+						   ,[CustomerName]
+						   ,[ShiftId]
+						   ,[StorageId]
+						   ,[PurchasingRepresentive]
+						   ,[RepresentivePhone]
+						   ,[ReasonFor]
+						   ,[TransactionDate]
+						   ,[UpdatedDate]
+						   ,[Note]
+						   ,[CreditAccount]
+						   ,[DebitAccount]
+						   ,[GroupId]
+						   ,[Status])
+
+						SELECT [DocummentNumber]
+							   ,[UserId]
+							   ,[BillId]
+							   ,[CustomerId]
+							   ,[CustomerName]
+							   ,[ShiftId]
+							   ,[StorageId]
+							   ,[PurchasingRepresentive]
+							   ,[RepresentivePhone]
+							   ,[ReasonFor]
+							   ,[TransactionDate]
+							   ,[UpdatedDate]
+							   ,[Note]
+							   ,[CreditAccount]
+							   ,[DebitAccount]
+							   ,[GroupId]
+							   ,[Status]
+						FROM dbo.InventoryVouchers
+						WHERE DocummentNumber = @inventoryNummber
+
+						DELETE a
+						FROM dbo.Legers a
+						JOIN #tmpLegers b on a.LegerId = b.LegerId
+
+						DELETE dbo.CreditVouchers
+						WHERE DocumentNumber = @creditVoucherNumber
+
+						DELETE dbo.ReceiptVouchers
+						WHERE DocumentNumber = @receiptVoucherNumber
+
+						DELETE dbo.InventoryVoucherDetails
+						WHERE DocummentNumber = @inventoryNummber
+
+						DELETE dbo.InventoryVouchers
+						WHERE DocummentNumber = @inventoryNummber
+						COMMIT TRAN
+
+					END TRY
+					BEGIN CATCH
+						ROLLBACK TRAN
+					END CATCH
+				END");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

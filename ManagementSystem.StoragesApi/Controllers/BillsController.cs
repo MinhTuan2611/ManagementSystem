@@ -76,10 +76,10 @@ namespace ManagementSystem.StoragesApi.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("delete/{billId}")]
-        public async Task<IActionResult> DeleteBill(int billId)
+        [HttpDelete("delete/{billId}/{actionUser}")]
+        public async Task<IActionResult> DeleteBill(int billId, int actionUser)
         {
-            var result = await _BillsService.DeleteBills(billId );
+            var result = await _BillsService.DeleteBills(billId, actionUser );
 
             return Ok(result);
         }
@@ -113,6 +113,14 @@ namespace ManagementSystem.StoragesApi.Controllers
         public async Task<IActionResult> ViewRevenueInformations([FromBody] SearchCriteria searchModel)
         {
             var result = await _BillsService.ViewRevenueInformation(searchModel);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("export_bill_detail_excel")]
+        public async Task<IActionResult> ExportBillDetail([FromBody] string lítBillIdl)
+        {
+            var result = await _BillsService.ExportBillDetailExcel(lítBillIdl);
             return Ok(result);
         }
     }
