@@ -538,11 +538,11 @@ namespace ManagementSystem.StoragesApi.Services
             {
 
                 // Headers
-                var headers = new[] { "Ngày bán", "BillId", "Mã khách hàng", "Tên khách hàng", "Tổng tiền trước khi chiết khấu", "Tổng tiền chiết khấu", "Tổng tiền sau chiết khấu"};
+                var headers = new[] { " Mã Chi Nhánh", "Chi Nhánh", "Ngày bán", "BillId", "Mã khách hàng", "Tên khách hàng", "Tổng tiền trước khi chiết khấu", "Tổng tiền chiết khấu", "Tổng tiền sau chiết khấu"};
 
                 // Handle file path
                 string dateFormat = DateTime.Now.ToString("yyyyMMdd");
-                string filePath = string.Format(StorageContant.billFilePathFomat, dateFormat, string.Format("DiscountInfomation_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
+                string filePath = string.Format(StorageContant.billFilePathFomat, dateFormat, string.Format("ChietKhau_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
 
                 // Get the directory path
                 string directoryPath = Path.GetDirectoryName(filePath);
@@ -602,7 +602,7 @@ namespace ManagementSystem.StoragesApi.Services
 
                 // Handle file path
                 string dateFormat = DateTime.Now.ToString("yyyyMMdd");
-                string filePath = string.Format(StorageContant.billFilePathFomat, dateFormat, string.Format("RevenueInformation_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
+                string filePath = string.Format(StorageContant.billFilePathFomat, dateFormat, string.Format("DoanhThu_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
 
                 // Get the directory path
                 string directoryPath = Path.GetDirectoryName(filePath);
@@ -863,7 +863,7 @@ namespace ManagementSystem.StoragesApi.Services
                     FROM bills
                     WHERE FORMAT(CreateDate, 'yyyy-MM-dd') between CONVERT(datetime, '{0}') AND CONVERT(datetime, '{1}')
 
-                    DROP TABLE IF EXISTS #tmp_detail
+DROP TABLE IF EXISTS #tmp_detail
                     select b.BillId
 		                    ,coalesce(d.CustomerCode, N'KL') As CustomerCode
 		                    ,coalesce(d.CustomerName, N'Khách lẻ') As CustomerName
@@ -872,25 +872,31 @@ namespace ManagementSystem.StoragesApi.Services
 		                    ,b.DiscountAmount AS DiscountAmount
 		                    ,b.Amount AS Amount
 		                    ,a.CreateDate
+							,e.BranchCode
+							,e.BranchName
                     INTO #tmp_detail
                     FROM #tmp_bills A
                     JOIN BillDetails b ON a.BillId = b.BillId
                     JOIN Products c on c.ProductId = b.ProductId
+					JOIN Branches e ON e.BranchId = a.BranchId
                     LEFT JOIN Customers d on d.CustomerId = A.CustomerId
 
                     SELECT CreateDate
 		                    ,BillId
+							,BranchCode
+							,BranchName
 		                    ,CustomerCode
 		                    ,CustomerName
 		                    ,SUM(AmountBeforeDiscount) AS TotalAmountBeforeDiscount
 		                    ,SUM(DiscountAmount) AS TotalDiscountAmount
 		                    ,SUM(Amount) AS TotalAmount
-
                     FROM #tmp_detail
                     GROUP BY BillId
 		                    ,CustomerCode
 		                    ,CustomerName
 		                    ,CreateDate
+							,BranchCode
+							,BranchName
                     ORDER BY CreateDate DESC
 
                 ", fromDate, toDate);

@@ -32,7 +32,9 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<ActivityLog> ActivityLog { get; set; }
         public DbSet<ProductSupplier> ProductSuppliers { get; set; }
         public DbSet<ProductUnitBranch> ProductUnitBranches { get; set; }
-
+        public DbSet<BillDeleted> BillDeleted { get; set; }
+        public DbSet<BillPaymentDeleted> BillPaymentDeleted { get; set; }
+        public DbSet<BillDetailDeleted> BillDetailDeleted { get; set; }
         // Response Value
         public DbSet<CustomerResponseDto> customerResponseDtos { get; set; }
         public DbSet<BillSearchingResponseDto> billSearchingResponseDtos { get; set; }
