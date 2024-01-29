@@ -306,31 +306,6 @@ namespace ManagementSystem.StoragesApi.Services
                         productUnit.IsPrimary = i == 0;
                         _unitOfWork.ProductUnitRepository.Update(productUnit);
 
-                        if (request.Units[i].BranchId > 0)
-                        {
-                            var productUnitBrach = _storageContext.ProductUnitBranches.FirstOrDefault(x => x.ProductUnitId == request.Units[i].Id && x.BranchId == request.Units[i].BranchId);
-
-                            if (productUnitBrach == null)
-                            {
-                                productUnitBrach = new ProductUnitBranch()
-                                {
-                                    ProductUnitId = productUnit.Id,
-                                    BranchId = request.Units[i].BranchId,
-                                    Price = request.Units[i].Price,
-                                    CreateBy = request.ModifyBy,
-                                    ModifyBy = request.ModifyBy,
-                                };
-
-                                _storageContext.ProductUnitBranches.Add(productUnitBrach);
-                                _storageContext.SaveChanges();
-                            }
-                            else
-                            {
-                                productUnitBrach.Price = request.Units[i].Price;
-                                productUnitBrach.ModifyDate = DateTime.Now;
-                                productUnitBrach.ModifyBy = request.ModifyBy;
-                            }
-                        }
                     } else
                     {
                         ProductUnit productUnit = new ProductUnit();
@@ -344,6 +319,40 @@ namespace ManagementSystem.StoragesApi.Services
                         productUnit.Barcode = request.Units[i].Barcode;
                         productUnit.IsPrimary = i == 0;
                         _unitOfWork.ProductUnitRepository.Insert(productUnit);
+                    }
+                }
+
+
+                foreach(var entry in request.UnitDictionary)
+                {
+                    int branchId = entry.Key;
+                    List<ProductUnitDetail> productUnitDetails = entry.Value;
+
+                    foreach (var item in productUnitDetails)
+                    {
+                        var productUnitBranch = _storageContext.ProductUnitBranches.FirstOrDefault(x => x.BranchId == branchId && x.ProductUnitId == item.Id);
+
+                        if (productUnitBranch != null && item.Price != productUnitBranch.Price)
+                        {
+                            productUnitBranch.Price = item.Price;
+                            productUnitBranch.ModifyDate = DateTime.Now;
+
+                            _storageContext.SaveChanges();
+                        }
+                        else if (productUnitBranch == null)
+                        {
+                            productUnitBranch = new ProductUnitBranch()
+                            {
+                                ProductUnitId = item.Id.Value,
+                                BranchId = branchId,
+                                Price = item.Price,
+                                CreateBy = request.ModifyBy,
+                                ModifyBy = request.ModifyBy
+                            };
+
+                            _storageContext.ProductUnitBranches.Add(productUnitBranch);
+                            _storageContext.SaveChanges();
+                        }
                     }
                 }
 
@@ -462,74 +471,6 @@ namespace ManagementSystem.StoragesApi.Services
             productDetailInSale.ProductUnits = listUnitOfProduct;
             return productDetailInSale;
         }
-
-        //public List<ProductDetailInSale>? AutoCompleteGetProductDetailForSale(string barcode, int branchId = 3)
-        //{
-        //    List<ProductDetailInSale> productDetailInSales = new List<ProductDetailInSale>();
-        //    //barcode = convertToUnSign(barcode);
-        //    var valueSearch = barcode.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        //    string[] includes = { "Product", "Unit" };
-        //    List<ProductUnit> productDetails = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes).AsNoTracking().OrderBy(x => x.Id).ToList();
-        //    productDetails = productDetails.Where(x => x.Barcode == barcode || valueSearch.All(keyWord => x.Product.ProductName.ToLower().Contains(keyWord) 
-        //                                                                                                || x.Product.ProductCode.ToLower().Contains(keyWord)
-        //                                                                                                || x.Unit.UnitName.ToLower().Contains(keyWord))).ToList();
-
-        //    var productUnitBranchs = _unitOfWork.ProductUnitBranchRepository.Get().ToList();
-
-        //    if (productDetails == null)
-        //    {
-        //        return null;
-        //    }
-        //    string[] unitIncludes = { "Unit" };
-        //    foreach(ProductUnit productDetail in productDetails)
-        //    {
-        //        ProductDetailInSale productDetailInSale = new ProductDetailInSale();
-
-        //        var units = _unitOfWork.ProductUnitRepository
-        //                .GetWithInclude(x => x.ProductId == productDetail.ProductId && x.Status == ActiveStatus.Active, unitIncludes)
-        //                .OrderBy(x => x.Id).ToList();
-        //        var listUnitOfProduct = new List<ProductUnitDetail>();
-        //        foreach (var unit in units)
-        //        {
-        //            ProductUnitDetail productUnit = new ProductUnitDetail();
-        //            ProductUnitBranch unitBranchdetail = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == unit.Id && x.BranchId == branchId));
-
-        //            productUnit.Id = unit.Id;
-        //            productUnit.ProductId = unit.ProductId;
-        //            productUnit.UnitId = unit.UnitId;
-        //            productUnit.UnitName = unit.Unit?.UnitName;
-        //            productUnit.UnitExchange = unit.UnitExchange;
-        //            productUnit.Price = unitBranchdetail != null ? (int)unitBranchdetail.Price : unit.Price;
-        //            productUnit.OldPrice = unit.OldPrice;
-        //            productUnit.Barcode = unit.Barcode;
-        //            productUnit.IsPrimary = unit.IsPrimary;
-        //            listUnitOfProduct.Add(productUnit);
-        //        }
-        //        var currentUnit = new ProductUnitDetail();
-        //        ProductUnitBranch unitBranch = productUnitBranchs.FirstOrDefault(x => (x.ProductUnitId == productDetail.Id && x.BranchId == branchId));
-
-        //        currentUnit.Id = productDetail.Id;
-        //        currentUnit.ProductId = productDetail.ProductId;
-        //        currentUnit.UnitId = productDetail.UnitId;
-        //        currentUnit.UnitName = productDetail.Unit?.UnitName;
-        //        currentUnit.UnitExchange = productDetail.UnitExchange;
-        //        currentUnit.Price = unitBranch != null ? (int)unitBranch.Price : productDetail.Price;
-        //        currentUnit.OldPrice = productDetail.OldPrice;
-        //        currentUnit.Barcode = productDetail.Barcode;
-        //        currentUnit.IsPrimary = productDetail.IsPrimary;
-
-        //        productDetailInSale.Id = productDetail.ProductId;
-        //        productDetailInSale.Barcode = productDetail.Barcode ?? string.Empty;
-        //        productDetailInSale.Name = productDetail.Product?.ProductName ?? string.Empty;
-        //        productDetailInSale.Unit = currentUnit;
-        //        productDetailInSale.Price = unitBranch != null ? (int)unitBranch.Price : productDetail.Price;
-        //        productDetailInSale.ProductUnits = listUnitOfProduct;
-
-        //        productDetailInSales.Add(productDetailInSale);
-        //    }
-            
-        //    return productDetailInSales;
-        //}
 
         public TPagination<ProductDetailInSale>? AutoCompleteGetProductDetailForSale(string barcode, int pageNumber, int pageSize, int branchId = 3)
         {

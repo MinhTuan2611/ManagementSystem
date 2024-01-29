@@ -124,6 +124,43 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.ToTable("Bills");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.BillDeleted", b =>
+                {
+                    b.Property<int>("BillId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsAutoComplete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ShiftId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("totalAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("totalChange")
+                        .HasColumnType("int");
+
+                    b.Property<int>("totalPaid")
+                        .HasColumnType("int");
+
+                    b.HasKey("BillId");
+
+                    b.ToTable("BillDeleted");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.BillDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -179,6 +216,43 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.ToTable("BillDetails");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.BillDetailDeleted", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BillId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DiscountAmount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("DiscountByPercentage")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("DiscountPercentage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BillDetailDeleted");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.BillPayment", b =>
                 {
                     b.Property<int>("Id")
@@ -221,6 +295,34 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.HasIndex("PaymentMethodId");
 
                     b.ToTable("BillPayments");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.BillPaymentDeleted", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BillId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentTransactionRef")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BillPaymentDeleted");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Branch", b =>
@@ -1112,6 +1214,47 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.ToTable("BillPaymentDetailResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.BillRevenueInformationDto", b =>
+                {
+                    b.Property<long?>("Amount")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("BillId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BranchCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BranchName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreditAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DepositAccount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DoccumentNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DoccumentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ForReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TransactionDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("BillRevenueInformationDto", null, t => t.ExcludeFromMigrations());
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.BillSearchingResponseDto", b =>
                 {
                     b.Property<int>("BillId")
@@ -1157,6 +1300,40 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasColumnType("int");
 
                     b.ToTable("BillSearchingResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.DiscountInformationDto", b =>
+                {
+                    b.Property<int>("BillId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BranchCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BranchName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalAmountBeforeDiscount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalDiscountAmount")
+                        .HasColumnType("int");
+
+                    b.ToTable("DiscountInformationDto", null, t => t.ExcludeFromMigrations());
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.EmployeeShiftInformationDto", b =>
@@ -1214,6 +1391,20 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("ProductAutoGenerationResponseDto", null, t => t.ExcludeFromMigrations());
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.ProductUnitBranchResponseDto", b =>
+                {
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("Price")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("ProductUnitId")
+                        .HasColumnType("int");
+
+                    b.ToTable("ProductUnitBranchResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Bill", b =>

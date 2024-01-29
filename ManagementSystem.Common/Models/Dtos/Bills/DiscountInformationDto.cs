@@ -5,6 +5,8 @@ namespace ManagementSystem.Common.Models.Dtos
     [Keyless]
     public class DiscountInformationDto
     {
+        public string BranchCode { get; set; }
+        public string BranchName { get; set; }
         public DateTime CreateDate { get; set; }
         public int BillId { get; set; }
         public string? CustomerCode { get; set; }

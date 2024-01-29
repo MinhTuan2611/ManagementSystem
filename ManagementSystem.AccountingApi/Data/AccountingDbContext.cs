@@ -35,6 +35,13 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<DebitVoucher> DebitVouchers { get; set; }
         public DbSet <PaymentMenthodReasonRef> PaymentMenthodReasonRefs { get; set; }
 
+        public DbSet<InventoryVoucherDeleted> InventoryVoucherDeleted { get; set; }
+        public DbSet<InventoryVoucherDetailDeleted> InventoryVoucherDetailDeleted { get; set; }
+        public DbSet<CreditVoucherDeleted> CreditVoucherDeleted { get; set; }
+        public DbSet<ReceiptVoucherDeleted> ReceiptVoucherDeleted { get; set; }
+        public DbSet<LegerDeleted> LegerDeleted { get; set; }
+
+
         // Add context to return tabbles
         public DbSet<InventoryVoucherResponseDto> InventoryVoucherResponseDto { get; set; }
         public DbSet<InventoryVoucherDetailResponseDto> InventoryVoucherDetailResponses { get; set; }
