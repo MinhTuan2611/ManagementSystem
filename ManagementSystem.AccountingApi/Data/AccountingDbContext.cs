@@ -51,6 +51,7 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<UnitResponseDto> UnitResponseDtos { get; set; }
         public DbSet<LegerResponseDto> LegerResponseDtos { get; set; }
         public DbSet<ProductStorageInformationDto> ProductStorageInformationDtos { get; set; }
+        public DbSet<DamagedGoodsStorageDto> DamagedGoodsStorages { get; set; }
         public DbSet<PaymentVoucherResponseDto> PaymentVoucherResponseDtos { get; set; }
         public DbSet<OtherAccountEntryResponseDto> OtherAccountEntryResponseDtos { get; set; }
         public DbSet<BillPaymentDetailResponseDto> BillPaymentDetailResponseDtos { get; set; }
@@ -77,6 +78,7 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<PaymentMethodResponseDto>().ToTable(nameof(PaymentMethodResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<UnitResponseDto>().ToTable(nameof(UnitResponseDtos), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<ProductStorageInformationDto>().ToTable(nameof(ProductStorageInformationDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<DamagedGoodsStorageDto>().ToTable(nameof(DamagedGoodsStorageDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<LegerResponseDto>().ToTable(nameof(LegerResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<PaymentVoucherResponseDto>().ToTable(nameof(PaymentVoucherResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<OtherAccountEntryResponseDto>().ToTable(nameof(OtherAccountEntryResponseDto), t => t.ExcludeFromMigrations());
