@@ -8,9 +8,9 @@ namespace ManagementSystem.Common.Models.Dtos
 {
     public class UpdateBillPaymentMethodRequestDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string PaymentMethodCode { get; set; }
-        public int Amount { get; set; } = 0;
+        public float Amount { get; set; } = 0;
         public string? PaymentTransactionRef { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace ManagementSystem.Common.Entities
         public int Id { get; set; }
         public int BillId { get; set; } = 0;
         public int PaymentMethodId { get; set; }
-        public int Amount { get; set; } = 0;
+        public float Amount { get; set; } = 0;
         public Bill Bill { get; set; }
         public PaymentMethod PaymentMethod { get; set; }
         public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.UnPaid;
