@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using System.Xml.Linq;
 using ManagementSystem.Common.Models.Dtos.Bills;
+using ManagementSystem.Common.Entities.Bills;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -656,6 +657,13 @@ namespace ManagementSystem.StoragesApi.Services
             }
 
             return _responseDto;
+        }
+
+        public async Task<bool> CheckDeletingPermission(BranchVerification branchVerification)
+        {
+            var verifications = await _context.branchVerifications.Where(x => x.BranchId == branchVerification.BranchId).ToListAsync();
+
+            return verifications.Where(x => x.VerifyPassword == branchVerification.VerifyPassword).Any();
         }
 
         #region Handle Get Data
