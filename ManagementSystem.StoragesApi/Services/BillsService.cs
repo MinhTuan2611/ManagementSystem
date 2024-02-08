@@ -917,7 +917,7 @@ namespace ManagementSystem.StoragesApi.Services
                         // Update credit and recipt voucher
                         if (billPayment.PaymentMethod.PaymentMethodCode != item.PaymentMethodCode)
                         {
-                            await UpdateChangePaymentMethodWithVoucher(model, item, inventoryVoucher, oldPaymentMethod);
+                            await UpdateChangePaymentMethodWithVoucher(model, item, inventoryVoucher, oldPaymentMethod, paymentMethodId.Value);
                         }
                         else
                         {
@@ -937,11 +937,11 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
-        private async Task UpdateChangePaymentMethodWithVoucher(UpdateBillRequestDto model, UpdateBillPaymentMethodRequestDto updatedBill, InventoryVoucher inventoryVoucher, int paymentMethodId)
+        private async Task UpdateChangePaymentMethodWithVoucher(UpdateBillRequestDto model, UpdateBillPaymentMethodRequestDto updatedBill, InventoryVoucher inventoryVoucher, int oldPaymentMethodId, int newPaymentMethod)
         {
             try
             {
-                var creditVoucher = await GetCreditVoucher(model.BillId, paymentMethodId);
+                var creditVoucher = await GetCreditVoucher(model.BillId, oldPaymentMethodId);
                 var receiptVoucher = await GetReceiptVoucherByBillId(model.BillId);
 
                 if (updatedBill.PaymentMethodCode == StorageContant.CashPaymentMethodCode)
@@ -1001,7 +1001,7 @@ namespace ManagementSystem.StoragesApi.Services
                                         UPDATE CreditVouchers
                                         SET TotalMoney = @amount
                                             ,PaymentMethodId = {0}
-                                        WHERE DocumentNumber = @documentNUmber", paymentMethodId)
+                                        WHERE DocumentNumber = @documentNUmber", newPaymentMethod)
                         ;
 
                         await UpdateVoucherAmount(creditVoucher.DocumentNumber, updatedBill.Amount, query, "BAOCO");
