@@ -1,3 +1,4 @@
+using ManagementSystem.Common.Entities.Bills;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
@@ -122,6 +123,13 @@ namespace ManagementSystem.StoragesApi.Controllers
         {
             var result = await _BillsService.ExportBillDetailExcel(lítBillIdl);
             return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("check_deleting_permission")]
+        public async Task<bool> CheckDeleingPermission([FromBody]BranchVerification branchVerification)
+        {
+            return await _BillsService.CheckDeletingPermission(branchVerification);
         }
     }
 }

@@ -1,16 +1,20 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities.Bills;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
+using Microsoft.AspNetCore.Identity;
 
 namespace ManagementSystem.StoragesApi.Services
 {
     public class BranchesService : IBranchesService
     {
         private readonly UnitOfWork _unitOfWork;
+        private readonly StoragesDbContext _context;
         public BranchesService(StoragesDbContext context)
         {
             _unitOfWork = new UnitOfWork(context);
+            _context = context;
         }
 
         public IEnumerable<Branch> GetListBranches()
@@ -60,6 +64,24 @@ namespace ManagementSystem.StoragesApi.Services
             try
             {
                 _unitOfWork.BranchRepository.Update(branchCur);
+
+                if (!string.IsNullOrEmpty(branch.VefificationPassword))
+                {
+                    var verificationPasswords = branch.VefificationPassword.Split(',').ToList();
+
+                    var listVerification = _context.branchVerifications.Where(x => x.BranchId == branchId).ToList();
+                    foreach (var item in verificationPasswords)
+                    {
+                        if (!listVerification.Where(x => x.VerifyPassword == item).Any())
+                        {
+                            _context.branchVerifications.Add(new BranchVerification()
+                            {
+                                BranchId = branchId,
+                                VerifyPassword = item
+                            });
+                        }
+                    }
+                }
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
                 return true;

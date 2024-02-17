@@ -325,6 +325,19 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.ToTable("BillPaymentDeleted");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.Bills.BranchVerification", b =>
+                {
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VerifyPassword")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("BranchId", "VerifyPassword");
+
+                    b.ToTable("branchVerifications");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.Branch", b =>
                 {
                     b.Property<int>("BranchId")
