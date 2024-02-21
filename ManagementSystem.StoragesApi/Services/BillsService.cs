@@ -661,7 +661,7 @@ namespace ManagementSystem.StoragesApi.Services
 
         public async Task<bool> CheckDeletingPermission(BranchVerification branchVerification)
         {
-            var verifications = await _context.branchVerifications.Where(x => x.BranchId == branchVerification.BranchId).ToListAsync();
+            var verifications = await _context.BranchVerifications.Where(x => x.BranchId == branchVerification.BranchId).ToListAsync();
 
             return verifications.Where(x => x.VerifyPassword == branchVerification.VerifyPassword).Any();
         }

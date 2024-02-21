@@ -36,7 +36,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<BillDeleted> BillDeleted { get; set; }
         public DbSet<BillPaymentDeleted> BillPaymentDeleted { get; set; }
         public DbSet<BillDetailDeleted> BillDetailDeleted { get; set; }
-        public DbSet<BranchVerification> branchVerifications { get; set; }
+        public DbSet<BranchVerification> BranchVerifications { get; set; }
 
         // Response Value
         public DbSet<CustomerResponseDto> customerResponseDtos { get; set; }

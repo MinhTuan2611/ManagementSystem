@@ -20,6 +20,12 @@ namespace ManagementSystem.StoragesApi.Services
         public IEnumerable<Branch> GetListBranches()
         {
             List<Branch> listBranches = _unitOfWork.BranchRepository.GetMany(b => b.Status.Equals(ActiveStatus.Active)).ToList();
+            var branchVerifies = _context.BranchVerifications.ToList();
+
+            foreach (var branch in listBranches)
+            {
+                branch.BranchVerifications = branchVerifies.Where(x => x.BranchId == branch.BranchId).ToList();
+            }
             if (listBranches.Any())
             {
                 return listBranches;
@@ -69,12 +75,12 @@ namespace ManagementSystem.StoragesApi.Services
                 {
                     var verificationPasswords = branch.VefificationPassword.Split(',').ToList();
 
-                    var listVerification = _context.branchVerifications.Where(x => x.BranchId == branchId).ToList();
+                    var listVerification = _context.BranchVerifications.Where(x => x.BranchId == branchId).ToList();
                     foreach (var item in verificationPasswords)
                     {
                         if (!listVerification.Where(x => x.VerifyPassword == item).Any())
                         {
-                            _context.branchVerifications.Add(new BranchVerification()
+                            _context.BranchVerifications.Add(new BranchVerification()
                             {
                                 BranchId = branchId,
                                 VerifyPassword = item

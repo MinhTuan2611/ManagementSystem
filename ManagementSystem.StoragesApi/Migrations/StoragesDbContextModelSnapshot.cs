@@ -335,7 +335,7 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.HasKey("BranchId", "VerifyPassword");
 
-                    b.ToTable("branchVerifications");
+                    b.ToTable("BranchVerifications");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Branch", b =>
