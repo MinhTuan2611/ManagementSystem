@@ -1,6 +1,4 @@
-﻿using Azure.Core;
-using Azure;
-using Dapper;
+﻿using Dapper;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
@@ -15,8 +13,6 @@ using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using ManagementSystem.StoragesApi.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.Xml.Linq;
 using ManagementSystem.Common.Models.Dtos.Bills;
 
 namespace ManagementSystem.StoragesApi.Services
