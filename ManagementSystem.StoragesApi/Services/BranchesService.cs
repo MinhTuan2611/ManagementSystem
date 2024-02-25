@@ -76,18 +76,43 @@ namespace ManagementSystem.StoragesApi.Services
                     var verificationPasswords = branch.VefificationPassword.Split(',').ToList();
 
                     var listVerification = _context.BranchVerifications.Where(x => x.BranchId == branchId).ToList();
-                    foreach (var item in verificationPasswords)
+                    if (listVerification.Count()<2)
                     {
-                        if (!listVerification.Where(x => x.VerifyPassword == item).Any())
+                        if (listVerification.Count() < 1 && verificationPasswords[0] != "null")
                         {
                             _context.BranchVerifications.Add(new BranchVerification()
                             {
                                 BranchId = branchId,
-                                VerifyPassword = item
+                                VerifyPassword = verificationPasswords[0]
+                            });
+                        }
+
+                        if (listVerification.Count() < 2 && verificationPasswords[1] != "null")
+                        {
+                            _context.BranchVerifications.Add(new BranchVerification()
+                            {
+                                BranchId = branchId,
+                                VerifyPassword = verificationPasswords[1]
                             });
                         }
                     }
+                    if (listVerification.Any())
+                    {
+                        if (verificationPasswords[0] != "null")
+                        {
+                            listVerification[0].VerifyPassword = verificationPasswords[0];
+                            _context.BranchVerifications.Update(listVerification[0]);
+                        }
+                        if (listVerification.Count() > 1 && verificationPasswords[1] != "null")
+                        {
+                            listVerification[1].VerifyPassword = verificationPasswords[1];
+                            _context.BranchVerifications.Update(listVerification[1]);
+                        }
+                        
+                    }
                 }
+
+                _context.SaveChanges();
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
                 return true;
