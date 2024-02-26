@@ -327,13 +327,22 @@ namespace ManagementSystem.StoragesApi.Migrations
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Bills.BranchVerification", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
                     b.Property<int>("BranchId")
                         .HasColumnType("int");
 
                     b.Property<string>("VerifyPassword")
-                        .HasColumnType("nvarchar(450)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("BranchId", "VerifyPassword");
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
 
                     b.ToTable("BranchVerifications");
                 });
@@ -1481,6 +1490,15 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.Navigation("PaymentMethod");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.Bills.BranchVerification", b =>
+                {
+                    b.HasOne("ManagementSystem.Common.Entities.Branch", null)
+                        .WithMany("BranchVerifications")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.Product", b =>
                 {
                     b.HasOne("ManagementSystem.Common.Entities.Category", "Category")
@@ -1665,6 +1683,11 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasForeignKey("BranchId");
 
                     b.Navigation("Branch");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.Branch", b =>
+                {
+                    b.Navigation("BranchVerifications");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.Product", b =>

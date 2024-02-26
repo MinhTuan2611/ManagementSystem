@@ -4,6 +4,7 @@ using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -73,18 +74,32 @@ namespace ManagementSystem.StoragesApi.Services
 
                 if (!string.IsNullOrEmpty(branch.VefificationPassword))
                 {
-                    var verificationPasswords = branch.VefificationPassword.Split(',').ToList();
+                    var verificationPasswords = branch.VefificationPassword.Split(',').Where(x => x != "null").ToList();
 
                     var listVerification = _context.BranchVerifications.Where(x => x.BranchId == branchId).ToList();
-                    foreach (var item in verificationPasswords)
+
+                    if (verificationPasswords.Count == 1 && listVerification.Count == 1)
                     {
-                        if (!listVerification.Where(x => x.VerifyPassword == item).Any())
+                        listVerification[0].VerifyPassword = verificationPasswords[0];
+                        _context.Entry(listVerification[0]).State = EntityState.Modified;
+                    }
+                    else if (verificationPasswords.Count == 2 && listVerification.Count == 1)
+                    {
+                        listVerification[0].VerifyPassword = verificationPasswords[0];
+                        _context.Entry(listVerification[0]).State = EntityState.Modified;
+
+                        _context.BranchVerifications.Add(new BranchVerification()
                         {
-                            _context.BranchVerifications.Add(new BranchVerification()
-                            {
-                                BranchId = branchId,
-                                VerifyPassword = item
-                            });
+                            BranchId = branchId,
+                            VerifyPassword = verificationPasswords[1]
+                        });
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            listVerification[i].VerifyPassword = verificationPasswords[i];
+                            _context.Entry(listVerification[i]).State = EntityState.Modified;
                         }
                     }
                 }

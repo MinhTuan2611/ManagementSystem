@@ -54,8 +54,6 @@ namespace ManagementSystem.StoragesApi.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<ProductUnitBranch>().HasKey(x => new {x.Id, x.ProductUnitId, x.BranchId});
-            modelBuilder.Entity<BranchVerification>().HasKey(x => new { x.BranchId, x.VerifyPassword});
-
             modelBuilder.Entity<RequestSampleItem>().HasKey(x => new {x.ProductId, x.RequestSampleId, x.UnitId});
             modelBuilder.Entity<ProductSupplier>().HasKey(x => new { x.SupplierId, x.ProductId });
             modelBuilder.Entity<CustomerResponseDto>().ToTable(nameof(CustomerResponseDto), t => t.ExcludeFromMigrations());
