@@ -1162,6 +1162,20 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("CreditVoucherResponseDto", null, t => t.ExcludeFromMigrations());
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.DamagedGoodsStorageDto", b =>
+                {
+                    b.Property<string>("StorageCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("StorageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StorageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("DamagedGoodsStorageDto", null, t => t.ExcludeFromMigrations());
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.DebitVoucherResponseDto", b =>
                 {
                     b.Property<string>("BranchCode")
@@ -1629,8 +1643,14 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<float?>("Quantity")
                         .HasColumnType("real");
 
+                    b.Property<string>("StorageCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("StorageId")
                         .HasColumnType("int");
+
+                    b.Property<string>("StorageName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.ToTable("ProductStorageInformationDto", null, t => t.ExcludeFromMigrations());
                 });
