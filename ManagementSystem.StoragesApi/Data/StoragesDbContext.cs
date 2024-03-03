@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities.Bills;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,8 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<BillDeleted> BillDeleted { get; set; }
         public DbSet<BillPaymentDeleted> BillPaymentDeleted { get; set; }
         public DbSet<BillDetailDeleted> BillDetailDeleted { get; set; }
+        public DbSet<BranchVerification> BranchVerifications { get; set; }
+
         // Response Value
         public DbSet<CustomerResponseDto> customerResponseDtos { get; set; }
         public DbSet<BillSearchingResponseDto> billSearchingResponseDtos { get; set; }
@@ -51,7 +54,6 @@ namespace ManagementSystem.StoragesApi.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<ProductUnitBranch>().HasKey(x => new {x.Id, x.ProductUnitId, x.BranchId});
-
             modelBuilder.Entity<RequestSampleItem>().HasKey(x => new {x.ProductId, x.RequestSampleId, x.UnitId});
             modelBuilder.Entity<ProductSupplier>().HasKey(x => new { x.SupplierId, x.ProductId });
             modelBuilder.Entity<CustomerResponseDto>().ToTable(nameof(CustomerResponseDto), t => t.ExcludeFromMigrations());

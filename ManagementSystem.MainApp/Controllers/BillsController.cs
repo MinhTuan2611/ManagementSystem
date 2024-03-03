@@ -9,6 +9,7 @@ using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.MainApp.Utility;
 using ManagementSystem.MainApp.Services.IServices;
+using ManagementSystem.Common.Entities.Bills;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -332,6 +333,15 @@ namespace ManagementSystem.MainApp.Controllers
 
             return response;
         }
+
+        [HttpPost("check_deleting_permission")]
+        public async Task<IActionResult> CheckDeletingPermission([FromBody]BranchVerification branchVerification)
+        {
+            var result = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "bills/check_deleting_permission", branchVerification);
+
+            return Ok(result);
+        }
+
         #region Private handle function
         // Create private function Handler.
         private NewInventoryVoucherDto PrepareInventoryModel(BillInfo bill)

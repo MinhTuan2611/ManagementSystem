@@ -1,4 +1,5 @@
-﻿using ManagementSystem.Common.Models;
+﻿using ManagementSystem.Common.Entities.Bills;
+using ManagementSystem.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,6 +18,7 @@ namespace ManagementSystem.Common.Entities
         public string? Address { get; set; }
         public string? PhoneNumber { get; set; }
         public int? ManagerID { get; set; }
+        public List<BranchVerification>? BranchVerifications { get; set; } = null;
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
     }
 }

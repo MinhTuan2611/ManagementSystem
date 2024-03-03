@@ -262,6 +262,13 @@ namespace ManagementSystem.AccountingApi.Services
 
             try
             {
+                int? shfitEndId = _context.CalculateScalarFunction<ScalarResult<int?>>(@$"
+                    SELECT ShiftEndId as Value
+                    FROM dbo.ShiftHandovers
+                    WHERE HandoverId = {handoverId}
+                       ").Value;
+
+                _context.Database.ExecuteSqlRaw($"exec usp_update_shift_handover {shfitEndId.Value}");
                 var result = _context.ShiftHandoverResponseDtos.FromSqlRaw(query).AsEnumerable().FirstOrDefault();
 
                 return result;
@@ -527,6 +534,19 @@ namespace ManagementSystem.AccountingApi.Services
                 result.ErrorMessage = ex.Message;
             }
             return result;
+        }
+
+        public async Task<bool> UpdateShiftEndReport(int shiftEndId)
+        {
+            try
+            {
+                _context.Database.ExecuteSqlRaw($"exec usp_update_shift_handover {shiftEndId}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         #region Private function handle

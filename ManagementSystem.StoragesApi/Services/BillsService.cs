@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
@@ -13,6 +13,7 @@ using ManagementSystem.StoragesApi.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ManagementSystem.Common.Models.Dtos.Bills;
+using ManagementSystem.Common.Entities.Bills;
 using ManagementSystem.Common.Helpers;
 
 namespace ManagementSystem.StoragesApi.Services
@@ -508,6 +509,13 @@ namespace ManagementSystem.StoragesApi.Services
             }
 
             return _responseDto;
+        }
+
+        public async Task<bool> CheckDeletingPermission(BranchVerification branchVerification)
+        {
+            var verifications = await _context.BranchVerifications.Where(x => x.BranchId == branchVerification.BranchId).ToListAsync();
+
+            return verifications.Where(x => x.VerifyPassword == branchVerification.VerifyPassword).Any();
         }
 
         #region Handle Get Data

@@ -202,7 +202,7 @@ namespace ManagementSystem.StoragesApi.Services
                     productUnit.OldPrice = request.Units[i].OldPrice;
                     productUnit.UnitId = request.Units[i].UnitId;
                     productUnit.Barcode = request.Units[i].Barcode;
-                    productUnit.IsPrimary = i == 0;
+                    productUnit.IsPrimary = request.Units[i].IsPrimary;
                     _unitOfWork.ProductUnitRepository.Insert(productUnit);
                     _unitOfWork.Save();
 
@@ -303,7 +303,7 @@ namespace ManagementSystem.StoragesApi.Services
                         productUnit.OldPrice = request.Units[i].OldPrice;
                         productUnit.UnitId = request.Units[i].UnitId;
                         productUnit.Barcode = request.Units[i].Barcode;
-                        productUnit.IsPrimary = i == 0;
+                        productUnit.IsPrimary = request.Units[i].IsPrimary;
                         _unitOfWork.ProductUnitRepository.Update(productUnit);
 
                     } else
@@ -317,7 +317,7 @@ namespace ManagementSystem.StoragesApi.Services
                         productUnit.OldPrice = request.Units[i].OldPrice;
                         productUnit.UnitId = request.Units[i].UnitId;
                         productUnit.Barcode = request.Units[i].Barcode;
-                        productUnit.IsPrimary = i == 0;
+                        productUnit.IsPrimary = request.Units[i].IsPrimary;
                         _unitOfWork.ProductUnitRepository.Insert(productUnit);
                     }
                 }
@@ -422,7 +422,7 @@ namespace ManagementSystem.StoragesApi.Services
         {
             ProductDetailInSale productDetailInSale = new ProductDetailInSale();
             string[] includes = { "Product", "Unit" };
-            var productDetail = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Barcode == barcode && x.Status == ActiveStatus.Active, includes).OrderBy(x => x.Id).FirstOrDefault();
+            var productDetail = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Barcode == barcode && x.Status == ActiveStatus.Active, includes).OrderByDescending(x => x.IsPrimary).FirstOrDefault();
             var productUnitBranchs = _unitOfWork.ProductUnitBranchRepository.Get().ToList();
 
             if (productDetail == null)
