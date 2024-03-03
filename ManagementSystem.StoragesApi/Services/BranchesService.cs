@@ -1,9 +1,10 @@
-﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Entities.Bills;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -73,7 +74,7 @@ namespace ManagementSystem.StoragesApi.Services
 
                 if (!string.IsNullOrEmpty(branch.VefificationPassword))
                 {
-                    var verificationPasswords = branch.VefificationPassword.Split(',').ToList();
+                    var verificationPasswords = branch.VefificationPassword.Split(',').Where(x => x != "null").ToList();
 
                     var listVerification = _context.BranchVerifications.Where(x => x.BranchId == branchId).ToList();
                     if (listVerification.Count()<2)
