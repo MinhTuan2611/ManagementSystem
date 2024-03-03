@@ -1,4 +1,4 @@
-﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Entities.Bills;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
@@ -77,32 +77,43 @@ namespace ManagementSystem.StoragesApi.Services
                     var verificationPasswords = branch.VefificationPassword.Split(',').Where(x => x != "null").ToList();
 
                     var listVerification = _context.BranchVerifications.Where(x => x.BranchId == branchId).ToList();
-
-                    if (verificationPasswords.Count == 1 && listVerification.Count == 1)
+                    if (listVerification.Count()<2)
                     {
-                        listVerification[0].VerifyPassword = verificationPasswords[0];
-                        _context.Entry(listVerification[0]).State = EntityState.Modified;
-                    }
-                    else if (verificationPasswords.Count == 2 && listVerification.Count == 1)
-                    {
-                        listVerification[0].VerifyPassword = verificationPasswords[0];
-                        _context.Entry(listVerification[0]).State = EntityState.Modified;
-
-                        _context.BranchVerifications.Add(new BranchVerification()
+                        if (listVerification.Count() < 1 && verificationPasswords[0] != "null")
                         {
-                            BranchId = branchId,
-                            VerifyPassword = verificationPasswords[1]
-                        });
-                    }
-                    else
-                    {
-                        for (int i = 0; i < 2; i++)
+                            _context.BranchVerifications.Add(new BranchVerification()
+                            {
+                                BranchId = branchId,
+                                VerifyPassword = verificationPasswords[0]
+                            });
+                        }
+
+                        if (listVerification.Count() < 2 && verificationPasswords[1] != "null")
                         {
-                            listVerification[i].VerifyPassword = verificationPasswords[i];
-                            _context.Entry(listVerification[i]).State = EntityState.Modified;
+                            _context.BranchVerifications.Add(new BranchVerification()
+                            {
+                                BranchId = branchId,
+                                VerifyPassword = verificationPasswords[1]
+                            });
                         }
                     }
+                    if (listVerification.Any())
+                    {
+                        if (verificationPasswords[0] != "null")
+                        {
+                            listVerification[0].VerifyPassword = verificationPasswords[0];
+                            _context.BranchVerifications.Update(listVerification[0]);
+                        }
+                        if (listVerification.Count() > 1 && verificationPasswords[1] != "null")
+                        {
+                            listVerification[1].VerifyPassword = verificationPasswords[1];
+                            _context.BranchVerifications.Update(listVerification[1]);
+                        }
+                        
+                    }
                 }
+
+                _context.SaveChanges();
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
                 return true;
