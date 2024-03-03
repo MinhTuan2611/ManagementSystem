@@ -1,4 +1,5 @@
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities.Bills;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,11 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<ActivityLog> ActivityLog { get; set; }
         public DbSet<ProductSupplier> ProductSuppliers { get; set; }
         public DbSet<ElectronicBill> ElectronicBills { get; set; }
+        public DbSet<ProductUnitBranch> ProductUnitBranches { get; set; }
+        public DbSet<BillDeleted> BillDeleted { get; set; }
+        public DbSet<BillPaymentDeleted> BillPaymentDeleted { get; set; }
+        public DbSet<BillDetailDeleted> BillDetailDeleted { get; set; }
+        public DbSet<BranchVerification> BranchVerifications { get; set; }
 
         // Response Value
         public DbSet<CustomerResponseDto> customerResponseDtos { get; set; }
@@ -42,11 +48,14 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<ProductAutoGenerationResponseDto> ProductAutoGenerationResponseDtos { get; set; }
         public DbSet<EmployeeShiftInformationDto> EmployeeShiftInformationDtos { get; set; }
         public DbSet<ProductDetailResponseDto> ProductResponseDtos { get; set; }
+        public DbSet<ProductUnitBranchResponseDto> ProductUnitBranchResponseDtos { get; set; }
+        public DbSet<DiscountInformationDto> DiscountInformationDtos { get; set; }
+        public DbSet<BillRevenueInformationDto> BillRevenueInformationDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            modelBuilder.Entity<ProductUnitBranch>().HasKey(x => new {x.Id, x.ProductUnitId, x.BranchId});
             modelBuilder.Entity<RequestSampleItem>().HasKey(x => new {x.ProductId, x.RequestSampleId, x.UnitId});
             modelBuilder.Entity<ProductSupplier>().HasKey(x => new { x.SupplierId, x.ProductId });
             modelBuilder.Entity<CustomerResponseDto>().ToTable(nameof(CustomerResponseDto), t => t.ExcludeFromMigrations());
@@ -56,6 +65,10 @@ namespace ManagementSystem.StoragesApi.Data
             modelBuilder.Entity<PaymentMethodDto>().ToTable(nameof(PaymentMethodDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<ProductAutoGenerationResponseDto>().ToTable(nameof(ProductAutoGenerationResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<EmployeeShiftInformationDto>().ToTable(nameof(EmployeeShiftInformationDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<ProductUnitBranchResponseDto>().ToTable(nameof(ProductUnitBranchResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<DiscountInformationDto>().ToTable(nameof(DiscountInformationDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<BillRevenueInformationDto>().ToTable(nameof(BillRevenueInformationDto), t => t.ExcludeFromMigrations());
+
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.HasIndex(x => x.ProductUnSignSearching)

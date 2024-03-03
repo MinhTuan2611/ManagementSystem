@@ -25,12 +25,14 @@ namespace ManagementSystem.Common.Entities
         public long TotalVoucherAmount { get; set; } = 0;
         public long TotalInternalConsumption { get; set; } = 0;
         public long TotalMOMOAmount { get; set; } = 0;
+        public long TotalPointAmount { get; set; } = 0;
         public long TotalExpenses { get; set; } = 0;
         public long OtherExpense { get; set; } = 0;
         public long ActualMoneyForNextShift { get; set; } = 0;
         public long RemindMoneyForNextShift { get; set; } = 0;
         public long ExcessMoney { get; set; } = 0;
         public long LackOfMoney { get; set; } = 0;
+        public long TotalOtherAmount { get; set; } = 0;
         public DateTime ReportDate { get; set; } = DateTime.Now;
 
         public ShiftHandovers ShiftHandovers { get; set; }

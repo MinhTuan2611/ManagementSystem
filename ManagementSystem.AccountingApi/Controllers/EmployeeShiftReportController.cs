@@ -49,10 +49,10 @@ namespace ManagementSystem.AccountingApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("get-lastest-shift-end")]
-        public async Task<IActionResult> GetLastestShiftEnd()
+        [HttpGet("get-lastest-shift-end/{branchId}")]
+        public async Task<IActionResult> GetLastestShiftEnd(int? branchId)
         {
-            var result = await _service.GetLastestShiftEnd();
+            var result = await _service.GetLastestShiftEnd(branchId);
 
             return Ok(result);
         }
@@ -106,6 +106,14 @@ namespace ManagementSystem.AccountingApi.Controllers
         public async Task<IActionResult> CanProcessShiftEnd([FromQuery] int branchId)
         {
             var result = await _service.CanProcessShiftEnd(branchId);
+
+            return Ok(result);
+        }
+
+        [HttpPost("update-shift-end-report")]
+        public async Task<IActionResult> UpdateShiftEndReport([FromBody] int shiftEndId)
+        {
+            var result = await _service.UpdateShiftEndReport(shiftEndId);
 
             return Ok(result);
         }

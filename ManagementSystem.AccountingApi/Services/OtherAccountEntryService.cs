@@ -207,7 +207,7 @@ namespace ManagementSystem.AccountingApi.Services
                 var otherAccountEntry = _context.OtherAccountEntries.SingleOrDefault(x => x.DocumentNumber == updateOtherAccountEntry.DocumentNumber);
                 otherAccountEntry.BrandId = updateOtherAccountEntry.BrandId;
                 otherAccountEntry.AccountId = updateOtherAccountEntry.AccountId;
-                otherAccountEntry.UserId = updateOtherAccountEntry.UserId;
+                // otherAccountEntry.UserId = updateOtherAccountEntry.UserId;
                 otherAccountEntry.Amount = updateOtherAccountEntry.Amount;
                 otherAccountEntry.CustomerId = updateOtherAccountEntry.CustomerId;
                 otherAccountEntry.CustomerName = updateOtherAccountEntry.CustomerId == null && updateOtherAccountEntry.CustomerName != null ? updateOtherAccountEntry.CustomerName : string.Empty;

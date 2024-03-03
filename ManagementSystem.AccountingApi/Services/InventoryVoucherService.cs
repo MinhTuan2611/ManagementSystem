@@ -1,5 +1,4 @@
 ﻿using ManagementSystem.AccountingApi.Data;
-using ManagementSystem.AccountingApi.Repositories;
 using ManagementSystem.AccountingApi.Utility;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
@@ -29,16 +28,16 @@ namespace ManagementSystem.AccountingApi.Services
             _path = @"C:\\Logs\\Accounting\\InventoryVoucher";
         }
 
-        public async Task<ResponseDto> CreateInventoryVoucher(NewInventoryVoucherDto request)
+        public async Task<ResponseDto> CreateInventoryVoucher(NewInventoryVoucherDto request, bool isRefundItem)
         {
             try
             {
                 var inventory = new InventoryVoucher();
-                var accountInfor = GetAccountInfor(AccountingConstant.XBAReason);
+                var accountInfor = isRefundItem ? GetAccountInfor(AccountingConstant.NHTReason) : GetAccountInfor(AccountingConstant.XBAReason);
                 inventory.UserId = request.UserId;
                 inventory.PurchasingRepresentive = request.PurchasingRepresentive;
                 inventory.TransactionDate = DateTime.Now;
-                inventory.ReasonFor = AccountingConstant.XBAReason;
+                inventory.ReasonFor = isRefundItem ? AccountingConstant.NHTReason : AccountingConstant.XBAReason;
                 inventory.Note = request.Note;
                 inventory.RepresentivePhone = "";
                 inventory.CustomerId = request.CustomerId;
@@ -71,7 +70,7 @@ namespace ManagementSystem.AccountingApi.Services
                     item.TotalMoneyBeforeTax = product != null ? product.PriceBeforeTax * detail.Quantity : 0;
                     item.DebitAccountMoney = detail.TotalMoneyAfterTax;
                     item.CreditAccountMoney = detail.TotalMoneyAfterTax;
-                    //item.PaymentDiscountMoney = detail.PaymentDiscountMoney;
+                    item.PaymentDiscountMoney = detail.PaymentDiscountMoney;
                     //item.TaxMoney = detail.TaxMoney;
                     item.TotalMoneyAfterTax = detail.TotalMoneyAfterTax;
                     item.Note = detail.Note;
@@ -109,6 +108,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
+        
         public async Task<ResponseDto> UpdateInventoryDeliveryVoucher(UpdateInventoryVoucherDto request)
         {
             try
@@ -120,7 +120,7 @@ namespace ManagementSystem.AccountingApi.Services
 
                 var accountInfor = GetAccountInfor(request.ReasonFor);
 
-                inventory.UserId = request.UserId;
+                // inventory.UserId = request.UserId;
                 inventory.PurchasingRepresentive = request.PurchasingRepresentive;
                 inventory.RepresentivePhone = request.RepresentivePhone;
                 inventory.ReasonFor = request.ReasonFor;
@@ -372,11 +372,13 @@ namespace ManagementSystem.AccountingApi.Services
                 SELECT s.StorageId
 		                ,ps.ProductId
 		                ,COALESCE(ps.Quantity, 0) AS Quantity
+                        ,StorageCode
+                        ,StorageName
                 FROM {0}.dbo.Storages s
                 LEFT JOIN {0}.dbo.ProductStorages ps ON s.StorageId = ps.StorageId
                 WHERE s.BranchId = {1}
                 AND ps.ProductId = {2}
-            ",SD.StorageDbName, brandId, productId);
+            ", SD.StorageDbName, brandId, productId);
 
             try
             {
@@ -471,6 +473,7 @@ namespace ManagementSystem.AccountingApi.Services
                 throw ex;
             }
         }
+
         #endregion
     }
 }

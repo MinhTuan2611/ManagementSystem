@@ -38,7 +38,7 @@ namespace ManagementSystem.AccountingApi.Services
                 var creditVoucher = new CreditVoucher();
                 creditVoucher.CustomerId = request.CustomerId;
                 creditVoucher.CustomerName = request.CustomerId == null && request.CustomerName != null ? request.CustomerName : string.Empty;
-                creditVoucher.ForReason = reason;
+                creditVoucher.ForReason = string.IsNullOrEmpty(request.ForReason) || request.ForReason.Length <= 0 ? reason : request.ForReason;
                 creditVoucher.TotalMoney = request.TotalMoney;
                 creditVoucher.UserId = request.UserId;
                 creditVoucher.TransactionDate = DateTime.Now;
@@ -46,6 +46,7 @@ namespace ManagementSystem.AccountingApi.Services
                 creditVoucher.PaymentMethodId = paymentMethod?.PaymentMethodId;
                 creditVoucher.CreditAccount = accounts?.CreditAccount;
                 creditVoucher.DebitAccount = accounts?.DebitAccount;
+                creditVoucher.BillId = request.BillId;
 
                 _context.CreditVouchers.Add(creditVoucher);
                 _context.SaveChanges();
@@ -96,7 +97,7 @@ namespace ManagementSystem.AccountingApi.Services
                 string reason = GetReasonByMethodCode(request.PaymentMethodCode);
                 var accounts = GetAccountInfor(request.PaymentMethodCode);
 
-                existingCredit.UserId = request.UserId;
+                // existingCredit.UserId = request.UserId;
                 existingCredit.UpdatedDate = DateTime.Now;
                 existingCredit.CustomerId = request.CustomerId;
                 existingCredit.CustomerName = request.CustomerId == null && request.CustomerName != null ? request.CustomerName : string.Empty;
@@ -193,7 +194,7 @@ namespace ManagementSystem.AccountingApi.Services
 		                ,PaymentMethodName
 		                ,PaymentMethodCode
                 FROM {0}.dbo.PaymentMethods
-                WHERE PaymentMethodCode = '{0}'
+                WHERE PaymentMethodCode = '{1}'
             ",SD.StorageDbName, methodCode);
 
             try
@@ -212,19 +213,9 @@ namespace ManagementSystem.AccountingApi.Services
         private AccountsDto GetAccountInfor(string methodCode)
         {
             var query = string.Format(@"
-                DROP TABLE IF EXISTS #map_method_transaction_reason
-                CREATE TABLE #map_method_transaction_reason
-                (
-	                MethodCode VARCHAR(30)
-	                ,ReasonCode VARCHAR(30)
-                )
-
-                INSERT INTO #map_method_transaction_reason(MethodCode,ReasonCode)
-                VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017')
-
                 SELECT tc.AccountCode AS CreditAccount
 		                ,td.AccountCode AS DebitAccount
-                FROM #map_method_transaction_reason t
+                FROM PaymentMenthodReasonRefs t
                 JOIN dbo.Recordingtransactions rt ON rt.ReasonCode = t.ReasonCode
                 JOIN dbo.TypesOfAccounts tc ON tc.AccountId = rt.CreditAccountId
                 JOIN dbo.TypesOfAccounts td ON td.AccountId = rt.DebitAccountId
@@ -246,18 +237,8 @@ namespace ManagementSystem.AccountingApi.Services
         private string GetReasonByMethodCode(string methodCode)
         {
             string query = string.Format(@"
-                DROP TABLE IF EXISTS #map_method_transaction_reason
-                CREATE TABLE #map_method_transaction_reason
-                (
-	                MethodCode VARCHAR(30)
-	                ,ReasonCode VARCHAR(30)
-                )
-
-                INSERT INTO #map_method_transaction_reason(MethodCode,ReasonCode)
-                VALUES ('CARD', 'TCK'), ('BANKING', 'TIEUDUNG'), ('MOMO', 'MOMO'), ('ZALO', 'BC017')
-
                 SELECT ReasonCode AS Value
-                FROM #map_method_transaction_reason t
+                FROM PaymentMenthodReasonRefs t
                 WHERE t.MethodCode = '{0}'
             ", methodCode);
 

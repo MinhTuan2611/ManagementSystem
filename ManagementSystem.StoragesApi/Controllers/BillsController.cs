@@ -1,4 +1,4 @@
-using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities.Bills;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
@@ -87,6 +87,61 @@ namespace ManagementSystem.StoragesApi.Controllers
             var result = await _BillsService.UpdateBill(model);
 
             return Ok(result);
+        }
+
+        [HttpDelete("delete/{billId}/{actionUser}")]
+        public async Task<IActionResult> DeleteBill(int billId, int actionUser)
+        {
+            var result = await _BillsService.DeleteBills(billId, actionUser );
+
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("export_discount_information_excel")]
+        public async Task<IActionResult> ExportDiscountInformation([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _BillsService.ExportDiscountInformationExcel(searchModel);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("view_discount_informations")]
+        public async Task<IActionResult> ViewDiscountInformations([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _BillsService.ViewDiscountInformation(searchModel);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("export_revenue_information_excel")]
+        public async Task<IActionResult> ExportRevenueInformation([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _BillsService.ExportRevenueExcel(searchModel);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("view_revenue_informations")]
+        public async Task<IActionResult> ViewRevenueInformations([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _BillsService.ViewRevenueInformation(searchModel);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("export_bill_detail_excel")]
+        public async Task<IActionResult> ExportBillDetail([FromBody] string lítBillIdl)
+        {
+            var result = await _BillsService.ExportBillDetailExcel(lítBillIdl);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("check_deleting_permission")]
+        public async Task<bool> CheckDeleingPermission([FromBody]BranchVerification branchVerification)
+        {
+            return await _BillsService.CheckDeletingPermission(branchVerification);
         }
     }
 }

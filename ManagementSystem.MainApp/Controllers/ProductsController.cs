@@ -36,7 +36,7 @@ namespace ManagementSystem.MainApp.Controllers
         {
 
             ResponseModel<ProductCreateUpdate> response = new ResponseModel<ProductCreateUpdate>();
-            ProductCreateUpdate detail = await HttpRequestsHelper.Get<ProductCreateUpdate>(APIUrl + "get-detail?productId=" + productId);
+            ProductCreateUpdate detail = await HttpRequestsHelper.Get<ProductCreateUpdate>(APIUrl + "get-detail?productId=" + productId );
             List<ProductCreateUpdate> responseData = new List<ProductCreateUpdate>();
             responseData.Add(detail);
             if (detail != null)
@@ -100,16 +100,17 @@ namespace ManagementSystem.MainApp.Controllers
             return Ok(successfully);
         }
         [HttpGet("get-product-detail-for-sale")]
-        public async Task<IActionResult> GetProductDetailForSale(string barcode)
+        public async Task<IActionResult> GetProductDetailForSale(string barcode, int branchId = 3)
         {
-            ProductDetailInSale? product = await HttpRequestsHelper.Get<ProductDetailInSale>(APIUrl + "get-product-detail-for-sale?barcode=" + barcode);
+            ProductDetailInSale? product = await HttpRequestsHelper.Get<ProductDetailInSale>(APIUrl + "get-product-detail-for-sale?barcode=" + barcode + "&branchId=" + branchId);
             return Ok(product);
         }
 
         [HttpGet("autocomplete-get-product-detail-for-sale")]
-        public async Task<IActionResult> AutocompleteGetProductDetailForSale(string barcode)
+        public async Task<IActionResult> AutocompleteGetProductDetailForSale(string barcode, int branchId = 3, int pageNumber = 1, int pageSize = 20)
         {
-            List<ProductDetailInSale>? product = await HttpRequestsHelper.Get<List<ProductDetailInSale>>(APIUrl + "autocomplete-get-product-detail-for-sale?barcode=" + barcode);
+            TPagination<ProductDetailInSale>? product = await HttpRequestsHelper.Get<TPagination<ProductDetailInSale>>(APIUrl + "autocomplete-get-product-detail-for-sale?barcode=" + barcode + "&branchId=" + branchId
+                                                                                                                + "&pageNumber=" + pageNumber + "&pageSize="+pageSize);
             return Ok(product);
         }
 

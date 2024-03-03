@@ -12,7 +12,7 @@ namespace ManagementSystem.Common.Entities
         public string? CustomerName { get; set; }
         //public string? ExtenalCustomer { get; set; }
         public string ForReason { get; set; }
-        public int TotalMoney { get; set; }
+        public float TotalMoney { get; set; }
         public int? UserId { get; set; }
         public int? PaymentMethodId { get; set; }
         public DateTime TransactionDate { get; set; } = DateTime.Now;
@@ -20,6 +20,7 @@ namespace ManagementSystem.Common.Entities
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public string? CreditAccount { get; set; }
         public string? DebitAccount { get; set; }
+        public int? BillId { get; set; }
 
         [ForeignKey("DocumentGroup")]
         public int? GroupId { get; set; }

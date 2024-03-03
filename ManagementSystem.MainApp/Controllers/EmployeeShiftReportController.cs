@@ -95,12 +95,12 @@ namespace ManagementSystem.MainApp.Controllers
             return StatusCode(StatusCodes.Status404NotFound, "The list is empty");
         }
 
-        [HttpGet("get-lastest-shift-end")]
-        public async Task<IActionResult> GetLastestShiftEnd()
+        [HttpGet("get-lastest-shift-end/{branchId}")]
+        public async Task<IActionResult> GetLastestShiftEnd(int? branchId)
         {
 
             ResponseModel<ShiftEndResponseDto> response = new ResponseModel<ShiftEndResponseDto>();
-            ShiftEndResponseDto detail = await HttpRequestsHelper.Get<ShiftEndResponseDto>(APIUrl + "get-lastest-shift-end");
+            ShiftEndResponseDto detail = await HttpRequestsHelper.Get<ShiftEndResponseDto>(APIUrl + "get-lastest-shift-end/" + branchId);
             List <ShiftEndResponseDto> responseData = new List<ShiftEndResponseDto>();
             responseData.Add(detail);
 
@@ -173,6 +173,18 @@ namespace ManagementSystem.MainApp.Controllers
             var result = await HttpRequestsHelper.Get<bool>(APIUrl + "can-process-shift-end?branchId=" + branchId);
 
             return Ok(result);
+        }
+
+        [HttpPost("update-shift-end-report")]
+        public async Task<IActionResult> UpdateShiftEndReport([FromBody] int shiftEndId)
+        {
+
+            var result = await HttpRequestsHelper.Post<bool>(APIUrl + "update-shift-end-report", shiftEndId);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
     }
 }

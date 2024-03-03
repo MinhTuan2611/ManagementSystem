@@ -38,14 +38,14 @@ namespace ManagementSystem.AccountingApi.Services
                 {
                     shiftEnd.CompanyMoneyTransferred = shiftEnd.CompanyMoneyTransferred != null || shiftEnd.CompanyMoneyTransferred > 0 ? shiftEnd.CompanyMoneyTransferred : model.CompanyMoneyTransferred;
                     shiftEnd.UserId = model.UserId;
-                    shiftEnd.Status = model.Status;
+                    shiftEnd.Status = model.Status != ShiftEndReportStatus.ShiftEndProgress ? model.Status : ShiftEndReportStatus.SubmitShiftEnd;
 
                     _context.ShiftEndReports.Update(shiftEnd);
                     _context.SaveChanges();
 
                     shiftEndId = shiftEnd.ShiftEndId;
 
-                    foreach (var item in model.AuditDetails)
+                    foreach (var item in model.AuditDetails.Where(p => p.ActualAmount > 0))
                     {
                         var detail = _context.InventoryAuditDetails.AsNoTracking().SingleOrDefault(x => x.ShiftEndId == shiftEnd.ShiftEndId && x.ProductId == item.ProductId && x.UnitId == item.UnitId );
 
@@ -166,16 +166,18 @@ namespace ManagementSystem.AccountingApi.Services
 		                    ,sr.OtherExpense
 		                    ,sr.ActualMoneyForNextShift
 		                    ,sr.RemindMoneyForNextShift
+                            ,sr.TotalPointAmount
 		                    ,sr.ExcessMoney
 		                    ,sr.LackOfMoney
 		                    ,se.ShiftEndDate
+                            ,sr.TotalOtherAmount
                     FROM dbo.ShiftEndReports se
                     JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = se.ShiftEndId
                     JOIN dbo.ShiftReports sr ON sr.HandoverId = sh.HandoverId
                     LEFT JOIN {0}.dbo.EmployeeShifts es ON es.ShiftId = sr.ShiftId
                     JOIN {0}.dbo.Users u ON u.UserId = se.UserId
                     WHERE se.ShiftEndId = {1}
-                ",SD.AccountDbName, shiftEndId);
+                ", SD.AccountDbName, shiftEndId);
 
             try
             {
@@ -242,6 +244,9 @@ namespace ManagementSystem.AccountingApi.Services
 		                  ,sto.StorageName
 		                  ,sh.Note
 		                  ,sh.Status
+                          ,sr.BranchId
+                          ,b.BranchCode
+				          ,b.BranchName
                   FROM cte t
                   JOIN dbo.ShiftEndReports sr ON sr.ShiftEndId = t.ShiftEndId
                   JOIN dbo.ShiftHandovers sh ON sh.ShiftEndId = sr.ShiftEndId
@@ -252,10 +257,18 @@ namespace ManagementSystem.AccountingApi.Services
                   LEFT JOIN cte_users sender2 ON sh.SenderUserI2 = sender2.UserId
                   LEFT JOIN cte_users receiver ON sh.ReceiverUserId = receiver.UserId
                   LEFT JOIN {2}.DBO.Storages sto ON SH.StorageId = sto.StorageId
+                  LEFT JOIN {2}..Branches b ON sr.BranchId = b.BranchId
             ", handoverId, SD.AccountDbName, SD.StorageDbName);
 
             try
             {
+                int? shfitEndId = _context.CalculateScalarFunction<ScalarResult<int?>>(@$"
+                    SELECT ShiftEndId as Value
+                    FROM dbo.ShiftHandovers
+                    WHERE HandoverId = {handoverId}
+                       ").Value;
+
+                _context.Database.ExecuteSqlRaw($"exec usp_update_shift_handover {shfitEndId.Value}");
                 var result = _context.ShiftHandoverResponseDtos.FromSqlRaw(query).AsEnumerable().FirstOrDefault();
 
                 return result;
@@ -307,9 +320,44 @@ namespace ManagementSystem.AccountingApi.Services
             }
         }
 
-        public async Task<ShiftEndResponseDto> GetLastestShiftEnd()
+        public async Task<ShiftEndResponseDto> GetLastestShiftEnd(int? branchId)
         {
-            string sqlQuery = "SELECT * FROM dbo.ShiftEndReportView_latest";
+            string sqlQuery = string.Format(@"
+                        WITH cte
+                        AS
+                        (
+    	                    SELECT MAX(ShiftEndId) AS ShiftEndId
+    	                    FROM dbo.ShiftEndReports
+						    WHERE BranchId = {0}
+                        )
+                        SELECT s.ShiftEndId
+    		                    ,s.UserId
+    		                    ,u.UserName
+    		                    ,es.ShiftId
+    		                    ,es.ShiftName
+    		                    ,s.ShiftEndDate
+    		                    ,s.CompanyMoneyTransferred
+    		                    ,sh.Denomination
+    		                    ,sh.Amount
+    		                    ,sa.ProductId
+                                ,p.ProductName
+    		                    ,ui.UnitId
+    		                    ,ui.UnitName
+    		                    ,sa.ActualAmount
+    		                    ,sa.SystemAmount
+    						    ,b.BranchId
+    						    ,b.BranchName
+                        FROM cte 
+                        JOIN dbo.ShiftEndReports s ON s.ShiftEndId = cte.ShiftEndId
+                        LEFT JOIN dbo.InventoryAuditDetails sa ON sa.ShiftEndId = s.ShiftEndId
+                        LEFT JOIN dbo.ShiftHandoverCashDetails sh ON sh.ShiftEndId = s.ShiftEndId
+                        LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = s.UserId
+                        LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
+                        LEFT JOIN StoragesDb.dbo.Products p ON p.ProductId = sa.ProductId
+                        LEFT JOIN StoragesDb.dbo.Unit ui ON sa.UnitId = ui.UnitId
+    				    LEFT JOIN AccountsDb.dbo.UserBranchs ub ON ub.UserId = u.UserId
+    				    LEFT JOIN StoragesDb.dbo.Branches b ON b.BranchId = ub.BranchId
+             ", branchId);
 
             try
             {
@@ -397,6 +445,7 @@ namespace ManagementSystem.AccountingApi.Services
             }
             catch (Exception ex)
             {
+                var logger = new LogWriter("Function IsCompletedShiftEnd: " + ex.Message, _path);
                 return -1;
             }
         }
@@ -456,7 +505,8 @@ namespace ManagementSystem.AccountingApi.Services
 
                 int count = _context.CalculateScalarFunction<ScalarResult<int>>(query).Value;
 
-                return ++count;
+                int shiftId = ++ count;
+                return shiftId > 2 ? 2 : shiftId;
             }
             catch (Exception ex)
             {
@@ -484,6 +534,19 @@ namespace ManagementSystem.AccountingApi.Services
                 result.ErrorMessage = ex.Message;
             }
             return result;
+        }
+
+        public async Task<bool> UpdateShiftEndReport(int shiftEndId)
+        {
+            try
+            {
+                _context.Database.ExecuteSqlRaw($"exec usp_update_shift_handover {shiftEndId}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         #region Private function handle

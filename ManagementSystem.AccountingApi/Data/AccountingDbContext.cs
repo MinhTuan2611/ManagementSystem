@@ -33,6 +33,14 @@ namespace ManagementSystem.AccountingApi.Data
 
         public DbSet<CreditVoucher> CreditVouchers { get; set; }
         public DbSet<DebitVoucher> DebitVouchers { get; set; }
+        public DbSet <PaymentMenthodReasonRef> PaymentMenthodReasonRefs { get; set; }
+
+        public DbSet<InventoryVoucherDeleted> InventoryVoucherDeleted { get; set; }
+        public DbSet<InventoryVoucherDetailDeleted> InventoryVoucherDetailDeleted { get; set; }
+        public DbSet<CreditVoucherDeleted> CreditVoucherDeleted { get; set; }
+        public DbSet<ReceiptVoucherDeleted> ReceiptVoucherDeleted { get; set; }
+        public DbSet<LegerDeleted> LegerDeleted { get; set; }
+
 
         // Add context to return tabbles
         public DbSet<InventoryVoucherResponseDto> InventoryVoucherResponseDto { get; set; }
@@ -43,6 +51,7 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<UnitResponseDto> UnitResponseDtos { get; set; }
         public DbSet<LegerResponseDto> LegerResponseDtos { get; set; }
         public DbSet<ProductStorageInformationDto> ProductStorageInformationDtos { get; set; }
+        public DbSet<DamagedGoodsStorageDto> DamagedGoodsStorages { get; set; }
         public DbSet<PaymentVoucherResponseDto> PaymentVoucherResponseDtos { get; set; }
         public DbSet<OtherAccountEntryResponseDto> OtherAccountEntryResponseDtos { get; set; }
         public DbSet<BillPaymentDetailResponseDto> BillPaymentDetailResponseDtos { get; set; }
@@ -50,6 +59,8 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<ShiftHandoverResponseDto> ShiftHandoverResponseDtos { get; set; }
         public DbSet<ShiftReportResponseDto> ShiftReportResponseDtos { get; set; }
         public DbSet<AccountsDto> AccountDtos { get; set; }
+        public DbSet<LegerExportExcelResponseDto> LegerExportExcelResponseDtos { get; set; }
+        public DbSet<PaymentMethodInformationDto> PaymentMethodInformationDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -58,6 +69,7 @@ namespace ManagementSystem.AccountingApi.Data
             //modelBuilder.Entity<InventoryVoucherDetail>().HasKey(x => new { x.DocummentNumber, x.ProductId, x.UnitId });
             modelBuilder.Entity<ShiftHandoverCashDetail>().HasKey(x => new { x.ShiftEndId, x.Denomination });
             modelBuilder.Entity<InventoryAuditDetail>().HasKey(x => new { x.ShiftEndId, x.ProductId, x.UnitId });
+            modelBuilder.Entity<PaymentMenthodReasonRef>().HasKey(x => new { x.MethodCode, x.ReasonCode });
 
             modelBuilder.Entity<InventoryVoucherResponseDto>().ToTable(nameof(InventoryVoucherResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<InventoryVoucherDetailResponseDto>().ToTable(nameof(InventoryVoucherDetailResponseDto), t => t.ExcludeFromMigrations());
@@ -66,6 +78,7 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<PaymentMethodResponseDto>().ToTable(nameof(PaymentMethodResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<UnitResponseDto>().ToTable(nameof(UnitResponseDtos), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<ProductStorageInformationDto>().ToTable(nameof(ProductStorageInformationDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<DamagedGoodsStorageDto>().ToTable(nameof(DamagedGoodsStorageDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<LegerResponseDto>().ToTable(nameof(LegerResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<PaymentVoucherResponseDto>().ToTable(nameof(PaymentVoucherResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<OtherAccountEntryResponseDto>().ToTable(nameof(OtherAccountEntryResponseDto), t => t.ExcludeFromMigrations());
@@ -79,6 +92,9 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<RecTransInfoResponseDto>().ToTable(nameof(RecTransInfoResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<DebitVoucherResponseDto>().ToTable(nameof(DebitVoucherResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<DocumentGroupResponseDto>().ToTable(nameof(DocumentGroupResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<LegerExportExcelResponseDto>().ToTable(nameof(LegerExportExcelResponseDto), t => t.ExcludeFromMigrations());
+            modelBuilder.Entity<PaymentMethodInformationDto>().ToTable(nameof(PaymentMethodInformationDto), t => t.ExcludeFromMigrations());
+
             //// Dynamic Response functions
 
             foreach (var entityType in AccountingTableName.GenerateDynamicResponseDbSet())

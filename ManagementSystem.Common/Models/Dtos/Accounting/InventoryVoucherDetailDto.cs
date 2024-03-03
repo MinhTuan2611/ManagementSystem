@@ -8,5 +8,6 @@
         public int UnitId { get; set; }
         public int TotalMoneyAfterTax { get; set; }
         public string Note { get; set; } = "";
+        public int PaymentDiscountMoney { get; set; } = 0;
     }
 }

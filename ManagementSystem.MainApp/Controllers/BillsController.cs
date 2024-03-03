@@ -9,6 +9,7 @@ using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.MainApp.Utility;
 using ManagementSystem.MainApp.Services.IServices;
+using ManagementSystem.Common.Entities.Bills;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -48,7 +49,6 @@ namespace ManagementSystem.MainApp.Controllers
             var resultBill = await HttpRequestsHelper.Post<BillInfo>(SD.StorageApiUrl + "bills/create", bill);
             if (resultBill != null)
             {
-
                 // Tao Phieu Xuat Kho
                 var inventoryVoucherDto = PrepareInventoryModel(bill);
                 inventoryVoucherDto.UserId = userId;
@@ -57,7 +57,10 @@ namespace ManagementSystem.MainApp.Controllers
                 var inventoryResult = await _inventoryService.CreateInventory(inventoryVoucherDto);
 
                 if (inventoryResult.IsSuccess == false)
+                {
+                    var deleteBillFlags = await HttpRequestsHelper.Delete<bool>(SD.StorageApiUrl + $"bills/delete/{resultBill.BillId}/{userId}", resultBill.BillId);
                     return StatusCode(StatusCodes.Status500InternalServerError, inventoryResult.Message);
+                }
 
                 // Update Customer Point
                 if (bill.CustomerId != null)
@@ -183,6 +186,164 @@ namespace ManagementSystem.MainApp.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when Update bill");
         }
 
+        [HttpPost("export_discount_information_excel")]
+        public async Task<IActionResult> ExportDiscountInformationExcel([FromBody] SearchCriteria searchModel)
+        {
+            var result = await HttpRequestsHelper.Post<ResponseDto>(SD.StorageApiUrl + "bills/export_discount_information_excel", searchModel);
+
+            if (result.IsSuccess == false)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+
+            string filePath = result.Result.ToString();
+            // Set the content type based on the file type
+            string contentType = "application/octet-stream";
+
+            // Set the file name displayed in the download dialog
+            string fileName = Path.GetFileName(filePath);
+
+
+            // Create a FileStreamResult with the file stream
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+
+            var response = File(fileStream, contentType, fileName);
+
+            // Register a callback to close the stream after the response is sent
+            Response.OnCompleted(() =>
+            {
+                fileStream.Dispose();
+
+                // Delete the file after it has been downloaded
+                System.IO.File.Delete(filePath);
+
+                return Task.CompletedTask;
+            });
+
+            return response;
+        }
+
+        [HttpPost("view_discount_informations")]
+        public async Task<IActionResult> ViewDiscountInformations([FromBody] SearchCriteria searchModel)
+        {
+            var result = await HttpRequestsHelper.Post<List<DiscountInformationDto>>(SD.StorageApiUrl + "bills/view_discount_informations", searchModel);
+
+            if (result == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("export_revenue_information_excel")]
+        public async Task<IActionResult> ExportRevenueInformationExcel([FromBody] SearchCriteria searchModel)
+        {
+            var result = await HttpRequestsHelper.Post<ResponseDto>(SD.StorageApiUrl + "bills/export_revenue_information_excel", searchModel);
+
+            if (result.IsSuccess == false)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+
+            string filePath = result.Result.ToString();
+            // Set the content type based on the file type
+            string contentType = "application/octet-stream";
+
+            // Set the file name displayed in the download dialog
+            string fileName = Path.GetFileName(filePath);
+
+
+            // Create a FileStreamResult with the file stream
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+
+            var response = File(fileStream, contentType, fileName);
+
+            // Register a callback to close the stream after the response is sent
+            Response.OnCompleted(() =>
+            {
+                fileStream.Dispose();
+
+                // Delete the file after it has been downloaded
+                System.IO.File.Delete(filePath);
+
+                return Task.CompletedTask;
+            });
+
+            return response;
+        }
+
+        [HttpPost("view_revenue_informations")]
+        public async Task<IActionResult> ViewRevenueInformations([FromBody] SearchCriteria searchModel)
+        {
+            var result = await HttpRequestsHelper.Post<List<BillRevenueInformationDto>>(SD.StorageApiUrl + "bills/view_revenue_informations", searchModel);
+
+            if (result == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{billId}")]
+        public async Task<IActionResult> DeleteBill(int billId)
+        {
+            var userId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+
+            var deleteBillFlags = await HttpRequestsHelper.Delete<bool>(SD.StorageApiUrl + $"bills/delete/{billId}/{userId}", billId);
+
+            return Ok();
+        }
+
+        [HttpPost("export_bill_detail_excel")]
+        public async Task<IActionResult> ExportBillDetailExcel([FromBody] string lístBillId)
+        {
+            var result = await HttpRequestsHelper.Post<ResponseDto>(SD.StorageApiUrl + "bills/export_bill_detail_excel", lístBillId);
+
+            if (result.IsSuccess == false)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+
+            string filePath = result.Result.ToString();
+            // Set the content type based on the file type
+            string contentType = "application/octet-stream";
+
+            // Set the file name displayed in the download dialog
+            string fileName = Path.GetFileName(filePath);
+
+
+            // Create a FileStreamResult with the file stream
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+
+            var response = File(fileStream, contentType, fileName);
+
+            // Register a callback to close the stream after the response is sent
+            Response.OnCompleted(() =>
+            {
+                fileStream.Dispose();
+
+                // Delete the file after it has been downloaded
+                System.IO.File.Delete(filePath);
+
+                return Task.CompletedTask;
+            });
+
+            return response;
+        }
+
+        [HttpPost("check_deleting_permission")]
+        public async Task<IActionResult> CheckDeletingPermission([FromBody]BranchVerification branchVerification)
+        {
+            var result = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "bills/check_deleting_permission", branchVerification);
+
+            return Ok(result);
+        }
+
         #region Private handle function
         // Create private function Handler.
         private NewInventoryVoucherDto PrepareInventoryModel(BillInfo bill)
@@ -203,11 +364,12 @@ namespace ManagementSystem.MainApp.Controllers
                 inventoryDetail.Quantity = item.Quantity;
                 inventoryDetail.TotalMoneyAfterTax = item.Amount;
                 inventoryDetail.UnitId = item.UnitId;
+                inventoryDetail.PaymentDiscountMoney = item.DiscountAmount;
 
                 inventoryDetails.Add(inventoryDetail);
             }
             model.CashPaymentAmount = bill.Payments.Where(x => x.PaymentMethodCode == StorageContant.CashPaymentMethodCode).Sum(x => x.Amount);
-
+            
             model.Details = inventoryDetails;
             return model;
         }
