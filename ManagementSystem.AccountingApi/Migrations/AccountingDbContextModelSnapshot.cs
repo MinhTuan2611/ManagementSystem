@@ -85,8 +85,8 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotalMoney")
-                        .HasColumnType("int");
+                    b.Property<float>("TotalMoney")
+                        .HasColumnType("real");
 
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime2");
@@ -500,8 +500,8 @@ namespace ManagementSystem.AccountingApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LegerId"), 1L, 1);
 
-                    b.Property<long>("Amount")
-                        .HasColumnType("bigint");
+                    b.Property<float>("Amount")
+                        .HasColumnType("real");
 
                     b.Property<int?>("BillId")
                         .HasColumnType("int");
@@ -742,8 +742,8 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotalMoney")
-                        .HasColumnType("int");
+                    b.Property<float>("TotalMoney")
+                        .HasColumnType("real");
 
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime2");
