@@ -518,6 +518,50 @@ namespace ManagementSystem.StoragesApi.Services
             return verifications.Where(x => x.VerifyPassword == branchVerification.VerifyPassword).Any();
         }
 
+        public async Task<ResponseDto> ExportBillRevenueDetailExcel(SearchCriteria model)
+        {
+            try
+            {
+
+                // Headers
+                var headers = new[] { "Hóa Đơn", "Ngày Tạo", "Mã Khách Hàng", "Tên Khách Hàng", "Mã Sản Phẩm", "Tên Sản Phẩm", "Đơn Vị Tính", "Số Lượng", "Chiết Khấu", "Thành Tiền" };
+
+                // Handle file path
+                string dateFormat = DateTime.Now.ToString("yyyyMMdd");
+                string filePath = string.Format(StorageContant.billFilePathFomat, dateFormat, string.Format("Doanh_Thu_Chi_Tiet_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
+
+                // Get the directory path
+                string directoryPath = Path.GetDirectoryName(filePath);
+
+                // Check if the directory exists, and if not, create it
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                if (!File.Exists(filePath))
+                {
+                    File.Create(filePath).Close();
+                }
+
+                var resul = await GetBillRevenueDetailInformation(model);
+                // Call the generic function
+                var excelExporter = new ExcelExporter();
+                excelExporter.ExportToExcel(resul, headers, filePath);
+
+                _responseDto.Result = filePath;
+
+            }
+            catch (Exception ex)
+            {
+
+                var logger = new LogWriter("Function ExportBillRevenueDetailExcel: " + ex.Message, _path);
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = ex.Message;
+            }
+
+            return _responseDto;
+        }
         #region Handle Get Data
         private async Task<List<BillDetailResponseDto>> GetBillDetailHandler(int billId)
         {
@@ -807,6 +851,51 @@ namespace ManagementSystem.StoragesApi.Services
 
             return result;
         }
+
+        private async Task<List<BillRevenueDetailInformation>> GetBillRevenueDetailInformation(SearchCriteria model)
+        {
+            string fromDate = model.Criterias["fromDate"].ToString();
+            string toDate = model.Criterias["toDate"].ToString();
+
+            string query = string.Format(@"
+                SELECT  c.BillId
+		                ,FORMAT(c.CreateDate, 'yyyy-MM-dd HH:mm:ss')
+		                ,convert(nvarchar,coalesce(CustomerCode, '')) AS CustomerCode
+		                ,convert(nvarchar,coalesce(CustomerName, '')) AS CustomerName
+		                ,convert(nvarchar,b.ProductCode) as ProductCode
+		                ,b.ProductName 
+		                ,e.UnitName 
+		                ,a.Quantity
+		                ,DiscountAmount
+		                ,a.Amount
+                FROM BillDetails a
+                JOIN Bills c on c.BillId = a.BillId
+                LEFT JOIN Customers d on c.CustomerId = d.CustomerId
+                --left join BillPayments bp on bp.BillId = c.BillId
+                --left join PaymentMethods pm on pm.PaymentMethodId = bp.PaymentMethodId
+                JOIN Products b on a.ProductId = b.ProductId
+                JOIN Unit e on e.UnitId = a.UnitId
+                WHERE 
+                    (CONVERT(datetime, FORMAT(a.CreateDate, 'yyyy-MM-dd')) between CONVERT(datetime, '{0}') AND CONVERT(datetime, '{1}'))
+                order by c.BillId
+            ", fromDate, toDate);
+
+            try
+            {
+                string storageConnection = string.Format(_configuration.GetConnectionString("StoragesDbConnStr"), SD.AccountingDbName);
+                using (var connection = new SqlConnection(storageConnection))
+                {
+                    var result = connection.Query<BillRevenueDetailInformation>(query).ToList();
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         private async Task<List<BillRevenueInformationDto>> GetRevenueInformations(SearchCriteria model)
         {
             string fromDate = model.Criterias["fromDate"].ToString();
@@ -837,16 +926,23 @@ namespace ManagementSystem.StoragesApi.Services
                 LEFT JOIN StoragesProdDb..Branches h ON g.BranchId = h.BranchId
                 where DoccumentType <> 'Chi'
                 AND 
-                (FORMAT(a.TransactionDate, 'yyyy-MM-dd') between CONVERT(datetime, '{2}') AND CONVERT(datetime, '{3}')))
+                (CONVERT(datetime, FORMAT(a.TransactionDate, 'yyyy-MM-dd')) between CONVERT(datetime, '{2}') AND CONVERT(datetime, '{3}')))
 
                 SELECT *
                 from cte
                 ORDER BY BranchCode, TransactionDate
             ", SD.AccountingDbName, SD.AccountDbName, fromDate, toDate);
 
-            var result = _context.BillRevenueInformationDtos.FromSqlRaw(query).ToList();
+            try
+            {
+                var result = _context.BillRevenueInformationDtos.FromSqlRaw(query).ToList();
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private async Task DeleteAccountingVouchers(int billId, int actionUser)
