@@ -599,7 +599,7 @@ namespace ManagementSystem.StoragesApi.Services
         {
             string query = string.Format(@"
  	                SELECT b.Id
-			                ,b.Amount
+			                ,CONVERT(INT, b.Amount) AS Amount
 			                ,b.PaymentTransactionRef
 			                ,p.PaymentMethodCode
 			                ,P.PaymentMethodName

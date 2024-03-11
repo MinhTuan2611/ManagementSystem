@@ -57,7 +57,7 @@ namespace ManagementSystem.MainApp.Controllers
         {
             List<CustomerResponseDto> customers = await HttpRequestsHelper.GetList<CustomerResponseDto>(Environment.StorageApiUrl + "customers/search-term?searchTerm=" + searchTerm);
 
-            if (customers.Count == 0)
+            if (customers?.Count == 0)
                 return BadRequest("Customers not found");
 
             return Ok(customers);

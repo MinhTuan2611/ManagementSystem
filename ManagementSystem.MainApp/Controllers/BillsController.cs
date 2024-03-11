@@ -177,6 +177,16 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             model.UserId = int.Parse(userId);
 
+            var userRoles = await HttpRequestsHelper.Get<List<UserRole>>(SD.AccountApiUrl + "users/get-user-roles-detail?userId=" + userId);
+
+            if (userRoles == null)
+                 return BadRequest("User Login is invalid");
+
+            var valuesToExclude = new List<string> { "QL", "QTV" };
+
+            if (userRoles.Any(x => ! valuesToExclude.Contains(x.role.RoleCode)))
+                return Unauthorized("You don't have permission to do action update bill.");
+
             var resultBill = await HttpRequestsHelper.Post<BillInfo>(SD.StorageApiUrl + "bills/update-bill", model);
             if (resultBill != null)
                 return Ok(resultBill);
@@ -290,6 +300,16 @@ namespace ManagementSystem.MainApp.Controllers
         public async Task<IActionResult> DeleteBill(int billId)
         {
             var userId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
+
+            var userRoles = await HttpRequestsHelper.Get<List<UserRole>>(SD.AccountApiUrl + "users/get-user-roles-detail?userId=" + userId);
+
+            if (userRoles == null)
+                return BadRequest("User Login is invalid");
+
+            var valuesToExclude = new List<string> { "QL", "QTV" };
+
+            if (userRoles.Any(x => !valuesToExclude.Contains(x.role.RoleCode)))
+                return Unauthorized("You don't have permission to do action Delete bill.");
 
             var deleteBillFlags = await HttpRequestsHelper.Delete<bool>(SD.StorageApiUrl + $"bills/delete/{billId}/{userId}", billId);
 
