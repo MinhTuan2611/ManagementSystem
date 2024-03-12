@@ -12,7 +12,9 @@ namespace ManagementSystem.Common.Entities
     {
         [Key]
         public int CategoryId { get; set; }
+        [MaxLength(128)]
         public string CategoryName { get; set; }
+        [MaxLength(1000)]
         public string Description { get; set; }
         public int ParentId { get; set; }
         public int CategoryRefCode { get; set; }

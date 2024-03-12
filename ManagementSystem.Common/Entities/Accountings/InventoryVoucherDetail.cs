@@ -23,6 +23,7 @@ namespace ManagementSystem.Common.Entities
         public int? TaxAccount { get; set; }
         public int? TaxMoney { get; set; }
         public int? TotalMoneyAfterTax { get; set; }
+        [MaxLength(500)]
         public string? Note { get; set; }
         public InventoryVoucher InventoryVoucher { get; set; }
 

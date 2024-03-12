@@ -338,7 +338,8 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("VerifyPassword")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
 
@@ -356,15 +357,18 @@ namespace ManagementSystem.StoragesApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BranchId"), 1L, 1);
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("BranchCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("BranchName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int?>("CreateBy")
                         .HasColumnType("int");
@@ -382,7 +386,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -402,7 +407,8 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("CategoryRefCode")
                         .HasColumnType("int");
@@ -415,7 +421,8 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
@@ -444,7 +451,8 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime?>("BirthDay")
                         .HasColumnType("datetime2");
@@ -457,21 +465,25 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("CustomerCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("CustomerName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("CustomerPoint")
                         .HasColumnType("int");
 
                     b.Property<string>("CustomerUnsign")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Gender")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
@@ -510,11 +522,13 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("PaymentMethodCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("PaymentMethodName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -533,7 +547,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"), 1L, 1);
 
                     b.Property<string>("BarCode")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
@@ -551,7 +566,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Decription")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("DefaultPurchasePrice")
                         .HasColumnType("int");
@@ -567,17 +583,16 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("ProductCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int>("ProductType")
                         .HasColumnType("int");
-
-                    b.Property<string>("ProductUnSignSearching")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("RevenueGroupId")
                         .HasColumnType("int");
@@ -591,11 +606,6 @@ namespace ManagementSystem.StoragesApi.Migrations
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("ProductUnSignSearching")
-                        .HasDatabaseName("idx_productUnSignSearch");
-
-                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("ProductUnSignSearching"), false);
 
                     b.HasIndex("RevenueGroupId");
 
@@ -801,11 +811,13 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("DeliverName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("DeliverPhone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
@@ -821,11 +833,13 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("ReceiverName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ReceiverPhone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<DateTime>("ReceivingDay")
                         .HasColumnType("datetime2");
@@ -936,10 +950,12 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("RequestSampleName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("RequestSampleNote")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -976,7 +992,8 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("ItemNote")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
@@ -1003,7 +1020,8 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("RevenueGroupName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("RevenueGroupId");
 
@@ -1019,7 +1037,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StorageId"), 1L, 1);
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int?>("BranchId")
                         .HasColumnType("int");
@@ -1037,18 +1056,21 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<string>("StorageCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("StorageName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("StorageId");
 
@@ -1066,7 +1088,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SupplierId"), 1L, 1);
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int?>("CreateBy")
                         .HasColumnType("int");
@@ -1075,14 +1098,17 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DisplayAddress")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("MSThue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
@@ -1091,7 +1117,8 @@ namespace ManagementSystem.StoragesApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PTTT")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
@@ -1101,11 +1128,13 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("SupplierCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("SupplierName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.HasKey("SupplierId");
 
@@ -1134,7 +1163,8 @@ namespace ManagementSystem.StoragesApi.Migrations
 
                     b.Property<string>("UnitName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("UnitId");
 
@@ -1238,8 +1268,8 @@ namespace ManagementSystem.StoragesApi.Migrations
 
             modelBuilder.Entity("ManagementSystem.Common.Models.Dtos.BillRevenueInformationDto", b =>
                 {
-                    b.Property<long?>("Amount")
-                        .HasColumnType("bigint");
+                    b.Property<float?>("Amount")
+                        .HasColumnType("real");
 
                     b.Property<int?>("BillId")
                         .HasColumnType("int");

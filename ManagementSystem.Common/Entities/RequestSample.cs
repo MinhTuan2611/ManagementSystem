@@ -9,8 +9,10 @@ namespace ManagementSystem.Common.Entities
         [Key]
          [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RequestSampleId { get; set; }
+        [MaxLength(128)]
         public string RequestSampleName { get; set; }
         public int UserId { get; set; }
+        [MaxLength(1000)]
         public string? RequestSampleNote { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
         public virtual ICollection<RequestSampleItem> RequestSampleItems { get; set; }

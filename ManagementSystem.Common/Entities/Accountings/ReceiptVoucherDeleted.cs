@@ -10,8 +10,10 @@ namespace ManagementSystem.Common.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int DocumentNumber { get; set; }
         public int? CustomerId { get; set; }
+        [MaxLength(128)]
         public string? CustomerName { get; set; }
         //public string? ExtenalCustomer { get; set; }
+        [MaxLength(500)]
         public string ForReason { get; set; }
         public int TotalMoney { get; set; }
         public int UserId { get; set; }

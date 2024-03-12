@@ -6,6 +6,7 @@ namespace ManagementSystem.Common.Entities
     {
         [Key]
         public int ShiftId { get; set; }
+        [MaxLength(50)]
         public string ShiftName { get; set; }
         public int StartHour { get; set; }
         public int StartMinute { get; set; }

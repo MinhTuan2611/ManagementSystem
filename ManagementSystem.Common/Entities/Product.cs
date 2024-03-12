@@ -7,9 +7,13 @@ namespace ManagementSystem.Common.Entities
     {
         [Key]
         public int ProductId { get; set; }
+        [MaxLength(100)]
         public string ProductCode { get; set; }
+        [MaxLength(100)]
         public string? BarCode { get; set; }
+        [MaxLength(128)]
         public string ProductName { get; set; }
+        [MaxLength(500)]
         public string? Decription { get; set; }
         public int? CategoryId { get; set; }
         public ProductTypes ProductType { get; set; } = ProductTypes.Product;
@@ -22,7 +26,7 @@ namespace ManagementSystem.Common.Entities
         public int? DebitAccountId { get; set; }
         public int? RevenueGroupId { get; set; }
 
-        public string? ProductUnSignSearching { get; set; }
+        //public string? ProductUnSignSearching { get; set; }
         public Category? Category { get; set; }
         public RevenueGroup RevenueGroup { get; set; }
         public List<RequestSampleItem> RequestSampleItems { get; set; }

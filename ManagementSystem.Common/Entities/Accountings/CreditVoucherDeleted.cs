@@ -10,8 +10,10 @@ namespace ManagementSystem.Common.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int DocumentNumber { get; set; }
         public int? CustomerId { get; set; }
+        [MaxLength(128)]
         public string? CustomerName { get; set; }
         //public string? ExtenalCustomer { get; set; }
+        [MaxLength(128)]
         public string ForReason { get; set; }
         public int TotalMoney { get; set; }
         public int? UserId { get; set; }
@@ -19,7 +21,9 @@ namespace ManagementSystem.Common.Entities
         public DateTime TransactionDate { get; set; } = DateTime.Now;
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
+        [MaxLength(128)]
         public string? CreditAccount { get; set; }
+        [MaxLength(128)]
         public string? DebitAccount { get; set; }
         public int? BillId { get; set; }
 

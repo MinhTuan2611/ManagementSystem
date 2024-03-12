@@ -67,13 +67,13 @@ namespace ManagementSystem.StoragesApi.Data
             modelBuilder.Entity<DiscountInformationDto>().ToTable(nameof(DiscountInformationDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<BillRevenueInformationDto>().ToTable(nameof(BillRevenueInformationDto), t => t.ExcludeFromMigrations());
 
-            modelBuilder.Entity<Product>(entity =>
-            {
-                entity.HasIndex(x => x.ProductUnSignSearching)
-                    .IsUnique(false)
-                    .IsClustered(false)
-                    .HasDatabaseName("idx_productUnSignSearch");
-            });
+            //modelBuilder.Entity<Product>(entity =>
+            //{
+            //    entity.HasIndex(x => x.ProductUnSignSearching)
+            //        .IsUnique(false)
+            //        .IsClustered(false)
+            //        .HasDatabaseName("idx_productUnSignSearch");
+            //});
 
             modelBuilder.Entity<ProductUnit>(entity =>
             {

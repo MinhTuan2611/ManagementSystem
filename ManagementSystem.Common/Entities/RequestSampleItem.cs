@@ -7,6 +7,7 @@ namespace ManagementSystem.Common.Entities
     public class RequestSampleItem : BaseEntity
     {
         public int UnitId { get; set; }
+        [MaxLength(1000)]
         public string ItemNote { get; set; }
 
         public int ProductId { get; set; }

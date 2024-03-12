@@ -11,6 +11,7 @@ namespace ManagementSystem.Common.Entities
     {
         [Key]
         public int RevenueGroupId { get; set; }
+        [MaxLength(128)]
         public string RevenueGroupName { get; set; }
     }
 }

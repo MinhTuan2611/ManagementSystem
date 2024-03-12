@@ -12,7 +12,9 @@ namespace ManagementSystem.Common.Entities
     {
         [Key]
         public int AccountId { get; set; }
+        [MaxLength(128)]
         public string AccountCode { get; set; }
+        [MaxLength(128)]
         public string AccountName { get; set; }
         public int? AccountParentId { get; set; }
         public HasAccountItemStatus? HasAccountItem { get; set; }

@@ -11,6 +11,7 @@ namespace ManagementSystem.Common.Entities
         public int? CustomerId { get; set; }
         public string? CustomerName { get; set; }
         //public string? ExtenalCustomer { get; set; }
+        [MaxLength(500)]
         public string ForReason { get; set; }
         public float TotalMoney { get; set; }
         public int? UserId { get; set; }
@@ -18,7 +19,9 @@ namespace ManagementSystem.Common.Entities
         public DateTime TransactionDate { get; set; } = DateTime.Now;
         public DateTime UpdatedDate { get; set; } = DateTime.Now;
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
+        [MaxLength(128)]
         public string? CreditAccount { get; set; }
+        [MaxLength(128)]
         public string? DebitAccount { get; set; }
         public int? BillId { get; set; }
 

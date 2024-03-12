@@ -13,6 +13,7 @@ namespace ManagementSystem.Common.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Key]
         public int GroupId { get; set; }
+        [MaxLength(128)]
         public string GroupName { get; set; }
     }
 }

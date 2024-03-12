@@ -12,9 +12,13 @@ namespace ManagementSystem.Common.Entities
         public int StorageId { get; set; }
         public int SupplierId { get; set; }
         public int BillNumber { get; set; }
+        [MaxLength(128)]
         public string DeliverName { get; set; }
+        [MaxLength(15)]
         public string DeliverPhone { get; set; }
+        [MaxLength(128)]
         public string ReceiverName { get; set; }
+        [MaxLength(15)]
         public string ReceiverPhone { get; set; }
         public DateTime ReceivingDay { get; set; }
         public PaymentMethod PaymentMethod { get; set; }

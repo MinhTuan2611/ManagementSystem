@@ -12,6 +12,7 @@ namespace ManagementSystem.Common.Entities
     {
         [Key]
         public int UnitId { get; set; }
+        [MaxLength(50)]
         public string UnitName { get; set; }
     }
 }

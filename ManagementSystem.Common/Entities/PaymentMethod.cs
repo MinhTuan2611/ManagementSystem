@@ -13,9 +13,11 @@ namespace ManagementSystem.Common.Entities
         [Key]
         public int PaymentMethodId { get; set; }
         [Required]
+        [MaxLength(30)]
         public string PaymentMethodCode { get; set; }
 
         [Required]
+        [MaxLength(100)]
         public string PaymentMethodName { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
     }

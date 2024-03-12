@@ -12,13 +12,20 @@ namespace ManagementSystem.Common.Entities
     {
         [Key]
         public int SupplierId { get; set; }
+        [MaxLength(100)]
         public string SupplierCode { get; set; }
+        [MaxLength(128)]
         public string SupplierName { get; set; }
+        [MaxLength(128)]
         public string DisplayName { get; set; }
+        [MaxLength(500)]
         public string? Address { get; set; }
         public string? Phone { get; set; }
+        [MaxLength(128)]
         public string? PTTT { get; set; }
+        [MaxLength(128)]
         public string? MSThue { get; set; }
+        [MaxLength(500)]
         public string? DisplayAddress { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
     }

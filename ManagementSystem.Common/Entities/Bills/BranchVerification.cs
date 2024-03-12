@@ -11,5 +11,6 @@ public class BranchVerification
     [Required]
     public int BranchId { get; set; }
     [Required]
+    [MaxLength(500)]
     public string VerifyPassword { get; set; }
 }

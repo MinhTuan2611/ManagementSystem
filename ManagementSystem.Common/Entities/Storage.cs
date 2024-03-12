@@ -12,9 +12,13 @@ namespace ManagementSystem.Common.Entities
     {
         [Key]
         public int StorageId { get; set; }
+        [MaxLength(100)]
         public string StorageCode { get; set; }
+        [MaxLength(128)]
         public string StorageName { get; set; }
+        [MaxLength(500)]
         public string? Address { get; set; }
+        [MaxLength(15)]
         public string? Phone  { get; set; }
         public int? BranchId { get; set; }
         public ActiveStatus Status { get; set; } = ActiveStatus.Active;
