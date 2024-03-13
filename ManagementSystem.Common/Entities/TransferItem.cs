@@ -1,22 +1,22 @@
+using ManagementSystem.Common.Models;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ManagementSystem.Common.Entities
 {
-    public class RequestItem : BaseEntity
+    public class TransferItem : BaseEntity
     {
         [Key]
-        public int RequestItemId { get; set; }
+        public int TransferItemId { get; set; }
         public int ProductId { get; set; }
-        public int RequestId { get; set; }
+        public int TransferId { get; set; }
         public int Quantity { get; set; }
+        public int ActualQuantity { get; set; } = 0;
         public int UnitId { get; set; }
-        public int UnitPrice { get; set; }
-        public float Tax { get; set; }
-        public decimal ProductAmount { get; set; }
-        public decimal TaxAmount { get; set; }
-        public decimal Amount { get; set; }
         public string? Note { get; set; }
+        [ForeignKey("ProductId")]
         public Product? Product { get; set; }
+        [ForeignKey("UnitId")]
         public Unit? Unit { get; set; }
     }
 }
