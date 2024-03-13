@@ -21,6 +21,7 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
         private GenericRepository<Supplier> _supplierRepository;
         private GenericRepository<RequestSample> _requestSampleRepository;
         private GenericRepository<Request> _requestRepository;
+        private GenericRepository<Transfer> _transferRepository;
         private GenericRepository<Customer> _customerRepository;
         private GenericRepository<Bill> _billRepository;
         private GenericRepository<BillDetail> _billDetailRepository;
@@ -180,6 +181,16 @@ namespace ManagementSystem.StoragesApi.Repositories.UnitOfWork
                 if (_requestRepository == null)
                     _requestRepository = new GenericRepository<Request>(_context);
                 return _requestRepository;
+            }
+        }
+
+        public GenericRepository<Transfer> TransferRepository
+        {
+            get
+            {
+                if (_transferRepository == null)
+                    _transferRepository = new GenericRepository<Transfer>(_context);
+                return _transferRepository;
             }
         }
 

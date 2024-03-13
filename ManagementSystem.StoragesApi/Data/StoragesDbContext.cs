@@ -28,6 +28,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<BillPayment> BillPayments { get; set; }
         public DbSet<RequestSample> RequestSamples { get; set; }
         public DbSet<Request> Requests { get; set; }
+        public DbSet<RequestItem> RequestItem { get; set; }
         public DbSet<AnimalPartRefCode> AnimalPartRefCodes { get; set; }
         public DbSet<RequestSampleItem> RequestSampleItems { get; set; }
         public DbSet<ActivityLog> ActivityLog { get; set; }
@@ -37,6 +38,8 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<BillPaymentDeleted> BillPaymentDeleted { get; set; }
         public DbSet<BillDetailDeleted> BillDetailDeleted { get; set; }
         public DbSet<BranchVerification> BranchVerifications { get; set; }
+        public DbSet<Transfer> Transfer { get; set; }
+        public DbSet<TransferItem> TransferItem { get; set; }
 
         // Response Value
         public DbSet<CustomerResponseDto> customerResponseDtos { get; set; }
