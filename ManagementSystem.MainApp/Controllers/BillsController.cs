@@ -182,16 +182,18 @@ namespace ManagementSystem.MainApp.Controllers
             if (userRoles == null)
                  return BadRequest("User Login is invalid");
 
-            var valuesToExclude = new List<string> { "QL", "QTV" };
+            var valueAcceptRoles = new List<string> { "QL", "QTV", "KT" };
 
-            if (userRoles.Any(x => ! valuesToExclude.Contains(x.role.RoleCode)))
-                return Unauthorized("You don't have permission to do action update bill.");
+            if (userRoles.Any(x =>  valueAcceptRoles.Contains(x.role.RoleCode)))
+            {
+                var resultBill = await HttpRequestsHelper.Post<BillInfo>(SD.StorageApiUrl + "bills/update-bill", model);
+                if (resultBill != null)
+                    return Ok(resultBill);
 
-            var resultBill = await HttpRequestsHelper.Post<BillInfo>(SD.StorageApiUrl + "bills/update-bill", model);
-            if (resultBill != null)
-                return Ok(resultBill);
+                return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when Update bill");
+            }
 
-            return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when Update bill");
+             return Unauthorized("You don't have permission to do action update bill.");
         }
 
         [HttpPost("export_discount_information_excel")]
@@ -306,14 +308,16 @@ namespace ManagementSystem.MainApp.Controllers
             if (userRoles == null)
                 return BadRequest("User Login is invalid");
 
-            var valuesToExclude = new List<string> { "QL", "QTV" };
+            var valueAcceptRoles = new List<string> { "QL", "QTV", "KT" };
 
-            if (userRoles.Any(x => !valuesToExclude.Contains(x.role.RoleCode)))
-                return Unauthorized("You don't have permission to do action Delete bill.");
+            if (userRoles.Any(x => valueAcceptRoles.Contains(x.role.RoleCode)))
+            {
+                var deleteBillFlags = await HttpRequestsHelper.Delete<bool>(SD.StorageApiUrl + $"bills/delete/{billId}/{userId}", billId);
 
-            var deleteBillFlags = await HttpRequestsHelper.Delete<bool>(SD.StorageApiUrl + $"bills/delete/{billId}/{userId}", billId);
+                return Ok();
+            }
 
-            return Ok();
+            return Unauthorized("You don't have permission to do action Delete bill.");
         }
 
         [HttpPost("export_bill_detail_excel")]
