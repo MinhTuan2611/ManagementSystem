@@ -86,6 +86,7 @@ namespace ManagementSystem.StoragesApi.Services
                     ReceiverPhone = request.ReceiverPhone,
                     ReceivingDay = request.ReceivingDay,
                     PaymentMethodId = request.PaymentMethodId,
+                    Note = request.Note,
                     CreditAccount = request.CreditAccount,
                     CreditAmount = request.CreditAmount,
                     DebitAccount = request.DebitAccount,
@@ -94,17 +95,12 @@ namespace ManagementSystem.StoragesApi.Services
                     CreateDate = DateTime.Now
                 };
 
-
-                _context.Requests.Add(newRequest);
-
-                _context.SaveChanges();
-
+                var requestItems = new List<RequestItem>();
                 foreach (var i in request.RequestItemId)
                 {
 
                     RequestItem newRequestItem = new RequestItem
                     {
-                        RequestId = newRequest.RequestId,
                         ProductId = i.ProductId,
                         Quantity = i.Quantity,
                         UnitId = i.UnitId,
@@ -116,14 +112,12 @@ namespace ManagementSystem.StoragesApi.Services
                         Amount = i.Amount,
                         CreateDate = DateTime.Now
                     };
-                    _context.RequestItem.Add(newRequestItem);
-
-                    _context.SaveChanges();
+                    requestItems.Add(newRequestItem);
                 }
 
-
-                // _unitOfWork.RequestRepository.Insert(newRequest);
-                // _unitOfWork.Save();
+                newRequest.RequestItemId = requestItems;
+                _context.Requests.Add(newRequest);
+                _context.SaveChanges();
 
                 return newRequest;
 
@@ -144,8 +138,6 @@ namespace ManagementSystem.StoragesApi.Services
 
             try
             {
-                // Update the properties of the existing request with the new values
-                //existingRequest.RequestName = updatedRequest.RequestName;
                 existingRequest.SupplierId = updatedRequest.SupplierId;
                 existingRequest.BranchId = updatedRequest.BranchId;
                 existingRequest.StorageId = updatedRequest.StorageId;
@@ -159,8 +151,6 @@ namespace ManagementSystem.StoragesApi.Services
                 existingRequest.DebitAccount = updatedRequest.DebitAccount;
                 existingRequest.DebitAmount = updatedRequest.DebitAmount;
                 existingRequest.ModifyDate = DateTime.Now;
-
-                _context.SaveChanges();
 
                 var requestItems = _context.RequestItem.Include(i => i.Product).Include(i => i.Unit).Where(i => i.RequestId == requestId).ToList();
 
@@ -177,11 +167,11 @@ namespace ManagementSystem.StoragesApi.Services
                             itemExisting.Note = j.Note;
                             itemExisting.ProductAmount = j.ProductAmount;
                             itemExisting.ModifyDate = DateTime.Now;
-
-                            _context.SaveChanges();
                         }
                     }
                 }
+
+                _context.SaveChanges();
 
                 return true;
             }
