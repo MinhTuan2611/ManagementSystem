@@ -8,6 +8,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text;
 using ManagementSystem.Common.GenericModels;
+using ManagementSystem.Common.Models.Dtos.Products;
+using ManagementSystem.Common.Helpers;
+using OfficeOpenXml;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -15,22 +18,24 @@ namespace ManagementSystem.StoragesApi.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly StoragesDbContext _storageContext;
-        public ProductsService(StoragesDbContext context)
+        private readonly string _import_file_location;
+        public ProductsService(StoragesDbContext context, IConfiguration configuration)
         {
             _unitOfWork = new UnitOfWork(context);
             _storageContext = context;
+            _import_file_location = configuration.GetValue<string>("Import_File_Location");
         }
 
-        public async Task<(List<ProductListResponse>,int)> GetListProduct(string? searchValue, int? categoryId, int pageSize, int pageNumber)
+        public async Task<(List<ProductListResponse>, int)> GetListProduct(string? searchValue, int? categoryId, int pageSize, int pageNumber)
         {
-            string[] includes = { "Category"};
+            string[] includes = { "Category" };
             IQueryable<Product> products = _unitOfWork.ProductRepository.GetWithInclude(x => x.Status == ActiveStatus.Active, includes);
             var totalRecord = 0;
-            if(searchValue != null && searchValue != String.Empty)
+            if (searchValue != null && searchValue != String.Empty)
             {
                 products = products.Where(x => x.ProductCode.Contains(searchValue) || x.ProductName.Contains(searchValue));
             }
-            if(categoryId != null)
+            if (categoryId != null)
             {
                 products = products.Where(x => x.CategoryId == categoryId);
             }
@@ -40,7 +45,8 @@ namespace ManagementSystem.StoragesApi.Services
             {
                 productToList = products.Skip((pageNumber - 1) * pageSize)
                    .Take(pageSize).ToList();
-            } else
+            }
+            else
             {
                 productToList = products.ToList();
             }
@@ -60,7 +66,7 @@ namespace ManagementSystem.StoragesApi.Services
                 };
                 listProduct.Add(product);
             }
-            return (listProduct,totalRecord);
+            return (listProduct, totalRecord);
         }
 
         public IEnumerable<ProductInfo> AutoCompleteProduct(string? valueSearch)
@@ -75,7 +81,7 @@ namespace ManagementSystem.StoragesApi.Services
             if (listProduct.Any())
             {
                 List<ProductInfo> result = new List<ProductInfo>();
-                foreach(var item in listProduct)
+                foreach (var item in listProduct)
                 {
                     result.Add(new ProductInfo
                     {
@@ -104,7 +110,7 @@ namespace ManagementSystem.StoragesApi.Services
 
                 List<ProductSupplierDto> productSupliers = new List<ProductSupplierDto>();
 
-                foreach(var productSuplier in productSupliersRes)
+                foreach (var productSuplier in productSupliersRes)
                 {
                     productSupliers.Add(new ProductSupplierDto { SupplierId = productSuplier.SupplierId });
                 }
@@ -123,9 +129,9 @@ namespace ManagementSystem.StoragesApi.Services
 
                 for (int i = 0; i < units.Count; i++)
                 {
-                    
-                    List< ProductUnitBranch> unitBranchs = productUnitBranchs.Where(x => x.ProductUnitId == units[i].Id).ToList();
-                       // GetProductUnitBranch(units[i].Id, 0);
+
+                    List<ProductUnitBranch> unitBranchs = productUnitBranchs.Where(x => x.ProductUnitId == units[i].Id).ToList();
+                    // GetProductUnitBranch(units[i].Id, 0);
 
                     if (unitBranchs.Count > 0)
                     {
@@ -162,7 +168,7 @@ namespace ManagementSystem.StoragesApi.Services
                 response.UnitDictionary = response.UnitsBranch.GroupBy(x => x.BranchId)
                                             .ToDictionary(k => k.Key, k => k.ToList());
                 response.Units = response.Units.DistinctBy(x => x.Id).ToList();
-                
+
                 response.UnitsBranch = null;
                 return response;
             }
@@ -191,7 +197,7 @@ namespace ManagementSystem.StoragesApi.Services
                 _unitOfWork.ProductRepository.Insert(product);
                 _unitOfWork.Save();
 
-                for(int i = 0; i < request.Units.Count; i++)
+                for (int i = 0; i < request.Units.Count; i++)
                 {
                     ProductUnit productUnit = new ProductUnit();
                     productUnit.ProductId = product.ProductId;
@@ -225,16 +231,16 @@ namespace ManagementSystem.StoragesApi.Services
                 // Add Product Supplier
                 foreach (var item in request.ProductSuppliers)
                 {
-                     var supplier = new ProductSupplier()
-                     {
+                    var supplier = new ProductSupplier()
+                    {
                         ProductId = product.ProductId,
                         SupplierId = item.SupplierId,
                         CreateBy = request.ModifyBy,
                         ModifyBy = request.ModifyBy,
-                     };
+                    };
 
-                     _unitOfWork.ProductSupplierRepository.Insert(supplier);
-                     _unitOfWork.Save();                    
+                    _unitOfWork.ProductSupplierRepository.Insert(supplier);
+                    _unitOfWork.Save();
                 }
 
 
@@ -251,11 +257,12 @@ namespace ManagementSystem.StoragesApi.Services
 
                 _unitOfWork.Dispose();
                 return true;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return false;
             }
-            
+
         }
         public bool UpdateProduct(ProductCreateUpdate request)
         {
@@ -282,14 +289,14 @@ namespace ManagementSystem.StoragesApi.Services
                 var newUnit = request.Units.Where(x => x.Id != null).Select(x => x.Id).ToList();
                 foreach (ProductUnit productUnit in currentUnit)
                 {
-                    if(newUnit.IndexOf(productUnit.Id) == -1)
+                    if (newUnit.IndexOf(productUnit.Id) == -1)
                     {
                         productUnit.Status = ActiveStatus.Inactive;
                         _unitOfWork.ProductUnitRepository.Update(productUnit);
                         _unitOfWork.Save();
                     }
                 }
-                
+
                 for (int i = 0; i < request.Units.Count; i++)
                 {
                     if (request.Units[i].Id != null)
@@ -306,7 +313,8 @@ namespace ManagementSystem.StoragesApi.Services
                         productUnit.IsPrimary = request.Units[i].IsPrimary;
                         _unitOfWork.ProductUnitRepository.Update(productUnit);
 
-                    } else
+                    }
+                    else
                     {
                         ProductUnit productUnit = new ProductUnit();
                         productUnit.ProductId = product.ProductId;
@@ -323,7 +331,7 @@ namespace ManagementSystem.StoragesApi.Services
                 }
 
 
-                foreach(var entry in request.UnitDictionary)
+                foreach (var entry in request.UnitDictionary)
                 {
                     int branchId = entry.Key;
                     List<ProductUnitDetail> productUnitDetails = entry.Value;
@@ -401,7 +409,7 @@ namespace ManagementSystem.StoragesApi.Services
             try
             {
                 var product = _unitOfWork.ProductRepository.GetByID(productId);
-                if(product != null)
+                if (product != null)
                 {
                     product.Status = ActiveStatus.Inactive;
                     product.ModifyBy = userId;
@@ -551,7 +559,7 @@ namespace ManagementSystem.StoragesApi.Services
         public string GenerateProductCode(int categoryId, string productName)
         {
             string categoryRefCode = _unitOfWork.CategoryRepository.Get(x => x.CategoryId == categoryId)?.CategoryRefCode.ToString();
-            string animalPartRefCode = _unitOfWork.AnimalPartRefCodeRepository.Get(x => 
+            string animalPartRefCode = _unitOfWork.AnimalPartRefCodeRepository.Get(x =>
                     CheckAnimalPartInProductName(productName, x.PartName.Split("/").ToList()))?.RefCode.ToString(); // Handle some part like Nọng/má
 
             //// check category is valid
@@ -580,7 +588,7 @@ namespace ManagementSystem.StoragesApi.Services
                 LEFT JOIN dbo.Storages s ON s.StorageId = ps.StorageId
                 LEFT JOIN dbo.Branches b ON b.BranchId = s.BranchId
                 ORDER BY NEWID()
-                ",items);
+                ", items);
 
             try
             {
@@ -594,10 +602,10 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
-        private  List<ProductUnitBranchResponseDto> GetProductUnitBranch(int unitId, int branchId)
+        private List<ProductUnitBranchResponseDto> GetProductUnitBranch(int unitId, int branchId)
         {
             string query = string.Empty;
-                
+
             if (branchId > 0)
             {
                 query = string.Format(@"
@@ -637,10 +645,10 @@ namespace ManagementSystem.StoragesApi.Services
         private bool CheckAnimalPartInProductName(string productName, List<string> AniamlPartSplit)
         {
             foreach (var part in AniamlPartSplit)
-            if (productName.ToLower().Contains(part.ToLower()))
-                return true;
+                if (productName.ToLower().Contains(part.ToLower()))
+                    return true;
             return false;
-                
+
         }
 
         private static string convertToUnSign(string s)
@@ -650,6 +658,73 @@ namespace ManagementSystem.StoragesApi.Services
             return regex.Replace(temp, String.Empty).Replace('\u0111', 'd').Replace('\u0110', 'D').ToLower();
         }
 
+        private string UploadExcelFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                throw new ArgumentException("File is empty or null.", nameof(file));
+            }
 
+            // Ensure the directory exists
+            if (!Directory.Exists(_import_file_location))
+            {
+                Directory.CreateDirectory(_import_file_location);
+            }
+
+            var fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
+            var filePath = Path.Combine(_import_file_location, file.FileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            return filePath;
+        }
+
+        public ProductReviewImportDto ReviewImportProduct(IFormFile file)
+        {
+            try
+            {
+                var filePath = UploadExcelFile(file);
+                if (Path.GetExtension(filePath).Equals(".xls", StringComparison.OrdinalIgnoreCase))
+                {
+                    string convertedFilePath = Path.ChangeExtension(filePath, ".xlsx");
+                    ExcelImportHelper.ConvertXlsToXlsx(filePath, convertedFilePath);
+                    filePath = convertedFilePath; // Use the converted file
+                }
+                ReadExcelFile(filePath);
+                return new ProductReviewImportDto();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+
+        private void ReadExcelFile(string filePath)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Set license context
+
+            using (var package = new ExcelPackage(new FileInfo(filePath)))
+            {
+                var workbook = package.Workbook;
+                if (workbook != null && workbook.Worksheets.Count > 0)
+                {
+                    var worksheet = workbook.Worksheets[1]; // Get the first worksheet
+
+                    // Read some data
+                    for (int row = 1; row <= worksheet.Dimension.End.Row; row++)
+                    {
+                        for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+                        {
+                            Console.Write($"{worksheet.Cells[row, col].Text}\t");
+                        }
+                        Console.WriteLine();
+                    }
+                }
+            }
+        }
     }
 }

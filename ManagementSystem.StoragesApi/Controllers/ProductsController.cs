@@ -14,14 +14,14 @@ namespace ManagementSystem.StoragesApi.Controllers
     {
         private readonly ProductsService _ProductService;
 
-        public ProductsController(StoragesDbContext context)
+        public ProductsController(StoragesDbContext context, IConfiguration configuration)
         {
-            _ProductService = new ProductsService(context);
+            _ProductService = new ProductsService(context, configuration);
         }
         [HttpGet("get")]
-        public async Task<TPagination<ProductListResponse>> Get(string? searchValue,int? categoryId, int pageSize = 0, int pageNumber = 0)
+        public async Task<TPagination<ProductListResponse>> Get(string? searchValue, int? categoryId, int pageSize = 0, int pageNumber = 0)
         {
-            var (products,total) = await _ProductService.GetListProduct(searchValue, categoryId, pageSize, pageNumber);
+            var (products, total) = await _ProductService.GetListProduct(searchValue, categoryId, pageSize, pageNumber);
             var result = new TPagination<ProductListResponse>();
             result.TotalItems = total;
             result.Items = products;
@@ -86,7 +86,7 @@ namespace ManagementSystem.StoragesApi.Controllers
 
         [HttpGet()]
         [Route("auto-generate-product-code")]
-        public IActionResult GenerateProductCode([FromQuery] int categoryId, [FromQuery] string productName )
+        public IActionResult GenerateProductCode([FromQuery] int categoryId, [FromQuery] string productName)
         {
             string generateCode = _ProductService.GenerateProductCode(categoryId, productName);
 
@@ -103,6 +103,21 @@ namespace ManagementSystem.StoragesApi.Controllers
             var result = _ProductService.AutoRandomProducts(items, brandId);
 
             return Ok(result);
+        }
+
+        [HttpPost()]
+        [Route("review-import-products")]
+
+        public IActionResult ReviewImportExcel(IFormFile file)
+        {
+            // Check if the uploaded file is not null and is an Excel file based on its content type
+            if (file == null || !file.ContentType.Contains("excel") && !file.ContentType.Contains("spreadsheetml"))
+            {
+                return BadRequest("Invalid file. Please upload an Excel file.");
+            }
+            var result = _ProductService.ReviewImportProduct(file);
+            return Ok();
+
         }
     }
 }
