@@ -5,14 +5,16 @@ using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 
-namespace ManagementSystem.StoragesApi.Services{
+namespace ManagementSystem.StoragesApi.Services
+{
     public class TransferStorageService
     {
         private readonly StoragesDbContext _context;
         private readonly IMapper _mapper;
         private readonly UnitOfWork _unitOfWork;
 
-        public TransferStorageService(StoragesDbContext context) {
+        public TransferStorageService(StoragesDbContext context)
+        {
             _context = context;
             _unitOfWork = new UnitOfWork(context);
         }
@@ -71,7 +73,7 @@ namespace ManagementSystem.StoragesApi.Services{
             {
                 Transfer newTransfer = new Transfer
                 {
-                    VoucherNumber = transfer.VoucherNumber,
+                    VoucherNumber = (int)transfer.VoucherNumber,
                     BranchId = transfer.BranchId,
                     StoreInId = transfer.StoreInId,
                     StoreOutId = transfer.StoreOutId,
@@ -81,14 +83,9 @@ namespace ManagementSystem.StoragesApi.Services{
                     DeliverPhone = transfer.DeliverPhone,
                     ReceiverName = transfer.ReceiverName,
                     ReceiverPhone = transfer.ReceiverPhone,
-                    ReceivingDay = transfer.ReceivingDay,
-                    Status = transfer.Status,
-                    ExportingDay = DateTime.Now
-            };
-
-                _context.Transfer.Add(newTransfer);
-
-                _context.SaveChanges();
+                    Status = TransferStatus.Created,
+                };
+                var transferItems = new List<TransferItem>();
 
                 foreach (var i in transfer.TransferItems)
                 {
@@ -101,14 +98,13 @@ namespace ManagementSystem.StoragesApi.Services{
                         UnitId = i.UnitId,
                         Note = i.Note,
                     };
-                    _context.TransferItem.Add(newTransferItem);
 
-                    _context.SaveChanges();
+                    transferItems.Add(newTransferItem);
                 }
 
-
-                // _unitOfWork.RequestRepository.Insert(newRequest);
-                // _unitOfWork.Save();
+                newTransfer.TransferItems = transferItems;
+                _context.Transfer.Add(newTransfer);
+                _context.SaveChanges();
 
                 return newTransfer;
 
@@ -132,16 +128,13 @@ namespace ManagementSystem.StoragesApi.Services{
             {
                 try
                 {
-                    // Update the properties of the existing request with the new values
-                    //existingTransfer.RequestName = updatedTransfer.RequestName;
                     existingTransfer.DeliverName = updatedTransfer.DeliverName;
                     existingTransfer.DeliverPhone = updatedTransfer.DeliverPhone;
                     existingTransfer.ReceiverName = updatedTransfer.ReceiverName;
                     existingTransfer.ReceiverPhone = updatedTransfer.ReceiverPhone;
                     existingTransfer.Status = TransferStatus.Transporting;
                     existingTransfer.ModifyDate = DateTime.Now;
-
-                    _context.SaveChanges();
+                    existingTransfer.ExportingDay = DateTime.Now;
 
                     var transferItems = _context.TransferItem.Include(i => i.Product).Include(i => i.Unit).Where(i => i.TransferId == transferId).ToList();
 
@@ -168,10 +161,10 @@ namespace ManagementSystem.StoragesApi.Services{
                                     productStorageOut.Quantity = productStorageIn.Quantity - j.Quantity;
                                 }
 
-                                _context.SaveChanges();
                             }
                         }
                     }
+                    _context.SaveChanges();
 
                     return true;
                 }
@@ -179,7 +172,6 @@ namespace ManagementSystem.StoragesApi.Services{
                 {
                     throw new Exception(ex.Message);
                 }
-
             }
             else if (updatedTransfer.Status == TransferStatus.Transporting)
             {
@@ -190,8 +182,6 @@ namespace ManagementSystem.StoragesApi.Services{
                     existingTransfer.Status = TransferStatus.Receive;
                     existingTransfer.ModifyDate = DateTime.Now;
                     existingTransfer.ReceivingDay = DateTime.Now;
-
-                    _context.SaveChanges();
 
                     var transferItems = _context.TransferItem.Include(i => i.Product).Include(i => i.Unit).Where(i => i.TransferId == transferId).ToList();
 
@@ -208,7 +198,8 @@ namespace ManagementSystem.StoragesApi.Services{
                                 itemExisting.ModifyDate = DateTime.Now;
 
                                 var productStorageIn = _context.ProductStorages.FirstOrDefault(p => p.ProductId == j.ProductId && p.StorageId == existingTransfer.StoreInId);
-                                if(productStorageIn != null){
+                                if (productStorageIn != null)
+                                {
                                     productStorageIn.Quantity = productStorageIn.Quantity + j.ActualQuantity;
                                 }
 
@@ -217,11 +208,11 @@ namespace ManagementSystem.StoragesApi.Services{
                                 {
                                     productStorageOut.Quantity = productStorageOut.Quantity - j.ActualQuantity;
                                 }
-                                _context.SaveChanges();
                             }
                         }
                     }
 
+                    _context.SaveChanges();
                     return true;
                 }
                 catch (Exception ex)
@@ -230,7 +221,6 @@ namespace ManagementSystem.StoragesApi.Services{
                 }
             }
 
-            // Add a return statement here for cases where none of the conditions are met
             return false;
         }
 

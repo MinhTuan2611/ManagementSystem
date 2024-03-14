@@ -56,24 +56,11 @@ namespace ManagementSystem.MainApp.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, "Error when create request");
         }
 
-        [HttpPost("{id}")]
+        [HttpPost("update/{id}")]
         public async Task<IActionResult> update(int id, [FromBody] TransferModel updatedTransfer)
         {
             updatedTransfer.TransferId = id;
             var response = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "TransferStorege/update", updatedTransfer);
-            if (response)
-            {
-                return Ok(response);
-            }
-
-            return StatusCode(StatusCodes.Status500InternalServerError, "Error when update transfer");
-        }
-
-        [HttpPost("{id}/update-status")]
-        public async Task<IActionResult> UpdateStatusRequest(int id, [FromBody] StatusTransferModel updateStatusModel)
-        {
-            updateStatusModel.TransferId = id;
-            var response = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "TransferStorege/update/status", updateStatusModel);
             if (response)
             {
                 return Ok(response);
