@@ -11,12 +11,20 @@ namespace ManagementSystem.Common.Helpers
     {
         public static void ConvertXlsToXlsx(string sourcePath, string destinationPath)
         {
-            // Load the .xls file
-            Workbook workbook = new Workbook();
-            workbook.LoadFromFile(sourcePath, ExcelVersion.Version97to2003);
+            try
+            {
+                // Load the .xls file
+                Workbook workbook = new Workbook();
+                workbook.LoadFromFile(sourcePath, ExcelVersion.Version97to2003);
+                // Save the workbook as .xlsx
+                workbook.SaveToFile(destinationPath, ExcelVersion.Version2013);
+                // delete the old file
+                File.Delete(sourcePath);
+            }
+            catch
+            {
 
-            // Save the workbook as .xlsx
-            workbook.SaveToFile(destinationPath, ExcelVersion.Version2013);
+            }
         }
     }
 }

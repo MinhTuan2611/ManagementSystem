@@ -107,17 +107,28 @@ namespace ManagementSystem.StoragesApi.Controllers
 
         [HttpPost()]
         [Route("review-import-products")]
-
         public IActionResult ReviewImportExcel(IFormFile file)
         {
             // Check if the uploaded file is not null and is an Excel file based on its content type
             if (file == null || !file.ContentType.Contains("excel") && !file.ContentType.Contains("spreadsheetml"))
             {
-                return BadRequest("Invalid file. Please upload an Excel file.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Invalid file. Please upload an Excel file.");
+            }
+            var result = _ProductService.ReviewImportProduct(file);
+            return Ok(result);
+        }
+
+        [HttpPost()]
+        [Route("import-products")]
+        public IActionResult ImportExcel(IFormFile file)
+        {
+            // Check if the uploaded file is not null and is an Excel file based on its content type
+            if (file == null || !file.ContentType.Contains("excel") && !file.ContentType.Contains("spreadsheetml"))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Invalid file. Please upload an Excel file.");
             }
             var result = _ProductService.ReviewImportProduct(file);
             return Ok();
-
         }
     }
 }

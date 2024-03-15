@@ -3,6 +3,7 @@ using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
+using ManagementSystem.Common.Models.Dtos.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,12 +18,10 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpGet("get")]
         public async Task<IActionResult> Get(string? searchValue, int? categoryId, int pageSize = 0, int pageNumber = 0)
         {
-
             ResponsePagingModel<TPagination<ProductListResponse>> response = new ResponsePagingModel<TPagination<ProductListResponse>>();
             TPagination<ProductListResponse> products = await HttpRequestsHelper.Get<TPagination<ProductListResponse>>(APIUrl + "get?searchValue="+searchValue+ "&categoryId="+categoryId + "&pageSize=" + pageSize + "&pageNumber=" + pageNumber);
             if (products != null)
             {
-
                 response.Status = "success";
                 response.Data = products;
                 return Ok(response);
@@ -136,7 +135,6 @@ namespace ManagementSystem.MainApp.Controllers
             
             if (result != null)
             {
-
                 response.Status = "success";
                 response.Data = result;
                 return Ok(response);
@@ -144,6 +142,58 @@ namespace ManagementSystem.MainApp.Controllers
             response.Status = "success";
             response.ErrorMessage = "Not found any information!";
             return Ok(response);
+        }
+
+        [HttpPost()]
+        [Route("review-import-products")]
+        public async Task<IActionResult> ReviewImportExcel(IFormFile file)
+        {
+            // Check if the uploaded file is not null and is an Excel file based on its content type
+            if (file == null || !file.ContentType.Contains("excel") && !file.ContentType.Contains("spreadsheetml"))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Invalid file. Please upload an Excel file.");
+            }
+            ResponseModel<ProductReviewImportDto> response = new ResponseModel<ProductReviewImportDto>();
+            var responseData = await HttpRequestsHelper.Post<ProductReviewImportDto>(APIUrl + "review-import-products", file);
+            if(responseData != null)
+            {
+                response.Status = "success";
+                response.Data.Add(responseData);
+                return Ok(response);
+            }
+            else
+            {
+                response.Status = "error";
+                response.ErrorMessage = "Failed to review the excel file.";
+
+            }
+            return Ok(responseData);
+        }
+
+        [HttpPost()]
+        [Route("import-products")]
+        public async Task<IActionResult> ImportExcel(IFormFile file)
+        {
+            // Check if the uploaded file is not null and is an Excel file based on its content type
+            if (file == null || !file.ContentType.Contains("excel") && !file.ContentType.Contains("spreadsheetml"))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Invalid file. Please upload an Excel file.");
+            }
+            ResponseModel<ProductReviewImportDto> response = new ResponseModel<ProductReviewImportDto>();
+            var responseData = await HttpRequestsHelper.Post<ProductReviewImportDto>(APIUrl + "review-import-products", file);
+            if (responseData != null)
+            {
+                response.Status = "success";
+                response.Data.Add(responseData);
+                return Ok(response);
+            }
+            else
+            {
+                response.Status = "error";
+                response.ErrorMessage = "Failed to review the excel file.";
+
+            }
+            return Ok(responseData);
         }
     }
 }
