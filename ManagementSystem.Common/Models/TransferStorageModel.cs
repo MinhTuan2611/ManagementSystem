@@ -16,19 +16,19 @@ namespace ManagementSystem.Common.Models
     public class TransferModel
     {
         public int TransferId { get; set; }
-        public string UserCreating { get; set; }
+        public string? UserCreating { get; set; }
         public int VoucherNumber { get; set; }
         public int BranchId { get; set; }
-        public int SupplierId { get; set; }
+        public int? SupplierId { get; set; }
         public int BillNumber { get; set; }
         public string DeliverName { get; set; }
         public string DeliverPhone { get; set; }
         public string ReceiverName { get; set; }
         public string ReceiverPhone { get; set; }
-        public DateTime ReceivingDay { get; set; }
-        public DateTime ExportingDay { get; set; }
+        public DateTime? ReceivingDay { get; set; }
+        public DateTime? ExportingDay { get; set; }
         public TransferStatus Status { get; set; } = TransferStatus.Created;
-        public List<TransferItemModel> TransferItems { get; set; }
+        public List<TransferItemModel>? TransferItems { get; set; }
         public int StoreInId { get; set; }
         public int StoreOutId { get; set; }
     }
