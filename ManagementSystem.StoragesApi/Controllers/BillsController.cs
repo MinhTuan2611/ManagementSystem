@@ -1,3 +1,4 @@
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Entities.Bills;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;

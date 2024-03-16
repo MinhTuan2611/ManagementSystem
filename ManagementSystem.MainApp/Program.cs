@@ -34,6 +34,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 SD.AccountingApiUrl = builder.Configuration["ServicesUrls:AccountingApi"];
 SD.AccountApiUrl = builder.Configuration["ServicesUrls:AccountApi"];
 SD.StorageApiUrl = builder.Configuration["ServicesUrls:StorageApi"];
+SD.MainApiUrl = builder.Configuration["ServicesUrls:MainApi"];
 
 SD.ETaxCode = builder.Configuration["ElectronicBill:TaxCode"];
 SD.EPatern = builder.Configuration["ElectronicBill:Patern"];

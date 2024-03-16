@@ -34,10 +34,11 @@ namespace ManagementSystem.MainApp.Controllers
 
             string invoicesXml = XMLCommonFunction.GenerateXml(model.ToList());
 
+            ElectronicPattern pattern = await HttpRequestsHelper.Get<ElectronicPattern>(SD.StorageApiUrl + "ElectronicBill/get_lastest_electronic_pattern");
             var request = new InvoiceRequestWithoutKeyDto()
             {
                 XmlData = invoicesXml,
-                Pattern = SD.EPatern
+                Pattern = pattern.PatternCode
             };
 
             string authen = GenerateToken("POST");
@@ -46,6 +47,7 @@ namespace ManagementSystem.MainApp.Controllers
 
             var electronicModel = new ElectronicBill
             {
+                EKey = model.ToList().FirstOrDefault().Ikey,
                 Result = result.ToString(),
                 EBType = StorageContant.CreateElectronilcBill,
                 BillId = billInfo.BillId,
@@ -142,7 +144,7 @@ namespace ManagementSystem.MainApp.Controllers
         private async Task<IEnumerable<InvoiceDto>> GenerateInvoiceInformation(BillInfo billInfo)
         {
             var invoices = new List<InvoiceDto>();
-
+            string eKey = string.Format(SD.EIKey, billInfo.BillId, DateTime.Now.Ticks);
             var customer = new CustomerResponseDto();
             var invoice = new InvoiceDto();
             var billAmount = billInfo.Payments.Sum(x => x.Amount);
@@ -153,7 +155,6 @@ namespace ManagementSystem.MainApp.Controllers
 
             if (customer != null && customer.CustomerId > 0)
             {
-                invoice.Ikey = billInfo.BillId.ToString();
                 invoice.Buyer = string.IsNullOrEmpty(customer.CustomerName) == true ? "Khách Lẻ" : customer.CustomerName;
                 invoice.CusCode = customer.CustomerCode;
                 invoice.CusName = customer.CustomerName;
@@ -163,7 +164,7 @@ namespace ManagementSystem.MainApp.Controllers
 
             invoice.Buyer = string.IsNullOrEmpty(invoice.Buyer) == true ? "Khách Lẻ" : invoice.Buyer;
             invoice.TaxAuthorityCode = SD.ETaxCode;
-            invoice.Ikey = SD.EIKey;
+            invoice.Ikey = eKey;
             invoice.ArisingDate = DateTime.Now.ToString("dd/MM/yyyy");
             invoice.CurrencyUnit = "VND";
             invoice.AmountInWords = Utils.NumberToText(billAmount);
