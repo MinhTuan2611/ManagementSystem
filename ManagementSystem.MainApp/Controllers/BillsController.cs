@@ -179,11 +179,23 @@ namespace ManagementSystem.MainApp.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
             model.UserId = int.Parse(userId);
 
-            var resultBill = await HttpRequestsHelper.Post<BillInfo>(SD.StorageApiUrl + "bills/update-bill", model);
-            if (resultBill != null)
-                return Ok(resultBill);
+            var userRoles = await HttpRequestsHelper.Get<List<UserRole>>(SD.AccountApiUrl + "users/get-user-roles-detail?userId=" + userId);
 
-            return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when Update bill");
+            if (userRoles == null)
+                 return BadRequest("User Login is invalid");
+
+            var valueAcceptRoles = new List<string> { "QL", "QTV", "KT" };
+
+            if (userRoles.Any(x =>  valueAcceptRoles.Contains(x.role.RoleCode)))
+            {
+                var resultBill = await HttpRequestsHelper.Post<BillInfo>(SD.StorageApiUrl + "bills/update-bill", model);
+                if (resultBill != null)
+                    return Ok(resultBill);
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong when Update bill");
+            }
+
+             return Unauthorized("You don't have permission to do action update bill.");
         }
 
         [HttpPost("export_discount_information_excel")]
@@ -293,9 +305,21 @@ namespace ManagementSystem.MainApp.Controllers
         {
             var userId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
 
-            var deleteBillFlags = await HttpRequestsHelper.Delete<bool>(SD.StorageApiUrl + $"bills/delete/{billId}/{userId}", billId);
+            var userRoles = await HttpRequestsHelper.Get<List<UserRole>>(SD.AccountApiUrl + "users/get-user-roles-detail?userId=" + userId);
 
-            return Ok();
+            if (userRoles == null)
+                return BadRequest("User Login is invalid");
+
+            var valueAcceptRoles = new List<string> { "QL", "QTV", "KT" };
+
+            if (userRoles.Any(x => valueAcceptRoles.Contains(x.role.RoleCode)))
+            {
+                var deleteBillFlags = await HttpRequestsHelper.Delete<bool>(SD.StorageApiUrl + $"bills/delete/{billId}/{userId}", billId);
+
+                return Ok();
+            }
+
+            return Unauthorized("You don't have permission to do action Delete bill.");
         }
 
         [HttpPost("export_bill_detail_excel")]
@@ -344,6 +368,43 @@ namespace ManagementSystem.MainApp.Controllers
             return Ok(result);
         }
 
+        [HttpPost("export_bill_revenue_detail_excel")]
+        public async Task<IActionResult> ExportBillRevenueDetail([FromBody] SearchCriteria searchModel)
+        {
+            var result = await HttpRequestsHelper.Post<ResponseDto>(SD.StorageApiUrl + "bills/export_bill_revenue_detail_excel", searchModel);
+
+            if (result.IsSuccess == false)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+
+            string filePath = result.Result.ToString();
+            // Set the content type based on the file type
+            string contentType = "application/octet-stream";
+
+            // Set the file name displayed in the download dialog
+            string fileName = Path.GetFileName(filePath);
+
+
+            // Create a FileStreamResult with the file stream
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+
+
+            var response = File(fileStream, contentType, fileName);
+
+            // Register a callback to close the stream after the response is sent
+            Response.OnCompleted(() =>
+            {
+                fileStream.Dispose();
+
+                // Delete the file after it has been downloaded
+                System.IO.File.Delete(filePath);
+
+                return Task.CompletedTask;
+            });
+
+            return response;
+        }
         #region Private handle function
         // Create private function Handler.
         private NewInventoryVoucherDto PrepareInventoryModel(BillInfo bill)

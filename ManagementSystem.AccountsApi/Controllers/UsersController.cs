@@ -89,6 +89,13 @@ namespace ManagementSystem.AccountsApi.Controllers
             return Ok(roleIds);
         }
 
+        [HttpGet("get-user-roles-detail")]
+        public IActionResult GetUserRolesDetail(int userId)
+        {
+            var userRoles = _UsersService.GetUserRoleDetail(userId);
+            return Ok(userRoles);
+        }
+
         [HttpPost("change_password")]
         public async Task<ResponseDto> ChangePassword([FromBody]UserChangePasswordRequestDto requestDto)
         {

@@ -11,7 +11,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? Id { get; set; }
         public string? PaymentMethodCode { get; set; }
         public string? PaymentMethodName { get; set; }
-        public float? Amount { get; set; } = 0;
+        public int? Amount { get; set; } = 0;
         public string? PaymentTransactionRef { get; set; }
     }
 }

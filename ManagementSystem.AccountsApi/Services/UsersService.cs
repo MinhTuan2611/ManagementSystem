@@ -203,6 +203,13 @@ namespace ManagementSystem.AccountsApi.Services
             return roles;
         }
 
+        public List<UserRole> GetUserRoleDetail(int userId)
+        {
+            List<UserRole> userRoles = _context.UserRoles.Where(x => x.UserId == userId).Include(x => x.role).ToList();
+
+            return userRoles;
+        }
+
         public async Task<ResponseDto> ChangePassword(UserChangePasswordRequestDto requestDto)
         {
             try

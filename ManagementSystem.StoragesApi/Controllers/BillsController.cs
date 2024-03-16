@@ -144,5 +144,13 @@ namespace ManagementSystem.StoragesApi.Controllers
         {
             return await _BillsService.CheckDeletingPermission(branchVerification);
         }
+
+        [HttpPost]
+        [Route("export_bill_revenue_detail_excel")]
+        public async Task<IActionResult> ExportBillRevenueDetail([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _BillsService.ExportBillRevenueDetailExcel(searchModel);
+            return Ok(result);
+        }
     }
 }

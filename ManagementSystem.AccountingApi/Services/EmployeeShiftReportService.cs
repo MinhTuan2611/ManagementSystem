@@ -351,13 +351,13 @@ namespace ManagementSystem.AccountingApi.Services
                         JOIN dbo.ShiftEndReports s ON s.ShiftEndId = cte.ShiftEndId
                         LEFT JOIN dbo.InventoryAuditDetails sa ON sa.ShiftEndId = s.ShiftEndId
                         LEFT JOIN dbo.ShiftHandoverCashDetails sh ON sh.ShiftEndId = s.ShiftEndId
-                        LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = s.UserId
-                        LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
-                        LEFT JOIN StoragesDb.dbo.Products p ON p.ProductId = sa.ProductId
-                        LEFT JOIN StoragesDb.dbo.Unit ui ON sa.UnitId = ui.UnitId
-    				    LEFT JOIN AccountsDb.dbo.UserBranchs ub ON ub.UserId = u.UserId
-    				    LEFT JOIN StoragesDb.dbo.Branches b ON b.BranchId = ub.BranchId
-             ", branchId);
+                        LEFT JOIN {1}.dbo.Users u ON u.UserId = s.UserId
+                        LEFT JOIN {1}.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
+                        LEFT JOIN {2}.dbo.Products p ON p.ProductId = sa.ProductId
+                        LEFT JOIN {2}.dbo.Unit ui ON sa.UnitId = ui.UnitId
+    				    LEFT JOIN {1}.dbo.UserBranchs ub ON ub.UserId = u.UserId
+    				    LEFT JOIN {2}.dbo.Branches b ON b.BranchId = ub.BranchId
+             ", branchId, SD.AccountDbName, SD.StorageDbName);
 
             try
             {

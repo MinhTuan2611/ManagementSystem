@@ -18,11 +18,10 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpGet]
         public async Task<IActionResult>  Get()
         {
-            ResponsePagingModel<IEnumerable<Request>> response = new ResponsePagingModel<IEnumerable<Request>>();
-            var requets = await HttpRequestsHelper.Get<IEnumerable<Request>>(SD.StorageApiUrl + "Request");
+            ResponsePagingModel<ResponseRequestDto> response = new ResponsePagingModel<ResponseRequestDto>();
+            var requets = await HttpRequestsHelper.Get<ResponseRequestDto>(SD.StorageApiUrl + "Request");
             if (requets != null)
             {
-
                 response.Status = "success";
                 response.Data = requets;
                 return Ok(response);
@@ -35,7 +34,7 @@ namespace ManagementSystem.MainApp.Controllers
         [HttpGet("get_by_id")]
         public async Task<IActionResult> GetById([FromQuery]int id)
         {
-            var request = await HttpRequestsHelper.Get<Request>(SD.StorageApiUrl + "Request/get_by_id?id=" + id);
+            var request = await HttpRequestsHelper.Get<RequestDTO>(SD.StorageApiUrl + "Request/get_by_id?id=" + id);
             if (request != null)
             {
                 return Ok(request);
@@ -56,12 +55,25 @@ namespace ManagementSystem.MainApp.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, "Error when create request");
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> update(int id, [FromBody]Request updatedRequest)
+        [HttpPost("{id}")]
+        public async Task<IActionResult> update(int id, [FromBody] RequestModel updatedRequest)
         {
             updatedRequest.RequestId = id;
-            var response = await HttpRequestsHelper.Post<Request>(SD.StorageApiUrl + "Request/update", updatedRequest);
-            if (response != null)
+            var response = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "Request/update", updatedRequest);
+            if (response)
+            {
+                return Ok(response);
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error when create request");
+        }
+
+        [HttpPost("{id}/update-status")]
+        public async Task<IActionResult> UpdateStatusRequest(int id, [FromBody] UpdateStatusModel updateStatusModel)
+        {
+            updateStatusModel.RequestId = id;
+            var response = await HttpRequestsHelper.Post<bool>(SD.StorageApiUrl + "Request/update/status", updateStatusModel);
+            if (response)
             {
                 return Ok(response);
             }

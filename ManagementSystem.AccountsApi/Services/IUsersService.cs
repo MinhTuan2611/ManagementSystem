@@ -16,7 +16,7 @@ namespace ManagementSystem.AccountsApi.Services
         bool UpdateUser(int UserId, UserInformation UserEntity);
         //bool DeleteUser(int UserId);
         string GetUserRoles(int UserId);
-
+        List<UserRole> GetUserRoleDetail(int UserId);
         Task<ResponseDto> ChangePassword(UserChangePasswordRequestDto requestDto);
     }
 }
