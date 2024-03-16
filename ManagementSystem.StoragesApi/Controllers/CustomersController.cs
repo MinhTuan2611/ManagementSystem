@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
@@ -22,10 +23,15 @@ namespace ManagementSystem.StoragesApi.Controllers
             _mapper = mapper;
         }
         [HttpGet("get")]
-        public List<Customer> Get()
+        public TPagination<Customer> Get(string? customerName, string? phoneNumber, int pageSize = 15, int pageNumber = 1)
         {
-            var customers = _CustomersService.GetListCustomers();
-            return customers;
+            var (customers, countCustomer) = _CustomersService.GetListCustomers(customerName, phoneNumber, pageSize, pageNumber);
+
+            var result = new TPagination<Customer>();
+            result.TotalItems = countCustomer;
+            result.Items = customers;
+
+            return result;
         }
         [HttpGet("get-customer-by-code")]
         public Customer GetCustomerByCode(string customerCode)

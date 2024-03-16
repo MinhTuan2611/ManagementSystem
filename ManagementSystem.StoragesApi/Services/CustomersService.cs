@@ -4,6 +4,8 @@ using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Text;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -18,10 +20,67 @@ namespace ManagementSystem.StoragesApi.Services
             _storageContext = context;
         }
 
-        public List<Customer> GetListCustomers()
+        public (List<Customer>, int) GetListCustomers(string? customerName, string? phoneNumber, int pageSize, int pageNumber)
         {
-            List<Customer> customers = _unitOfWork.CustomerRepository.GetAll().ToList();
-            return customers;
+            try
+            {
+                IEnumerable<Customer> customers;
+
+                bool isDiacriticsCusomterName = false;
+                string cusomterNameNonDiacritics = string.Empty;
+                if (!String.IsNullOrEmpty(customerName))
+                {
+                    cusomterNameNonDiacritics = RemoveDiacritics(customerName);
+                    isDiacriticsCusomterName  = customerName != cusomterNameNonDiacritics ? true : false;
+                }
+
+                if (!String.IsNullOrEmpty(customerName) && !String.IsNullOrEmpty(phoneNumber))
+                {
+                    if (isDiacriticsCusomterName == true)
+                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerName.Contains(customerName, StringComparison.CurrentCultureIgnoreCase) && c.CustomerCode.Contains(phoneNumber));
+                    else
+                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerUnsign.Contains(cusomterNameNonDiacritics, StringComparison.CurrentCultureIgnoreCase) && c.CustomerCode.Contains(phoneNumber));
+                }
+                else if (!String.IsNullOrEmpty(customerName))
+                {
+                    if (isDiacriticsCusomterName == true)
+                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerName.Contains(customerName, StringComparison.CurrentCultureIgnoreCase));
+                    else
+                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerUnsign.Contains(cusomterNameNonDiacritics, StringComparison.CurrentCultureIgnoreCase));
+                }
+                else if (!String.IsNullOrEmpty(phoneNumber))
+                {
+                    customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerCode.Contains(phoneNumber));
+                }
+                else
+                    customers = _unitOfWork.CustomerRepository.GetAll();
+
+                return (customers.OrderBy(c => c.CustomerName).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList(), customers.Count());
+            }
+            catch (Exception ex)
+            {
+                return (null, 0);
+            }
+        }
+
+        public string RemoveDiacritics(string text)
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
+
+            for (int i = 0; i < normalizedString.Length; i++)
+            {
+                char c = normalizedString[i];
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder
+                .ToString()
+                .Normalize(NormalizationForm.FormC);
         }
         public Customer GetCustomerByCode(string customerCode)
         {
