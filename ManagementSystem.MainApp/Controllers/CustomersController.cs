@@ -1,7 +1,9 @@
 ﻿using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
+using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.MainApp.CustomerActionFilters;
+using ManagementSystem.MainApp.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -62,6 +64,29 @@ namespace ManagementSystem.MainApp.Controllers
 
             return Ok(customers);
 
+        }
+
+        [HttpGet("get-detail")]
+        public async Task<IActionResult> GetDetail([FromQuery] int id)
+        {
+
+            ResponseModel<CustomerResponseDto> response = new ResponseModel<CustomerResponseDto>();
+            var result = await HttpRequestsHelper.Get<CustomerResponseDto>(SD.StorageApiUrl + "customers/get-detail?id=" + id);
+
+            var resultResponse = new List<CustomerResponseDto>();
+            resultResponse.Add(result);
+
+            if (result != null)
+            {
+
+                response.Status = "success";
+                response.Data = resultResponse;
+                return Ok(response);
+            }
+
+            response.Status = "success";
+            response.ErrorMessage = "Not found any information!";
+            return Ok(response);
         }
     }
 }

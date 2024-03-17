@@ -1,4 +1,4 @@
-﻿namespace ManagementSystem.Common.Constants
+namespace ManagementSystem.Common.Constants
 {
     public class StorageContant
     {
@@ -6,5 +6,6 @@
         public const string CashPaymentMethodCode = "CASH";
         public const string PointPaymentMethod = "POINT";
         public const string billFilePathFomat = @"C:\Bills\{0}\{1}";
+        public const int CreateElectronilcBill = 1;
     }
 }

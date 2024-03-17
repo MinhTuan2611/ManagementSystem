@@ -633,6 +633,38 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
+
+        public ProductDetailResponseDto ProductDetailByIdAndUnit(int productId, int unitId)
+        {
+
+            string query = string.Format(@"
+                    SELECT p.ProductId
+		                    ,p.ProductCode
+                            ,p.ProductName
+                            ,CONVERT(DECIMAL(18, 2), p.Price) AS Price
+		                    ,CONVERT(DECIMAL(18, 2), p.DefaultPurchasePrice) AS DefaultPurchasePrice
+		                    ,p.BarCode
+		                    ,p.Tax
+		                    ,c.CategoryName
+		                    ,u.UnitName
+                    FROM dbo.Products p
+                    JOIN dbo.Category c ON c.CategoryId = p.CategoryId
+                    JOIN dbo.ProductUnit pu ON pu.ProductId = p.ProductId
+                    JOIN dbo.Unit U ON U.UnitId = pu.UnitId
+                    WHERE p.ProductId = {0} AND U.UnitId = {1}
+                ", productId, unitId);
+
+            try
+            {
+                var result = _storageContext.ProductResponseDtos.FromSqlRaw(query).SingleOrDefault();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         // private function check part name is in product name
         private bool CheckAnimalPartInProductName(string productName, List<string> AniamlPartSplit)
         {

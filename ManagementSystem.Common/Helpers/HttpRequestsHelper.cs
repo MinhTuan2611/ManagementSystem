@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,6 +53,25 @@ namespace ManagementSystem.Common.Helpers
             if (resLogin.IsSuccessStatusCode)
             {
                 var content = await resLogin.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<TResult>(content);
+            }
+            return default(TResult);
+        }
+
+        public static async Task<TResult> PostAuthorize<TResult>(string url, object parameter, string? token)
+        {
+            using var httpClient = new HttpClient();
+            string payRequestJson = JsonConvert.SerializeObject(parameter);
+            //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Authentication", token);
+
+            var requestProd = new HttpRequestMessage(HttpMethod.Post, url);
+            requestProd.Headers.Add("Authentication", token);
+
+            requestProd.Content = new StringContent(payRequestJson, Encoding.UTF8, "application/json");
+            var resprod = await httpClient.SendAsync(requestProd);
+            if (resprod.IsSuccessStatusCode)
+            {
+                var content = await resprod.Content.ReadAsStringAsync();
                 return JsonConvert.DeserializeObject<TResult>(content);
             }
             return default(TResult);

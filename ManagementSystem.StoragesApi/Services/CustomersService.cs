@@ -1,4 +1,4 @@
-﻿using ManagementSystem.Common.Constants;
+using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
@@ -84,6 +84,31 @@ namespace ManagementSystem.StoragesApi.Services
             try
             {
                 var customers = _storageContext.customerResponseDtos.FromSqlRaw(query).ToList();
+                return customers;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public CustomerResponseDto GetCustomerById(int id)
+        {
+            string query = string.Format(@"
+                SELECT [CustomerCode]
+    	                ,[CustomerName]
+    	                ,[CustomerPoint]
+    	                ,[Address]
+    	                ,[BirthDay]
+    	                ,[Gender]
+    	                ,[PhoneNumber]
+                FROM dbo.Customers
+                WHERE CustomerId = {0}
+                            ", id);
+
+            try
+            {
+                var customers = _storageContext.customerResponseDtos.FromSqlRaw(query).FirstOrDefault();
                 return customers;
             }
             catch (Exception ex)
