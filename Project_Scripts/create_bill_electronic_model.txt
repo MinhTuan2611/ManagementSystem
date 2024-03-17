@@ -1,0 +1,16 @@
+CREATE TABLE dbo.ElectronicBills
+(
+	EKey VARCHAR(50)
+	,Result VARCHAR(MAX)
+	,EBType INT
+	,BillId INT
+)
+
+CREATE TABLE dbo.ElectronicPattern
+(
+	PatternYear INT
+	,PatternCode VARCHAR(50)
+)
+
+INSERT INTO dbo.ElectronicPattern
+VALUES (2024, '1C24MTP')

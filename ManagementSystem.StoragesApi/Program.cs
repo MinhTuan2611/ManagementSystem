@@ -14,6 +14,7 @@ builder.Services.AddDbContextPool<DbContext, StoragesDbContext>(options =>
     options.UseSqlServer(connectionString));
 SD.AccountDbName = builder.Configuration["DatabaseNames:AccountsDb"];
 SD.AccountingDbName = builder.Configuration["DatabaseNames:AccountingDb"];
+SD.StorageDbName = builder.Configuration["DatabaseNames:StoragesDb"];
 SD.AccountingApiUrl = builder.Configuration["ServicesUrls:AccountingApi"];
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

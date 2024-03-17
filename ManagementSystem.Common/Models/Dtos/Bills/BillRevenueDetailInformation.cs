@@ -3,7 +3,7 @@
 public class BillRevenueDetailInformation
 {
     public int BillId { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime CreateDate { get; set; }
     public string CustomerCode { get; set; }
     public string CustomerName { get; set; }
     public string ProductCode { get; set; }
