@@ -4,13 +4,15 @@ using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Text;
 using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models.Dtos.Products;
 using ManagementSystem.Common.Helpers;
 using OfficeOpenXml;
+using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens;
+using Azure.Core;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -672,7 +674,7 @@ namespace ManagementSystem.StoragesApi.Services
             }
 
             var fileName = Path.GetRandomFileName() + Path.GetExtension(file.FileName);
-            var filePath = Path.Combine(_import_file_location, file.FileName);
+            var filePath = Path.Combine(_import_file_location, fileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
@@ -682,7 +684,7 @@ namespace ManagementSystem.StoragesApi.Services
             return filePath;
         }
 
-        public ProductReviewImportDto ReviewImportProduct(IFormFile file)
+        public List<ProductReviewImportDto> ReviewImportProduct(IFormFile file)
         {
             try
             {
@@ -693,38 +695,153 @@ namespace ManagementSystem.StoragesApi.Services
                     ExcelImportHelper.ConvertXlsToXlsx(filePath, convertedFilePath);
                     filePath = convertedFilePath; // Use the converted file
                 }
-                ReadExcelFile(filePath);
-                return new ProductReviewImportDto();
+                var excelData = ReadExcelFile(filePath);
+                var result = ReviewImportFile(excelData);
+                return result;
             }
             catch (Exception ex)
             {
                 return null;
             }
-
         }
 
-        private void ReadExcelFile(string filePath)
+        public bool ImportProduct(List<ProductImportRequest> listImport, int userId)
+        {
+            try
+            {
+                foreach (var item in listImport)
+                {
+                    if (item.status == ImportProductStatus.UpdateProduct)
+                    {
+                        var product = _storageContext.Products.FirstOrDefault(x => x.ProductCode == item.ProductCode);
+                        if (product == null) return false;
+
+                        product.ProductName = item.ProductName;
+                        product.DefaultPurchasePrice = item.DefaultPurchasePrice;
+                        product.Price = item.Price;
+                        product.ModifyBy = userId;
+                        _unitOfWork.ProductRepository.Update(product);
+                    }
+                    if (item.status == ImportProductStatus.CreateProduct)
+                    {
+                        var product = new Product();
+                        product.ProductCode = item.ProductCode;
+                        product.ProductName = item.ProductName;
+                        product.DefaultPurchasePrice = item.DefaultPurchasePrice;
+                        product.Price = item.Price;
+                        product.CategoryId = item.CategoryId;
+                        product.ModifyBy = userId;
+                        _unitOfWork.ProductRepository.Insert(product);
+                        _unitOfWork.Save();
+                        if (item.UnitId != null)
+                        {
+                            ProductUnit productUnit = new ProductUnit();
+                            productUnit.ProductId = product.ProductId;
+                            productUnit.UnitId = item.UnitId.Value;
+                            productUnit.IsPrimary = true;
+                            productUnit.UnitExchange = 1;
+                            _unitOfWork.ProductUnitRepository.Insert(productUnit);
+                        }
+                    }
+                }
+                _unitOfWork.Save();
+                _unitOfWork.Dispose();
+
+                // Add activity logs
+                _storageContext.ActivityLog.Add(new ActivityLog()
+                {
+                    UserId = userId,
+                    Action = "Import Products",
+                    Source = "Product",
+                    DateModified = DateTime.Now,
+                });
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        private List<ProductReviewImport> ReadExcelFile(string filePath)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Set license context
+            List<ProductReviewImport> productReviews = new List<ProductReviewImport>();
 
             using (var package = new ExcelPackage(new FileInfo(filePath)))
             {
                 var workbook = package.Workbook;
                 if (workbook != null && workbook.Worksheets.Count > 0)
                 {
-                    var worksheet = workbook.Worksheets[1]; // Get the first worksheet
-
-                    // Read some data
-                    for (int row = 1; row <= worksheet.Dimension.End.Row; row++)
+                    ExcelWorksheet worksheet = null;
+                    foreach (var sheet in workbook.Worksheets)
                     {
-                        for (int col = 1; col <= worksheet.Dimension.End.Column; col++)
+                        if (sheet.Hidden == eWorkSheetHidden.Visible)
                         {
-                            Console.Write($"{worksheet.Cells[row, col].Text}\t");
+                            worksheet = sheet;
+                            break; 
                         }
-                        Console.WriteLine();
+                    }
+
+                    // Assume first row is headers, so start from row 2
+                    for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                    {
+                        var productReviewImport = new ProductReviewImport
+                        {
+                            ProductCode = worksheet.Cells[row, 3].Text,
+                            ProductName = worksheet.Cells[row, 4].Text,
+                            CategoryId = int.TryParse(worksheet.Cells[row, 6].Text, out int categoryId) ? categoryId : null,
+                            UnitName = worksheet.Cells[row, 7].Text,
+                            DefaultPurchasePrice = int.TryParse(worksheet.Cells[row, 8].Text.Replace(",", ""), out int defaultPurchasePrice) ? defaultPurchasePrice : 0,
+                            Price = int.TryParse(worksheet.Cells[row, 9].Text.Replace(",", ""), out int price) ? price : 0
+                        };
+                        if (productReviewImport.ProductCode.IsNullOrEmpty() == false)
+                        {
+                            productReviews.Add(productReviewImport);
+                        }
                     }
                 }
+                return productReviews;
             }
+        }
+
+        private List<ProductReviewImportDto> ReviewImportFile(List<ProductReviewImport> file)
+        {
+            var productReviewDto = new List<ProductReviewImportDto>();
+            foreach (var item in file)
+            {
+                var importProduct = new ProductReviewImportDto();
+
+                var product = _storageContext.Products.FirstOrDefault(x => x.ProductCode == item.ProductCode);
+                importProduct.CategoryId = product?.CategoryId;
+                importProduct.ProductCode = item.ProductCode;
+                importProduct.ProductName = item.ProductName;
+                importProduct.DefaultPurchasePrice = item.DefaultPurchasePrice;
+                importProduct.Price = item.Price;
+                importProduct.UnitName = item.UnitName;
+
+                if (product != null)
+                {
+                    var productUnit = _storageContext.ProductUnit.Include(x => x.Unit).FirstOrDefault(x => x.ProductId == product.ProductId);
+                    importProduct.UnitName = productUnit.Unit.UnitName;
+                    importProduct.UnitId = productUnit.Unit.UnitId;
+                    if (product.ProductName != item.ProductName || product.DefaultPurchasePrice != item.DefaultPurchasePrice || product.Price != item.Price)
+                    {
+                        importProduct.status = ImportProductStatus.UpdateProduct;
+                    }
+                }
+                else
+                {
+                    if (item.UnitName.IsNullOrEmpty() == false)
+                    {
+                        var unit = _storageContext.Unit.FirstOrDefault(x => x.UnitName == item.UnitName);
+                        importProduct.UnitId = unit?.UnitId;
+                    }
+                    importProduct.status = ImportProductStatus.CreateProduct;
+                }
+                productReviewDto.Add(importProduct);
+            }
+            return productReviewDto;
         }
     }
 }

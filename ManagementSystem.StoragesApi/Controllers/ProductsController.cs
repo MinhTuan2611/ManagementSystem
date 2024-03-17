@@ -2,6 +2,7 @@
 using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
+using ManagementSystem.Common.Models.Dtos.Products;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -112,22 +113,31 @@ namespace ManagementSystem.StoragesApi.Controllers
             // Check if the uploaded file is not null and is an Excel file based on its content type
             if (file == null || !file.ContentType.Contains("excel") && !file.ContentType.Contains("spreadsheetml"))
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Invalid file. Please upload an Excel file.");
+                return StatusCode(StatusCodes.Status400BadRequest, "Invalid file. Please upload an Excel file.");
             }
-            var result = _ProductService.ReviewImportProduct(file);
+            List<ProductReviewImportDto> result = _ProductService.ReviewImportProduct(file);
+            if(result == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Fail reviewing the Excel file.");
+
+            }
             return Ok(result);
         }
 
         [HttpPost()]
         [Route("import-products")]
-        public IActionResult ImportExcel(IFormFile file)
+        public IActionResult ImportExcel(List<ProductImportRequest> importFile,int userId)
         {
             // Check if the uploaded file is not null and is an Excel file based on its content type
-            if (file == null || !file.ContentType.Contains("excel") && !file.ContentType.Contains("spreadsheetml"))
+            if (importFile == null || !importFile.Any())
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Invalid file. Please upload an Excel file.");
+                return StatusCode(StatusCodes.Status400BadRequest, "No product to import");
             }
-            var result = _ProductService.ReviewImportProduct(file);
+            var sucesss = _ProductService.ImportProduct(importFile, userId);
+            if(sucesss == false)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Fail importing the Excel file.");
+            }
             return Ok();
         }
     }
