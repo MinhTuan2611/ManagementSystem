@@ -1,4 +1,4 @@
-﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Entities.Bills;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
@@ -33,6 +33,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<RequestSampleItem> RequestSampleItems { get; set; }
         public DbSet<ActivityLog> ActivityLog { get; set; }
         public DbSet<ProductSupplier> ProductSuppliers { get; set; }
+        public DbSet<ElectronicBill> ElectronicBills { get; set; }
         public DbSet<ProductUnitBranch> ProductUnitBranches { get; set; }
         public DbSet<BillDeleted> BillDeleted { get; set; }
         public DbSet<BillPaymentDeleted> BillPaymentDeleted { get; set; }
@@ -49,6 +50,7 @@ namespace ManagementSystem.StoragesApi.Data
         public DbSet<PaymentMethodDto> PaymentMethodDtos { get; set; }
         public DbSet<ProductAutoGenerationResponseDto> ProductAutoGenerationResponseDtos { get; set; }
         public DbSet<EmployeeShiftInformationDto> EmployeeShiftInformationDtos { get; set; }
+        public DbSet<ProductDetailResponseDto> ProductResponseDtos { get; set; }
         public DbSet<ProductUnitBranchResponseDto> ProductUnitBranchResponseDtos { get; set; }
         public DbSet<DiscountInformationDto> DiscountInformationDtos { get; set; }
         public DbSet<BillRevenueInformationDto> BillRevenueInformationDtos { get; set; }
@@ -85,6 +87,7 @@ namespace ManagementSystem.StoragesApi.Data
                     .IsClustered(false)
                     .HasDatabaseName("idx_productUnitBarcode");
             });
+            modelBuilder.Entity<ProductDetailResponseDto>().ToTable(nameof(ProductDetailResponseDto), t => t.ExcludeFromMigrations());
         }
     }
 }

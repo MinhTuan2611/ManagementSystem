@@ -30,7 +30,6 @@ builder.Services.AddScoped<ICreditVoucherService, CreditVoucherService>();
 builder.Services.AddScoped<IDebitVoucherService, DebitVoucherService>();
 builder.Services.AddScoped<IDocumentGroupService, DocumentGroupService>();
 builder.Services.AddScoped<IEventLoggingService, EventLoggingService>();
-builder.Services.AddScoped<IStorageVoucherService, StorageVoucherService>();
 
 SD.AccountDbName = builder.Configuration["DatabaseNames:AccountsDb"];
 SD.StorageDbName = builder.Configuration["DatabaseNames:StoragesDb"];

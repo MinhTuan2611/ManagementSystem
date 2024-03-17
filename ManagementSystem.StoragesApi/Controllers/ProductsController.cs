@@ -1,5 +1,4 @@
-﻿using ManagementSystem.Common.Entities;
-using ManagementSystem.Common.GenericModels;
+﻿using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.Common.Models.Dtos.Products;
@@ -121,6 +120,15 @@ namespace ManagementSystem.StoragesApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Fail reviewing the Excel file.");
 
             }
+            return Ok(result);
+        }
+
+        [HttpGet()]
+        [Route("get-detail-by-id-unitid")]
+        public IActionResult GenerateProductCode([FromQuery] int productId, [FromQuery] int unitId)
+        {
+            var result = _ProductService.ProductDetailByIdAndUnit(productId, unitId);
+
             return Ok(result);
         }
 

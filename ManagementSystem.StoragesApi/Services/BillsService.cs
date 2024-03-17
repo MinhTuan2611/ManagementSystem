@@ -189,6 +189,31 @@ namespace ManagementSystem.StoragesApi.Services
                 return false;
             }
         }
+
+        public bool StoreElectronicBill(ElectronicBill bill)
+        {
+            try
+            {
+                if (bill != null)
+                {
+                    _context.ElectronicBills.Add(bill);
+                    _context.SaveChanges();
+
+                    return true;
+                }
+                else
+                {
+                    var logger = new LogWriter("Function CreateElectronicBill: " + "The object request is null", _path);
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                var logger = new LogWriter("Function CreateElectronicBill: " + ex.Message, _path);
+                return false;
+            }
+        }
+
         public bool CheckMomoPayment(MomoRequestIPN request)
         {
             var orderId = Int32.Parse(request.OrderId.Split('-').Last());
