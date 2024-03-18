@@ -19,6 +19,8 @@ namespace ManagementSystem.StoragesApi.Mappings
             CreateMap<RequestSample, NewRequestSampleDto>().ReverseMap();
             CreateMap<RequestSample, UpdateRequestSampleDto>().ReverseMap();
             CreateMap<RequestSampleItem, RequestSampleItemDto>().ReverseMap();
+            CreateMap<Request, RequestDTO>().ReverseMap();
+            CreateMap<Transfer, TransferDTO>().ReverseMap();
         }
     }
 }

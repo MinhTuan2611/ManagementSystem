@@ -4,6 +4,9 @@ using ManagementSystem.Common.Entities;
 using ManagementSystem.StoragesApi.Services;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
+using AutoMapper;
+using Dapper;
+using AutoMapper.QueryableExtensions;
 
 namespace ManagementSystem.StoragesApi.Controllers
 {
@@ -12,29 +15,37 @@ namespace ManagementSystem.StoragesApi.Controllers
     public class RequestController : ControllerBase
     {
         private readonly RequestService _requestService;
+        private readonly IMapper _mapper;
 
-        public RequestController(StoragesDbContext context)
+        public RequestController(StoragesDbContext context, IMapper mapper)
         {
-            _requestService = new RequestService(context);
+            _requestService = new RequestService(context, _mapper);
+            _mapper = mapper;
         }
 
         [HttpGet()]
-        public ActionResult<IEnumerable<Request>> GetListRequests()
+        public ActionResult GetListRequests()
         {
             var requests = _requestService.GetListRequests();
-            return Ok(requests);
+
+            var rs = requests.AsQueryable().ProjectTo<RequestDTO>(_mapper.ConfigurationProvider).ToList();
+
+            return Ok(new ResponseRequestDto() {
+                Data = rs,
+                TotalRecord = rs.Count(),
+            });
         }
 
         [HttpGet("get_by_id")]
-        public ActionResult<Request> GetRequestById([FromQuery]int id)
+        public ActionResult GetRequestById([FromQuery]int id)
         {
             var request = _requestService.GetRequestById(id);
-            if (request == null)
+            var rs = _mapper.Map<RequestDTO>(request);
+            if (rs == null)
             {
                 return NotFound();
             }
-
-            return Ok(request);
+            return Ok(rs);
         }
 
         [HttpPost("create")]
@@ -45,13 +56,26 @@ namespace ManagementSystem.StoragesApi.Controllers
         }
 
         [HttpPost("update")]
-        public IActionResult UpdateRequest([FromBody] Request updatedRequest)
+        public IActionResult UpdateRequest([FromBody] RequestModel updatedRequest)
         {
             int id = updatedRequest.RequestId;
             var result = _requestService.UpdateRequest(id, updatedRequest);
             if (result)
             {
-                return NoContent();
+                return Ok(true);
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost("update/status")]
+        public IActionResult UpdateStatusRequest([FromBody] UpdateStatusModel updateStatusModel)
+        {
+            int id = updateStatusModel.RequestId;
+            var result = _requestService.UpdateStatusRequest(id, updateStatusModel.RequestStatus);
+            if (result)
+            {
+                return Ok(true);
             }
 
             return NotFound();

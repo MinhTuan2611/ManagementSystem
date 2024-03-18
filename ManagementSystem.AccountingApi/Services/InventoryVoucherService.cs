@@ -372,11 +372,13 @@ namespace ManagementSystem.AccountingApi.Services
                 SELECT s.StorageId
 		                ,ps.ProductId
 		                ,COALESCE(ps.Quantity, 0) AS Quantity
+                        ,StorageCode
+                        ,StorageName
                 FROM {0}.dbo.Storages s
                 LEFT JOIN {0}.dbo.ProductStorages ps ON s.StorageId = ps.StorageId
                 WHERE s.BranchId = {1}
                 AND ps.ProductId = {2}
-            ",SD.StorageDbName, brandId, productId);
+            ", SD.StorageDbName, brandId, productId);
 
             try
             {

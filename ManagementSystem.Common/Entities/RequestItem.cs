@@ -7,6 +7,7 @@ namespace ManagementSystem.Common.Entities
         [Key]
         public int RequestItemId { get; set; }
         public int ProductId { get; set; }
+        public int RequestId { get; set; }
         public int Quantity { get; set; }
         public int UnitId { get; set; }
         public int UnitPrice { get; set; }
@@ -16,5 +17,6 @@ namespace ManagementSystem.Common.Entities
         public decimal Amount { get; set; }
         public string? Note { get; set; }
         public Product? Product { get; set; }
+        public Unit? Unit { get; set; }
     }
 }

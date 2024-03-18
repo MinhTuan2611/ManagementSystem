@@ -19,5 +19,6 @@ namespace ManagementSystem.AccountingApi.Services
         Task<bool> CanProcessShiftEnd(int branchId);
         Task<int> GetCurrentShift(int branchId);
         Task<ResponsePagingModel<ShiftEndReport>> StartShiftEnd(StartShiftEndRequestDto request);
+        Task<bool> UpdateShiftEndReport(int shiftEndId);
     }
 }

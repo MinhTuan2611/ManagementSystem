@@ -34,7 +34,14 @@ builder.Services.AddScoped<IUserService, UserService>();
 SD.AccountingApiUrl = builder.Configuration["ServicesUrls:AccountingApi"];
 SD.AccountApiUrl = builder.Configuration["ServicesUrls:AccountApi"];
 SD.StorageApiUrl = builder.Configuration["ServicesUrls:StorageApi"];
+SD.MainApiUrl = builder.Configuration["ServicesUrls:MainApi"];
 
+SD.ETaxCode = builder.Configuration["ElectronicBill:TaxCode"];
+SD.EPatern = builder.Configuration["ElectronicBill:Patern"];
+SD.EIKey = builder.Configuration["ElectronicBill:IKey"];
+SD.EUserName = builder.Configuration["ElectronicBill:UserName"];
+SD.EPassword = builder.Configuration["ElectronicBill:Password"];
+SD.EUrl = builder.Configuration["ElectronicBill:URL"];
 
 builder.Services.AddAuthentication(option =>
 {

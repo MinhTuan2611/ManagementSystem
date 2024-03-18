@@ -15,7 +15,7 @@ namespace ManagementSystem.Common.Models.Dtos
         public int? BillId { get; set; }
         public string? CustomerCode { get; set; }
         public string? CustomerName { get; set; }
-        public long? Amount { get; set; }
+        public float? Amount { get; set; }
         public string? ForReason { get; set; }
     }
 }

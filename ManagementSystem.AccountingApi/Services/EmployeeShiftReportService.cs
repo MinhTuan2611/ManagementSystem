@@ -262,6 +262,13 @@ namespace ManagementSystem.AccountingApi.Services
 
             try
             {
+                int? shfitEndId = _context.CalculateScalarFunction<ScalarResult<int?>>(@$"
+                    SELECT ShiftEndId as Value
+                    FROM dbo.ShiftHandovers
+                    WHERE HandoverId = {handoverId}
+                       ").Value;
+
+                _context.Database.ExecuteSqlRaw($"exec usp_update_shift_handover {shfitEndId.Value}");
                 var result = _context.ShiftHandoverResponseDtos.FromSqlRaw(query).AsEnumerable().FirstOrDefault();
 
                 return result;
@@ -344,13 +351,13 @@ namespace ManagementSystem.AccountingApi.Services
                         JOIN dbo.ShiftEndReports s ON s.ShiftEndId = cte.ShiftEndId
                         LEFT JOIN dbo.InventoryAuditDetails sa ON sa.ShiftEndId = s.ShiftEndId
                         LEFT JOIN dbo.ShiftHandoverCashDetails sh ON sh.ShiftEndId = s.ShiftEndId
-                        LEFT JOIN AccountsDb.dbo.Users u ON u.UserId = s.UserId
-                        LEFT JOIN AccountsDb.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
-                        LEFT JOIN StoragesDb.dbo.Products p ON p.ProductId = sa.ProductId
-                        LEFT JOIN StoragesDb.dbo.Unit ui ON sa.UnitId = ui.UnitId
-    				    LEFT JOIN AccountsDb.dbo.UserBranchs ub ON ub.UserId = u.UserId
-    				    LEFT JOIN StoragesDb.dbo.Branches b ON b.BranchId = ub.BranchId
-             ", branchId);
+                        LEFT JOIN {1}.dbo.Users u ON u.UserId = s.UserId
+                        LEFT JOIN {1}.dbo.EmployeeShifts es ON es.ShiftId = s.ShiftId
+                        LEFT JOIN {2}.dbo.Products p ON p.ProductId = sa.ProductId
+                        LEFT JOIN {2}.dbo.Unit ui ON sa.UnitId = ui.UnitId
+    				    LEFT JOIN {1}.dbo.UserBranchs ub ON ub.UserId = u.UserId
+    				    LEFT JOIN {2}.dbo.Branches b ON b.BranchId = ub.BranchId
+             ", branchId, SD.AccountDbName, SD.StorageDbName);
 
             try
             {
@@ -527,6 +534,19 @@ namespace ManagementSystem.AccountingApi.Services
                 result.ErrorMessage = ex.Message;
             }
             return result;
+        }
+
+        public async Task<bool> UpdateShiftEndReport(int shiftEndId)
+        {
+            try
+            {
+                _context.Database.ExecuteSqlRaw($"exec usp_update_shift_handover {shiftEndId}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         #region Private function handle

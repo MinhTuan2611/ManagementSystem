@@ -1,12 +1,9 @@
-﻿using Azure.Core;
-using Azure;
 using Dapper;
 using ManagementSystem.Common;
 using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Functions;
 using ManagementSystem.Common.GenericModels;
-using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Loggers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
@@ -15,9 +12,9 @@ using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
 using ManagementSystem.StoragesApi.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using System.Xml.Linq;
 using ManagementSystem.Common.Models.Dtos.Bills;
+using ManagementSystem.Common.Entities.Bills;
+using ManagementSystem.Common.Helpers;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -192,6 +189,31 @@ namespace ManagementSystem.StoragesApi.Services
                 return false;
             }
         }
+
+        public bool StoreElectronicBill(ElectronicBill bill)
+        {
+            try
+            {
+                if (bill != null)
+                {
+                    _context.ElectronicBills.Add(bill);
+                    _context.SaveChanges();
+
+                    return true;
+                }
+                else
+                {
+                    var logger = new LogWriter("Function CreateElectronicBill: " + "The object request is null", _path);
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                var logger = new LogWriter("Function CreateElectronicBill: " + ex.Message, _path);
+                return false;
+            }
+        }
+
         public bool CheckMomoPayment(MomoRequestIPN request)
         {
             var orderId = Int32.Parse(request.OrderId.Split('-').Last());
@@ -282,35 +304,13 @@ namespace ManagementSystem.StoragesApi.Services
             try
             {
                 var existingBill = _context.Bills.SingleOrDefault(x => x.BillId == model.BillId);
+                var originPayment = _context.BillPayments.Where(x => x.BillId == model.BillId).AsNoTracking().Include(x => x.PaymentMethod).ToList();
 
                 if (existingBill == null)
                     return null;
 
-                var billCustomer = _unitOfWork.CustomerRepository.Get(x => x.CustomerId == existingBill.CustomerId);
-                var newCustomer = _unitOfWork.CustomerRepository.Get(x => x.CustomerId == model.CustomerId);
-
-                // Update KL to customer
-                if (billCustomer == null && newCustomer != null)
-                {
-                    newCustomer.CustomerPoint += model.totalAmount / StorageContant.ConventPoint;
-
-                }
-                // Update customer from KL
-                else if (billCustomer != null && newCustomer == null)
-                {
-                    billCustomer.CustomerPoint -= model.totalAmount / StorageContant.ConventPoint;
-                }
-                else if (billCustomer != null && newCustomer != null && billCustomer.CustomerId != newCustomer.CustomerId)
-                {
-                    billCustomer.CustomerPoint -= model.totalAmount / StorageContant.ConventPoint;
-                    newCustomer.CustomerPoint += model.totalAmount / StorageContant.ConventPoint;
-                }
-                else if(billCustomer != null && existingBill.totalAmount != model.totalAmount)
-                {
-                    billCustomer.CustomerPoint += (existingBill.totalAmount > model.totalAmount 
-                            ? model.totalAmount - existingBill.totalAmount 
-                            : existingBill.totalAmount - model.totalAmount) / StorageContant.ConventPoint;
-                }
+                // Update Customer Bills
+                UpdateCustomerBill(model, existingBill);
 
                 // Update with another customer
                 existingBill.totalChange = model.totalChange;
@@ -341,140 +341,18 @@ namespace ManagementSystem.StoragesApi.Services
                 }
 
                 // Update Bill Payment Methods
-                foreach (var item in model.PaymentMethods)
-                {
-                    
-                    var billPayment = _context.BillPayments.Include(x => x.PaymentMethod).SingleOrDefault(x => x.Id == item.Id);
-                    if (billPayment != null)
-                    {
-                        var paymentMethodId = GetPaymentMethod(item.PaymentMethodCode);
+                await UpdateBillPayment(model);
 
-                        // Get Credit voucher
-                        var creditVoucher = await GetCreditVoucher(model.BillId, billPayment.PaymentMethod.PaymentMethodId);
-                        var receiptVoucher = await GetReceiptVoucherByBillId(model.BillId);
-                        var inventoryVoucher = await GetInventoryVoucher(model.BillId);
-
-                        // Change payment method
-                        if (billPayment.PaymentMethod.PaymentMethodCode != item.PaymentMethodCode)
-                        {
-                            if (item.PaymentMethodCode == StorageContant.CashPaymentMethodCode)
-                            {
-                                // Delete voucher
-                                if (creditVoucher != null)
-                                {
-                                    string deletedCredit = "DELETE CreditVouchers WHERE DocumentNumber = @documentNumber";
-                                    await DeleteVoucher(creditVoucher.DocumentNumber, deletedCredit, "BAOCO");
-                                }
-
-                                // Add receipt
-
-                                var newReceiptDto = new NewReceiptRequestDto()
-                                {
-                                    CustomerId = model.CustomerId,
-                                    ForReason = string.Format(AccountingConstant.ReceiptReason, inventoryVoucher.DocummentNumber),
-                                    UserId = model.UserId.Value,
-                                    TotalMoney = item.Amount,
-                                    BillId = model.BillId,
-                                    StorageId = 0,
-                                    InventoryDocumentNumber = inventoryVoucher.DocummentNumber
-                                };
-
-                                var result = await HttpRequestsHelper.Post<CreditVoucher>(SD.AccountingApiUrl + "Receipt/create", newReceiptDto);
-                            }
-
-                            // other case
-                            else
-                            {
-                                if (creditVoucher == null)
-                                {
-                                    // Change from Cash to other payment
-                                    if (item.PaymentMethodCode != StorageContant.CashPaymentMethodCode)
-                                    {
-                                        // Delete recepit
-                                        if (receiptVoucher != null)
-                                        {
-                                            string deletedReceipt = "DELETE ReceiptVouchers WHERE DocumentNumber = @documentNumber";
-                                            await DeleteVoucher(receiptVoucher.DocumentNumber, deletedReceipt, "THU");
-                                        }
-
-                                        // Add Credit Voucher
-
-                                        var newCreditVoucher = new NewCreditVoucherRequestDto()
-                                        {
-                                            CustomerId = model.CustomerId,
-                                            TotalMoney = item.Amount,
-                                            UserId = model.UserId.Value,
-                                            BillId = model.BillId,
-                                            BrandId = model.BranchId != null ? model.BranchId : 0,
-                                            PaymentMethodCode = item.PaymentMethodCode == "BANKKING" ? "BANKING" : item.PaymentMethodCode,
-                                            ProductId = model.BillDetail[0].ProductId,
-                                            GroupId = AccountingConstant.AutoGenerateDocumentGroup
-                                        };
-
-                                        var result = await HttpRequestsHelper.Post<CreditVoucher>(SD.AccountingApiUrl + "CreditVouchers/create", newCreditVoucher);
-                                    }
-                                }
-
-                                else
-                                {
-                                    string query = string.Format( @"
-                                        UPDATE CreditVouchers
-                                        SET TotalMoney = @amount
-                                            ,PaymentMethodId = {0}
-                                        WHERE DocumentNumber = @documentNUmber", paymentMethodId)
-                                    ;
-
-                                    await UpdateVoucherAmount(creditVoucher.DocumentNumber, item.Amount, query, "BAOCO");
-                                }
-                            }
-
-                        }
-
-                        // Same method but update amount
-                        else
-                        {
-                            string query = string.Empty;
-                            if (item.Amount != receiptVoucher?.TotalMoney || item.Amount !=  creditVoucher?.TotalMoney)
-                            {
-                                if (item.PaymentMethodCode == StorageContant.CashPaymentMethodCode)
-                                {
-                                    query = @"
-                                        UPDATE ReceiptVouchers
-                                        SET TotalMoney = @amount
-                                        WHERE DocumentNumber = @documentNUmber";
-
-                                    await UpdateVoucherAmount(receiptVoucher.DocumentNumber, item.Amount, query, "THU");
-                                }
-                                else
-                                {
-                                    query = @"
-                                        UPDATE CreditVouchers
-                                        SET TotalMoney = @amount
-                                        WHERE DocumentNumber = @documentNUmber";
-
-                                    await UpdateVoucherAmount(creditVoucher.DocumentNumber, item.Amount, query, "BAOCO");
-                                }
-                            }
-                        }
-
-
-                        billPayment.PaymentMethodId = paymentMethodId.Value;
-                        billPayment.Amount = item.Amount;
-                        billPayment.PaymentTransactionRef = item.PaymentTransactionRef;
-                        billPayment.ModifyBy = model.UserId;
-                        billPayment.ModifyDate = DateTime.Now;
-                    }
-                }
-
-                _context.SaveChanges();
-
+                _unitOfWork.Save();
                 return model;
             }
+
             catch (Exception ex)
             {
                 return null;
             }
         }
+
 
         public async Task<bool> DeleteBills(int billId, int ActionUser)
         {
@@ -514,7 +392,7 @@ namespace ManagementSystem.StoragesApi.Services
             {
 
                 // Headers
-                var headers = new[] { " Mã Chi Nhánh", "Chi Nhánh", "Ngày bán", "BillId", "Mã khách hàng", "Tên khách hàng", "Tổng tiền trước khi chiết khấu", "Tổng tiền chiết khấu", "Tổng tiền sau chiết khấu"};
+                var headers = new[] { " Mã Chi Nhánh", "Chi Nhánh", "Ngày bán", "BillId", "Mã khách hàng", "Tên khách hàng", "Tổng tiền trước khi chiết khấu", "Tổng tiền chiết khấu", "Tổng tiền sau chiết khấu" };
 
                 // Handle file path
                 string dateFormat = DateTime.Now.ToString("yyyyMMdd");
@@ -559,7 +437,7 @@ namespace ManagementSystem.StoragesApi.Services
             {
                 var result = await GetRevenueInformations(model);
 
-               return result;
+                return result;
             }
             catch (Exception ex)
             {
@@ -619,7 +497,7 @@ namespace ManagementSystem.StoragesApi.Services
             {
 
                 // Headers
-                var headers = new[] { "Hóa Đơn","Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", "Thành Tiền" };
+                var headers = new[] { "Hóa Đơn", "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", "Thành Tiền" };
 
                 // Handle file path
                 string dateFormat = DateTime.Now.ToString("yyyyMMdd");
@@ -658,6 +536,57 @@ namespace ManagementSystem.StoragesApi.Services
             return _responseDto;
         }
 
+        public async Task<bool> CheckDeletingPermission(BranchVerification branchVerification)
+        {
+            var verifications = await _context.BranchVerifications.Where(x => x.BranchId == branchVerification.BranchId).ToListAsync();
+
+            return verifications.Where(x => x.VerifyPassword == branchVerification.VerifyPassword).Any();
+        }
+
+        public async Task<ResponseDto> ExportBillRevenueDetailExcel(SearchCriteria model)
+        {
+            try
+            {
+
+                // Headers
+                var headers = new[] { "Hóa Đơn", "Ngày Tạo", "Mã Khách Hàng", "Tên Khách Hàng", "Mã Sản Phẩm", "Tên Sản Phẩm", "Đơn Vị Tính", "Số Lượng", "Chiết Khấu", "Thành Tiền" };
+
+                // Handle file path
+                string dateFormat = DateTime.Now.ToString("yyyyMMdd");
+                string filePath = string.Format(StorageContant.billFilePathFomat, dateFormat, string.Format("Doanh_Thu_Chi_Tiet_{0}_{1}.xlsx", dateFormat, DateTime.Now.Ticks));
+
+                // Get the directory path
+                string directoryPath = Path.GetDirectoryName(filePath);
+
+                // Check if the directory exists, and if not, create it
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                if (!File.Exists(filePath))
+                {
+                    File.Create(filePath).Close();
+                }
+
+                var resul = await GetBillRevenueDetailInformation(model);
+                // Call the generic function
+                var excelExporter = new ExcelExporter();
+                excelExporter.ExportToExcel(resul, headers, filePath);
+
+                _responseDto.Result = filePath;
+
+            }
+            catch (Exception ex)
+            {
+
+                var logger = new LogWriter("Function ExportBillRevenueDetailExcel: " + ex.Message, _path);
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = ex.Message;
+            }
+
+            return _responseDto;
+        }
         #region Handle Get Data
         private async Task<List<BillDetailResponseDto>> GetBillDetailHandler(int billId)
         {
@@ -695,7 +624,7 @@ namespace ManagementSystem.StoragesApi.Services
         {
             string query = string.Format(@"
  	                SELECT b.Id
-			                ,b.Amount
+			                ,CONVERT(INT, b.Amount) AS Amount
 			                ,b.PaymentTransactionRef
 			                ,p.PaymentMethodCode
 			                ,P.PaymentMethodName
@@ -782,7 +711,7 @@ namespace ManagementSystem.StoragesApi.Services
                             LEFT JOIN dbo.Branches br ON br.BranchId = ub.BranchId
                             LEFT JOIN {0}.dbo.Users u ON u.UserId = b.CreateBy
                             WHERE b.BillId = {1}
-            ", SD.AccountDbName ,billId);
+            ", SD.AccountDbName, billId);
 
             try
             {
@@ -855,7 +784,7 @@ namespace ManagementSystem.StoragesApi.Services
                                     WHERE a.BillId IN ({0})
 
                                     ORDER BY a.BillId", listBills);
-            using(var connection = new SqlConnection(connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 var result = connection.Query<BillDetailExcelView>(query).ToList();
 
@@ -871,12 +800,12 @@ namespace ManagementSystem.StoragesApi.Services
             using (var connection = new SqlConnection(accountingConnection))
             {
                 await connection.ExecuteAsync(legerDeleteQuery, new { documentNumber, documentType });
-                await connection.ExecuteAsync(query, new { documentNumber});
+                await connection.ExecuteAsync(query, new { documentNumber });
 
             }
         }
 
-        private async Task UpdateVoucherAmount(int documentNumber, int amount, string query, string documentType)
+        private async Task UpdateVoucherAmount(int documentNumber, float amount, string query, string documentType)
         {
             string accountingConnection = string.Format(_configuration.GetConnectionString("AcountingsDbConnStr"), SD.AccountingDbName);
 
@@ -887,7 +816,7 @@ namespace ManagementSystem.StoragesApi.Services
 
             using (var connection = new SqlConnection(accountingConnection))
             {
-                await connection.ExecuteAsync(updateLegerQuery, new { amount ,documentNumber, documentType });
+                await connection.ExecuteAsync(updateLegerQuery, new { amount, documentNumber, documentType });
                 await connection.ExecuteAsync(query, new { amount, documentNumber });
 
             }
@@ -947,6 +876,51 @@ namespace ManagementSystem.StoragesApi.Services
 
             return result;
         }
+
+        private async Task<List<BillRevenueDetailInformation>> GetBillRevenueDetailInformation(SearchCriteria model)
+        {
+            string fromDate = model.Criterias["fromDate"].ToString();
+            string toDate = model.Criterias["toDate"].ToString();
+
+            string query = string.Format(@"
+                SELECT  c.BillId
+		                ,FORMAT(c.CreateDate, 'yyyy-MM-dd HH:mm:ss') AS CreateDate
+		                ,convert(nvarchar,coalesce(CustomerCode, '')) AS CustomerCode
+		                ,convert(nvarchar,coalesce(CustomerName, '')) AS CustomerName
+		                ,convert(nvarchar,b.ProductCode) as ProductCode
+		                ,b.ProductName 
+		                ,e.UnitName 
+		                ,a.Quantity
+		                ,DiscountAmount
+		                ,a.Amount
+                FROM BillDetails a
+                JOIN Bills c on c.BillId = a.BillId
+                LEFT JOIN Customers d on c.CustomerId = d.CustomerId
+                --left join BillPayments bp on bp.BillId = c.BillId
+                --left join PaymentMethods pm on pm.PaymentMethodId = bp.PaymentMethodId
+                JOIN Products b on a.ProductId = b.ProductId
+                JOIN Unit e on e.UnitId = a.UnitId
+                WHERE 
+                    (CONVERT(datetime, FORMAT(a.CreateDate, 'yyyy-MM-dd')) between CONVERT(datetime, '{0}') AND CONVERT(datetime, '{1}'))
+                order by c.BillId
+            ", fromDate, toDate);
+
+            try
+            {
+                string storageConnection = _configuration.GetConnectionString("StoragesDbConnStr");
+                using (var connection = new SqlConnection(storageConnection))
+                {
+                    var result = connection.Query<BillRevenueDetailInformation>(query).ToList();
+
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         private async Task<List<BillRevenueInformationDto>> GetRevenueInformations(SearchCriteria model)
         {
             string fromDate = model.Criterias["fromDate"].ToString();
@@ -968,25 +942,32 @@ namespace ManagementSystem.StoragesApi.Services
 		                ,a.Amount
 		                ,COALESCE(b.ForReason, c.ForReason) ForReason
                 FROM {0}..Legers a
-                LEFT JOIN StoragesProdDb.dbo.Customers d on d.CustomerId = a.CustomerId
+                LEFT JOIN {2}.dbo.Customers d on d.CustomerId = a.CustomerId
                 LEFT JOIN {0}.[dbo].[ReceiptVouchers] b on b.DocumentNumber = a.DoccumentNumber and a.DoccumentType = 'THU'
                 LEFT JOIN {0}.[dbo].[CreditVouchers] c on c.DocumentNumber = a.DoccumentNumber and a.DoccumentType = 'BAOCO'
-                LEFT JOIN StoragesProdDb.dbo.Bills e on e.BillId = a.BillId
-                LEFT JOIN StoragesProdDb.dbo.Branches br on br.BranchId = e.BranchId
+                LEFT JOIN {2}.dbo.Bills e on e.BillId = a.BillId
+                LEFT JOIN {2}.dbo.Branches br on br.BranchId = e.BranchId
                 LEFT JOIN {1}..UserBranchs g on g.UserId = a.UserId
-                LEFT JOIN StoragesProdDb..Branches h ON g.BranchId = h.BranchId
+                LEFT JOIN {2}..Branches h ON g.BranchId = h.BranchId
                 where DoccumentType <> 'Chi'
                 AND 
-                (FORMAT(a.TransactionDate, 'yyyy-MM-dd') between CONVERT(datetime, '{2}') AND CONVERT(datetime, '{3}')))
+                (CONVERT(datetime, FORMAT(a.TransactionDate, 'yyyy-MM-dd')) between CONVERT(datetime, '{3}') AND CONVERT(datetime, '{4}')))
 
                 SELECT *
                 from cte
                 ORDER BY BranchCode, TransactionDate
-            ", SD.AccountingDbName, SD.AccountDbName, fromDate, toDate);
+            ", SD.AccountingDbName, SD.AccountDbName,SD.StorageDbName , fromDate, toDate);
 
-            var result = _context.BillRevenueInformationDtos.FromSqlRaw(query).ToList();
+            try
+            {
+                var result = _context.BillRevenueInformationDtos.FromSqlRaw(query).ToList();
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         private async Task DeleteAccountingVouchers(int billId, int actionUser)
@@ -1003,6 +984,256 @@ namespace ManagementSystem.StoragesApi.Services
                 await connection.ExecuteAsync(deleterQuery, parameters, commandType: System.Data.CommandType.StoredProcedure);
             }
         }
+
+        private void UpdateCustomerBill(UpdateBillRequestDto model, Bill existingBill)
+        {
+            try
+            {
+                var billCustomer = _unitOfWork.CustomerRepository.Get(x => x.CustomerId == existingBill.CustomerId);
+                var newCustomer = _unitOfWork.CustomerRepository.Get(x => x.CustomerId == model.CustomerId);
+
+                // Update KL to customer
+                if (billCustomer == null && newCustomer != null)
+                {
+                    newCustomer.CustomerPoint += model.totalAmount / StorageContant.ConventPoint;
+                }
+                // Update customer from KL
+                else if (billCustomer != null && newCustomer == null)
+                {
+                    billCustomer.CustomerPoint -= model.totalAmount / StorageContant.ConventPoint;
+                }
+                else if (billCustomer != null && newCustomer != null && billCustomer.CustomerId != newCustomer.CustomerId)
+                {
+                    billCustomer.CustomerPoint -= model.totalAmount / StorageContant.ConventPoint;
+                    newCustomer.CustomerPoint += model.totalAmount / StorageContant.ConventPoint;
+                }
+                else if (billCustomer != null && existingBill.totalAmount != model.totalAmount)
+                {
+                    billCustomer.CustomerPoint += (existingBill.totalAmount > model.totalAmount
+                            ? model.totalAmount - existingBill.totalAmount
+                            : existingBill.totalAmount - model.totalAmount) / StorageContant.ConventPoint;
+                }
+
+                _unitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private async Task UpdateBillPayment(UpdateBillRequestDto model)
+        {
+            try
+            {
+                foreach (var item in model.PaymentMethods)
+                {
+                    var billPayment = _context.BillPayments.Include(x => x.PaymentMethod).SingleOrDefault(x => x.Id == item.Id);
+                    var inventoryVoucher = await GetInventoryVoucher(model.BillId);
+                    var paymentMethodId = GetPaymentMethod(item.PaymentMethodCode);
+
+
+                    if (billPayment != null)
+                    {
+                        // Update bill payments
+                        int oldPaymentMethod = billPayment.PaymentMethodId;
+                        billPayment.PaymentMethodId = paymentMethodId.Value;
+                        billPayment.Amount = item.Amount;
+                        billPayment.PaymentTransactionRef = item.PaymentTransactionRef;
+                        billPayment.ModifyBy = model.UserId;
+                        billPayment.ModifyDate = DateTime.Now;
+
+                        // Update credit and recipt voucher
+                        if (billPayment.PaymentMethod.PaymentMethodCode != item.PaymentMethodCode)
+                        {
+                            await UpdateChangePaymentMethodWithVoucher(model, item, inventoryVoucher, oldPaymentMethod, paymentMethodId.Value);
+                        }
+                        else
+                        {
+                            await UpdateChangeAmountWithVoucher(item, model.BillId, paymentMethodId.Value);
+                        }
+                    }
+                    // New Payment method
+                    else
+                    {
+                        UpdateAddNewPaymentMethod(model, item, inventoryVoucher, model.BillId, paymentMethodId.Value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private async Task UpdateChangePaymentMethodWithVoucher(UpdateBillRequestDto model, UpdateBillPaymentMethodRequestDto updatedBill, InventoryVoucher inventoryVoucher, int oldPaymentMethodId, int newPaymentMethod)
+        {
+            try
+            {
+                var creditVoucher = await GetCreditVoucher(model.BillId, oldPaymentMethodId);
+                var receiptVoucher = await GetReceiptVoucherByBillId(model.BillId);
+
+                if (updatedBill.PaymentMethodCode == StorageContant.CashPaymentMethodCode)
+                {
+                    // Delete voucher
+                    if (creditVoucher != null)
+                    {
+                        string deletedCredit = "DELETE CreditVouchers WHERE DocumentNumber = @documentNumber";
+                        await DeleteVoucher(creditVoucher.DocumentNumber, deletedCredit, "BAOCO");
+                    }
+
+                    // Add receipt
+
+                    var newReceiptDto = new NewReceiptRequestDto()
+                    {
+                        CustomerId = model.CustomerId,
+                        ForReason = string.Format(AccountingConstant.ReceiptReason, inventoryVoucher.DocummentNumber),
+                        UserId = model.UserId.Value,
+                        TotalMoney = updatedBill.Amount,
+                        BillId = model.BillId,
+                        StorageId = 0,
+                        InventoryDocumentNumber = inventoryVoucher.DocummentNumber
+                    };
+
+                    await HttpRequestsHelper.Post<CreditVoucher>(SD.AccountingApiUrl + "Receipt/create", newReceiptDto);
+                }
+                else
+                {
+                    if (creditVoucher == null)
+                    {
+                        // Delete recepit
+                        if (receiptVoucher != null)
+                        {
+                            string deletedReceipt = "DELETE ReceiptVouchers WHERE DocumentNumber = @documentNumber";
+                            await DeleteVoucher(receiptVoucher.DocumentNumber, deletedReceipt, "THU");
+                        }
+
+                        // Add Credit Voucher
+
+                        var newCreditVoucher = new NewCreditVoucherRequestDto()
+                        {
+                            CustomerId = model.CustomerId,
+                            TotalMoney = updatedBill.Amount,
+                            UserId = model.UserId.Value,
+                            BillId = model.BillId,
+                            BrandId = model.BranchId != null ? model.BranchId : 0,
+                            PaymentMethodCode = updatedBill.PaymentMethodCode == "BANKKING" ? "BANKING" : updatedBill.PaymentMethodCode,
+                            ProductId = model.BillDetail[0].ProductId,
+                            GroupId = AccountingConstant.AutoGenerateDocumentGroup
+                        };
+
+                        await HttpRequestsHelper.Post<CreditVoucher>(SD.AccountingApiUrl + "CreditVouchers/create", newCreditVoucher);
+                    }
+                    else
+                    {
+                        string query = string.Format(@"
+                                        UPDATE CreditVouchers
+                                        SET TotalMoney = @amount
+                                            ,PaymentMethodId = {0}
+                                        WHERE DocumentNumber = @documentNUmber", newPaymentMethod)
+                        ;
+
+                        await UpdateVoucherAmount(creditVoucher.DocumentNumber, updatedBill.Amount, query, "BAOCO");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private async Task UpdateChangeAmountWithVoucher(UpdateBillPaymentMethodRequestDto updatedBill, int billId, int paymentMethodId)
+        {
+            try
+            {
+                string query = string.Empty;
+                var creditVoucher = await GetCreditVoucher(billId, paymentMethodId);
+                var receiptVoucher = await GetReceiptVoucherByBillId(billId);
+                if (updatedBill.Amount != receiptVoucher?.TotalMoney || updatedBill.Amount != creditVoucher?.TotalMoney)
+                {
+                    if (updatedBill.PaymentMethodCode == StorageContant.CashPaymentMethodCode)
+                    {
+                        query = @"
+                            UPDATE ReceiptVouchers
+                            SET TotalMoney = @amount
+                            WHERE DocumentNumber = @documentNUmber";
+
+                        await UpdateVoucherAmount(receiptVoucher.DocumentNumber, updatedBill.Amount, query, "THU");
+                    }
+                    else
+                    {
+                        query = @"
+                            UPDATE CreditVouchers
+                            SET TotalMoney = @amount
+                            WHERE DocumentNumber = @documentNUmber";
+
+                        await UpdateVoucherAmount(creditVoucher.DocumentNumber, updatedBill.Amount, query, "BAOCO");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        private async Task UpdateAddNewPaymentMethod(UpdateBillRequestDto model, UpdateBillPaymentMethodRequestDto updatedBill, InventoryVoucher inventoryVoucher, int billId, int paymentMethodId)
+        {
+            // Add billPayment
+            _context.BillPayments.Add(new BillPayment()
+            {
+                BillId = billId,
+                Amount = updatedBill.Amount,
+                PaymentMethodId = paymentMethodId,
+            });
+
+            // truong hop them 1 method moi
+            if (updatedBill.PaymentMethodCode == StorageContant.CashPaymentMethodCode)
+            {
+                // Add receipt
+
+                var newReceiptDto = new NewReceiptRequestDto()
+                {
+                    CustomerId = model.CustomerId,
+                    ForReason = string.Format(AccountingConstant.ReceiptReason, inventoryVoucher.DocummentNumber),
+                    UserId = model.UserId.Value,
+                    TotalMoney = updatedBill.Amount,
+                    BillId = model.BillId,
+                    StorageId = 0,
+                    InventoryDocumentNumber = inventoryVoucher.DocummentNumber
+                };
+
+                await HttpRequestsHelper.Post<CreditVoucher>(SD.AccountingApiUrl + "Receipt/create", newReceiptDto);
+            }
+            else
+            {
+                // Add Credit Voucher
+
+                var newCreditVoucher = new NewCreditVoucherRequestDto()
+                {
+                    CustomerId = model.CustomerId,
+                    TotalMoney = updatedBill.Amount,
+                    UserId = model.UserId.Value,
+                    BillId = model.BillId,
+                    BrandId = model.BranchId != null ? model.BranchId : 0,
+                    PaymentMethodCode = updatedBill.PaymentMethodCode == "BANKKING" ? "BANKING" : updatedBill.PaymentMethodCode,
+                    ProductId = model.BillDetail[0].ProductId,
+                    GroupId = AccountingConstant.AutoGenerateDocumentGroup
+                };
+
+                await HttpRequestsHelper.Post<CreditVoucher>(SD.AccountingApiUrl + "CreditVouchers/create", newCreditVoucher);
+            }
+
+            if (updatedBill.PaymentMethodCode == StorageContant.PointPaymentMethod)
+            {
+                var customer = _unitOfWork.CustomerRepository.Get(x => x.CustomerId == model.CustomerId);
+                if (customer != null)
+                {
+                    customer.CustomerPoint -= (int)updatedBill.Amount / StorageContant.ConventPoint;
+                }
+            }
+        }
+
         #endregion
     }
 }

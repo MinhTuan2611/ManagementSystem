@@ -1,24 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {}
+    "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {}
   },
   "projects": {
-    "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {
+    "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
+        "projectUniqueName": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
         "projectName": "ManagementSystem.AccountingApi",
-        "projectPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
-        "packagesPath": "C:\\Users\\hmtuan\\.nuget\\packages\\",
-        "outputPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.AccountingApi\\obj\\",
+        "projectPath": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
+        "packagesPath": "C:\\Users\\kimto\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.AccountingApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\hmtuan\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\kimto\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -32,11 +31,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
-                "projectPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj"
-              },
-              "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.StoragesApi\\ManagementSystem.StoragesApi.csproj": {
-                "projectPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.StoragesApi\\ManagementSystem.StoragesApi.csproj"
+              "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
+                "projectPath": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj"
               }
             }
           }
@@ -97,25 +93,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
+    "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
+        "projectUniqueName": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
         "projectName": "ManagementSystem.Common",
-        "projectPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
-        "packagesPath": "C:\\Users\\hmtuan\\.nuget\\packages\\",
-        "outputPath": "D:\\HMTUAN\\Sourse code\\ManagementSystem\\ManagementSystem.Common\\obj\\",
+        "projectPath": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\ManagementSystem.Common.csproj",
+        "packagesPath": "C:\\Users\\kimto\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\kimto\\Desktop\\FreelanceProject\\ManagementSystem\\ManagementSystem.Common\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\hmtuan\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\kimto\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -178,7 +173,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     },

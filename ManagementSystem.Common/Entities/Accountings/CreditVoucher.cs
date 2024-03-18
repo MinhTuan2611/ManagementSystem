@@ -12,7 +12,7 @@ namespace ManagementSystem.Common.Entities
         public string? CustomerName { get; set; }
         //public string? ExtenalCustomer { get; set; }
         public string ForReason { get; set; }
-        public int TotalMoney { get; set; }
+        public float TotalMoney { get; set; }
         public int? UserId { get; set; }
         public int? PaymentMethodId { get; set; }
         public DateTime TransactionDate { get; set; } = DateTime.Now;

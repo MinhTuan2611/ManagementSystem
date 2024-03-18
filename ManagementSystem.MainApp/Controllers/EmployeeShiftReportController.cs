@@ -174,5 +174,17 @@ namespace ManagementSystem.MainApp.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("update-shift-end-report")]
+        public async Task<IActionResult> UpdateShiftEndReport([FromBody] int shiftEndId)
+        {
+
+            var result = await HttpRequestsHelper.Post<bool>(APIUrl + "update-shift-end-report", shiftEndId);
+            if (result)
+            {
+                return Ok(result);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
+        }
     }
 }

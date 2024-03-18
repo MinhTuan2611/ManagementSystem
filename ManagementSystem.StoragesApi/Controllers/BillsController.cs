@@ -1,3 +1,5 @@
+using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.Entities.Bills;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
@@ -34,6 +36,18 @@ namespace ManagementSystem.StoragesApi.Controllers
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong when create bill!");
         }
+
+        [HttpPost("store_electtronic_bill")]
+        public IActionResult StoreElectronicBill(ElectronicBill bill)
+        {
+            var result = _BillsService.StoreElectronicBill(bill);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong when create bill!");
+        }
+
         [HttpPost("complete-bill")]
         public IActionResult CompleteBill(BillInfo bill)
         {
@@ -121,6 +135,21 @@ namespace ManagementSystem.StoragesApi.Controllers
         public async Task<IActionResult> ExportBillDetail([FromBody] string lítBillIdl)
         {
             var result = await _BillsService.ExportBillDetailExcel(lítBillIdl);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("check_deleting_permission")]
+        public async Task<bool> CheckDeleingPermission([FromBody]BranchVerification branchVerification)
+        {
+            return await _BillsService.CheckDeletingPermission(branchVerification);
+        }
+
+        [HttpPost]
+        [Route("export_bill_revenue_detail_excel")]
+        public async Task<IActionResult> ExportBillRevenueDetail([FromBody] SearchCriteria searchModel)
+        {
+            var result = await _BillsService.ExportBillRevenueDetailExcel(searchModel);
             return Ok(result);
         }
     }

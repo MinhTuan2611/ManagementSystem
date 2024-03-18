@@ -109,5 +109,13 @@ namespace ManagementSystem.AccountingApi.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("update-shift-end-report")]
+        public async Task<IActionResult> UpdateShiftEndReport([FromBody] int shiftEndId)
+        {
+            var result = await _service.UpdateShiftEndReport(shiftEndId);
+
+            return Ok(result);
+        }
     }
 }

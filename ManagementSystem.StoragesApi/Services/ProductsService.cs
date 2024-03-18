@@ -202,7 +202,7 @@ namespace ManagementSystem.StoragesApi.Services
                     productUnit.OldPrice = request.Units[i].OldPrice;
                     productUnit.UnitId = request.Units[i].UnitId;
                     productUnit.Barcode = request.Units[i].Barcode;
-                    productUnit.IsPrimary = i == 0;
+                    productUnit.IsPrimary = request.Units[i].IsPrimary;
                     _unitOfWork.ProductUnitRepository.Insert(productUnit);
                     _unitOfWork.Save();
 
@@ -303,7 +303,7 @@ namespace ManagementSystem.StoragesApi.Services
                         productUnit.OldPrice = request.Units[i].OldPrice;
                         productUnit.UnitId = request.Units[i].UnitId;
                         productUnit.Barcode = request.Units[i].Barcode;
-                        productUnit.IsPrimary = i == 0;
+                        productUnit.IsPrimary = request.Units[i].IsPrimary;
                         _unitOfWork.ProductUnitRepository.Update(productUnit);
 
                     } else
@@ -317,7 +317,7 @@ namespace ManagementSystem.StoragesApi.Services
                         productUnit.OldPrice = request.Units[i].OldPrice;
                         productUnit.UnitId = request.Units[i].UnitId;
                         productUnit.Barcode = request.Units[i].Barcode;
-                        productUnit.IsPrimary = i == 0;
+                        productUnit.IsPrimary = request.Units[i].IsPrimary;
                         _unitOfWork.ProductUnitRepository.Insert(productUnit);
                     }
                 }
@@ -422,7 +422,7 @@ namespace ManagementSystem.StoragesApi.Services
         {
             ProductDetailInSale productDetailInSale = new ProductDetailInSale();
             string[] includes = { "Product", "Unit" };
-            var productDetail = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Barcode == barcode && x.Status == ActiveStatus.Active, includes).OrderBy(x => x.Id).FirstOrDefault();
+            var productDetail = _unitOfWork.ProductUnitRepository.GetWithInclude(x => x.Barcode == barcode && x.Status == ActiveStatus.Active, includes).OrderByDescending(x => x.IsPrimary).FirstOrDefault();
             var productUnitBranchs = _unitOfWork.ProductUnitBranchRepository.Get().ToList();
 
             if (productDetail == null)
@@ -633,6 +633,38 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
+
+        public ProductDetailResponseDto ProductDetailByIdAndUnit(int productId, int unitId)
+        {
+
+            string query = string.Format(@"
+                    SELECT p.ProductId
+		                    ,p.ProductCode
+                            ,p.ProductName
+                            ,CONVERT(DECIMAL(18, 2), p.Price) AS Price
+		                    ,CONVERT(DECIMAL(18, 2), p.DefaultPurchasePrice) AS DefaultPurchasePrice
+		                    ,p.BarCode
+		                    ,p.Tax
+		                    ,c.CategoryName
+		                    ,u.UnitName
+                    FROM dbo.Products p
+                    JOIN dbo.Category c ON c.CategoryId = p.CategoryId
+                    JOIN dbo.ProductUnit pu ON pu.ProductId = p.ProductId
+                    JOIN dbo.Unit U ON U.UnitId = pu.UnitId
+                    WHERE p.ProductId = {0} AND U.UnitId = {1}
+                ", productId, unitId);
+
+            try
+            {
+                var result = _storageContext.ProductResponseDtos.FromSqlRaw(query).SingleOrDefault();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         // private function check part name is in product name
         private bool CheckAnimalPartInProductName(string productName, List<string> AniamlPartSplit)
         {
