@@ -105,6 +105,15 @@ namespace ManagementSystem.StoragesApi.Controllers
             return Ok(result);
         }
 
+        [HttpGet()]
+        [Route("get-detail-by-id-unitid")]
+        public IActionResult GenerateProductCode([FromQuery] int productId, [FromQuery] int unitId)
+        {
+            var result = _ProductService.ProductDetailByIdAndUnit(productId, unitId);
+
+            return Ok(result);
+        }
+
         [HttpPost()]
         [Route("review-import-products")]
         public IActionResult ReviewImportExcel(IFormFile file)
@@ -120,15 +129,6 @@ namespace ManagementSystem.StoragesApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Fail reviewing the Excel file.");
 
             }
-            return Ok(result);
-        }
-
-        [HttpGet()]
-        [Route("get-detail-by-id-unitid")]
-        public IActionResult GenerateProductCode([FromQuery] int productId, [FromQuery] int unitId)
-        {
-            var result = _ProductService.ProductDetailByIdAndUnit(productId, unitId);
-
             return Ok(result);
         }
 
@@ -148,5 +148,5 @@ namespace ManagementSystem.StoragesApi.Controllers
             }
             return Ok();
         }
-    }
+     }
 }

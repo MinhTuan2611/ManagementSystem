@@ -743,7 +743,7 @@ namespace ManagementSystem.StoragesApi.Services
             {
                 foreach (var item in listImport)
                 {
-                    if (item.status == ImportProductStatus.UpdateProduct)
+                    if (item.status == ImportProductStatus.UpdateProduct.ToString())
                     {
                         var product = _storageContext.Products.FirstOrDefault(x => x.ProductCode == item.ProductCode);
                         if (product == null) return false;
@@ -754,7 +754,7 @@ namespace ManagementSystem.StoragesApi.Services
                         product.ModifyBy = userId;
                         _unitOfWork.ProductRepository.Update(product);
                     }
-                    if (item.status == ImportProductStatus.CreateProduct)
+                    if (item.status == ImportProductStatus.CreateProduct.ToString())
                     {
                         var product = new Product();
                         product.ProductCode = item.ProductCode;
@@ -811,12 +811,10 @@ namespace ManagementSystem.StoragesApi.Services
                         if (sheet.Hidden == eWorkSheetHidden.Visible)
                         {
                             worksheet = sheet;
-                            break; 
+                            break;
                         }
                     }
-
-                    // Assume first row is headers, so start from row 2
-                    for (int row = 2; row <= worksheet.Dimension.End.Row; row++)
+                    for (int row = 2; row <= worksheet?.Dimension.End.Row; row++)
                     {
                         var productReviewImport = new ProductReviewImport
                         {
@@ -845,21 +843,32 @@ namespace ManagementSystem.StoragesApi.Services
                 var importProduct = new ProductReviewImportDto();
 
                 var product = _storageContext.Products.FirstOrDefault(x => x.ProductCode == item.ProductCode);
-                importProduct.CategoryId = product?.CategoryId;
                 importProduct.ProductCode = item.ProductCode;
                 importProduct.ProductName = item.ProductName;
                 importProduct.DefaultPurchasePrice = item.DefaultPurchasePrice;
                 importProduct.Price = item.Price;
                 importProduct.UnitName = item.UnitName;
+                importProduct.CategoryId = product?.CategoryId;
+
 
                 if (product != null)
                 {
                     var productUnit = _storageContext.ProductUnit.Include(x => x.Unit).FirstOrDefault(x => x.ProductId == product.ProductId);
-                    importProduct.UnitName = productUnit.Unit.UnitName;
-                    importProduct.UnitId = productUnit.Unit.UnitId;
+                    if (productUnit != null)
+                    {
+                        importProduct.UnitName = productUnit.Unit.UnitName;
+                        importProduct.UnitId = productUnit.Unit.UnitId;
+                    }
+
+
+                    var productCategory = _storageContext.Category.FirstOrDefault(x => x.CategoryId == item.CategoryId);
+                    if (productCategory != null)
+                    {
+                        importProduct.CategoryName = productCategory.CategoryName;
+                    }
                     if (product.ProductName != item.ProductName || product.DefaultPurchasePrice != item.DefaultPurchasePrice || product.Price != item.Price)
                     {
-                        importProduct.status = ImportProductStatus.UpdateProduct;
+                        importProduct.status = ImportProductStatus.UpdateProduct.ToString();
                     }
                 }
                 else
@@ -869,7 +878,7 @@ namespace ManagementSystem.StoragesApi.Services
                         var unit = _storageContext.Unit.FirstOrDefault(x => x.UnitName == item.UnitName);
                         importProduct.UnitId = unit?.UnitId;
                     }
-                    importProduct.status = ImportProductStatus.CreateProduct;
+                    importProduct.status = ImportProductStatus.CreateProduct.ToString();
                 }
                 productReviewDto.Add(importProduct);
             }

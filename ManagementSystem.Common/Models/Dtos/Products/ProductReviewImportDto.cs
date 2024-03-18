@@ -16,7 +16,7 @@ namespace ManagementSystem.Common.Models.Dtos.Products
         public int? UnitId { get; set; }
 
         public int? CategoryId { get; set; }
-
-        public ImportProductStatus status { get; set; } = ImportProductStatus.Unchange;
+        public string CategoryName { get; set; }
+        public string status { get; set; } = ImportProductStatus.Unchange.ToString();
     }
 }

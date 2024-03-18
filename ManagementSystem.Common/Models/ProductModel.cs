@@ -102,6 +102,6 @@ namespace ManagementSystem.Common.Models
         public int? UnitId { get; set; }
         public int? CategoryId { get; set; }
 
-        public ImportProductStatus status { get; set; }
+        public string status { get; set; }
     }
 }
