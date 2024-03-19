@@ -172,26 +172,24 @@ namespace ManagementSystem.MainApp.Controllers
 
         [HttpPost()]
         [Route("import-products")]
-        public async Task<IActionResult> ImportExcel(IFormFile file)
+        public async Task<IActionResult> ImportExcel(List<ProductImportRequest> importFile)
         {
             // Check if the uploaded file is not null and is an Excel file based on its content type
-            if (file == null || !file.ContentType.Contains("excel") && !file.ContentType.Contains("spreadsheetml"))
+            if (!importFile.Any())
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Invalid file. Please upload an Excel file.");
+                return StatusCode(StatusCodes.Status400BadRequest, "No Product to import.");
             }
             ResponseModel<ProductReviewImportDto> response = new ResponseModel<ProductReviewImportDto>();
-            var responseData = await HttpRequestsHelper.Post<ProductReviewImportDto>(APIUrl + "review-import-products", file);
-            if (responseData != null)
+            var responseData = await HttpRequestsHelper.Post<bool>(APIUrl + "import-products", importFile);
+            if (responseData)
             {
                 response.Status = "success";
-                response.Data.Add(responseData);
                 return Ok(response);
             }
             else
             {
                 response.Status = "error";
                 response.ErrorMessage = "Failed to review the excel file.";
-
             }
             return Ok(responseData);
         }

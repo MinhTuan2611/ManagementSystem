@@ -137,7 +137,7 @@ namespace ManagementSystem.StoragesApi.Controllers
         public IActionResult ImportExcel(List<ProductImportRequest> importFile,int userId)
         {
             // Check if the uploaded file is not null and is an Excel file based on its content type
-            if (importFile == null || !importFile.Any())
+            if (!importFile.Any())
             {
                 return StatusCode(StatusCodes.Status400BadRequest, "No product to import");
             }
