@@ -76,5 +76,18 @@ namespace ManagementSystem.Common.Helpers
             }
             return default(TResult);
         }
+
+        public static async Task<TResult> PostFile<TResult>(string url, HttpContent content)
+        {
+            using var httpClient = new HttpClient();
+            HttpResponseMessage resLogin = await httpClient.PostAsync(url, content);
+            if (resLogin.IsSuccessStatusCode)
+            {
+                var responseContent = await resLogin.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<TResult>(responseContent);
+            }
+            return default;
+        }
+
     }
 }

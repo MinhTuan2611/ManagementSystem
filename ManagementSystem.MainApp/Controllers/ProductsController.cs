@@ -6,6 +6,7 @@ using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.Common.Models.Dtos.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 
 namespace ManagementSystem.MainApp.Controllers
 {
@@ -148,27 +149,42 @@ namespace ManagementSystem.MainApp.Controllers
         [Route("review-import-products")]
         public async Task<IActionResult> ReviewImportExcel(IFormFile file)
         {
-            // Check if the uploaded file is not null and is an Excel file based on its content type
             if (file == null || !file.ContentType.Contains("excel") && !file.ContentType.Contains("spreadsheetml"))
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Invalid file. Please upload an Excel file.");
             }
-            ResponseModel<ProductReviewImportDto> response = new ResponseModel<ProductReviewImportDto>();
-            var responseData = await HttpRequestsHelper.Post<ProductReviewImportDto>(APIUrl + "review-import-products", file);
-            if(responseData != null)
-            {
-                response.Status = "success";
-                response.Data.Add(responseData);
-                return Ok(response);
-            }
-            else
-            {
-                response.Status = "error";
-                response.ErrorMessage = "Failed to review the excel file.";
 
+            // Prepare MultipartFormDataContent
+            var content = new MultipartFormDataContent();
+            var fileStreamContent = new StreamContent(file.OpenReadStream());
+            fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            content.Add(fileStreamContent, "file", file.FileName); // Make sure "file" matches the name expected by the server
+
+            ResponseModel<ProductReviewImportDto> response = new ResponseModel<ProductReviewImportDto>();
+
+            try
+            {
+                // Adjust this call to your HttpRequestsHelper to accept MultipartFormDataContent
+                var responseData = await HttpRequestsHelper.PostFile<List<ProductReviewImportDto>>(APIUrl + "review-import-products", content);
+
+                if (responseData != null)
+                {
+                    return Ok(responseData);
+                }
+                else
+                {
+                    response.Status = "error";
+                    response.ErrorMessage = "Failed to review the excel file.";
+                    return Ok(response);
+                }
             }
-            return Ok(responseData);
+            catch (Exception ex)
+            {
+                // Handle exception
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error forwarding file to storage app.");
+            }
         }
+
 
         [HttpPost()]
         [Route("import-products")]

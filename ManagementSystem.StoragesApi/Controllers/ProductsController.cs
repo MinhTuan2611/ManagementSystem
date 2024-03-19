@@ -116,7 +116,7 @@ namespace ManagementSystem.StoragesApi.Controllers
 
         [HttpPost()]
         [Route("review-import-products")]
-        public IActionResult ReviewImportExcel(IFormFile file)
+        public IActionResult ReviewImportExcel([FromForm] IFormFile file)
         {
             // Check if the uploaded file is not null and is an Excel file based on its content type
             if (file == null || !file.ContentType.Contains("excel") && !file.ContentType.Contains("spreadsheetml"))
