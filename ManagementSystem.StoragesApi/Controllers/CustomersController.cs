@@ -23,7 +23,7 @@ namespace ManagementSystem.StoragesApi.Controllers
             _mapper = mapper;
         }
         [HttpGet("get")]
-        public TPagination<Customer> Get(string? customerName, string? phoneNumber, int pageSize = 15, int pageNumber = 1)
+        public TPagination<Customer> Get(string? customerName, string? phoneNumber, int pageSize = 10, int pageNumber = 1)
         {
             var (customers, countCustomer) = _CustomersService.GetListCustomers(customerName, phoneNumber, pageSize, pageNumber);
 
@@ -72,11 +72,18 @@ namespace ManagementSystem.StoragesApi.Controllers
 
             return Ok(false);
         }
-        [HttpPost("update")]
-        public IActionResult Update(Customer customer, int userId)
+
+        [HttpPost("update/{actionUserId}")]
+        public IActionResult Update([FromBody] Customer customer, int actionUserId)
         {
-            bool updated = _CustomersService.UpdateCustomer(customer, userId);
-            return Ok(updated);
+            if (customer == null)
+                return BadRequest("Invalid model");
+
+            bool updated = _CustomersService.UpdateCustomer(customer, actionUserId);
+            if (updated == true)
+                return Ok(updated);
+
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
 
         [HttpPost("update_point")]

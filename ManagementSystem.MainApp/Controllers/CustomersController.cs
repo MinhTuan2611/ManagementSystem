@@ -1,4 +1,5 @@
 ﻿using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Helpers;
 using ManagementSystem.Common.Models;
 using ManagementSystem.MainApp.CustomerActionFilters;
@@ -13,6 +14,23 @@ namespace ManagementSystem.MainApp.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
+
+        [HttpGet("get")]
+        public async Task<IActionResult> Get(string? customerName, string? phoneNumber, int? pageSize = 10, int? pageNumber = 1)
+        {
+            var result = await HttpRequestsHelper.Get<TPagination<Customer>>(Environment.StorageApiUrl
+                + "customers/get?pageSize=" + pageSize
+                + "&pageNumber=" + pageNumber
+                + (!String.IsNullOrEmpty(customerName) ? "&customerName=" + customerName : "")
+                + (!String.IsNullOrEmpty(phoneNumber) ? "&phoneNumber=" + phoneNumber : "")
+                );
+
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
+        }
 
         [HttpGet("get-customer-by-code")]
         public async Task<IActionResult> Get(string customerCode)
@@ -62,6 +80,20 @@ namespace ManagementSystem.MainApp.Controllers
 
             return Ok(customers);
 
+        }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> Update([FromBody] Customer customer)
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+            int actionUserId = int.Parse(userId);
+
+            var response = await HttpRequestsHelper.Post<bool>(Environment.StorageApiUrl + $"customers/update/{actionUserId}", customer);
+            if (response)
+            {
+                return Ok(response);
+            }
+            return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
         }
     }
 }

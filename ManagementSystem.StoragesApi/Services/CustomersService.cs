@@ -37,23 +37,23 @@ namespace ManagementSystem.StoragesApi.Services
                 if (!String.IsNullOrEmpty(customerName) && !String.IsNullOrEmpty(phoneNumber))
                 {
                     if (isDiacriticsCusomterName == true)
-                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerName.Contains(customerName, StringComparison.CurrentCultureIgnoreCase) && c.CustomerCode.Contains(phoneNumber));
+                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerName.Contains(customerName, StringComparison.CurrentCultureIgnoreCase) && c.CustomerCode.Contains(phoneNumber) && c.IsActive.Equals(true));
                     else
-                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerUnsign.Contains(cusomterNameNonDiacritics, StringComparison.CurrentCultureIgnoreCase) && c.CustomerCode.Contains(phoneNumber));
+                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerUnsign.Contains(cusomterNameNonDiacritics, StringComparison.CurrentCultureIgnoreCase) && c.CustomerCode.Contains(phoneNumber) && c.IsActive.Equals(true));
                 }
                 else if (!String.IsNullOrEmpty(customerName))
                 {
                     if (isDiacriticsCusomterName == true)
-                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerName.Contains(customerName, StringComparison.CurrentCultureIgnoreCase));
+                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerName.Contains(customerName, StringComparison.CurrentCultureIgnoreCase) && c.IsActive.Equals(true));
                     else
-                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerUnsign.Contains(cusomterNameNonDiacritics, StringComparison.CurrentCultureIgnoreCase));
+                        customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerUnsign.Contains(cusomterNameNonDiacritics, StringComparison.CurrentCultureIgnoreCase) && c.IsActive.Equals(true));
                 }
                 else if (!String.IsNullOrEmpty(phoneNumber))
                 {
-                    customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerCode.Contains(phoneNumber));
+                    customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.CustomerCode.Contains(phoneNumber) && c.IsActive.Equals(true));
                 }
                 else
-                    customers = _unitOfWork.CustomerRepository.GetAll();
+                    customers = _unitOfWork.CustomerRepository.GetAll().Where(c => c.IsActive.Equals(true));
 
                 return (customers.OrderBy(c => c.CustomerName).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList(), customers.Count());
             }
@@ -103,18 +103,26 @@ namespace ManagementSystem.StoragesApi.Services
             }
 
         }
-        public bool UpdateCustomer(Customer customer, int userId)
+        public bool UpdateCustomer(Customer customer, int actionUserId)
         {
-            customer.ModifyDate = DateTime.Now;
-            customer.ModifyBy = userId;
             try
             {
-                _unitOfWork.CustomerRepository.Update(customer);
-                _unitOfWork.Save();
-                _unitOfWork.Dispose();
-                return true;
+                string query = string.Format(@"
+                dbo.usp_update_customer
+                    @ModifierId = {0},
+                    @CustomerId = {1},
+                    @CustomerCode = '{2}',
+                    @CustomerName = '{3}',
+                    @CustomerPoint = {4},
+                    @Address = '{5}',
+                    @PhoneNumber = '{6}'
+            ", actionUserId, customer.CustomerId, customer.CustomerCode, customer.CustomerName, customer.CustomerPoint, customer.Address, customer.PhoneNumber);
+
+                var result = _storageContext.Database.ExecuteSqlRaw(query);
+
+                return result == 1;
             }
-            catch
+            catch (Exception ex)
             {
                 return false;
             }
