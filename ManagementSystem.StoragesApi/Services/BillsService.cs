@@ -884,7 +884,7 @@ namespace ManagementSystem.StoragesApi.Services
 
             string query = string.Format(@"
                 SELECT  c.BillId
-		                ,FORMAT(c.CreateDate, 'yyyy-MM-dd HH:mm:ss')
+		                ,FORMAT(c.CreateDate, 'yyyy-MM-dd HH:mm:ss') AS CreateDate
 		                ,convert(nvarchar,coalesce(CustomerCode, '')) AS CustomerCode
 		                ,convert(nvarchar,coalesce(CustomerName, '')) AS CustomerName
 		                ,convert(nvarchar,b.ProductCode) as ProductCode
@@ -907,7 +907,7 @@ namespace ManagementSystem.StoragesApi.Services
 
             try
             {
-                string storageConnection = string.Format(_configuration.GetConnectionString("StoragesDbConnStr"), SD.AccountingDbName);
+                string storageConnection = _configuration.GetConnectionString("StoragesDbConnStr");
                 using (var connection = new SqlConnection(storageConnection))
                 {
                     var result = connection.Query<BillRevenueDetailInformation>(query).ToList();
@@ -942,21 +942,21 @@ namespace ManagementSystem.StoragesApi.Services
 		                ,a.Amount
 		                ,COALESCE(b.ForReason, c.ForReason) ForReason
                 FROM {0}..Legers a
-                LEFT JOIN StoragesProdDb.dbo.Customers d on d.CustomerId = a.CustomerId
+                LEFT JOIN {2}.dbo.Customers d on d.CustomerId = a.CustomerId
                 LEFT JOIN {0}.[dbo].[ReceiptVouchers] b on b.DocumentNumber = a.DoccumentNumber and a.DoccumentType = 'THU'
                 LEFT JOIN {0}.[dbo].[CreditVouchers] c on c.DocumentNumber = a.DoccumentNumber and a.DoccumentType = 'BAOCO'
-                LEFT JOIN StoragesProdDb.dbo.Bills e on e.BillId = a.BillId
-                LEFT JOIN StoragesProdDb.dbo.Branches br on br.BranchId = e.BranchId
+                LEFT JOIN {2}.dbo.Bills e on e.BillId = a.BillId
+                LEFT JOIN {2}.dbo.Branches br on br.BranchId = e.BranchId
                 LEFT JOIN {1}..UserBranchs g on g.UserId = a.UserId
-                LEFT JOIN StoragesProdDb..Branches h ON g.BranchId = h.BranchId
+                LEFT JOIN {2}..Branches h ON g.BranchId = h.BranchId
                 where DoccumentType <> 'Chi'
                 AND 
-                (CONVERT(datetime, FORMAT(a.TransactionDate, 'yyyy-MM-dd')) between CONVERT(datetime, '{2}') AND CONVERT(datetime, '{3}')))
+                (CONVERT(datetime, FORMAT(a.TransactionDate, 'yyyy-MM-dd')) between CONVERT(datetime, '{3}') AND CONVERT(datetime, '{4}')))
 
                 SELECT *
                 from cte
                 ORDER BY BranchCode, TransactionDate
-            ", SD.AccountingDbName, SD.AccountDbName, fromDate, toDate);
+            ", SD.AccountingDbName, SD.AccountDbName,SD.StorageDbName , fromDate, toDate);
 
             try
             {

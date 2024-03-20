@@ -29,7 +29,7 @@ namespace ManagementSystem.Common.Functions
                         // Check if the property is of type DateTime and format it
                         if (value is DateTime dateTimeValue)
                         {
-                            worksheet.Cells[row, i + 1].Value = dateTimeValue.ToString("dd/MM/yyyy");
+                            worksheet.Cells[row, i + 1].Value = dateTimeValue.ToString("dd/MM/yyyy HH:mm:ss");
                         }
                         else
                         {
