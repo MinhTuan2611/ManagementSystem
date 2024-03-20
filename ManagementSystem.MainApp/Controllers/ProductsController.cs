@@ -166,10 +166,11 @@ namespace ManagementSystem.MainApp.Controllers
             {
                 // Adjust this call to your HttpRequestsHelper to accept MultipartFormDataContent
                 var responseData = await HttpRequestsHelper.PostFile<List<ProductReviewImportDto>>(APIUrl + "review-import-products", content);
-
                 if (responseData != null)
                 {
-                    return Ok(responseData);
+                    response.Status = "success";
+                    response.Data = responseData;
+                    return Ok(response);
                 }
                 else
                 {
@@ -207,7 +208,7 @@ namespace ManagementSystem.MainApp.Controllers
                 response.Status = "error";
                 response.ErrorMessage = "Failed to review the excel file.";
             }
-            return Ok(responseData);
+            return Ok(response);
         }
     }
 }

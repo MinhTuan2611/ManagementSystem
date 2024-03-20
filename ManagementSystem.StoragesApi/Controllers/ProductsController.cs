@@ -146,7 +146,7 @@ namespace ManagementSystem.StoragesApi.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Fail importing the Excel file.");
             }
-            return Ok();
+            return Ok(sucesss);
         }
      }
 }

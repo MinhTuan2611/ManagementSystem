@@ -4,8 +4,7 @@
     "Projects": [
       {
         "Name": "ManagementSystem.AccountsApi\\ManagementSystem.AccountsApi.csproj",
-        "Action": "Start",
-        "DebugTarget": ""
+        "Action": "Start"
       },
       {
         "Name": "ManagementSystem.StoragesApi\\ManagementSystem.StoragesApi.csproj",
@@ -13,9 +12,8 @@
         "DebugTarget": ""
       },
       {
-        "Name": "ManagementSystem.AccountingApi\\ManagementSystem.AccountingApi.csproj",
-        "Action": "Start",
-        "DebugTarget": ""
+        "Name": "ManagementSystem.MainApp\\ManagementSystem.MainApp.csproj",
+        "Action": "Start"
       }
     ]
   }
