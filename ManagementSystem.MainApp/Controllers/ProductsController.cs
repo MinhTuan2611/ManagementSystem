@@ -196,8 +196,9 @@ namespace ManagementSystem.MainApp.Controllers
             {
                 return StatusCode(StatusCodes.Status400BadRequest, "No Product to import.");
             }
+            var userId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == "UserId").Value);
             ResponseModel<ProductReviewImportDto> response = new ResponseModel<ProductReviewImportDto>();
-            var responseData = await HttpRequestsHelper.Post<bool>(APIUrl + "import-products", importFile);
+            var responseData = await HttpRequestsHelper.Post<bool>(APIUrl + "import-products?userId=" + userId, importFile);
             if (responseData)
             {
                 response.Status = "success";

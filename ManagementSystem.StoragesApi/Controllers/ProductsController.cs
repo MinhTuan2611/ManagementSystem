@@ -5,6 +5,7 @@ using ManagementSystem.Common.Models.Dtos.Products;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ManagementSystem.StoragesApi.Controllers
 {
@@ -133,8 +134,8 @@ namespace ManagementSystem.StoragesApi.Controllers
         }
 
         [HttpPost()]
-        [Route("import-products")]
-        public IActionResult ImportExcel(List<ProductImportRequest> importFile,int userId)
+        [Route("import-products/")]
+        public IActionResult ImportExcel(List<ProductImportRequest> importFile, int userId)
         {
             // Check if the uploaded file is not null and is an Excel file based on its content type
             if (!importFile.Any())
