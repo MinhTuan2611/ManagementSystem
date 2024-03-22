@@ -1,11 +1,16 @@
-﻿using ManagementSystem.Common.Constants;
+﻿using Dapper;
+using ManagementSystem.Common.Constants;
 using ManagementSystem.Common.Entities;
 using ManagementSystem.Common.Models;
 using ManagementSystem.StoragesApi.Data;
 using ManagementSystem.StoragesApi.Repositories.UnitOfWork;
+using ManagementSystem.StoragesApi.Utilities;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 
 namespace ManagementSystem.StoragesApi.Services
 {
@@ -13,11 +18,13 @@ namespace ManagementSystem.StoragesApi.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly StoragesDbContext _storageContext;
+        private IConfiguration _configuration;
 
-        public CustomersService(StoragesDbContext context)
+        public CustomersService(StoragesDbContext context, IConfiguration configuration)
         {
             _unitOfWork = new UnitOfWork(context);
             _storageContext = context;
+            _configuration = configuration;
         }
 
         public (List<Customer>, int) GetListCustomers(string? customerName, string? phoneNumber, int pageSize, int pageNumber)
@@ -103,24 +110,63 @@ namespace ManagementSystem.StoragesApi.Services
             }
 
         }
-        public bool UpdateCustomer(Customer customer, int actionUserId)
+        public async Task<bool> UpdateCustomer(Customer customer, int actionUserId)
         {
             try
             {
-                string query = string.Format(@"
-                dbo.usp_update_customer
-                    @ModifierId = {0},
-                    @CustomerId = {1},
-                    @CustomerCode = '{2}',
-                    @CustomerName = '{3}',
-                    @CustomerPoint = {4},
-                    @Address = '{5}',
-                    @PhoneNumber = '{6}'
-            ", actionUserId, customer.CustomerId, customer.CustomerCode, customer.CustomerName, customer.CustomerPoint, customer.Address, customer.PhoneNumber);
+                string accountingConnection = string.Format(_configuration.GetConnectionString("AccountsDbConnStr"), SD.AccountDbName);
+                string getActionUserRole = string.Format(@"
+                    select top 1 r.RoleCode
+                    from dbo.Roles as r
+                    join dbo.UserRoles as ur on ur.RoleId = r.RoleId
+                    where ur.UserId = @actionUserId
+                    order by ur.RoleId asc", actionUserId);
 
-                var result = _storageContext.Database.ExecuteSqlRaw(query);
+                string actionUserRole;
+                using (var connection = new SqlConnection(accountingConnection))
+                {
+                    actionUserRole = (string)await connection.ExecuteScalarAsync(getActionUserRole, new { actionUserId});
+                }
 
-                return result == 1;
+                if (String.IsNullOrEmpty(actionUserRole))
+                    return false;
+
+                if (actionUserRole == "NV" || actionUserRole == "NVTN")
+                {
+                    string updateQuery = string.Format(@"
+                        update dbo.Customers
+		                set CustomerName = N'{0}'
+			                ,CustomerCode = N'{1}'
+			                ,PhoneNumber = N'{2}'
+			                ,[Address] = N'{3}'
+			                ,ModifyDate = getdate()
+			                ,ModifyBy = {4}
+		                where CustomerId = {5}
+                    ", customer.CustomerName, customer.CustomerCode, customer.PhoneNumber, customer.Address, actionUserId, customer.CustomerId);
+
+                    var rowAffected = _storageContext.Database.ExecuteSqlRaw(updateQuery);
+                    return rowAffected > 0;
+                }
+
+                if (actionUserRole == "QTV" || actionUserRole == "QL")
+                {
+                    string updateQuery = string.Format(@"
+                        update dbo.Customers
+		                set CustomerName = N'{0}'
+			                ,CustomerCode = N'{1}'
+			                ,PhoneNumber = N'{2}'
+			                ,[Address] = N'{3}'
+                            ,CustomerPoint = {4}
+			                ,ModifyDate = getdate()
+			                ,ModifyBy = {5}
+		                where CustomerId = {6}
+                    ", customer.CustomerName, customer.CustomerCode, customer.PhoneNumber, customer.Address, customer.CustomerPoint, actionUserId, customer.CustomerId);
+
+                    var rowAffected = _storageContext.Database.ExecuteSqlRaw(updateQuery);
+                    return rowAffected > 0;
+                }
+
+                return false;
             }
             catch (Exception ex)
             {

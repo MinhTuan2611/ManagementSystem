@@ -17,9 +17,9 @@ namespace ManagementSystem.StoragesApi.Controllers
         private readonly CustomersService _CustomersService;
         private readonly IMapper _mapper;
 
-        public CustomersController(StoragesDbContext context, IMapper mapper)
+        public CustomersController(StoragesDbContext context, IMapper mapper, IConfiguration configuration)
         {
-            _CustomersService = new CustomersService(context);
+            _CustomersService = new CustomersService(context, configuration);
             _mapper = mapper;
         }
         [HttpGet("get")]
@@ -74,12 +74,12 @@ namespace ManagementSystem.StoragesApi.Controllers
         }
 
         [HttpPost("update/{actionUserId}")]
-        public IActionResult Update([FromBody] Customer customer, int actionUserId)
+        public async Task<IActionResult> Update([FromBody] Customer customer, int actionUserId)
         {
             if (customer == null)
                 return BadRequest("Invalid model");
 
-            bool updated = _CustomersService.UpdateCustomer(customer, actionUserId);
+            bool updated = await _CustomersService.UpdateCustomer(customer, actionUserId);
             if (updated == true)
                 return Ok(updated);
 
