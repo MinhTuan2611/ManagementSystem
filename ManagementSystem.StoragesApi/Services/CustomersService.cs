@@ -137,6 +137,7 @@ namespace ManagementSystem.StoragesApi.Services
 			                ,ModifyDate = getdate()
 			                ,ModifyBy = {4}
 		                where CustomerId = {5}
+                            and IsActive = 1
                     ", customer.CustomerName, customer.CustomerCode, customer.PhoneNumber, customer.Address, actionUserId, customer.CustomerId);
 
                     var rowAffected = _storageContext.Database.ExecuteSqlRaw(updateQuery);
@@ -155,6 +156,7 @@ namespace ManagementSystem.StoragesApi.Services
 			                ,ModifyDate = getdate()
 			                ,ModifyBy = {5}
 		                where CustomerId = {6}
+                            and IsActive = 1
                     ", customer.CustomerName, customer.CustomerCode, customer.PhoneNumber, customer.Address, customer.CustomerPoint, actionUserId, customer.CustomerId);
 
                     var rowAffected = _storageContext.Database.ExecuteSqlRaw(updateQuery);
