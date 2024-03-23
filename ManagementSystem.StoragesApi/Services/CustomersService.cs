@@ -114,24 +114,12 @@ namespace ManagementSystem.StoragesApi.Services
         {
             try
             {
-                string accountingConnection = string.Format(_configuration.GetConnectionString("AccountsDbConnStr"), SD.AccountDbName);
-                string getActionUserRole = string.Format(@"
-                    select top 1 r.RoleCode
-                    from dbo.Roles as r
-                    join dbo.UserRoles as ur on ur.RoleId = r.RoleId
-                    where ur.UserId = @actionUserId
-                    order by ur.RoleId asc", actionUserId);
-
-                string actionUserRole;
-                using (var connection = new SqlConnection(accountingConnection))
-                {
-                    actionUserRole = (string)await connection.ExecuteScalarAsync(getActionUserRole, new { actionUserId});
-                }
+                string actionUserRole = GetUserRole(actionUserId);
 
                 if (String.IsNullOrEmpty(actionUserRole))
                     return false;
 
-                if (actionUserRole == "NV" || actionUserRole == "NVTN")
+                if (actionUserRole == "NV")
                 {
                     string updateQuery = string.Format(@"
                         update dbo.Customers
@@ -173,14 +161,31 @@ namespace ManagementSystem.StoragesApi.Services
                 return false;
             }
         }
-        public bool DeleteCustomer(int customerId)
+        public bool DeleteCustomer(int customerId, int actionUserId)
         {
             try
             {
-                _unitOfWork.CustomerRepository.Delete(customerId);
-                _unitOfWork.Save();
-                _unitOfWork.Dispose();
-                return true;
+                string actionUserRole = GetUserRole(actionUserId);
+
+                if (String.IsNullOrEmpty(actionUserRole))
+                    return false;
+
+                if (actionUserRole != "QTV" && actionUserRole != "QL")
+                    return false;
+
+                if (actionUserRole == "QTV" || actionUserRole == "QL")
+                {
+                    string softDeleteQuery = string.Format(@"
+                        update dbo.Customers
+		                set IsActive = 0
+		                where CustomerId = {0}
+                    ", customerId);
+
+                    var rowAffected = _storageContext.Database.ExecuteSqlRaw(softDeleteQuery);
+                    return rowAffected > 0;
+                }
+
+                return false;
             }
             catch
             {
@@ -232,6 +237,33 @@ namespace ManagementSystem.StoragesApi.Services
             var isExist = _unitOfWork.CustomerRepository.Get(x => x.CustomerCode == customer.CustomerCode);
             return isExist != null ;
         }
+
+        private  string GetUserRole(int userId)
+        {
+            try
+            {
+                string accountingConnection = string.Format(_configuration.GetConnectionString("AccountsDbConnStr"), SD.AccountDbName);
+                string getActionUserRole = @"
+                    select top 1 r.RoleCode
+                    from dbo.Roles as r
+                    join dbo.UserRoles as ur on ur.RoleId = r.RoleId
+                    where ur.UserId = @userId
+                    order by ur.RoleId asc";
+
+                string actionUserRole;
+                using (var connection = new SqlConnection(accountingConnection))
+                {
+                    actionUserRole = connection.ExecuteScalar(getActionUserRole, new { userId }).ToString();
+                }
+
+                return actionUserRole;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
 
     }
 }

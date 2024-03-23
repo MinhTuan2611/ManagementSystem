@@ -93,11 +93,11 @@ namespace ManagementSystem.StoragesApi.Controllers
             return Ok(updated);
         }
 
-        [HttpPost("delete")]
-        public IActionResult Delete(int customerId)
+        [HttpDelete("delete/{customerId}/{actionUserId}")]
+        public IActionResult Delete(int customerId, int actionUserId)
         {
-            bool updated = _CustomersService.DeleteCustomer(customerId);
-            return Ok(updated);
+            bool deleted = _CustomersService.DeleteCustomer(customerId, actionUserId);
+            return Ok(deleted);
         }
 
         [HttpGet("search-term")]

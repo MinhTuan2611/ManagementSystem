@@ -95,5 +95,20 @@ namespace ManagementSystem.MainApp.Controllers
             }
             return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");
         }
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> Delete(int customerId)
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId").Value;
+            int actionUserId = int.Parse(userId);
+
+            var response = await HttpRequestsHelper.Delete<bool>(Environment.StorageApiUrl + $"customers/delete/{customerId}/{actionUserId}", customerId);
+            if (response)
+            {
+                return Ok(response);
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong");
+        }
     }
 }
