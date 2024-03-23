@@ -39,6 +39,14 @@ namespace ManagementSystem.StoragesApi.Controllers
             var customer = _CustomersService.GetCustomerByCode(customerCode);
             return customer;
         }
+
+        [HttpGet("get-customer-by-id")]
+        public Customer GetCustomerByCode(int customerId)
+        {
+            var customer = _CustomersService.GetCustomerById(customerId);
+            return customer;
+        }
+
         [HttpPost("create")]
         public IActionResult Create([FromBody] NewCustomerRequestDto customerDto)
         {

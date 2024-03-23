@@ -45,6 +45,18 @@ namespace ManagementSystem.MainApp.Controllers
             return Ok("Customer not found");
         }
 
+        [HttpGet("get-customer-by-id")]
+        public async Task<IActionResult> GetCustomerById(int customerId)
+        {
+            Customer customers = await HttpRequestsHelper.Get<Customer>(Environment.StorageApiUrl + "customers/get-customer-by-id?customerId=" + customerId);
+
+            if (customers != null)
+            {
+                return Ok(customers);
+            }
+            return Ok("Customer not found");
+        }
+
         [HttpPost]
         [Route("create-customer")]
         [ValidateModel]

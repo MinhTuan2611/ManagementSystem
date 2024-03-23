@@ -95,10 +95,17 @@ namespace ManagementSystem.StoragesApi.Services
             return customer;
         }
 
+        public Customer GetCustomerById(int customerId)
+        {
+            Customer customer = _unitOfWork.CustomerRepository.GetByID(customerId);
+            return customer;
+        }
+
         public Customer CreateCustomer(Customer customer)
         {
             try
             {
+                customer.CustomerUnsign = customer.CustomerName;
                 _unitOfWork.CustomerRepository.Insert(customer);
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
