@@ -125,7 +125,7 @@ namespace ManagementSystem.StoragesApi.Services
                 if (String.IsNullOrEmpty(actionUserRole))
                     return false;
 
-                if (actionUserRole == "NV")
+                if (actionUserRole == "NV" || actionUserRole == "NVTN")
                 {
                     string updateQuery = string.Format(@"
                         update dbo.Customers
@@ -133,17 +133,19 @@ namespace ManagementSystem.StoragesApi.Services
 			                ,CustomerCode = N'{1}'
 			                ,PhoneNumber = N'{2}'
 			                ,[Address] = N'{3}'
+                            ,Gender = N'{4}'
+                            ,BirthDay = '{5}'
 			                ,ModifyDate = getdate()
-			                ,ModifyBy = {4}
-		                where CustomerId = {5}
+			                ,ModifyBy = {6}
+		                where CustomerId = {7}
                             and IsActive = 1
-                    ", customer.CustomerName, customer.CustomerCode, customer.PhoneNumber, customer.Address, actionUserId, customer.CustomerId);
+                    ", customer.CustomerName, customer.CustomerCode, customer.PhoneNumber, customer.Address, customer.Gender, customer.BirthDay, actionUserId, customer.CustomerId);
 
                     var rowAffected = _storageContext.Database.ExecuteSqlRaw(updateQuery);
                     return rowAffected > 0;
                 }
 
-                if (actionUserRole == "QTV" || actionUserRole == "QL")
+                if (actionUserRole == "QTV" || actionUserRole == "QL" || actionUserRole == "KT")
                 {
                     string updateQuery = string.Format(@"
                         update dbo.Customers
@@ -152,11 +154,13 @@ namespace ManagementSystem.StoragesApi.Services
 			                ,PhoneNumber = N'{2}'
 			                ,[Address] = N'{3}'
                             ,CustomerPoint = {4}
+                            ,Gender = N'{5}'
+                            ,BirthDay = '{6}'
 			                ,ModifyDate = getdate()
-			                ,ModifyBy = {5}
-		                where CustomerId = {6}
+			                ,ModifyBy = {7}
+		                where CustomerId = {8}
                             and IsActive = 1
-                    ", customer.CustomerName, customer.CustomerCode, customer.PhoneNumber, customer.Address, customer.CustomerPoint, actionUserId, customer.CustomerId);
+                    ", customer.CustomerName, customer.CustomerCode, customer.PhoneNumber, customer.Address, customer.CustomerPoint, customer.Gender, customer.BirthDay, actionUserId, customer.CustomerId);
 
                     var rowAffected = _storageContext.Database.ExecuteSqlRaw(updateQuery);
                     return rowAffected > 0;
@@ -178,10 +182,10 @@ namespace ManagementSystem.StoragesApi.Services
                 if (String.IsNullOrEmpty(actionUserRole))
                     return false;
 
-                if (actionUserRole != "QTV" && actionUserRole != "QL")
+                if (actionUserRole != "QTV" && actionUserRole != "QL" || actionUserRole != "KT")
                     return false;
 
-                if (actionUserRole == "QTV" || actionUserRole == "QL")
+                if (actionUserRole == "QTV" || actionUserRole == "QL" || actionUserRole == "KT")
                 {
                     string softDeleteQuery = string.Format(@"
                         update dbo.Customers
