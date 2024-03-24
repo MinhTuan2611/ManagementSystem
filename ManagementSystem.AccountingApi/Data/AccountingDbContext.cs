@@ -40,7 +40,9 @@ namespace ManagementSystem.AccountingApi.Data
         public DbSet<CreditVoucherDeleted> CreditVoucherDeleted { get; set; }
         public DbSet<ReceiptVoucherDeleted> ReceiptVoucherDeleted { get; set; }
         public DbSet<LegerDeleted> LegerDeleted { get; set; }
-
+        public DbSet<ExchangeItemVoucher> ExchangeItemVouchers { get; set; }
+        public DbSet<ExchangeProduct> ExchangeProducts { get; set; }
+        public DbSet<ReturnProduct> ReturnProducts { get; set; }
 
         // Add context to return tabbles
         public DbSet<InventoryVoucherResponseDto> InventoryVoucherResponseDto { get; set; }
@@ -70,6 +72,8 @@ namespace ManagementSystem.AccountingApi.Data
             modelBuilder.Entity<ShiftHandoverCashDetail>().HasKey(x => new { x.ShiftEndId, x.Denomination });
             modelBuilder.Entity<InventoryAuditDetail>().HasKey(x => new { x.ShiftEndId, x.ProductId, x.UnitId });
             modelBuilder.Entity<PaymentMenthodReasonRef>().HasKey(x => new { x.MethodCode, x.ReasonCode });
+            modelBuilder.Entity<ExchangeProduct>().HasKey(x => new {x.ExchangeItemVoucherId, x.ProductId});
+            modelBuilder.Entity<ReturnProduct>().HasKey(x => new { x.ExchangeItemVoucherId, x.ProductId });
 
             modelBuilder.Entity<InventoryVoucherResponseDto>().ToTable(nameof(InventoryVoucherResponseDto), t => t.ExcludeFromMigrations());
             modelBuilder.Entity<InventoryVoucherDetailResponseDto>().ToTable(nameof(InventoryVoucherDetailResponseDto), t => t.ExcludeFromMigrations());
