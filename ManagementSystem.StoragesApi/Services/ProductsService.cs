@@ -788,7 +788,6 @@ namespace ManagementSystem.StoragesApi.Services
                         }
                     }
                 }
-                _storageContext.ProductUnit.save();
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
 
@@ -874,7 +873,7 @@ namespace ManagementSystem.StoragesApi.Services
                     }
 
 
-                    var productCategory = _storageContext.Category.FirstOrDefault(x => x.CategoryId == product?.CategoryId);
+                    var productCategory = _storageContext.Category.FirstOrDefault(x => x.CategoryId == (product.CategoryId | 0));
                     if (productCategory != null)
                     {
                         importProduct.CategoryName = productCategory.CategoryName;
