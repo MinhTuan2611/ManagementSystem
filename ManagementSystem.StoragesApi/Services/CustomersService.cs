@@ -176,7 +176,7 @@ namespace ManagementSystem.StoragesApi.Services
                 if (String.IsNullOrEmpty(actionUserRole))
                     return false;
 
-                if (actionUserRole != "QTV" && actionUserRole != "QL" || actionUserRole != "KT")
+                if (actionUserRole != "QTV" && actionUserRole != "QL" && actionUserRole != "KT")
                     return false;
 
                 if (actionUserRole == "QTV" || actionUserRole == "QL" || actionUserRole == "KT")
