@@ -41,7 +41,7 @@ namespace ManagementSystem.StoragesApi.Controllers
         }
 
         [HttpGet("get-customer-by-id")]
-        public Customer GetCustomerByCode(int customerId)
+        public Customer GetCustomerById(int customerId)
         {
             var customer = _CustomersService.GetCustomerById(customerId);
             return customer;
@@ -56,6 +56,7 @@ namespace ManagementSystem.StoragesApi.Controllers
             // Add customer Metadata
             newCustomer.CreateBy = customerDto.UserId;
             newCustomer.ModifyBy = customerDto.UserId;
+            newCustomer.IsActive = true;
             if (_CustomersService.checkExistCustomer(newCustomer))
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Customer already exists!");

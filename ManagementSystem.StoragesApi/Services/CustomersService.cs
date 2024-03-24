@@ -105,7 +105,6 @@ namespace ManagementSystem.StoragesApi.Services
         {
             try
             {
-                customer.CustomerUnsign = customer.CustomerName;
                 _unitOfWork.CustomerRepository.Insert(customer);
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
