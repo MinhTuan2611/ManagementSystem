@@ -82,4 +82,26 @@ namespace ManagementSystem.Common.Models
         public int? Amount { get; set; }
         public List<ProductUnitDetail> ProductUnits { get; set; }
     }
+
+    public class ProductReviewImport
+    {
+        public string ProductCode { get; set; }
+        public string ProductName { get; set; }
+        public int DefaultPurchasePrice { get; set; }
+        public int Price { get; set; }
+        public string UnitName { get; set; }
+        public int? CategoryId { get; set; }
+    }
+
+    public class ProductImportRequest
+    {
+        public string ProductCode { get; set; }
+        public string ProductName { get; set; }
+        public int DefaultPurchasePrice { get; set; }
+        public int Price { get; set; }
+        public int? UnitId { get; set; }
+        public int? CategoryId { get; set; }
+
+        public string status { get; set; }
+    }
 }
