@@ -745,19 +745,28 @@ namespace ManagementSystem.StoragesApi.Services
                 {
                     if (item.status == ImportProductStatus.UpdateProduct.ToString())
                     {
-                        var product = _storageContext.Products.FirstOrDefault(x => x.ProductCode == item.ProductCode);
+                        Product product = _storageContext.Products.FirstOrDefault(x => x.ProductCode == item.ProductCode);
+                        ProductUnit productUnit = _storageContext.ProductUnit.FirstOrDefault(x => x.ProductId == product.ProductId && x.UnitId == item.UnitId.Value);
                         if (product == null) return false;
 
                         product.ProductName = item.ProductName;
                         product.DefaultPurchasePrice = item.DefaultPurchasePrice;
                         product.Price = item.Price;
+                        product.ModifyDate = DateTime.Now;
                         product.ModifyBy = userId;
                         _unitOfWork.ProductRepository.Update(product);
+
+                        if (productUnit == null) return false;
+                        productUnit.Price = item.Price;
+                        productUnit.Barcode = item.ProductCode;
+                        productUnit.ModifyDate = DateTime.Now;
+                        productUnit.ModifyBy = userId;
                     }
                     if (item.status == ImportProductStatus.CreateProduct.ToString())
                     {
                         var product = new Product();
                         product.ProductCode = item.ProductCode;
+                        product.BarCode = item.ProductCode;
                         product.ProductName = item.ProductName;
                         product.DefaultPurchasePrice = item.DefaultPurchasePrice;
                         product.Price = item.Price;
@@ -770,8 +779,10 @@ namespace ManagementSystem.StoragesApi.Services
                             ProductUnit productUnit = new ProductUnit();
                             productUnit.ProductId = product.ProductId;
                             productUnit.UnitId = item.UnitId.Value;
+                            productUnit.Price = item.Price;
                             productUnit.IsPrimary = true;
                             productUnit.UnitExchange = 1;
+                            productUnit.Barcode = item.ProductCode;
                             _unitOfWork.ProductUnitRepository.Insert(productUnit);
                         }
                     }
@@ -866,7 +877,10 @@ namespace ManagementSystem.StoragesApi.Services
                     {
                         importProduct.CategoryName = productCategory.CategoryName;
                     }
-                    if (product.ProductName != item.ProductName || product.DefaultPurchasePrice != item.DefaultPurchasePrice || product.Price != item.Price)
+                    if (product.ProductName != item.ProductName 
+                        || product.DefaultPurchasePrice != item.DefaultPurchasePrice 
+                        || product.Price != item.Price
+                        || productUnit.Price != item.Price)
                     {
                         importProduct.status = ImportProductStatus.UpdateProduct.ToString();
                     }
