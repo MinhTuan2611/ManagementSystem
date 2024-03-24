@@ -761,6 +761,7 @@ namespace ManagementSystem.StoragesApi.Services
                         productUnit.Barcode = item.ProductCode;
                         productUnit.ModifyDate = DateTime.Now;
                         productUnit.ModifyBy = userId;
+                        _storageContext.ProductUnit.Update(productUnit);
                     }
                     if (item.status == ImportProductStatus.CreateProduct.ToString())
                     {
@@ -787,6 +788,7 @@ namespace ManagementSystem.StoragesApi.Services
                         }
                     }
                 }
+                _storageContext.ProductUnit.save();
                 _unitOfWork.Save();
                 _unitOfWork.Dispose();
 
@@ -872,7 +874,7 @@ namespace ManagementSystem.StoragesApi.Services
                     }
 
 
-                    var productCategory = _storageContext.Category.FirstOrDefault(x => x.CategoryId == item.CategoryId);
+                    var productCategory = _storageContext.Category.FirstOrDefault(x => x.CategoryId == product?.CategoryId);
                     if (productCategory != null)
                     {
                         importProduct.CategoryName = productCategory.CategoryName;
