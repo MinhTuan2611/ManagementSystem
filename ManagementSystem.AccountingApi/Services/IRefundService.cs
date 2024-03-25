@@ -4,6 +4,6 @@ namespace ManagementSystem.AccountingApi.Services
 {
     public interface IRefundService
     {
-        Task CreateRefundVoucher(BillRefundRequestDto model);
+        Task<bool> CreateRefundVoucher(BillRefundRequestDto model);
     }
 }

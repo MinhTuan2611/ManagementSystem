@@ -29,42 +29,81 @@ public class RefundService : IRefundService
         _paymentVoucherService = paymentVoucherService;
     }
 
-    public async Task CreateRefundVoucher(BillRefundRequestDto model)
+    public async Task<bool> CreateRefundVoucher(BillRefundRequestDto model)
     {
-        // Create Phieu tra hang
-        var exchangeItem = new ExchangeItemVoucher()
+        try
         {
-            UserId = model.UserId,
-            CustomerId = model.CustomerId,
-            RefundAmount = model.TotalDeductibleAmount,
-            TotalExchangeProduct = model.ExchangedProduct.Count(),
-            TotalReturnProduct = model.ReturnedProduct.Count(),
-            BranchId = model.BranchId
-        };
+            // Create Phieu tra hang
+            var exchangeItem = new ExchangeItemVoucher()
+            {
+                UserId = model.UserId,
+                CustomerId = model.CustomerId,
+                RefundAmount = model.TotalDeductibleAmount,
+                TotalExchangeProduct = model.ExchangedProduct.Count(),
+                TotalReturnProduct = model.ReturnedProduct.Count(),
+                BranchId = model.BranchId
+            };
 
-        var exchangeResult = _context.ExchangeItemVouchers.Add(exchangeItem);
-        // If exchange product > 0
-        if (exchangeResult != null)
-        {
-            HandleExchangeProduct(exchangeItem.Id, model);
-        }
-        // If Return Product > 0
-        if (model.ReturnedProduct != null)
-        {
-            HandleReturnProduct(exchangeItem.Id, model);
-        }
-        // Tạo phiếu chi
-        HandlePhieuThuChi(exchangeItem.Id, model);
+            var exchangeResult = _context.ExchangeItemVouchers.Add(exchangeItem);
+            _context.SaveChanges();
 
+            // If exchange product > 0
+            if (model.ExchangedProduct != null && model.ExchangedProduct.Count >0 )
+            {
+                HandleExchangeProduct(exchangeItem.Id, model);
+            }
+            // If Return Product > 0
+            if (model.ReturnedProduct != null && model.ReturnedProduct.Count > 0)
+            {
+                HandleReturnProduct(exchangeItem.Id, model);
+            }
+            // Tạo phiếu chi
+            await HandlePhieuThuChi(exchangeItem.Id, model);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
     }
 
     #region Methods Handle
     private async Task UpdateProductStorage(int productId, float quantity, int userId, int branchId)
     {
         string storateConnection = string.Format(_configuration.GetSection("ConnectionStrings:StoragesDbConnStr").Value.ToString(), SD.StorageDbName);
+
+        var storage = GetMainStorageByBranch(branchId);
+        string query = string.Empty;
+
+        var productStorages = GetProductStorare(storage.StorageId, productId);
+
         using (var connection = new SqlConnection(storateConnection))
         {
-            string query = string.Format(@"
+            if (productStorages == null)
+            {
+                query = string.Format(@"
+                    INSERT INTO [dbo].[ProductStorages]
+                           ([ProductId]
+                           ,[StorageId]
+                           ,[Quantity]
+                           ,[CreateDate]
+                           ,[CreateBy]
+                           ,[ModifyDate]
+                           ,[ModifyBy])
+                     VALUES
+                           ({0}
+                           ,{1}
+                           ,{2}
+                           ,GETDATE()
+                           ,{3}
+                           ,GETDATE()
+                           ,{3})
+                    ", productId, storage.StorageId, quantity, userId);
+            }
+            else
+            {
+                query = string.Format(@"
                 UPDATE ps
 	                SET ps.Quantity = {0}
 		                ,ModifyDate = GETDATE()
@@ -74,10 +113,20 @@ public class RefundService : IRefundService
                 WHERE s.BranchId = {2}
 		                AND ps.ProductId = {3}
             ", quantity, userId, branchId, productId);
+            }
+
+            try
+            {
+                var affectedRows = connection.Execute(query);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 
-    private async Task<Branch> GetBranch(int branchId)
+    private Branch GetBranch(int branchId)
     {
         string storateConnection = string.Format(_configuration.GetSection("ConnectionStrings:StoragesDbConnStr").Value.ToString(), SD.StorageDbName);
         var result = new Branch();
@@ -141,7 +190,7 @@ public class RefundService : IRefundService
         }
     }
 
-    private async Task HandleReturnProduct(int exchangeItemId, BillRefundRequestDto model)
+    private void HandleReturnProduct(int exchangeItemId, BillRefundRequestDto model)
     {
         try
         {
@@ -174,7 +223,7 @@ public class RefundService : IRefundService
         {
             if (model.TotalDeductibleAmount < 0)
             {
-                var branch = await GetBranch(model.BranchId.Value);
+                var branch = GetBranch(model.BranchId.Value);
 
                 var paymentVoucher = new NewPaymentVoucherDto();
                 paymentVoucher.BranchId = model.BranchId;
@@ -191,7 +240,7 @@ public class RefundService : IRefundService
                 paymentVoucher.TotalMoneyVND = model.TotalDeductibleAmount * -1;
                 paymentVoucher.NTMoney = 0;
 
-                _paymentVoucherService.CreatePaymentVoucher(paymentVoucher);
+                await _paymentVoucherService.CreatePaymentVoucher(paymentVoucher);
 
             }
             else if (model.TotalDeductibleAmount > 0)
@@ -211,6 +260,46 @@ public class RefundService : IRefundService
         {
             throw ex;
         }
+    }
+
+    private Storage GetMainStorageByBranch(int branchId)
+    {
+        string storateConnection = string.Format(_configuration.GetSection("ConnectionStrings:StoragesDbConnStr").Value.ToString(), SD.StorageDbName);
+        Storage storage = new Storage();
+
+        using (var connection = new SqlConnection(storateConnection))
+        {
+            string query = string.Format(@"
+                SELECT TOP 1 *
+                FROM Storages
+                WHERE StorageCode NOT LIKE '%-%'
+                AND BranchId = {0}
+            ", branchId);
+
+            storage = connection.Query<Storage>(query).FirstOrDefault();
+        }
+
+        return storage;
+    }
+
+    private ProductStorage GetProductStorare(int storageId, int productId)
+    {
+        string storateConnection = string.Format(_configuration.GetSection("ConnectionStrings:StoragesDbConnStr").Value.ToString(), SD.StorageDbName);
+        ProductStorage productStorage = new ProductStorage();
+
+        using (var connection = new SqlConnection( storateConnection))
+        {
+            string query = string.Format(@"
+                SELECT TOP 1 *
+                FROM ProductStorages
+                WHERE StorageId = {0}
+                AND  ProductId = {1}    
+            ", storageId, productId);
+
+            productStorage = connection.Query<ProductStorage>(query).FirstOrDefault();
+        }
+
+        return productStorage;
     }
     #endregion
 }

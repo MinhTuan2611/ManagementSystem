@@ -21,8 +21,8 @@ namespace ManagementSystem.AccountingApi.Controllers
         public async Task<ActionResult> CreateRefundBill(BillRefundRequestDto model)
         {
 
-            await _refundService.CreateRefundVoucher(model);
-            return Ok(model);
+            var result = await _refundService.CreateRefundVoucher(model);
+            return Ok(result);
         }
     }
 }

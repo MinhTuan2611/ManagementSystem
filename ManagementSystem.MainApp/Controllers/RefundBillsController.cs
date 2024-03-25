@@ -26,8 +26,8 @@ namespace ManagementSystem.MainApp.Controllers
             model.UserId = int.Parse(userId);
 
            
-                var contentProcess = await HttpRequestsHelper.Post<object>(APIUrl + "create", model);
-                if(contentProcess != null) {
+                var contentProcess = await HttpRequestsHelper.Post<bool>(APIUrl + "create", model);
+                if(contentProcess) {
                 return Ok(contentProcess);
                 }
                 return StatusCode(StatusCodes.Status500InternalServerError, "Some thing went wrong");

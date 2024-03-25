@@ -225,6 +225,59 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.ToTable("DocumentGroups");
                 });
 
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ExchangeItemVoucher", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("RefundAmount")
+                        .HasColumnType("real");
+
+                    b.Property<int>("TotalExchangeProduct")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalReturnProduct")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExchangeItemVouchers");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ExchangeProduct", b =>
+                {
+                    b.Property<int>("ExchangeItemVoucherId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ExchangeItemVoucherId", "ProductId");
+
+                    b.ToTable("ExchangeProducts");
+                });
+
             modelBuilder.Entity("ManagementSystem.Common.Entities.InventoryAuditDetail", b =>
                 {
                     b.Property<int>("ShiftEndId")
@@ -856,6 +909,31 @@ namespace ManagementSystem.AccountingApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Recordingtransactions");
+                });
+
+            modelBuilder.Entity("ManagementSystem.Common.Entities.ReturnProduct", b =>
+                {
+                    b.Property<int>("ExchangeItemVoucherId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
+
+                    b.Property<int>("ReasonRef")
+                        .HasColumnType("int");
+
+                    b.HasKey("ExchangeItemVoucherId", "ProductId");
+
+                    b.ToTable("ReturnProducts");
                 });
 
             modelBuilder.Entity("ManagementSystem.Common.Entities.ShiftEndReport", b =>

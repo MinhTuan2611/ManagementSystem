@@ -69,7 +69,7 @@ namespace ManagementSystem.AccountingApi.Services
             try
             {
                 _context.Legers.Add(leger);
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
 
                 return leger;
             }
