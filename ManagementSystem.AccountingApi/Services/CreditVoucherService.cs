@@ -159,7 +159,7 @@ namespace ManagementSystem.AccountingApi.Services
 		                ,c.CustomerName
 		                ,c.CustomerName AS Payer
 		                ,rt.ReasonName AS ForReason
-		                ,r.TotalMoney
+		                ,CONVERT(INT, r.TotalMoney) AS TotalMoney
 		                ,u.UserId
 		                ,u.UserName AS Cashier
 		                ,pm.PaymentMethodCode
@@ -172,7 +172,7 @@ namespace ManagementSystem.AccountingApi.Services
                 JOIN {0}.dbo.PaymentMethods pm ON pm.PaymentMethodId = r.PaymentMethodId
                 JOIN dbo.Recordingtransactions rt ON rt.ReasonCode = r.ForReason
                 WHERE r.DocumentNumber = {2}
-            ",SD.StorageDbName, SD.AccountDbName, documentNumber);
+            ", SD.StorageDbName, SD.AccountDbName, documentNumber);
 
             try
             {

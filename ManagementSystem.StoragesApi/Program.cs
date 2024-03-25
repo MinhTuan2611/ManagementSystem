@@ -14,6 +14,7 @@ builder.Services.AddDbContextPool<DbContext, StoragesDbContext>(options =>
     options.UseSqlServer(connectionString));
 SD.AccountDbName = builder.Configuration["DatabaseNames:AccountsDb"];
 SD.AccountingDbName = builder.Configuration["DatabaseNames:AccountingDb"];
+SD.StorageDbName = builder.Configuration["DatabaseNames:StoragesDb"];
 SD.AccountingApiUrl = builder.Configuration["ServicesUrls:AccountingApi"];
 //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -24,6 +25,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IEventLoggingService, EventLoggingService>();
+builder.Services.AddScoped<IElectronicService, ElectronicBillService>();
+
 builder.Services.AddSwaggerGen();
 
 // Register Auto Mapping

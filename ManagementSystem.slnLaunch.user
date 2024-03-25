@@ -1,0 +1,20 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Name": "ManagementSystem.AccountsApi\\ManagementSystem.AccountsApi.csproj",
+        "Action": "Start"
+      },
+      {
+        "Name": "ManagementSystem.StoragesApi\\ManagementSystem.StoragesApi.csproj",
+        "Action": "Start",
+        "DebugTarget": ""
+      },
+      {
+        "Name": "ManagementSystem.MainApp\\ManagementSystem.MainApp.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

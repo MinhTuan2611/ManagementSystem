@@ -56,4 +56,11 @@ namespace ManagementSystem.Common.Models
         SubmitShiftEnd,
         CompleteShiftHavdover
     }
+
+    public enum ImportProductStatus
+    {
+        CreateProduct,
+        UpdateProduct,
+        Unchange
+    }
 }
