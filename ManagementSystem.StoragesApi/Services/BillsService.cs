@@ -549,7 +549,7 @@ namespace ManagementSystem.StoragesApi.Services
             {
 
                 // Headers
-                var headers = new[] { "Hóa Đơn", "Ngày Tạo", "Mã Khách Hàng", "Tên Khách Hàng", "Mã Sản Phẩm", "Tên Sản Phẩm", "Đơn Vị Tính", "Số Lượng", "Chiết Khấu", "Thành Tiền" };
+                var headers = new[] { "Hóa Đơn", "Mã Chi Nhánh", "Tên Chi Nhánh", "Ngày Tạo", "Mã Khách Hàng", "Tên Khách Hàng", "Mã Sản Phẩm", "Tên Sản Phẩm", "Đơn Vị Tính", "Số Lượng", "Chiết Khấu", "Thành Tiền" };
 
                 // Handle file path
                 string dateFormat = DateTime.Now.ToString("yyyyMMdd");
@@ -883,7 +883,9 @@ namespace ManagementSystem.StoragesApi.Services
             string toDate = model.Criterias["toDate"].ToString();
 
             string query = string.Format(@"
-                SELECT  c.BillId
+                                SELECT  c.BillId
+						,bc.BranchCode
+						,bc.BranchName
 		                ,FORMAT(c.CreateDate, 'yyyy-MM-dd HH:mm:ss') AS CreateDate
 		                ,convert(nvarchar,coalesce(CustomerCode, '')) AS CustomerCode
 		                ,convert(nvarchar,coalesce(CustomerName, '')) AS CustomerName
@@ -900,6 +902,7 @@ namespace ManagementSystem.StoragesApi.Services
                 --left join PaymentMethods pm on pm.PaymentMethodId = bp.PaymentMethodId
                 JOIN Products b on a.ProductId = b.ProductId
                 JOIN Unit e on e.UnitId = a.UnitId
+				JOIN Branches bc ON c.BranchId = bc.BranchId
                 WHERE 
                     (CONVERT(datetime, FORMAT(a.CreateDate, 'yyyy-MM-dd')) between CONVERT(datetime, '{0}') AND CONVERT(datetime, '{1}'))
                 order by c.BillId
