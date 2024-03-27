@@ -25,5 +25,7 @@ namespace ManagementSystem.Common.Entities
 
         [MaxLength(15)]
         public string? PhoneNumber  { get; set; }
+
+        public bool? IsActive { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ManagementSystem.Common.Entities;
+using ManagementSystem.Common.GenericModels;
 using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using ManagementSystem.StoragesApi.Data;
@@ -16,16 +17,21 @@ namespace ManagementSystem.StoragesApi.Controllers
         private readonly CustomersService _CustomersService;
         private readonly IMapper _mapper;
 
-        public CustomersController(StoragesDbContext context, IMapper mapper)
+        public CustomersController(StoragesDbContext context, IMapper mapper, IConfiguration configuration)
         {
-            _CustomersService = new CustomersService(context);
+            _CustomersService = new CustomersService(context, configuration);
             _mapper = mapper;
         }
         [HttpGet("get")]
-        public List<Customer> Get()
+        public TPagination<Customer> Get(string? customerName, string? phoneNumber, int pageSize = 10, int pageNumber = 1)
         {
-            var customers = _CustomersService.GetListCustomers();
-            return customers;
+            var (customers, countCustomer) = _CustomersService.GetListCustomers(customerName, phoneNumber, pageSize, pageNumber);
+
+            var result = new TPagination<Customer>();
+            result.TotalItems = countCustomer;
+            result.Items = customers;
+
+            return result;
         }
         [HttpGet("get-customer-by-code")]
         public Customer GetCustomerByCode(string customerCode)
@@ -33,6 +39,14 @@ namespace ManagementSystem.StoragesApi.Controllers
             var customer = _CustomersService.GetCustomerByCode(customerCode);
             return customer;
         }
+
+        [HttpGet("get-customer-by-id")]
+        public Customer GetCustomerById(int customerId)
+        {
+            var customer = _CustomersService.GetCustomerById(customerId);
+            return customer;
+        }
+
         [HttpPost("create")]
         public IActionResult Create([FromBody] NewCustomerRequestDto customerDto)
         {
@@ -42,6 +56,7 @@ namespace ManagementSystem.StoragesApi.Controllers
             // Add customer Metadata
             newCustomer.CreateBy = customerDto.UserId;
             newCustomer.ModifyBy = customerDto.UserId;
+            newCustomer.IsActive = true;
             if (_CustomersService.checkExistCustomer(newCustomer))
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Customer already exists!");
@@ -66,11 +81,18 @@ namespace ManagementSystem.StoragesApi.Controllers
 
             return Ok(false);
         }
-        [HttpPost("update")]
-        public IActionResult Update(Customer customer, int userId)
+
+        [HttpPost("update/{actionUserId}")]
+        public async Task<IActionResult> Update([FromBody] Customer customer, int actionUserId)
         {
-            bool updated = _CustomersService.UpdateCustomer(customer, userId);
-            return Ok(updated);
+            if (customer == null)
+                return BadRequest("Invalid model");
+
+            bool updated = await _CustomersService.UpdateCustomer(customer, actionUserId);
+            if (updated == true)
+                return Ok(updated);
+
+            return StatusCode(StatusCodes.Status500InternalServerError, "Something went wrong!");
         }
 
         [HttpPost("update_point")]
@@ -80,11 +102,11 @@ namespace ManagementSystem.StoragesApi.Controllers
             return Ok(updated);
         }
 
-        [HttpPost("delete")]
-        public IActionResult Delete(int customerId)
+        [HttpDelete("delete/{customerId}/{actionUserId}")]
+        public IActionResult Delete(int customerId, int actionUserId)
         {
-            bool updated = _CustomersService.DeleteCustomer(customerId);
-            return Ok(updated);
+            bool deleted = _CustomersService.DeleteCustomer(customerId, actionUserId);
+            return Ok(deleted);
         }
 
         [HttpGet("search-term")]
