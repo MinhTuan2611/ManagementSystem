@@ -8,7 +8,7 @@ using ManagementSystem.Common.Models;
 using ManagementSystem.Common.Models.Dtos;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 
 namespace ManagementSystem.AccountingApi.Services
 {
@@ -102,9 +102,20 @@ namespace ManagementSystem.AccountingApi.Services
 
                 var executeResult = await GenericSearchRepository<PaymentVoucherResponseDto>.ExecutePagedStoredProcedureCommonAsync<PaymentVoucherResponseDto>
                                                                                     (dbContext, "sp_SearchPaymentVouchers", pageNumber, pageSize, parameters);
-
                 // Process the results
                 List<PaymentVoucherResponseDto> pagedData = executeResult.Item1;
+                if (criteria.Criterias.TryGetValue("autoPaymentVoucher", out object value) && value is JsonElement element)
+                {
+                    if (element.ValueKind == JsonValueKind.False)
+                    {
+                        string[] excludedReasons = { "THIEU", "TIEN", "KETCHUYEN", "THUA" };
+                        int countExcluded = pagedData.Count(x => excludedReasons.Contains(x.Reason));
+                        pagedData = pagedData.Where(x => !excludedReasons.Contains(x.Reason)).ToList();
+                        executeResult.Item2 = executeResult.Item2 - countExcluded;
+                    }
+                }
+                //if (test.GetType().GetProperties().First(o => o.Name == "Property1").GetValue(test, null))
+
                 int totalRecords = executeResult.Item2;
 
                 var result = new TPagination<PaymentVoucherResponseDto>();
@@ -143,7 +154,7 @@ namespace ManagementSystem.AccountingApi.Services
                     LEFT JOIN {0}.dbo.Branches b ON pv.BranchId = b.BranchId 
                     LEFT JOIN {1}.dbo.Users u ON pv.UserId = u.UserId
                     WHERE DocumentNumber = {2}
-                ",SD.StorageDbName, SD.AccountDbName, DocumentId);
+                ", SD.StorageDbName, SD.AccountDbName, DocumentId);
 
                 var result = await _context.PaymentVoucherResponseDtos.FromSqlRaw(query).SingleOrDefaultAsync();
                 return result;
