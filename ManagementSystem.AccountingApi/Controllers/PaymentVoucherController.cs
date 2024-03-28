@@ -31,7 +31,6 @@ namespace ManagementSystem.AccountingApi.Controllers
         public async Task<IActionResult> GetPaymentVoucher([FromQuery] int documentNumber)
         {
             var result = await _service.GetPaymentVoucher(documentNumber);
-
             return Ok(result);
         }
 

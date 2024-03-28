@@ -150,6 +150,7 @@ namespace ManagementSystem.AccountingApi.Services
                             ,pv.TransactionDate
                             ,pv.DebitAccount
 							,pv.CreditAccount
+                            ,pv.ShiftId
                     FROM PaymentVouchers pv
                     LEFT JOIN {0}.dbo.Branches b ON pv.BranchId = b.BranchId 
                     LEFT JOIN {1}.dbo.Users u ON pv.UserId = u.UserId
