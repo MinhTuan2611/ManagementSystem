@@ -166,9 +166,12 @@ namespace ManagementSystem.AccountingApi.Services
 		                ,pm.PaymentMethodName
                         ,r.DebitAccount AS DebitAccount
 						,r.CreditAccount AS CreditAccount
+                        , b.BranchId
                 FROM dbo.CreditVouchers r
                 LEFT JOIN {0}.dbo.Customers c ON r.CustomerId = c.CustomerId
                 LEFT JOIN {1}.dbo.Users u ON u.UserId = r.UserId
+                LEFT JOIN {1}.dbo.UserBranchs ub ON u.UserId = ub.UserId
+				LEFT JOIN {0}.dbo.Branches b ON ub.BranchId = b.BranchId
                 JOIN {0}.dbo.PaymentMethods pm ON pm.PaymentMethodId = r.PaymentMethodId
                 JOIN dbo.Recordingtransactions rt ON rt.ReasonCode = r.ForReason
                 WHERE r.DocumentNumber = {2}

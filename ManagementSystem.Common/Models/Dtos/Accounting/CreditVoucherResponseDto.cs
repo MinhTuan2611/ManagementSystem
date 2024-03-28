@@ -23,5 +23,6 @@ namespace ManagementSystem.Common.Models.Dtos
         public string PaymentMethodCode { get; set; }
         public string? CreditAccount { get; set; }
         public string? DebitAccount { get; set; }
+        public int? BranchId { get; set; }
     }
 }
