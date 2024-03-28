@@ -222,30 +222,30 @@ namespace ManagementSystem.StoragesApi.Services
             }
         }
 
-        public CustomerResponseDto GetCustomerById(int id)
-        {
-            string query = string.Format(@"
-                SELECT [CustomerCode]
-    	                ,[CustomerName]
-    	                ,[CustomerPoint]
-    	                ,[Address]
-    	                ,[BirthDay]
-    	                ,[Gender]
-    	                ,[PhoneNumber]
-                FROM dbo.Customers
-                WHERE CustomerId = {0}
-                            ", id);
+        //public CustomerResponseDto GetCustomerById(int id)
+        //{
+        //    string query = string.Format(@"
+        //        SELECT [CustomerCode]
+    	   //             ,[CustomerName]
+    	   //             ,[CustomerPoint]
+    	   //             ,[Address]
+    	   //             ,[BirthDay]
+    	   //             ,[Gender]
+    	   //             ,[PhoneNumber]
+        //        FROM dbo.Customers
+        //        WHERE CustomerId = {0}
+        //                    ", id);
 
-            try
-            {
-                var customers = _storageContext.customerResponseDtos.FromSqlRaw(query).FirstOrDefault();
-                return customers;
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
+        //    try
+        //    {
+        //        var customers = _storageContext.customerResponseDtos.FromSqlRaw(query).FirstOrDefault();
+        //        return customers;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return null;
+        //    }
+        //}
 
         public bool UpdateCustomerPoint(int amount, int customerId, int usedPoint)
         {
@@ -272,10 +272,10 @@ namespace ManagementSystem.StoragesApi.Services
         public bool checkExistCustomer(Customer customer)
         {
             var isExist = _unitOfWork.CustomerRepository.Get(x => x.CustomerCode == customer.CustomerCode);
-            return isExist != null ;
+            return isExist != null;
         }
 
-        private  string GetUserRole(int userId)
+        private string GetUserRole(int userId)
         {
             try
             {
